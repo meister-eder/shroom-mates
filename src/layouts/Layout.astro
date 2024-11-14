@@ -32,7 +32,7 @@ import Header from "../components/Header.astro";
     <slot />
 
     <footer>
-      <p>© 2024 shroom-mates, All rights reserved.</p>
+      <p>© 2024 shroom-mates, built with 🍄 and free software in Leipzig</p>
     </footer>
 
     <script>
@@ -42,4 +42,10 @@ import Header from "../components/Header.astro";
 </html>
 <style is:global>
   @import url("../styles/global.css");
+
+  footer > p {
+    background-color: rgb(228, 228, 228);
+    margin: 0;
+    padding: 10px;
+  }
 </style>

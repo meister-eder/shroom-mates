@@ -4,12 +4,14 @@ import TextBox from "./TextBox.astro";
 interface Props {
   name: string;
   description: string;
+  color?: string;
+  imageSrc: string;
 }
 
-const { name, description } = Astro.props;
+const { name, description, color = "black", imageSrc } = Astro.props;
 ---
 
-<style>
+<style define:vars={{ color }}>
   .image-wrapper {
     display: flex;
     justify-content: flex-end; /* Aligns image to the right */
@@ -45,26 +47,16 @@ const { name, description } = Astro.props;
 
   .box {
     background-color: #fdfdfd;
-    box-shadow: 6px 6px #fad6da;
+    box-shadow: 6px 6px var(--color);
   }
-
-  /*   article {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  article div {
-    flex-grow: 1;
-  } */
 </style>
 <section>
   <article>
     <div class="image-wrapper">
-      <img src="seitling_tasse_cutout.png" />
+      <img src={"shroom-mates/" + imageSrc} />
     </div>
     <div class="text-wrapper">
-      <TextBox color="#fad6da" text="Der Kräuterseitling" />
+      <TextBox color={color} text={name} />
       <p class="description box">{description}</p>
     </div>
   </article>
