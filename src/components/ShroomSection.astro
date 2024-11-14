@@ -53,7 +53,7 @@ const { name, description, color = "black", imageSrc } = Astro.props;
 <section>
   <article>
     <div class="image-wrapper">
-      <img src={"shroom-mates/" + imageSrc} />
+      <img src={imageSrc} />
     </div>
     <div class="text-wrapper">
       <TextBox color={color} text={name} />
