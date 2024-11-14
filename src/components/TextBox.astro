@@ -1,8 +1,21 @@
 ---
 interface Props {
-  color: string;
+  color?: string;
   text: string;
 }
 
-const { color = "#fefefe", text } = Astro.props;
+const { color = "black", text } = Astro.props;
 ---
+
+<style define:vars={{ color }}>
+  .box {
+    display: inline-block;
+    padding: 10px;
+    background-color: #fdfdfd;
+    box-shadow: 6px 6px var(--color);
+  }
+</style>
+
+<h3 class="box">
+  {text}
+</h3>

@@ -1,4 +1,6 @@
 ---
+import TextBox from "./TextBox.astro";
+
 interface Props {
   name: string;
   description: string;
@@ -12,7 +14,6 @@ const { name, description } = Astro.props;
     display: flex;
     justify-content: flex-end; /* Aligns image to the right */
     height: 300px;
-    background-color: #fad6da;
     position: relative; /* Keep the image inside the wrapper */
   }
 
@@ -63,7 +64,7 @@ const { name, description } = Astro.props;
       <img src="seitling_tasse_cutout.png" />
     </div>
     <div class="text-wrapper">
-      <h3 class="box">{name}</h3>
+      <TextBox color="#fad6da" text="Der Kräuterseitling" />
       <p class="description box">{description}</p>
     </div>
   </article>

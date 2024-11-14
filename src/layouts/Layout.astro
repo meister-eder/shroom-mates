@@ -7,7 +7,7 @@ interface Props {
 
 const { title } = Astro.props;
 
-import HamburgerMenu from "../components/HamburgerMenu.astro";
+import Header from "../components/Header.astro";
 ---
 
 <!doctype html>
@@ -27,44 +27,19 @@ import HamburgerMenu from "../components/HamburgerMenu.astro";
     </style>
   </head>
   <body>
-    <HamburgerMenu />
+    <Header />
 
     <slot />
 
     <footer>
       <p>© 2024 shroom-mates, All rights reserved.</p>
     </footer>
+
+    <script>
+      import "../scripts/hamburger.js";
+    </script>
   </body>
 </html>
 <style is:global>
-  :root {
-    --accent: 136, 58, 234;
-    --accent-light: 224, 204, 250;
-    --accent-dark: 49, 10, 101;
-    --accent-gradient: linear-gradient(
-      45deg,
-      rgb(var(--accent)),
-      rgb(var(--accent-light)) 30%,
-      rgb(10, 10, 10) 60%
-    );
-  }
-  html {
-    font-family: "Dm Mono", system-ui, sans-serif;
-    background: #ffffff;
-    background-size: 20px 20px;
-    background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
-      linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
-  }
-
-  code {
-    font-family:
-      Menlo,
-      Monaco,
-      Lucida Console,
-      Liberation Mono,
-      DejaVu Sans Mono,
-      Bitstream Vera Sans Mono,
-      Courier New,
-      monospace;
-  }
+  @import url("../styles/global.css");
 </style>
