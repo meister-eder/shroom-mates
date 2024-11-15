@@ -1,64 +1,76 @@
 ---
 import TextBox from "./TextBox.astro";
+import TitleBox from "./TitleBox.astro";
+import { Picture } from "astro:assets";
 
 interface Props {
-	name: string;
-	description: string;
-	color?: string;
-	imageSrc: string;
+  name: string;
+  description: string;
+  color?: string;
+  imageSrc: ImageMetadata;
 }
 
 const { name, description, color = "black", imageSrc } = Astro.props;
 ---
 
 <style define:vars={{ color }}>
-  .image-wrapper {
+  .container {
+    position: relative;
     display: flex;
-    justify-content: flex-end; /* Aligns image to the right */
-    height: 300px;
-    position: relative; /* Keep the image inside the wrapper */
+    max-width: 1400px;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 200px;
   }
 
-  .image-wrapper > img {
-    width: 40vw; /* 40% of the viewport width */
-    height: 500px; /* Maintain aspect ratio by allowing the height to scale */
-    object-fit: cover; /* Prevent stretching and preserve the aspect ratio */
-    max-width: 100%; /* Prevent the image from exceeding its natural width */
+  .image-wrapper {
+    position: absolute;
+    right: 0;
+    top: -270px;
+    z-index: 1;
+  }
+
+  .image-wrapper img {
+    width: 60%;
+    height: auto;
+    right: -20%;
     position: relative;
-    right: 0; /* Keep the image aligned to the right */
+    max-width: 100%;
+    max-height: 900px;
+    object-fit: cover;
   }
 
   .text-wrapper {
     position: relative;
-    top: -80px;
-    padding: 10px;
+    z-index: 2;
+    max-width: 60%;
+    padding: 20px;
   }
 
   h3 {
-    display: inline-block;
     font-size: 2rem;
     margin-bottom: 0;
-    padding: 10px;
   }
 
   .description {
-    max-width: 75%;
-  }
-
-  .box {
+    font-size: 1rem;
     background-color: #fdfdfd;
     box-shadow: 6px 6px var(--color);
+    padding: 10px;
   }
 </style>
-<section>
-  <article>
-    <div class="image-wrapper">
-      <img src={imageSrc} />
-    </div>
-    <div class="text-wrapper">
-      <TextBox color={color} text={name} />
-      <p class="description box">{description}</p>
-    </div>
-  </article>
-  <!-- Add more mushroom types as needed -->
+
+<section class="container">
+  <div class="text-wrapper">
+    <TitleBox color={color} text={name} />
+    <TextBox color={color} text={description} />
+  </div>
+  <div class="image-wrapper">
+    <Picture
+      class="shroom-img"
+      src={imageSrc}
+      formats={["avif", "webp"]}
+      alt={name + " in einer altmodischen Tasse."}
+    />
+  </div>
 </section>
