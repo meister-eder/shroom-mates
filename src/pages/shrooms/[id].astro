@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { mushrooms } from '../../data/mushrooms';
+import { Image } from 'astro:assets';
 
 export function getStaticPaths() {
   return mushrooms.map(mushroom => ({
@@ -15,8 +16,19 @@ const { mushroom } = Astro.props;
 <Layout title={`${mushroom.name} - shroom-mates`}>
   <main>
     <div class="mushroom-detail">
-      <div class="image-container">
-        <img src={mushroom.imageSrc} alt={mushroom.name} />
+      <div class="image-container" style={`background: ${mushroom.highlightColor};`}>
+        <img 
+          src={`/shroom-mates${mushroom.imageSrc}`} 
+          alt={mushroom.name}
+          class="main-image"
+        />
+        {mushroom.cutoutImageSrc && (
+          <Image 
+            src={mushroom.cutoutImageSrc}
+            alt={`${mushroom.name} cutout`}
+            class="cutout-image"
+          />
+        )}
         <span class={`category ${mushroom.category}`}>{mushroom.category}</span>
       </div>
       
@@ -47,8 +59,50 @@ const { mushroom } = Astro.props;
         </div>
       </div>
     </div>
+
+    {mushroom.recipes && mushroom.recipes.length > 0 && (
+      <div class="recipes-section">
+        <h2>Recipes</h2>
+        <div class="recipes-grid">
+          {mushroom.recipes.map(recipe => (
+            <div class="recipe-card">
+              <div class="recipe-header">
+                <h3>{recipe.name}</h3>
+                <span class={`difficulty ${recipe.difficulty}`}>{recipe.difficulty}</span>
+              </div>
+              <p class="recipe-description">{recipe.description}</p>
+              
+              <div class="recipe-time">
+                <span>Prep: {recipe.prepTime}</span>
+                <span>Cook: {recipe.cookTime}</span>
+              </div>
+
+              <div class="recipe-content">
+                <div class="ingredients">
+                  <h4>Ingredients</h4>
+                  <ul>
+                    {recipe.ingredients.map(ingredient => (
+                      <li>{ingredient}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div class="instructions">
+                  <h4>Instructions</h4>
+                  <ol>
+                    {recipe.instructions.map(instruction => (
+                      <li>{instruction}</li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
     
-    <a href="/shrooms" class="back-link">← Back to All Mushrooms</a>
+    <a href="/shroom-mates/shrooms" class="back-link">← Back to All Mushrooms</a>
   </main>
 </Layout>
 
@@ -71,12 +125,27 @@ const { mushroom } = Astro.props;
 
   .image-container {
     position: relative;
+    min-height: 400px;
   }
 
-  .image-container img {
+  .main-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .cutout-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    z-index: 2;
   }
 
   .category {
@@ -88,6 +157,7 @@ const { mushroom } = Astro.props;
     color: white;
     font-weight: bold;
     text-transform: capitalize;
+    z-index: 3;
   }
 
   .category.edible {
@@ -161,6 +231,106 @@ const { mushroom } = Astro.props;
     color: #3498db;
   }
 
+  .recipes-section {
+    margin-top: 4rem;
+  }
+
+  .recipes-section h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+  }
+
+  .recipes-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .recipe-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .recipe-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+  }
+
+  .difficulty {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .difficulty.easy {
+    background-color: #2ecc71;
+    color: white;
+  }
+
+  .difficulty.medium {
+    background-color: #f1c40f;
+    color: #2c3e50;
+  }
+
+  .difficulty.hard {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .recipe-description {
+    color: #34495e;
+    margin-bottom: 1.5rem;
+  }
+
+  .recipe-time {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+  }
+
+  .recipe-content {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .recipe-content h4 {
+    color: #2c3e50;
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+  }
+
+  .ingredients ul {
+    list-style-type: disc;
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+
+  .instructions ol {
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+
+  .ingredients li,
+  .instructions li {
+    margin-bottom: 0.5rem;
+    color: #34495e;
+  }
+
   @media (max-width: 768px) {
     .mushroom-detail {
       grid-template-columns: 1fr;
@@ -168,6 +338,10 @@ const { mushroom } = Astro.props;
 
     .image-container {
       height: 300px;
+    }
+
+    .recipe-content {
+      grid-template-columns: 1fr;
     }
   }
 </style>

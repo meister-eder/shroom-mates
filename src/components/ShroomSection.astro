@@ -1,82 +1,150 @@
 ---
-import TextBox from "./TextBox.astro";
-import TitleBox from "./TitleBox.astro";
-import { Picture } from "astro:assets";
-import type { Mushroom } from '../data/mushrooms';
+import { type Mushroom } from '../data/mushrooms';
+import { Image } from 'astro:assets';
 
 interface Props {
   title: string;
-  mushrooms: Mushroom[];
+  mushroom?: Mushroom;
 }
 
-const { title, mushrooms } = Astro.props;
+const { title, mushroom } = Astro.props;
+
+if (!mushroom) {
+  return null;
+}
+
+// Import all mushroom images
+import seitlingCutout from '../assets/images/seitling_tasse_cutout.png';
+import whitePearlCutout from '../assets/images/white_pearl_tasse_cutout.png';
+import heroOyster from '../assets/images/hero_oyster.png';
+
+// Map image paths to imported images
+const imageMap = {
+  '/shroom-mates/images/seitling_tasse_cutout.png': seitlingCutout,
+  '/shroom-mates/images/white_pearl_tasse_cutout.png': whitePearlCutout,
+  '/shroom-mates/images/hero_oyster.png': heroOyster,
+};
+
 ---
 
 <section>
-  <h2>{title}</h2>
-  <div class="mushroom-grid">
-    {mushrooms.map((mushroom) => (
-      <a href={`/shrooms/${mushroom.id}`} class="mushroom-card">
-        <img src={mushroom.imageSrc} alt={mushroom.name} />
-        <div class="content">
-          <h3>{mushroom.name}</h3>
-          <p>{mushroom.description}</p>
+  <a href={`/shroom-mates/shrooms/${mushroom.id}`} class="mushroom-link">
+    <div class="mushroom-card">
+      <div class="image-container" style={mushroom.highlightColor ? `background: ${mushroom.highlightColor}` : undefined}>
+        {mushroom.cutoutImageSrc && (
+          <Image 
+            src={mushroom.cutoutImageSrc}
+            alt={mushroom.name}
+            width={400}
+            height={300}
+            class="mushroom-image"
+          />
+        )}
+      </div>
+      <div class="content">
+        <h3>{mushroom.name}</h3>
+        <p>{mushroom.description}</p>
+        <div class="category-wrapper">
+          <span class={`category ${mushroom.category}`}>{mushroom.category}</span>
         </div>
-      </a>
-    ))}
-  </div>
+      </div>
+    </div>
+  </a>
 </section>
 
 <style>
   section {
-    margin: 2rem 0;
+    margin: 0;
   }
 
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #2c3e50;
+  .mushroom-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease-in-out;
   }
 
-  .mushroom-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 1rem;
+  .mushroom-link:hover {
+    transform: translateY(-5px);
   }
 
   .mushroom-card {
     background: white;
-    border-radius: 12px;
+    border-radius: 1rem;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-    text-decoration: none;
-    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: box-shadow 0.2s ease-in-out;
   }
 
-  .mushroom-card:hover {
-    transform: translateY(-4px);
+  .mushroom-link:hover .mushroom-card {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
   }
 
-  .mushroom-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+  .image-container {
+    position: relative;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  .mushroom-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 
   .content {
-    padding: 1rem;
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   h3 {
-    margin: 0;
     font-size: 1.5rem;
     color: #2c3e50;
+    margin-bottom: 0.5rem;
   }
 
   p {
-    margin: 0.5rem 0 0;
-    color: #666;
+    color: #34495e;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .category-wrapper {
+    margin-top: auto;
+    display: flex;
+  }
+
+  .category {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    width: fit-content;
+  }
+
+  .edible {
+    background: #e1f5e1;
+    color: #2c662d;
+  }
+
+  .medicinal {
+    background: #e1e1f5;
+    color: #2d2d66;
+  }
+
+  .poisonous {
+    background: #f5e1e1;
+    color: #662c2c;
   }
 </style>

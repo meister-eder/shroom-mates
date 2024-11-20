@@ -3,28 +3,17 @@ import Layout from '../layouts/Layout.astro';
 import ShroomSection from "../components/ShroomSection.astro";
 import TitleBox from "../components/TitleBox.astro";
 import Divider from "../components/Divider.astro";
-
-import seitlingImg from "../assets/images/seitling_tasse_cutout.png";
-import whitePearlImg from "../assets/images/white_pearl_tasse_cutout.png";
 import TextBox from "../components/TextBox.astro";
 import heroImage from "../assets/images/hero_oyster.png";
+import { mushrooms } from "../data/mushrooms";
 
-const seitlingDescription = `Der Kräuterseitling ist der coole Typ unter den Pilzen: mild-nussig im Geschmack, mit einer festen Textur, die beim Braten perfekt bleibt. Ob in der Pfanne, auf dem Grill oder als Fleischersatz – er passt überall rein. Besonders nice in Bowls, Wokgerichten oder einfach solo angebraten.
+// Get the mushrooms we want to display
+const displayMushrooms = [
+  mushrooms.find(m => m.id === 'king-oyster'),
+  mushrooms.find(m => m.id === 'white-pearl')
+].filter(Boolean);
 
-Ein Shroom, der nicht nur easy im Handling ist, sondern auch echt vielseitig.`;
-
-const whitePearlDescription = `Elegant, mild und mit einem zarten Biss: Der White Pearl Mushroom bringt Stil in deine Küche. Sein leicht süßliches Aroma macht ihn zum Allrounder für raffinierte Gerichte. Ob in cremigen Suppen, Pasta oder asiatischen Pfannen: Dieser Shroom hebt deine Mahlzeiten auf das nächste Level.
-
-Dazu sieht er noch gut aus – ein echter Hingucker mit seiner perligen Optik. Ein Shroom-Mate, der nicht nur klasse schmeckt, sondern auch optisch glänzt.`;
-
-const aboutUsText = `Wir bei Shroom-Mates sind deine neuen Lieblingspartner für frische
-        Pilze, die mehr als nur lecker sind. In Leipzig großgezogen, setzen wir
-        auf nachhaltigen Anbau und bringen dir handverlesene Qualität direkt aus
-        unserer kleinen Pilzfarm. Keine Kompromisse, keine Massenware – nur
-        richtig gute Shrooms. Unser Ziel? Dir Pilze zu liefern, die so
-        vielseitig sind wie dein Lifestyle. Von der Pflege bis zur Ernte läuft
-        alles bei uns – echt, lokal und voller Geschmack.`;
-
+console.log('Display Mushrooms:', displayMushrooms);
 ---
 
 <Layout title="Welcome to shroom-mates">
@@ -58,6 +47,16 @@ const aboutUsText = `Wir bei Shroom-Mates sind deine neuen Lieblingspartner für
         </div>
       </div>
     </section>
+
+    {displayMushrooms.map((mushroom, index) => (
+      <>
+        <ShroomSection
+          title={mushroom.name}
+          mushroom={mushroom}
+        />
+        {index < displayMushrooms.length - 1 && <Divider />}
+      </>
+    ))}
   </main>
 </Layout>
 

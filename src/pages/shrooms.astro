@@ -1,34 +1,121 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ShroomSection from '../components/ShroomSection.astro';
+import Divider from '../components/Divider.astro';
 import { mushrooms } from '../data/mushrooms';
 
 const edibleMushrooms = mushrooms.filter(m => m.category === 'edible');
 const medicinalMushrooms = mushrooms.filter(m => m.category === 'medicinal');
 const poisonousMushrooms = mushrooms.filter(m => m.category === 'poisonous');
+
+console.log('Edible Mushrooms:', edibleMushrooms);
 ---
 
 <Layout title="Our Mushrooms - shroom-mates">
   <main>
     <h1>Our Mushrooms</h1>
     
-    <ShroomSection title="Edible Mushrooms" mushrooms={edibleMushrooms} />
-    <ShroomSection title="Medicinal Mushrooms" mushrooms={medicinalMushrooms} />
-    <ShroomSection title="Poisonous Mushrooms" mushrooms={poisonousMushrooms} />
+    {edibleMushrooms.length > 0 && (
+      <section class="mushroom-category">
+        <h2>Edible Mushrooms</h2>
+        <div class="mushroom-grid">
+          {edibleMushrooms.map(mushroom => (
+            <ShroomSection 
+              title={mushroom.name}
+              mushroom={mushroom}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {medicinalMushrooms.length > 0 && (
+      <>
+        <Divider />
+        <section class="mushroom-category">
+          <h2>Medicinal Mushrooms</h2>
+          <div class="mushroom-grid">
+            {medicinalMushrooms.map(mushroom => (
+              <ShroomSection 
+                title={mushroom.name}
+                mushroom={mushroom}
+              />
+            ))}
+          </div>
+        </section>
+      </>
+    )}
+
+    {poisonousMushrooms.length > 0 && (
+      <>
+        <Divider />
+        <section class="mushroom-category">
+          <h2>Poisonous Mushrooms</h2>
+          <div class="mushroom-grid">
+            {poisonousMushrooms.map(mushroom => (
+              <ShroomSection 
+                title={mushroom.name}
+                mushroom={mushroom}
+              />
+            ))}
+          </div>
+        </section>
+      </>
+    )}
   </main>
 </Layout>
 
 <style>
   main {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
   }
   
   h1 {
-    font-size: 3rem;
+    font-size: clamp(2rem, 5vw, 3rem);
     text-align: center;
     color: #2c3e50;
     margin-bottom: 2rem;
+  }
+
+  .mushroom-category {
+    margin: 4rem 0;
+  }
+
+  .mushroom-category h2 {
+    color: #34495e;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .mushroom-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+    align-items: stretch;
+  }
+
+  /* Responsive padding adjustments */
+  @media (max-width: 768px) {
+    main {
+      padding: 1rem;
+    }
+
+    .mushroom-grid {
+      gap: 1rem;
+    }
+
+    .mushroom-category {
+      margin: 2rem 0;
+    }
+  }
+
+  /* Ensure cards don't get too wide on large screens */
+  @media (min-width: 1400px) {
+    .mushroom-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 </style>
