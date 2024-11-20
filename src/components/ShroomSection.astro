@@ -2,75 +2,81 @@
 import TextBox from "./TextBox.astro";
 import TitleBox from "./TitleBox.astro";
 import { Picture } from "astro:assets";
+import type { Mushroom } from '../data/mushrooms';
 
 interface Props {
-  name: string;
-  description: string;
-  color?: string;
-  imageSrc: ImageMetadata;
+  title: string;
+  mushrooms: Mushroom[];
 }
 
-const { name, description, color = "black", imageSrc } = Astro.props;
+const { title, mushrooms } = Astro.props;
 ---
 
-<style define:vars={{ color }}>
-  .container {
-    position: relative;
-    display: flex;
-    max-width: 1400px;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 200px;
+<section>
+  <h2>{title}</h2>
+  <div class="mushroom-grid">
+    {mushrooms.map((mushroom) => (
+      <a href={`/shrooms/${mushroom.id}`} class="mushroom-card">
+        <img src={mushroom.imageSrc} alt={mushroom.name} />
+        <div class="content">
+          <h3>{mushroom.name}</h3>
+          <p>{mushroom.description}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  section {
+    margin: 2rem 0;
   }
 
-  .image-wrapper {
-    position: absolute;
-    right: 0;
-    top: -270px;
-    z-index: 1;
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
   }
 
-  .image-wrapper img {
-    width: 60%;
-    height: auto;
-    right: -20%;
-    position: relative;
-    max-width: 100%;
-    max-height: 900px;
+  .mushroom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+  }
+
+  .mushroom-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mushroom-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .mushroom-card img {
+    width: 100%;
+    height: 200px;
     object-fit: cover;
   }
 
-  .text-wrapper {
-    position: relative;
-    z-index: 2;
-    max-width: 60%;
-    padding: 20px;
+  .content {
+    padding: 1rem;
   }
 
   h3 {
-    font-size: 2rem;
-    margin-bottom: 0;
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
   }
 
-  .description {
-    font-size: 1rem;
-    background-color: #fdfdfd;
-    box-shadow: 6px 6px var(--color);
-    padding: 10px;
+  p {
+    margin: 0.5rem 0 0;
+    color: #666;
   }
 </style>
-
-<section class="container">
-  <div class="text-wrapper">
-    <TitleBox color={color} text={name} />
-    <TextBox color={color} text={description} />
-  </div>
-  <div class="image-wrapper">
-    <Picture
-      class="shroom-img"
-      src={imageSrc}
-      formats={["avif", "webp"]}
-      alt={name + " in einer altmodischen Tasse."}
-    />
-  </div>
-</section>

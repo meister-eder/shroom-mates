@@ -1,0 +1,173 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { mushrooms } from '../../data/mushrooms';
+
+export function getStaticPaths() {
+  return mushrooms.map(mushroom => ({
+    params: { id: mushroom.id },
+    props: { mushroom },
+  }));
+}
+
+const { mushroom } = Astro.props;
+---
+
+<Layout title={`${mushroom.name} - shroom-mates`}>
+  <main>
+    <div class="mushroom-detail">
+      <div class="image-container">
+        <img src={mushroom.imageSrc} alt={mushroom.name} />
+        <span class={`category ${mushroom.category}`}>{mushroom.category}</span>
+      </div>
+      
+      <div class="content">
+        <h1>{mushroom.name}</h1>
+        <h2 class="scientific-name">{mushroom.details.scientificName}</h2>
+        <p class="description">{mushroom.description}</p>
+        
+        <div class="details">
+          <div class="detail-section">
+            <h3>Habitat</h3>
+            <p>{mushroom.details.habitat}</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Season</h3>
+            <p>{mushroom.details.season.join(', ')}</p>
+          </div>
+          
+          <div class="detail-section">
+            <h3>Characteristics</h3>
+            <ul>
+              {mushroom.details.characteristics.map(char => (
+                <li>{char}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <a href="/shrooms" class="back-link">← Back to All Mushrooms</a>
+  </main>
+</Layout>
+
+<style>
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .mushroom-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .image-container {
+    position: relative;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .category {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .category.edible {
+    background-color: #2ecc71;
+  }
+
+  .category.medicinal {
+    background-color: #3498db;
+  }
+
+  .category.poisonous {
+    background-color: #e74c3c;
+  }
+
+  .content {
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin: 0;
+  }
+
+  .scientific-name {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    font-style: italic;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #34495e;
+    margin-bottom: 2rem;
+  }
+
+  .details {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .detail-section h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin: 0 0 0.5rem;
+  }
+
+  ul {
+    list-style-type: disc;
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  li {
+    margin: 0.3rem 0;
+    color: #34495e;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 2rem;
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .back-link:hover {
+    color: #3498db;
+  }
+
+  @media (max-width: 768px) {
+    .mushroom-detail {
+      grid-template-columns: 1fr;
+    }
+
+    .image-container {
+      height: 300px;
+    }
+  }
+</style>

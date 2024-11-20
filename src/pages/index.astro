@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from '../layouts/Layout.astro';
 import ShroomSection from "../components/ShroomSection.astro";
 import TitleBox from "../components/TitleBox.astro";
 import Divider from "../components/Divider.astro";
@@ -7,6 +7,7 @@ import Divider from "../components/Divider.astro";
 import seitlingImg from "../assets/images/seitling_tasse_cutout.png";
 import whitePearlImg from "../assets/images/white_pearl_tasse_cutout.png";
 import TextBox from "../components/TextBox.astro";
+import heroImage from "../assets/images/hero_oyster.png";
 
 const seitlingDescription = `Der Kräuterseitling ist der coole Typ unter den Pilzen: mild-nussig im Geschmack, mit einer festen Textur, die beim Braten perfekt bleibt. Ob in der Pfanne, auf dem Grill oder als Fleischersatz – er passt überall rein. Besonders nice in Bowls, Wokgerichten oder einfach solo angebraten.
 
@@ -23,52 +24,39 @@ const aboutUsText = `Wir bei Shroom-Mates sind deine neuen Lieblingspartner für
         richtig gute Shrooms. Unser Ziel? Dir Pilze zu liefern, die so
         vielseitig sind wie dein Lifestyle. Von der Pflege bis zur Ernte läuft
         alles bei uns – echt, lokal und voller Geschmack.`;
+
 ---
 
 <Layout title="Welcome to shroom-mates">
   <main>
-    <div class="hero">
+    <section class="hero" style={`background-image: url(${heroImage.src})`}>
       <div class="title-wrapper">
-        <h1>meet our<br /> shroom-mates</h1>
-        <p>Die perfekten Mitbewohnis - ruhig, pflegeleicht und lecker</p>
-      </div>
-    </div>
-
-    <section id="shrooms">
-      <ShroomSection
-        name="Der Kräuterseitling"
-        description={seitlingDescription}
-        color="#fad6da"
-        imageSrc={seitlingImg}
-      />
-
-      <Divider />
-
-      <ShroomSection
-        name="White Pearl"
-        description={whitePearlDescription}
-        imageSrc={whitePearlImg}
-        color="#99D5BF"
-      />
-    </section>
-
-    <section id="about">
-      <div class="section-content">
-        <TitleBox text="Über uns" />
-        <TextBox text={aboutUsText} />
+        <h1>MEET OUR<br> SHROOM-MATES</h1>
+        <p>Explore our unique mushrooms grown with care in Leipzig.</p>
+        <div class="cta-buttons">
+          <a href="/shroom-mates/shrooms" class="cta-button">View Our Mushrooms</a>
+          <a href="/shroom-mates/contact" class="cta-button secondary">Contact Us</a>
+        </div>
       </div>
     </section>
-    <section id="contact">
-      <TitleBox text="Kontakt" />
-      <form>
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required />
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required />
-
-        <button type="submit">Send</button>
-      </form>
+    <section class="overview">
+      <h2>Welcome to shroom-mates</h2>
+      <p>We are passionate about cultivating the finest mushrooms in Leipzig. Our carefully controlled growing environments ensure the highest quality produce for your table.</p>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Fresh & Local</h3>
+          <p>All our mushrooms are grown locally in Leipzig</p>
+        </div>
+        <div class="feature">
+          <h3>Sustainable</h3>
+          <p>We use eco-friendly farming practices</p>
+        </div>
+        <div class="feature">
+          <h3>Premium Quality</h3>
+          <p>Carefully cultivated in controlled environments</p>
+        </div>
+      </div>
     </section>
   </main>
 </Layout>
@@ -79,35 +67,37 @@ const aboutUsText = `Wir bei Shroom-Mates sind deine neuen Lieblingspartner für
     line-height: 1.6;
   }
 
-  section {
-    border-top: 1px solid rgb(63, 63, 63);
-    border-bottom: 1px solid rgb(0, 0, 0);
-    padding: 15px;
-  }
-
-  .section-content {
-    max-width: 800px;
-    padding: auto;
-  }
-
   .hero {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 80px);
-    background-image: url("../assets/images/hero_oyster.png");
+    height: 100vh;
     background-size: cover;
-    margin-top: 80px;
+    background-position: center;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
   }
 
   .title-wrapper {
     text-align: center;
-    margin: 15px;
+    padding: 2rem;
+    position: relative;
+    z-index: 2;
   }
 
   h1 {
-    font-size: 3rem;
-    font-weight: 400;
+    font-size: 4rem;
+    font-weight: 700;
     line-height: 1;
     color: #fefefe;
     text-align: center;
@@ -117,6 +107,61 @@ const aboutUsText = `Wir bei Shroom-Mates sind deine neuen Lieblingspartner für
   }
 
   .title-wrapper > p {
-    color: white;
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #fdfdfd;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 6px 6px #000;
+    transition: all 0.2s;
+  }
+
+  .cta-button.secondary {
+    background-color: transparent;
+    border: 2px solid #fdfdfd;
+    color: #fdfdfd;
+  }
+
+  .cta-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px #000;
+  }
+
+  .overview {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .feature {
+    padding: 2rem;
+    background-color: #fdfdfd;
+    box-shadow: 6px 6px #000;
+  }
+
+  .feature h3 {
+    margin-bottom: 1rem;
   }
 </style>

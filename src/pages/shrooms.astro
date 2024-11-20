@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ShroomSection from '../components/ShroomSection.astro';
+import { mushrooms } from '../data/mushrooms';
+
+const edibleMushrooms = mushrooms.filter(m => m.category === 'edible');
+const medicinalMushrooms = mushrooms.filter(m => m.category === 'medicinal');
+const poisonousMushrooms = mushrooms.filter(m => m.category === 'poisonous');
+---
+
+<Layout title="Our Mushrooms - shroom-mates">
+  <main>
+    <h1>Our Mushrooms</h1>
+    
+    <ShroomSection title="Edible Mushrooms" mushrooms={edibleMushrooms} />
+    <ShroomSection title="Medicinal Mushrooms" mushrooms={medicinalMushrooms} />
+    <ShroomSection title="Poisonous Mushrooms" mushrooms={poisonousMushrooms} />
+  </main>
+</Layout>
+
+<style>
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  h1 {
+    font-size: 3rem;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+  }
+</style>
