@@ -1,7 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ShroomSection from "../components/ShroomSection.astro";
-import Divider from "../components/Divider.astro";
 import heroImage from "../assets/images/hero_oyster.png";
 import { mushrooms } from "../data/mushrooms";
 
@@ -19,41 +17,70 @@ console.log('Display Mushrooms:', displayMushrooms);
     <section class="hero" style={`background-image: url(${heroImage.src})`}>
       <div class="title-wrapper">
         <h1>MEET OUR<br> SHROOM-MATES</h1>
-        <p>Explore our unique mushrooms grown with care in Leipzig.</p>
+        <p class="hero-subtitle">Explore our unique mushrooms grown with care in Leipzig.</p>
         <div class="cta-buttons">
-          <a href="/shroom-mates/shrooms" class="cta-button">View Our Mushrooms</a>
-          <a href="/shroom-mates/contact" class="cta-button secondary">Contact Us</a>
+          <button onclick="window.location.href='/shroom-mates/shrooms'" class="cta-button primary">
+            View Our Mushrooms
+          </button>
+          <button onclick="window.location.href='/shroom-mates/contact'" class="cta-button secondary">
+            Contact Us
+          </button>
         </div>
       </div>
     </section>
 
     <section class="overview">
-      <h2>Welcome to shroom-mates</h2>
-      <p>We are passionate about cultivating the finest mushrooms in Leipzig. Our carefully controlled growing environments ensure the highest quality produce for your table.</p>
-      <div class="feature-grid">
-        <div class="feature">
-          <h3>Fresh & Local</h3>
-          <p>All our mushrooms are grown locally in Leipzig</p>
-        </div>
-        <div class="feature">
-          <h3>Sustainable</h3>
-          <p>We use eco-friendly farming practices</p>
-        </div>
-        <div class="feature">
-          <h3>Premium Quality</h3>
-          <p>Carefully cultivated in controlled environments</p>
+      <div class="welcome-card">
+        <h2>Welcome to shroom-mates</h2>
+        <p class="welcome-text">We are passionate about cultivating the finest mushrooms in Leipzig. Our carefully controlled growing environments ensure the highest quality produce for your table.</p>
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-content">
+              <h3>Fresh & Local</h3>
+              <p>All our mushrooms are grown locally in Leipzig</p>
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-content">
+              <h3>Sustainable</h3>
+              <p>We use eco-friendly farming practices</p>
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-content">
+              <h3>Premium Quality</h3>
+              <p>Carefully cultivated in controlled environments</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    {displayMushrooms.map((mushroom, index) => (
-      <>
-        <ShroomSection 
-          mushroom={mushroom}
-        />
-        {index < displayMushrooms.length - 1 && <Divider />}
-      </>
-    ))}
+    <div class="mushroom-grid">
+      {
+        displayMushrooms.map((mushroom) => (
+          <div class="card-wrapper">
+            <a
+              href={`/shroom-mates/shrooms/${mushroom.id}`}
+              class="mushroom-card"
+              transition:animate="slide"
+            >
+              <div class="image-wrapper">
+                <img
+                  src={mushroom.cutoutImageSrc.src}
+                  alt={mushroom.name}
+                  transition:name={`mushroom-image-${mushroom.id}`}
+                />
+              </div>
+              <div class="card-content">
+                <h2 transition:name={`mushroom-title-${mushroom.id}`}>{mushroom.name}</h2>
+                <p class="category" transition:name={`mushroom-category-${mushroom.id}`}>{mushroom.category}</p>
+              </div>
+            </a>
+          </div>
+        ))
+      }
+    </div>
   </main>
 </Layout>
 
@@ -67,7 +94,7 @@ console.log('Display Mushrooms:', displayMushrooms);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 90vh;
     background-size: cover;
     background-position: center;
     position: relative;
@@ -92,72 +119,249 @@ console.log('Display Mushrooms:', displayMushrooms);
   }
 
   h1 {
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 700;
     line-height: 1;
     color: #fefefe;
     text-align: center;
     margin-top: 0;
     border: 6px solid white;
-    padding: 25px;
+    padding: 2rem;
   }
 
-  .title-wrapper > p {
-    color: #fff;
+  .hero-subtitle {
+    color: #fdfdfd;
     font-size: 1.5rem;
     margin: 2rem 0;
+    padding: 0.5rem 1rem;
+    font-family: "Dm Mono", monospace;
+    text-shadow: 2px 2px 0px #000;
+    font-weight: 500;
   }
 
   .cta-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     justify-content: center;
     margin-top: 2rem;
   }
 
   .cta-button {
-    display: inline-block;
     padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "Dm Mono", monospace;
+    text-transform: uppercase;
+  }
+
+  .cta-button.primary {
     background-color: #fdfdfd;
     color: #000;
-    text-decoration: none;
-    font-weight: bold;
     box-shadow: 6px 6px #000;
-    transition: all 0.2s;
+  }
+
+  .cta-button.primary:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px #000;
   }
 
   .cta-button.secondary {
     background-color: transparent;
     border: 2px solid #fdfdfd;
     color: #fdfdfd;
+    box-shadow: 6px 6px rgba(0, 0, 0, 0.8);
   }
 
-  .cta-button:hover {
+  .cta-button.secondary:hover {
     transform: translate(2px, 2px);
-    box-shadow: 4px 4px #000;
+    box-shadow: 4px 4px rgba(0, 0, 0, 0.8);
   }
 
   .overview {
-    padding: 4rem 2rem;
+    padding: 6rem 2rem;
+    text-align: center;
+  }
+
+  .welcome-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 3rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
     margin: 0 auto;
-    text-align: center;
+  }
+
+  .welcome-card h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+  }
+
+  .welcome-text {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    color: #666;
+    line-height: 1.6;
   }
 
   .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
-    margin-top: 3rem;
+    margin-top: 2rem;
   }
 
   .feature {
-    padding: 2rem;
-    background-color: #fdfdfd;
-    box-shadow: 6px 6px #000;
+    background: #fdfdfd;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 2px solid #eee;
+  }
+
+  .feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .feature-content {
+    padding: 1.5rem;
   }
 
   .feature h3 {
-    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .mushroom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .card-wrapper {
+    background: #fdfdfd;
+    box-shadow: 6px 6px #000;
+    transition: transform 0.2s;
+    view-transition-name: none;
+  }
+
+  .card-wrapper:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px #000;
+  }
+
+  .mushroom-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .image-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    view-transition-name: none;
+    position: relative;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1rem;
+    background: #f5f5f5;
+  }
+
+  .card-content {
+    padding: 1rem 1.5rem;
+  }
+
+  .card-content h2 {
+    font-family: "DM Mono", monospace;
+    font-size: 1.25rem;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    view-transition-name: none;
+  }
+
+  .category {
+    font-family: "DM Mono", monospace;
+    color: #666;
+    margin: 0;
+    text-transform: capitalize;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.5rem;
+      padding: 1.5rem;
+    }
+
+    .hero {
+      height: 70vh;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      margin: 1.5rem 0;
+      padding: 0.4rem 0.8rem;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 0 2rem;
+    }
+
+    .cta-button {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    .mushroom-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .image-wrapper {
+      height: 180px;
+    }
+
+    .welcome-card {
+      padding: 2rem 1.5rem;
+    }
+
+    .welcome-card h2 {
+      font-size: 2rem;
+    }
+
+    .welcome-text {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-grid {
+      gap: 1.5rem;
+    }
+
+    .feature-content {
+      padding: 1.25rem;
+    }
   }
 </style>

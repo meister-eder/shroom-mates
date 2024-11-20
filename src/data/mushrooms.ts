@@ -15,7 +15,7 @@ export interface Mushroom {
   id: string;
   name: string;
   description: string;
-  category: 'edible' | 'medicinal' | 'poisonous';
+  category: 'edible' | 'medicinal';
   imageSrc: string;
   cutoutImageSrc?: any;
   highlightColor: string;
@@ -36,7 +36,7 @@ export const mushrooms: Mushroom[] = [
     category: 'edible',
     imageSrc: '/shroom-mates/images/seitling_tasse_cutout.png',
     cutoutImageSrc: seitlingCutout,
-    highlightColor: '#FFE4E8', // Soft pink
+    highlightColor: '#E4F0FF', // Soft blue
     details: {
       scientificName: 'Pleurotus eryngii',
       habitat: 'Dead or dying hardwood trees',
@@ -79,7 +79,7 @@ export const mushrooms: Mushroom[] = [
     category: 'edible',
     imageSrc: '/shroom-mates/images/white_pearl_tasse_cutout.png',
     cutoutImageSrc: whitePearlCutout,
-    highlightColor: '#E4F0FF', // Soft blue
+    highlightColor: '#FFE4E8', // Soft pink
     details: {
       scientificName: 'Pleurotus ostreatus var. florida',
       habitat: 'Hardwood trees and logs',
@@ -231,26 +231,6 @@ export const mushrooms: Mushroom[] = [
         difficulty: 'easy'
       }
     ]
-  },
-  {
-    id: 'death-cap',
-    name: 'Death Cap',
-    description: 'One of the most poisonous mushrooms in the world.',
-    category: 'poisonous',
-    imageSrc: '/shroom-mates/images/seitling_tasse_cutout.png',
-    cutoutImageSrc: seitlingCutout,
-    highlightColor: '#FFA07A', // Soft orange
-    details: {
-      scientificName: 'Amanita phalloides',
-      habitat: 'Oak and other hardwood forests',
-      season: ['Summer', 'Fall'],
-      characteristics: [
-        'White to pale green cap',
-        'White gills',
-        'Base with distinctive volva',
-        'Ring on stem'
-      ]
-    }
   },
   {
     id: 'lions-mane',

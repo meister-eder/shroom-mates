@@ -6,7 +6,6 @@ import { mushrooms } from '../data/mushrooms';
 
 const edibleMushrooms = mushrooms.filter(m => m.category === 'edible');
 const medicinalMushrooms = mushrooms.filter(m => m.category === 'medicinal');
-const poisonousMushrooms = mushrooms.filter(m => m.category === 'poisonous');
 
 console.log('Edible Mushrooms:', edibleMushrooms);
 ---
@@ -35,22 +34,6 @@ console.log('Edible Mushrooms:', edibleMushrooms);
           <h2>Medicinal Mushrooms</h2>
           <div class="mushroom-grid">
             {medicinalMushrooms.map(mushroom => (
-              <ShroomSection 
-                mushroom={mushroom}
-              />
-            ))}
-          </div>
-        </section>
-      </>
-    )}
-
-    {poisonousMushrooms.length > 0 && (
-      <>
-        <Divider />
-        <section class="mushroom-category">
-          <h2>Poisonous Mushrooms</h2>
-          <div class="mushroom-grid">
-            {poisonousMushrooms.map(mushroom => (
               <ShroomSection 
                 mushroom={mushroom}
               />

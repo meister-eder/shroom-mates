@@ -16,7 +16,3 @@ html {
 	background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
 		linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
 }
-
-body {
-	padding-top: 80px;
-}

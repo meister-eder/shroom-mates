@@ -1,52 +1,184 @@
+---
+---
+
 <style>
   header {
-    display: flex;
-    align-items: center;
-    height: 100px;
-    justify-content: space-between;
-    border-bottom: 2px solid #5f5f5f;
-    margin-bottom: 0;
-    padding: 0 4rem;
-    background-color: #ffffff;
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
-  }
-  
-  .title {
-    text-align: center;
-    font-size: 1.4rem;
-    margin-bottom: 0;
-    padding: 6px 10px;
-    background-color: #fdfdfd;
-    box-shadow: 4px 4px;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: white;
+    border-bottom: 2px solid #5f5f5f;
   }
 
   nav {
     display: flex;
-    gap: 2.5rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
   }
 
-  nav a {
-    color: inherit;
+  .logo {
+    margin: 0 0rem;
+  }
+
+  .logo a {
+    font-family: "DM Mono", monospace;
+    font-size: 1.25rem;
+    color: #000;
     text-decoration: none;
-    font-size: 1.3rem;
-    padding: 0.7rem 1.2rem;
+    padding: 0.2rem 0.9rem;
+    background-color: #fdfdfd;
+    box-shadow: 4px 4px #000;
     transition: all 0.2s;
   }
 
-  nav a:hover {
+  .logo a:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px #000;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links a {
+    color: #000;
+    text-decoration: none;
+    font-family: "DM Mono", monospace;
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s;
+  }
+
+  .nav-links a:hover {
     background-color: #fdfdfd;
     box-shadow: 3px 3px #5f5f5f;
+  }
+
+  .hamburger {
+    display: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    z-index: 2;
+    background-color: #fdfdfd;
+    box-shadow: 4px 4px #000;
+  }
+
+  .hamburger:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px #000;
+  }
+
+  .hamburger-box {
+    display: inline-block;
+    position: relative;
+    width: 30px;
+    height: 24px;
+  }
+
+  .hamburger-inner {
+    display: block;
+    top: 50%;
+    margin-top: -2px;
+  }
+
+  .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+    width: 30px;
+    height: 3px;
+    background-color: #000;
+    position: absolute;
+    transition: transform 0.15s ease;
+  }
+
+  .hamburger-inner::before, .hamburger-inner::after {
+    content: "";
+    display: block;
+  }
+
+  .hamburger-inner::before {
+    top: -10px;
+  }
+
+  .hamburger-inner::after {
+    bottom: -10px;
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      padding: 0.75rem 1.5rem;
+    }
+
+    .hamburger {
+      display: block;
+    }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      gap: 1rem;
+      border-bottom: 2px solid #5f5f5f;
+    }
+
+    .nav-links.active {
+      display: flex;
+    }
+
+    nav.menu-open .hamburger-inner {
+      transform: rotate(45deg);
+    }
+
+    nav.menu-open .hamburger-inner::before {
+      top: 0;
+      opacity: 0;
+    }
+
+    nav.menu-open .hamburger-inner::after {
+      bottom: 0;
+      transform: rotate(-90deg);
+    }
+
+    .nav-links a {
+      font-size: 1rem;
+      padding: 0.4rem 0.6rem;
+    }
   }
 </style>
 
 <header>
-  <div class="title">shroom-mates</div>
   <nav>
-    <a href="/shroom-mates/">Home</a>
-    <a href="/shroom-mates/shrooms">Mushrooms</a>
-    <a href="/shroom-mates/about">About</a>
-    <a href="/shroom-mates/contact">Contact</a>
+    <div class="logo">
+      <a href="/shroom-mates/">shroom-mates</a>
+    </div>
+    <button class="hamburger" aria-label="Menu">
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="/shroom-mates/shrooms">Our Shrooms</a></li>
+      <li><a href="/shroom-mates/about">About</a></li>
+      <li><a href="/shroom-mates/contact">Contact</a></li>
+    </ul>
   </nav>
 </header>

@@ -15,21 +15,22 @@ if (!mushroom) {
 ---
 
 <section>
-  <a href={`/shroom-mates/shrooms/${mushroom.id}`} class="mushroom-link">
+  <a href={`/shroom-mates/shrooms/${mushroom.id}`} class="mushroom-link" transition:name={`mushroom-${mushroom.id}`}>
     <div class="mushroom-card">
       <div class="image-container" style={mushroom.highlightColor ? `background: ${mushroom.highlightColor}` : undefined}>
         {mushroom.cutoutImageSrc && (
           <Image 
             src={mushroom.cutoutImageSrc}
             alt={mushroom.name}
-            width={400}
-            height={300}
+            width={300}
+            height={225}
             class="mushroom-image"
+            transition:name={`mushroom-image-${mushroom.id}`}
           />
         )}
       </div>
       <div class="content">
-        <h3>{mushroom.name}</h3>
+        <h3 transition:name={`mushroom-title-${mushroom.id}`}>{mushroom.name}</h3>
         <p>{mushroom.description}</p>
         <div class="category-wrapper">
           <span class={`category ${mushroom.category}`}>{mushroom.category}</span>
@@ -57,7 +58,7 @@ if (!mushroom) {
 
   .mushroom-card {
     background: white;
-    border-radius: 1rem;
+    border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -72,28 +73,29 @@ if (!mushroom) {
 
   .image-container {
     position: relative;
-    padding: 2rem;
+    padding: 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
+    min-height: 225px;
   }
 
   .mushroom-image {
     max-width: 100%;
     height: auto;
     object-fit: contain;
+    max-height: 225px;
   }
 
   .content {
-    padding: 1.5rem;
+    padding: 1.25rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
   }
 
   h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: #2c3e50;
     margin-bottom: 0.5rem;
   }

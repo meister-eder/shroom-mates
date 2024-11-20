@@ -1,3 +1,6 @@
-document.querySelector(".menu-icon").addEventListener("click", () => {
-	document.querySelector(".nav-links").classList.toggle("open");
+document.querySelector(".hamburger").addEventListener("click", () => {
+  const nav = document.querySelector("nav");
+  const navLinks = document.querySelector(".nav-links");
+  nav.classList.toggle("menu-open");
+  navLinks.classList.toggle("active");
 });

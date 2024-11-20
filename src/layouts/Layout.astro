@@ -1,13 +1,14 @@
 ---
 import "@fontsource/dm-mono";
+import { ViewTransitions } from "astro:transitions";
+import Header from "../components/Header.astro";
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
 
-import Header from "../components/Header.astro";
 ---
 
 <!doctype html>
@@ -19,70 +20,132 @@ import Header from "../components/Header.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
     <div class="site-wrapper">
       <Header />
-
       <main class="site-main">
         <slot />
       </main>
 
       <footer>
-        <p> 2024 shroom-mates, built with  and <a href="https://github.com/meister-eder/shroom-mates" target="_blank">free software</a> in Leipzig</p>
+        <p>© 2024 shroom-mates, built with 🍄 and <a href="https://github.com/meister-eder/shroom-mates" target="_blank">free software</a> in Leipzig</p>
       </footer>
     </div>
 
     <script>
       import "../scripts/hamburger.js";
     </script>
+
+    <style is:global>
+      @import url("../styles/global.css");
+
+      :root {
+        --duration: 0.2s;
+      }
+
+      html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .site-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .site-main {
+        flex: 1 0 auto;
+        width: 100%;
+        z-index: 1;
+      }
+
+      footer {
+        flex-shrink: 0;
+        width: 100%;
+        background-color: rgb(228, 228, 228);
+        z-index: 1;
+      }
+
+      footer > p {
+        margin: 0;
+        padding: 1rem 2rem;
+        text-align: center;
+      }
+
+      footer a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+      }
+
+      footer a:hover {
+        opacity: 0.8;
+      }
+
+      /* View Transition Styles */
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+
+      /* Make transitions smoother */
+      ::view-transition-group(*),
+      ::view-transition-old(*),
+      ::view-transition-new(*) {
+        animation-duration: var(--duration);
+      }
+
+      /* Forward transitions */
+      [data-astro-transition=forward] {
+        & ::view-transition-old(root) {
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-out-left;
+        }
+        & ::view-transition-new(root) {
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-in-right;
+        }
+      }
+
+      /* Back transitions */
+      [data-astro-transition=back] {
+        & ::view-transition-old(root) {
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-out-right;
+        }
+        & ::view-transition-new(root) {
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-in-left;
+        }
+      }
+
+      @keyframes slide-out-left {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+      }
+
+      @keyframes slide-in-right {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+
+      @keyframes slide-out-right {
+        from { transform: translateX(0); }
+        to { transform: translateX(100%); }
+      }
+
+      @keyframes slide-in-left {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+    </style>
   </body>
 </html>
-
-<style is:global>
-  @import url("../styles/global.css");
-
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  .site-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  .site-main {
-    flex: 1 0 auto;
-  }
-
-  footer {
-    flex-shrink: 0;
-    width: 100%;
-    background-color: rgb(228, 228, 228);
-  }
-
-  footer > p {
-    margin: 0;
-    padding: 1rem 2rem;
-    text-align: center;
-  }
-
-  footer a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-  }
-
-  footer a:hover {
-    opacity: 0.8;
-  }
-</style>
