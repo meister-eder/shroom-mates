@@ -12,8 +12,8 @@ const displayMushrooms = [
 console.log('Display Mushrooms:', displayMushrooms);
 ---
 
-<Layout title="Welcome to shroom-mates">
-  <main>
+<Layout title="Welcome to shroom-mates" isLandingPage={true}>
+  <main class="landing-main">
     <section class="hero" style={`background-image: url(${heroImage.src})`}>
       <div class="title-wrapper">
         <h1>MEET OUR<br> SHROOM-MATES</h1>
@@ -85,19 +85,24 @@ console.log('Display Mushrooms:', displayMushrooms);
 </Layout>
 
 <style>
-  main {
-    font-size: 20px;
-    line-height: 1.6;
+  .landing-main {
+    width: 100vw;
+    max-width: none;
+    padding: 0;
+    margin: 0;
   }
 
   .hero {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
+    width: 100vw;
+    min-height: 100vh;
     background-size: cover;
     background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
     position: relative;
+    margin: 0;
   }
 
   .hero::before {
@@ -112,9 +117,11 @@ console.log('Display Mushrooms:', displayMushrooms);
   }
 
   .title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 2rem;
-    position: relative;
+    gap: 1.5rem;
     z-index: 2;
   }
 

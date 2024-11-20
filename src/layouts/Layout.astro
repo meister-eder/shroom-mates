@@ -5,9 +5,10 @@ import Header from "../components/Header.astro";
 
 interface Props {
   title: string;
+  isLandingPage?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, isLandingPage = false } = Astro.props;
 
 ---
 
@@ -25,12 +26,12 @@ const { title } = Astro.props;
   <body>
     <div class="site-wrapper">
       <Header />
-      <main class="site-main">
+      <main class={`site-main ${!isLandingPage ? 'with-nav-spacing' : ''}`}>
         <slot />
       </main>
 
       <footer>
-        <p>© 2024 shroom-mates, built with 🍄 and <a href="https://github.com/meister-eder/shroom-mates" target="_blank">free software</a> in Leipzig</p>
+        <p> 2024 shroom-mates, built with  and <a href="https://github.com/meister-eder/shroom-mates" target="_blank">free software</a> in Leipzig</p>
       </footer>
     </div>
 
@@ -67,7 +68,19 @@ const { title } = Astro.props;
       .site-main {
         flex: 1 0 auto;
         width: 100%;
-        z-index: 1;
+        padding: 1rem;
+      }
+
+      .site-main:not(.with-nav-spacing) {
+        max-width: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .site-main.with-nav-spacing {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 6rem;
       }
 
       footer {

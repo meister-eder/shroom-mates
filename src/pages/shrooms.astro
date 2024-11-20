@@ -12,7 +12,9 @@ console.log('Edible Mushrooms:', edibleMushrooms);
 
 <Layout title="Our Mushrooms - shroom-mates">
   <main>
-    <h1>Our Mushrooms</h1>
+    <div class="page-header">
+      <h1>Our Mushrooms</h1>
+    </div>
     
     {edibleMushrooms.length > 0 && (
       <section class="mushroom-category">
@@ -52,11 +54,18 @@ console.log('Edible Mushrooms:', edibleMushrooms);
     padding: 2rem;
   }
   
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 3rem;
+  }
+
   h1 {
     font-size: clamp(2rem, 5vw, 3rem);
     text-align: center;
     color: #2c3e50;
-    margin-bottom: 2rem;
+    margin: 0;
   }
 
   .mushroom-category {

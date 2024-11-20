@@ -151,6 +151,7 @@ const { mushroom } = Astro.props;
     position: absolute;
     top: 0;
     left: 0;
+    color: transparent;
   }
 
   .cutout-image {
@@ -162,6 +163,7 @@ const { mushroom } = Astro.props;
     max-height: 80%;
     object-fit: contain;
     z-index: 2;
+    color: transparent;
   }
 
   .cutout-image img {
@@ -363,6 +365,7 @@ const { mushroom } = Astro.props;
   @media (max-width: 768px) {
     .mushroom-detail {
       grid-template-columns: 1fr;
+      box-shadow: none;
     }
 
     .image-container {
