@@ -1,9 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ShroomSection from "../components/ShroomSection.astro";
-import TitleBox from "../components/TitleBox.astro";
 import Divider from "../components/Divider.astro";
-import TextBox from "../components/TextBox.astro";
 import heroImage from "../assets/images/hero_oyster.png";
 import { mushrooms } from "../data/mushrooms";
 
@@ -11,7 +9,7 @@ import { mushrooms } from "../data/mushrooms";
 const displayMushrooms = [
   mushrooms.find(m => m.id === 'king-oyster'),
   mushrooms.find(m => m.id === 'white-pearl')
-].filter(Boolean);
+].filter((m): m is NonNullable<typeof m> => m !== undefined);
 
 console.log('Display Mushrooms:', displayMushrooms);
 ---
@@ -50,8 +48,7 @@ console.log('Display Mushrooms:', displayMushrooms);
 
     {displayMushrooms.map((mushroom, index) => (
       <>
-        <ShroomSection
-          title={mushroom.name}
+        <ShroomSection 
           mushroom={mushroom}
         />
         {index < displayMushrooms.length - 1 && <Divider />}

@@ -3,27 +3,14 @@ import { type Mushroom } from '../data/mushrooms';
 import { Image } from 'astro:assets';
 
 interface Props {
-  title: string;
   mushroom?: Mushroom;
 }
 
-const { title, mushroom } = Astro.props;
+const { mushroom } = Astro.props;
 
 if (!mushroom) {
   return null;
 }
-
-// Import all mushroom images
-import seitlingCutout from '../assets/images/seitling_tasse_cutout.png';
-import whitePearlCutout from '../assets/images/white_pearl_tasse_cutout.png';
-import heroOyster from '../assets/images/hero_oyster.png';
-
-// Map image paths to imported images
-const imageMap = {
-  '/shroom-mates/images/seitling_tasse_cutout.png': seitlingCutout,
-  '/shroom-mates/images/white_pearl_tasse_cutout.png': whitePearlCutout,
-  '/shroom-mates/images/hero_oyster.png': heroOyster,
-};
 
 ---
 

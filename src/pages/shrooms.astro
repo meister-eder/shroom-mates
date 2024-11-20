@@ -21,7 +21,6 @@ console.log('Edible Mushrooms:', edibleMushrooms);
         <div class="mushroom-grid">
           {edibleMushrooms.map(mushroom => (
             <ShroomSection 
-              title={mushroom.name}
               mushroom={mushroom}
             />
           ))}
@@ -37,7 +36,6 @@ console.log('Edible Mushrooms:', edibleMushrooms);
           <div class="mushroom-grid">
             {medicinalMushrooms.map(mushroom => (
               <ShroomSection 
-                title={mushroom.name}
                 mushroom={mushroom}
               />
             ))}
@@ -54,7 +52,6 @@ console.log('Edible Mushrooms:', edibleMushrooms);
           <div class="mushroom-grid">
             {poisonousMushrooms.map(mushroom => (
               <ShroomSection 
-                title={mushroom.name}
                 mushroom={mushroom}
               />
             ))}
