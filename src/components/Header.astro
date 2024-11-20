@@ -74,13 +74,10 @@
     height: 40px;
     position: relative;
     z-index: 2;
-    background-color: #fdfdfd;
-    box-shadow: 4px 4px #000;
   }
 
   .hamburger:hover {
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px #000;
   }
 
   .hamburger-box {
@@ -128,8 +125,8 @@
 
     .nav-links {
       display: none;
-      position: absolute;
-      top: 100%;
+      position: fixed;
+      top: 60px;
       left: 0;
       right: 0;
       background: white;
@@ -149,13 +146,12 @@
     }
 
     nav.menu-open .hamburger-inner::before {
-      top: 0;
+      transform: translateY(10px) rotate(0deg);
       opacity: 0;
     }
 
     nav.menu-open .hamburger-inner::after {
-      bottom: 0;
-      transform: rotate(-90deg);
+      transform: translateY(-10px) rotate(-90deg);
     }
 
     .nav-links a {
@@ -176,7 +172,8 @@
       </span>
     </button>
     <ul class="nav-links">
-      <li><a href="/shroom-mates/shrooms">Our Shrooms</a></li>
+      <li><a href="/shroom-mates/shrooms">Mushrooms</a></li>
+      <li><a href="/shroom-mates/shop">Shop</a></li>
       <li><a href="/shroom-mates/about">About</a></li>
       <li><a href="/shroom-mates/contact">Contact</a></li>
     </ul>
