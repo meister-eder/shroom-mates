@@ -9,7 +9,6 @@ interface Props {
 }
 
 const { title, isLandingPage = false } = Astro.props;
-
 ---
 
 <!doctype html>
@@ -26,12 +25,20 @@ const { title, isLandingPage = false } = Astro.props;
   <body>
     <div class="site-wrapper">
       <Header />
-      <main class={`site-main ${!isLandingPage ? 'with-nav-spacing' : ''}`}>
+      <main class={`site-main ${!isLandingPage ? "with-nav-spacing" : ""}`}>
         <slot />
       </main>
 
       <footer>
-        <p> 2024 shroom-mates, built with  and <a href="https://github.com/meister-eder/shroom-mates" target="_blank">free software</a> in Leipzig</p>
+        <p>
+          ©️ 2024 shroom-mates, built with 🍄 and <a
+            href="https://github.com/meister-eder/shroom-mates"
+            target="_blank">free software</a
+          > in Leipzig
+        </p>
+        <p>
+          <a href="/impressum" target="_blank">Impressum</a>
+        </p>
       </footer>
     </div>
 
@@ -121,43 +128,63 @@ const { title, isLandingPage = false } = Astro.props;
       }
 
       /* Forward transitions */
-      [data-astro-transition=forward] {
+      [data-astro-transition="forward"] {
         & ::view-transition-old(root) {
-          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-out-left;
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both
+            slide-out-left;
         }
         & ::view-transition-new(root) {
-          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-in-right;
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both
+            slide-in-right;
         }
       }
 
       /* Back transitions */
-      [data-astro-transition=back] {
+      [data-astro-transition="back"] {
         & ::view-transition-old(root) {
-          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-out-right;
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both
+            slide-out-right;
         }
         & ::view-transition-new(root) {
-          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both slide-in-left;
+          animation: var(--duration) cubic-bezier(0.4, 0, 0.2, 1) both
+            slide-in-left;
         }
       }
 
       @keyframes slide-out-left {
-        from { transform: translateX(0); }
-        to { transform: translateX(-100%); }
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-100%);
+        }
       }
 
       @keyframes slide-in-right {
-        from { transform: translateX(100%); }
-        to { transform: translateX(0); }
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
       }
 
       @keyframes slide-out-right {
-        from { transform: translateX(0); }
-        to { transform: translateX(100%); }
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(100%);
+        }
       }
 
       @keyframes slide-in-left {
-        from { transform: translateX(-100%); }
-        to { transform: translateX(0); }
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(0);
+        }
       }
     </style>
   </body>
