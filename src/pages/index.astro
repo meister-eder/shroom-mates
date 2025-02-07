@@ -1,28 +1,42 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 import heroImage from "../assets/images/hero_oyster.png";
 import { mushrooms } from "../data/mushrooms";
+import MushroomCard from "../components/MushroomCard.astro";
 
 // Get the mushrooms we want to display
 const displayMushrooms = [
-  mushrooms.find(m => m.id === 'king-oyster'),
-  mushrooms.find(m => m.id === 'white-pearl')
-].filter((m): m is NonNullable<typeof m> => m !== undefined);
+  mushrooms.find((m) => m.id === "king-oyster"),
+  mushrooms.find((m) => m.id === "white-pearl"),
+]
+  .filter((m): m is NonNullable<typeof m> => m !== undefined)
+  .map((m) => ({
+    ...m,
+    cutoutImageSrc: m.cutoutImageSrc || "default-image-src.png", // Provide a default image source if missing
+  }));
 
-console.log('Display Mushrooms:', displayMushrooms);
+console.log("Display Mushrooms:", displayMushrooms);
 ---
 
 <Layout title="Welcome to shroom-mates" isLandingPage={true}>
   <main class="landing-main">
     <section class="hero" style={`background-image: url(${heroImage.src})`}>
       <div class="title-wrapper">
-        <h1>MEET OUR<br> SHROOM-MATES</h1>
-        <p class="hero-subtitle">Explore our unique mushrooms grown with care in Leipzig.</p>
+        <h1>MEET OUR<br /> SHROOM-MATES</h1>
+        <p class="hero-subtitle">
+          Explore our unique mushrooms grown with care in Leipzig.
+        </p>
         <div class="cta-buttons">
-          <button onclick="window.location.href='/shroom-mates/shrooms'" class="cta-button primary">
+          <button
+            onclick="window.location.href='/shroom-mates/shrooms'"
+            class="cta-button primary"
+          >
             View Our Mushrooms
           </button>
-          <button onclick="window.location.href='/shroom-mates/contact'" class="cta-button secondary">
+          <button
+            onclick="window.location.href='/shroom-mates/contact'"
+            class="cta-button secondary"
+          >
             Contact Us
           </button>
         </div>
@@ -32,7 +46,11 @@ console.log('Display Mushrooms:', displayMushrooms);
     <section class="overview">
       <div class="welcome-card">
         <h2>Welcome to shroom-mates</h2>
-        <p class="welcome-text">We are passionate about cultivating the finest mushrooms in Leipzig. Our carefully controlled growing environments ensure the highest quality produce for your table.</p>
+        <p class="welcome-text">
+          We are passionate about cultivating the finest mushrooms in Leipzig.
+          Our carefully controlled growing environments ensure the highest
+          quality produce for your table.
+        </p>
         <div class="feature-grid">
           <div class="feature">
             <div class="feature-content">
@@ -57,29 +75,7 @@ console.log('Display Mushrooms:', displayMushrooms);
     </section>
 
     <div class="mushroom-grid">
-      {
-        displayMushrooms.map((mushroom) => (
-          <div class="card-wrapper">
-            <a
-              href={`/shroom-mates/shrooms/${mushroom.id}`}
-              class="mushroom-card"
-              transition:animate="slide"
-            >
-              <div class="image-wrapper">
-                <img
-                  src={mushroom.cutoutImageSrc.src}
-                  alt={mushroom.name}
-                  transition:name={`mushroom-image-${mushroom.id}`}
-                />
-              </div>
-              <div class="card-content">
-                <h2 transition:name={`mushroom-title-${mushroom.id}`}>{mushroom.name}</h2>
-                <p class="category" transition:name={`mushroom-category-${mushroom.id}`}>{mushroom.category}</p>
-              </div>
-            </a>
-          </div>
-        ))
-      }
+      {displayMushrooms.map((mushroom) => <MushroomCard mushroom={mushroom} />)}
     </div>
   </main>
 </Layout>
@@ -106,7 +102,7 @@ console.log('Display Mushrooms:', displayMushrooms);
   }
 
   .hero::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -226,7 +222,9 @@ console.log('Display Mushrooms:', displayMushrooms);
     background: #fdfdfd;
     border-radius: 0.75rem;
     overflow: hidden;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition:
+      transform 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out;
     border: 2px solid #eee;
   }
 
