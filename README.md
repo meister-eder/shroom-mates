@@ -1,6 +1,7 @@
 # 🍄 Shroom-Mates
 
-A website dedicated to edible and medicinal mushrooms, featuring detailed information about their characteristics, cultivation methods, and preparation. Built with Astro and TypeScript.
+Business website for [shroom-mates.de](https://shroom-mates.de), a Leipzig-based gourmet mushroom cultivation company. We specialize in growing high-quality, locally cultivated mushrooms.
+
 
 ## 🚀 Project Structure
 
@@ -23,26 +24,18 @@ A website dedicated to edible and medicinal mushrooms, featuring detailed inform
 
 ## 🛠️ Tech Stack
 
-- [Astro](https://astro.build) - Static Site Generator
-- TypeScript - Type Safety
-- CSS Animations - Smooth transitions and effects
-- Responsive Design - Mobile-first approach
+- [Astro](https://astro.build)
+- TypeScript
+- CSS
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
+## 🧞 Development Commands
 
 | Command                | Action                                           |
 | :-------------------- | :----------------------------------------------- |
 | `bun install`         | Installs dependencies                            |
 | `bun run dev`         | Starts local dev server at `localhost:4321`      |
-| `bun run build`       | Build your production site to `./dist/`          |
-| `bun run preview`     | Preview your build locally, before deploying     |
-| `bun run astro check` | Check for TypeScript errors                      |
-
-## 🌐 Deployment
-
-The site is automatically deployed to GitHub Pages using GitHub Actions. Each push to the main branch triggers a new deployment.
+| `bun run build`       | Build production site to `./dist/`               |
+| `bun run preview`     | Preview build locally                            |
 
 ## 📝 License
 
