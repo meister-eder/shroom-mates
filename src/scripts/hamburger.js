@@ -7,25 +7,46 @@ function setupHamburgerMenu() {
 
   // Store event listeners so we can remove them later
   const toggleMenu = () => {
-    nav.classList.toggle("menu-open");
-    navLinks.classList.toggle("active");
-  };
+    const isOpen = nav.classList.contains("menu-open");
 
-  const closeMenuOutside = (e) => {
-    if (!nav.contains(e.target) && nav.classList.contains("menu-open")) {
+    if (isOpen) {
       nav.classList.remove("menu-open");
       navLinks.classList.remove("active");
+      hamburger.setAttribute("aria-expanded", "false");
+      hamburger.setAttribute("aria-label", "Navigationsmenü öffnen");
+    } else {
+      nav.classList.add("menu-open");
+      navLinks.classList.add("active");
+      hamburger.setAttribute("aria-expanded", "true");
+      hamburger.setAttribute("aria-label", "Navigationsmenü schließen");
     }
   };
 
   const closeMenu = () => {
     nav.classList.remove("menu-open");
     navLinks.classList.remove("active");
+    hamburger.setAttribute("aria-expanded", "false");
+    hamburger.setAttribute("aria-label", "Navigationsmenü öffnen");
+  };
+
+  const closeMenuOutside = (e) => {
+    if (!nav.contains(e.target) && nav.classList.contains("menu-open")) {
+      closeMenu();
+    }
+  };
+
+  const handleKeydown = (e) => {
+    if (e.key === "Escape" && nav.classList.contains("menu-open")) {
+      closeMenu();
+      hamburger.focus();
+    }
   };
 
   // Add event listeners
   hamburger.addEventListener("click", toggleMenu);
   document.addEventListener("click", closeMenuOutside);
+  document.addEventListener("keydown", handleKeydown);
+
   for (const link of navLinks.querySelectorAll("a")) {
     link.addEventListener("click", closeMenu);
   }
@@ -34,6 +55,7 @@ function setupHamburgerMenu() {
   return () => {
     hamburger.removeEventListener("click", toggleMenu);
     document.removeEventListener("click", closeMenuOutside);
+    document.removeEventListener("keydown", handleKeydown);
     for (const link of navLinks.querySelectorAll("a")) {
       link.removeEventListener("click", closeMenu);
     }

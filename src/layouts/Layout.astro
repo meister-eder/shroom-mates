@@ -5,35 +5,88 @@ import Header from "../components/Header.astro";
 
 interface Props {
   title: string;
+  description?: string;
+  ogImage?: string;
   isLandingPage?: boolean;
 }
 
-const { title, isLandingPage = false } = Astro.props;
+const {
+  title,
+  description = "Hochwertige Austernpilze vom Egenberger Samstagsmarkt in Leipzig. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.",
+  ogImage,
+  isLandingPage = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const defaultOgImage =
+  ogImage || new URL("/favicon.svg", Astro.site).toString();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+
+    <!-- Preload critical font -->
+    <link
+      rel="preload"
+      href="/node_modules/@fontsource/dm-mono/files/dm-mono-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- SEO and Open Graph -->
+    <title>{title} | Shroom-Mates</title>
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:title" content={`${title} | Shroom-Mates`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="Shroom-Mates" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:image" content={defaultOgImage} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | Shroom-Mates`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={defaultOgImage} />
+
+    <!-- Additional meta tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Shroom-Mates" />
+    <meta name="theme-color" content="#ffffff" />
+
     <ClientRouter />
   </head>
   <body>
+    <!-- Skip link for keyboard navigation -->
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
     <div class="site-wrapper">
       <Header />
-      <main class={`site-`}>
+      <main
+        id="main-content"
+        class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
+        role="main"
+      >
         <slot />
       </main>
 
-      <footer>
+      <footer role="contentinfo">
         <p>
           ©️ 2025 shroom-mates, built with 🍄 and <a
             href="https://github.com/meister-eder/shroom-mates"
-            target="_blank">free software</a
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub Repository (öffnet in neuem Tab)"
+            >free software</a
           > in Leipzig
         </p>
         <p>
@@ -41,11 +94,15 @@ const { title, isLandingPage = false } = Astro.props;
             class="insta-link"
             href="https://www.instagram.com/shroom_mates_le/"
             target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram Profil (öffnet in neuem Tab)"
             ><svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 448 512"
-              d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
               height="22"
+              width="22"
+              aria-hidden="true"
+              focusable="false"
               ><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
               <path
                 d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
@@ -53,7 +110,11 @@ const { title, isLandingPage = false } = Astro.props;
             ></a
           >
           <a href="/impressum">Impressum</a>
-          <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+          <a
+            href="mailto:hey@shroom-mates.de"
+            aria-label="E-Mail an hey@shroom-mates.de senden"
+            >hey@shroom-mates.de</a
+          >
         </p>
       </footer>
 
@@ -66,12 +127,51 @@ const { title, isLandingPage = false } = Astro.props;
 
         :root {
           --duration: 0.2s;
+          --focus-color: #5f5f5f;
+          --text-color: #000;
+          --bg-color: #ffffff;
+        }
+
+        /* Accessibility utilities */
+        .skip-link {
+          position: absolute;
+          top: -40px;
+          left: 6px;
+          background: var(--text-color);
+          color: var(--bg-color);
+          padding: 8px;
+          text-decoration: none;
+          z-index: 1001;
+          border-radius: 4px;
+        }
+
+        .skip-link:focus {
+          top: 6px;
+        }
+
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        /* Focus styles */
+        :focus-visible {
+          outline: 2px solid var(--focus-color);
+          outline-offset: 2px;
         }
 
         html {
           height: 100%;
           margin: 0;
           padding: 0;
+          scroll-behavior: smooth;
         }
 
         body {
@@ -123,14 +223,23 @@ const { title, isLandingPage = false } = Astro.props;
           color: inherit;
           text-decoration: none;
           border-bottom: 1px solid currentColor;
+          transition: opacity var(--duration) ease;
         }
 
-        footer a:hover {
+        footer a:hover,
+        footer a:focus {
           opacity: 0.8;
         }
 
         .insta-link {
-          text-decoration: none;
+          text-decoration: none !important;
+          border-bottom: none !important;
+        }
+
+        /* Improve image loading */
+        img {
+          height: auto;
+          max-width: 100%;
         }
       </style>
     </div>

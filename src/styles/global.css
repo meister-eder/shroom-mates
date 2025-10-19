@@ -8,11 +8,28 @@
 		rgb(var(--accent-light)) 30%,
 		rgb(10, 10, 10) 60%
 	);
+	--focus-color: #5f5f5f;
+	--text-color: #000;
+	--bg-color: #ffffff;
 }
+
 html {
-	font-family: "Dm Mono", system-ui, sans-serif;
-	background: #ffffff;
+	font-family: "DM Mono", system-ui, monospace, sans-serif;
+	background: var(--bg-color);
 	background-size: 20px 20px;
 	background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
 		linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
+	color: var(--text-color);
+	font-display: swap; /* Improve font loading performance */
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
 }
