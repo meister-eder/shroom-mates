@@ -66,140 +66,149 @@ const description =
       </form>
     </div>
     <script>
-      const form = document.getElementById("contact-form");
-      const result = document.getElementById("result");
-      const buttonText = document.querySelector(".button-text");
-      const buttonLoading = document.querySelector(".button-loading");
+      function initContactForm() {
+        const form = document.getElementById("contact-form");
+        const result = document.getElementById("result");
+        const buttonText = document.querySelector(".button-text");
+        const buttonLoading = document.querySelector(".button-loading");
 
-      if (!form || !result || !buttonText || !buttonLoading) return;
+        if (!form || !result || !buttonText || !buttonLoading) return;
 
-      // Form validation
-      function validateField(field, errorElement) {
-        const value = field.value.trim();
-        let isValid = true;
-        let errorMessage = "";
+        // Form validation
+        function validateField(field: HTMLElement, errorElement: HTMLElement) {
+          const formField = field as HTMLInputElement | HTMLTextAreaElement;
+          const value = formField.value.trim();
+          let isValid = true;
+          let errorMessage = "";
 
-        if (field.hasAttribute("required") && !value) {
-          isValid = false;
-          errorMessage = "Dieses Feld ist erforderlich.";
-        } else if (field.type === "email" && value) {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) {
+          if (field.hasAttribute("required") && !value) {
             isValid = false;
-            errorMessage = "Bitte gib eine gültige E-Mail-Adresse ein.";
-          }
-        }
-
-        errorElement.textContent = errorMessage;
-        field.setAttribute("aria-invalid", !isValid ? "true" : "false");
-
-        return isValid;
-      }
-
-      // Add real-time validation
-      const fields = ["name", "email", "message"];
-      fields.forEach((fieldName) => {
-        const field = document.getElementById(fieldName);
-        const errorElement = document.getElementById(`${fieldName}-error`);
-
-        if (field && errorElement) {
-          field.addEventListener("blur", () => {
-            validateField(field, errorElement);
-          });
-
-          field.addEventListener("input", () => {
-            if (field.getAttribute("aria-invalid") === "true") {
-              validateField(field, errorElement);
+            errorMessage = "Dieses Feld ist erforderlich.";
+          } else if (
+            (formField as HTMLInputElement).type === "email" &&
+            value
+          ) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+              isValid = false;
+              errorMessage = "Bitte gib eine gültige E-Mail-Adresse ein.";
             }
-          });
+          }
+
+          errorElement.textContent = errorMessage;
+          field.setAttribute("aria-invalid", !isValid ? "true" : "false");
+
+          return isValid;
         }
-      });
 
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        // Validate all fields
-        let isFormValid = true;
+        // Add real-time validation
+        const fields = ["name", "email", "message"];
         fields.forEach((fieldName) => {
           const field = document.getElementById(fieldName);
           const errorElement = document.getElementById(`${fieldName}-error`);
-          if (field && errorElement && !validateField(field, errorElement)) {
-            isFormValid = false;
+
+          if (field && errorElement) {
+            field.addEventListener("blur", () => {
+              validateField(field, errorElement);
+            });
+
+            field.addEventListener("input", () => {
+              if (field.getAttribute("aria-invalid") === "true") {
+                validateField(field, errorElement);
+              }
+            });
           }
         });
 
-        if (!isFormValid) {
-          result.textContent = "Bitte korrigiere die Fehler im Formular.";
-          return;
-        }
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
 
-        const formData = new FormData(form as HTMLFormElement);
-        const object = Object.fromEntries(formData);
-        const json = JSON.stringify(object);
-
-        // Update button state
-        buttonText.setAttribute("hidden", "true");
-        buttonLoading.removeAttribute("hidden");
-        const submitButton = form.querySelector('button[type="submit"]');
-        if (submitButton) {
-          submitButton.setAttribute("disabled", "true");
-        }
-        result.textContent = "";
-
-        fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: json,
-        })
-          .then(async (response) => {
-            let json = await response.json();
-            if (response.status == 200) {
-              result.textContent =
-                "Nachricht erfolgreich gesendet! Wir melden uns bald bei dir.";
-              // Reset form fields manually
-              const nameField = document.getElementById("name");
-              const emailField = document.getElementById("email");
-              const messageField = document.getElementById("message");
-              if (nameField && "value" in nameField) nameField.value = "";
-              if (emailField && "value" in emailField) emailField.value = "";
-              if (messageField && "value" in messageField)
-                messageField.value = "";
-
-              // Reset field validation states
-              fields.forEach((fieldName) => {
-                const field = document.getElementById(fieldName);
-                if (field) {
-                  field.setAttribute("aria-invalid", "false");
-                  const errorElement = document.getElementById(
-                    `${fieldName}-error`
-                  );
-                  if (errorElement) errorElement.textContent = "";
-                }
-              });
-            } else {
-              console.log(response);
-              result.textContent =
-                json.message || "Es ist ein Fehler aufgetreten.";
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            result.textContent =
-              "Ups, das hat nicht geklappt. Bitte versuche es später noch einmal.";
-          })
-          .finally(() => {
-            // Reset button state
-            buttonText.removeAttribute("hidden");
-            buttonLoading.setAttribute("hidden", "true");
-            const submitButton = form.querySelector('button[type="submit"]');
-            if (submitButton) {
-              submitButton.removeAttribute("disabled");
+          // Validate all fields
+          let isFormValid = true;
+          fields.forEach((fieldName) => {
+            const field = document.getElementById(fieldName);
+            const errorElement = document.getElementById(`${fieldName}-error`);
+            if (field && errorElement && !validateField(field, errorElement)) {
+              isFormValid = false;
             }
           });
-      });
+
+          if (!isFormValid) {
+            result.textContent = "Bitte korrigiere die Fehler im Formular.";
+            return;
+          }
+
+          const formData = new FormData(form as HTMLFormElement);
+          const object = Object.fromEntries(formData);
+          const json = JSON.stringify(object);
+
+          // Update button state
+          buttonText.setAttribute("hidden", "true");
+          buttonLoading.removeAttribute("hidden");
+          const submitButton = form.querySelector('button[type="submit"]');
+          if (submitButton) {
+            submitButton.setAttribute("disabled", "true");
+          }
+          result.textContent = "";
+
+          fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: json,
+          })
+            .then(async (response) => {
+              let json = await response.json();
+              if (response.status == 200) {
+                result.textContent =
+                  "Nachricht erfolgreich gesendet! Wir melden uns bald bei dir.";
+                // Reset form fields manually
+                const nameField = document.getElementById("name");
+                const emailField = document.getElementById("email");
+                const messageField = document.getElementById("message");
+                if (nameField && "value" in nameField) nameField.value = "";
+                if (emailField && "value" in emailField) emailField.value = "";
+                if (messageField && "value" in messageField)
+                  messageField.value = "";
+
+                // Reset field validation states
+                fields.forEach((fieldName) => {
+                  const field = document.getElementById(fieldName);
+                  if (field) {
+                    field.setAttribute("aria-invalid", "false");
+                    const errorElement = document.getElementById(
+                      `${fieldName}-error`
+                    );
+                    if (errorElement) errorElement.textContent = "";
+                  }
+                });
+              } else {
+                console.log(response);
+                result.textContent =
+                  json.message || "Es ist ein Fehler aufgetreten.";
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              result.textContent =
+                "Ups, das hat nicht geklappt. Bitte versuche es später noch einmal.";
+            })
+            .finally(() => {
+              // Reset button state
+              buttonText.removeAttribute("hidden");
+              buttonLoading.setAttribute("hidden", "true");
+              const submitButton = form.querySelector('button[type="submit"]');
+              if (submitButton) {
+                submitButton.removeAttribute("disabled");
+              }
+            });
+        });
+      }
+
+      // Initialize the form when the page loads
+      initContactForm();
     </script>
   </main>
 

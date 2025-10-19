@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
@@ -35,5 +36,6 @@ export default defineConfig({
       imports: ["./src/components/A.astro"],
     }),
     mdx(),
+    sitemap(),
   ],
 });
