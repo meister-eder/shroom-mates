@@ -1,0 +1,194 @@
+---
+import { Image } from "astro:assets";
+import heroOyster from "../assets/images/hero_oyster.png";
+import seitlingTasse from "../assets/images/seitling_tasse_cutout.png";
+---
+
+<section class="about-us" id="about">
+  <div class="about-container">
+    <div class="about-content">
+      <h2>Wie wir unsere Pilze anbauen</h2>
+      <div class="about-text">
+        <p>
+          Wir sind die shroom-mates aus Leipzig und kultivieren mit viel Liebe
+          hochwertige Austernpilze. Unsere Pilze wachsen auf nachhaltig
+          produziertem Substrat aus regionalen Rohstoffen unter optimalen
+          Bedingungen.
+        </p>
+        <p>
+          Von der Herstellung des Substrats bis zur Ernte achten wir auf höchste
+          Qualität. Unsere Austernpilze werden frisch geerntet und direkt an
+          unsere Kunden auf dem Egenberger Samstagsmarkt verkauft.
+        </p>
+        <p>
+          Nachhaltigkeit steht bei uns im Mittelpunkt: Wir verwenden
+          ausschließlich natürliche Materialien und arbeiten ressourcenschonend.
+          So entstehen nicht nur köstliche, sondern auch umweltfreundlich
+          produzierte Pilze.
+        </p>
+      </div>
+    </div>
+    <div class="about-images">
+      <div class="image-wrapper large">
+        <Image
+          src={heroOyster}
+          alt="Frische Austernpilze der shroom-mates"
+          width={400}
+          height={300}
+          format="webp"
+          loading="lazy"
+        />
+      </div>
+      <div class="image-wrapper small">
+        <Image
+          src={seitlingTasse}
+          alt="Austernpilze in einer Tasse präsentiert"
+          width={250}
+          height={250}
+          format="webp"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-us {
+    padding: 4rem 1rem;
+    background: #f8f8f8;
+    border-top: 3px solid #000;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .about-content h2 {
+    font-size: 2.5rem;
+    color: #000;
+    margin-bottom: 2rem;
+    font-family: "DM Mono", monospace;
+    line-height: 1.2;
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+  }
+
+  .about-images {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+  }
+
+  .image-wrapper {
+    border: 3px solid #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+    background: #fff;
+  }
+
+  .image-wrapper.large {
+    transform: rotate(-2deg);
+  }
+
+  .image-wrapper.small {
+    transform: rotate(3deg);
+    align-self: flex-end;
+    margin-top: -1rem;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .about-us {
+      padding: 3rem 0.5rem;
+    }
+
+    .about-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 0 0.5rem;
+    }
+
+    .about-content h2 {
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .about-text p {
+      font-size: 1rem;
+    }
+
+    .about-images {
+      flex-direction: row;
+      gap: 0.3rem;
+      justify-content: space-between;
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .image-wrapper.large {
+      flex: 1;
+      max-width: 57%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .image-wrapper.small {
+      flex: 1;
+      max-width: 37%;
+      min-width: 0;
+      margin-top: 2rem;
+      box-sizing: border-box;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .about-container {
+      gap: 2rem;
+    }
+
+    .about-content h2 {
+      font-size: 1.8rem;
+    }
+
+    .about-images {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .image-wrapper.large,
+    .image-wrapper.small {
+      max-width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,423 @@
+---
+// Customer delivery areas and information
+const deliveryAreas = [
+  {
+    id: 1,
+    area: "Leipzig Zentrum",
+    description: "Innenstadt und angrenzende Stadtteile",
+    icon: "🏙️",
+  },
+  {
+    id: 2,
+    area: "Egenberg",
+    description: "Direkter Verkauf auf dem Samstagsmarkt",
+    icon: "🏘️",
+  },
+  {
+    id: 3,
+    area: "Schönefeld",
+    description: "Lieferung nach Absprache möglich",
+    icon: "🌳",
+  },
+  {
+    id: 4,
+    area: "Gohlis",
+    description: "Sammelbestellungen ab 5kg",
+    icon: "🏡",
+  },
+];
+
+const customerTypes = [
+  {
+    title: "Privatpersonen",
+    description: "Frische Pilze für die heimische Küche",
+    details: [
+      "Mindestbestellung: 500g",
+      "Verkauf auf dem Markt",
+      "Kostproben verfügbar",
+    ],
+  },
+  {
+    title: "Restaurants",
+    description: "Hochwertige Pilze für die Gastronomie",
+    details: [
+      "Regelmäßige Lieferungen",
+      "Individuelle Mengen",
+      "Premium Qualität",
+    ],
+  },
+  {
+    title: "Märkte & Läden",
+    description: "Großhandel für Wiederverkäufer",
+    details: [
+      "Großmengen verfügbar",
+      "Kompetitive Preise",
+      "Zuverlässige Lieferung",
+    ],
+  },
+];
+---
+
+<section class="customer-delivery" id="customers">
+  <div class="delivery-container">
+    <h2>Unsere Kunden</h2>
+    <p class="delivery-subtitle">
+      Wir beliefern Leipzig und Umgebung mit frischen, hochwertigen
+      Austernpilzen
+    </p>
+
+    <div class="content-grid">
+      <!-- Delivery Areas -->
+      <div class="delivery-areas">
+        <h3>Liefergebiete</h3>
+        <div class="areas-grid">
+          {
+            deliveryAreas.map((area) => (
+              <div class="area-card">
+                <div class="area-icon">{area.icon}</div>
+                <div class="area-info">
+                  <h4>{area.area}</h4>
+                  <p>{area.description}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Customer Types -->
+      <div class="customer-types">
+        <h3>Für wen wir liefern</h3>
+        <div class="types-list">
+          {
+            customerTypes.map((type) => (
+              <div class="type-card">
+                <h4>{type.title}</h4>
+                <p class="type-description">{type.description}</p>
+                <ul class="type-details">
+                  {type.details.map((detail) => (
+                    <li>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="delivery-cta">
+      <div class="cta-content">
+        <h3>Interesse an unseren Pilzen?</h3>
+        <p>
+          Egal ob Privatperson, Restaurant oder Wiederverkäufer - wir finden die
+          passende Lösung für deine Bedürfnisse. Kontaktiere uns für ein
+          individuelles Angebot!
+        </p>
+        <div class="cta-buttons">
+          <a href="/contact" class="primary-button"> Jetzt anfragen </a>
+          <a
+            href="https://www.instagram.com/shroom_mates_le/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="secondary-button"
+          >
+            Instagram folgen
+          </a>
+        </div>
+      </div>
+      <div class="cta-info">
+        <div class="info-item">
+          <strong>📧 E-Mail:</strong>
+          <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+        </div>
+        <div class="info-item">
+          <strong>📍 Markt:</strong>
+          <span>Egenberger Samstagsmarkt</span>
+        </div>
+        <div class="info-item">
+          <strong>🕐 Zeiten:</strong>
+          <span>Samstags 08:00 - 14:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .customer-delivery {
+    padding: 4rem 1rem;
+    background: #fff;
+    border-top: 3px solid #000;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .delivery-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .delivery-container h2 {
+    font-size: 2.5rem;
+    color: #000;
+    margin-bottom: 1rem;
+    font-family: "DM Mono", monospace;
+    text-align: center;
+  }
+
+  .delivery-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .delivery-areas h3,
+  .customer-types h3 {
+    font-size: 1.8rem;
+    color: #000;
+    margin-bottom: 2rem;
+    font-family: "DM Mono", monospace;
+  }
+
+  .areas-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .area-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f8f8;
+    border: 2px solid #000;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .area-card:hover {
+    transform: translateX(5px);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .area-icon {
+    font-size: 2rem;
+    min-width: 3rem;
+    text-align: center;
+  }
+
+  .area-info h4 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.1rem;
+    color: #000;
+  }
+
+  .area-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .types-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .type-card {
+    padding: 1.5rem;
+    background: #f8f8f8;
+    border: 2px solid #000;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .type-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .type-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    color: #000;
+    font-family: "DM Mono", monospace;
+  }
+
+  .type-description {
+    margin: 0 0 1rem 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .type-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .type-details li {
+    padding: 0.2rem 0;
+    font-size: 0.8rem;
+    color: #333;
+  }
+
+  .type-details li::before {
+    content: "✓ ";
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+
+  .delivery-cta {
+    background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
+    border: 3px solid #000;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .cta-content h3 {
+    font-size: 1.5rem;
+    color: #000;
+    margin-bottom: 1rem;
+    font-family: "DM Mono", monospace;
+  }
+
+  .cta-content p {
+    color: #333;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding: 0.8rem 2rem;
+    text-decoration: none;
+    border-radius: 6px;
+    font-family: "DM Mono", monospace;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .primary-button {
+    background: #000;
+    color: #fff;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .primary-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .secondary-button {
+    border: 2px solid #000;
+    color: #000;
+    background: #fff;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .secondary-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .cta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .info-item {
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .info-item a {
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .info-item a:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .customer-delivery {
+      padding: 3rem 0.5rem;
+    }
+
+    .delivery-container {
+      padding: 0 0.5rem;
+    }
+
+    .delivery-container h2 {
+      font-size: 2rem;
+    }
+
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      width: 100%;
+    }
+
+    .delivery-cta {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+    }
+
+    .primary-button,
+    .secondary-button {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .area-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .area-icon {
+      min-width: auto;
+    }
+  }
+</style>

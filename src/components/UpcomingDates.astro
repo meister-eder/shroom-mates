@@ -1,0 +1,335 @@
+---
+// This component will show upcoming market dates
+// Currently using static placeholder data that can be made dynamic later
+const upcomingDates = [
+  {
+    id: 1,
+    date: "2025-10-25",
+    day: "Samstag",
+    time: "08:00 - 14:00",
+    location: "Egenberger Samstagsmarkt",
+    available: true,
+    specialNote: "Frische Ernte der Woche",
+  },
+  {
+    id: 2,
+    date: "2025-11-01",
+    day: "Samstag",
+    time: "08:00 - 14:00",
+    location: "Egenberger Samstagsmarkt",
+    available: true,
+    specialNote: null,
+  },
+  {
+    id: 3,
+    date: "2025-11-08",
+    day: "Samstag",
+    time: "08:00 - 14:00",
+    location: "Egenberger Samstagsmarkt",
+    available: true,
+    specialNote: "Kostproben verfügbar",
+  },
+  {
+    id: 4,
+    date: "2025-11-15",
+    day: "Samstag",
+    time: "08:00 - 14:00",
+    location: "Egenberger Samstagsmarkt",
+    available: false,
+    specialNote: "Markt fällt aus",
+  },
+];
+
+// Format date helper
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+}
+---
+
+<section class="upcoming-dates" id="dates">
+  <div class="dates-container">
+    <h2>Nächste Termine</h2>
+    <p class="dates-subtitle">
+      Besucht uns auf dem Egenberger Samstagsmarkt und probiert unsere frischen
+      Austernpilze!
+    </p>
+
+    <div class="dates-grid">
+      {
+        upcomingDates.map((dateItem) => (
+          <div
+            class={`date-card ${dateItem.available ? "available" : "unavailable"}`}
+          >
+            <div class="date-header">
+              <div class="date-number">{formatDate(dateItem.date)}</div>
+              <div class="date-day">{dateItem.day}</div>
+            </div>
+
+            <div class="date-details">
+              <div class="time">
+                <strong>🕐 {dateItem.time}</strong>
+              </div>
+              <div class="location">📍 {dateItem.location}</div>
+
+              {dateItem.specialNote && (
+                <div
+                  class={`special-note ${dateItem.available ? "highlight" : "cancelled"}`}
+                >
+                  {dateItem.specialNote}
+                </div>
+              )}
+            </div>
+
+            <div class="date-status">
+              {dateItem.available ? (
+                <span class="status-badge available-badge">Verfügbar</span>
+              ) : (
+                <span class="status-badge unavailable-badge">
+                  Nicht verfügbar
+                </span>
+              )}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="dates-cta">
+      <p>
+        Aktuelle Termine und Verfügbarkeit werden auf
+        <a
+          href="https://www.instagram.com/shroom_mates_le/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram
+        </a> bekanntgegeben.
+      </p>
+      <a href="/contact" class="contact-button"> Fragen? Schreibt uns! </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .upcoming-dates {
+    padding: 4rem 1rem;
+    background: #f8f8f8;
+    border-top: 3px solid #000;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .dates-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dates-container h2 {
+    font-size: 2.5rem;
+    color: #000;
+    margin-bottom: 1rem;
+    font-family: "DM Mono", monospace;
+  }
+
+  .dates-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .date-card {
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: left;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .date-card.available {
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .date-card.unavailable {
+    opacity: 0.6;
+    background: #f0f0f0;
+  }
+
+  .date-card:hover.available {
+    transform: translateY(-3px);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .date-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+  }
+
+  .date-number {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: "DM Mono", monospace;
+    color: #000;
+    min-width: 4rem;
+  }
+
+  .date-day {
+    font-size: 1.2rem;
+    color: #666;
+    font-family: "DM Mono", monospace;
+  }
+
+  .date-details {
+    margin-bottom: 1rem;
+  }
+
+  .time,
+  .location {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .special-note {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: "DM Mono", monospace;
+  }
+
+  .special-note.highlight {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+  }
+
+  .special-note.cancelled {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+  }
+
+  .date-status {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: "DM Mono", monospace;
+    font-weight: 500;
+  }
+
+  .available-badge {
+    background: #28a745;
+    color: #fff;
+  }
+
+  .unavailable-badge {
+    background: #dc3545;
+    color: #fff;
+  }
+
+  .dates-cta {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid #000;
+    border-radius: 12px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .dates-cta p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .dates-cta a:not(.contact-button) {
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .dates-cta a:not(.contact-button):hover {
+    opacity: 0.8;
+  }
+
+  .contact-button {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-family: "DM Mono", monospace;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .contact-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .upcoming-dates {
+      padding: 3rem 0.5rem;
+    }
+
+    .dates-container {
+      padding: 0 0.5rem;
+    }
+
+    .dates-container h2 {
+      font-size: 2rem;
+    }
+
+    .dates-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .date-card {
+      padding: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .date-number {
+      font-size: 1.5rem;
+      min-width: 3rem;
+    }
+
+    .dates-cta {
+      padding: 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+</style>

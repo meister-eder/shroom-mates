@@ -2,7 +2,10 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import heroImage from "../assets/images/shroom-mates-drawing.png";
-import Card from "../components/Card.astro";
+import AboutUsSection from "../components/AboutUsSection.astro";
+import ImageGallery from "../components/ImageGallery.astro";
+import UpcomingDates from "../components/UpcomingDates.astro";
+import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
 
 const title = "Hi, wir sind die shroom-mates";
 const description =
@@ -24,23 +27,22 @@ const description =
         format="webp"
       />
       <div class="title-wrapper">
-        <div class="construction-card">
+        <div class="hero-card">
           <h1>{title}</h1>
-          <p class="notice">🚧 Hier wächst gerade eine neue Website 🚧</p>
-          <p class="description">
-            Während diese Seite noch kultiviert wird, kannst du uns schon mal
-            auf Instagram besuchen oder direkt kontaktieren.
+          <p class="hero-description">
+            Hochwertige Austernpilze vom Egenberger Samstagsmarkt in Leipzig.
+            Frisch kultiviert und nachhaltig angebaut von den shroom-mates.
           </p>
-          <p class="description">
-            Kostproben gibt es schon jetzt auf dem <a
+          <p class="hero-description">
+            Kostproben gibt es auf dem <a
               href="https://samstagsmarkt.de/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Egenberger Samstagsmarkt Website (öffnet in neuem Tab)"
               >Egenberger Samstagsmarkt</a
-            >. Die Verkaufstermine werden auf Instagram bekanntgegeben.
+            >. Aktuelle Verkaufstermine werden auf Instagram bekanntgegeben.
           </p>
-          <div class="construction-links">
+          <div class="hero-links">
             <a
               href="https://www.instagram.com/shroom_mates_le/"
               class="social-link"
@@ -55,6 +57,12 @@ const description =
         </div>
       </div>
     </section>
+
+    <!-- New sections -->
+    <AboutUsSection />
+    <ImageGallery />
+    <UpcomingDates />
+    <CustomerDeliverySection />
   </main>
 </Layout>
 
@@ -66,6 +74,17 @@ const description =
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure sections flow properly */
+  .landing-main > :global(section) {
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .hero {
@@ -105,7 +124,7 @@ const description =
     margin-top: 6rem;
   }
 
-  .construction-card {
+  .hero-card {
     background: rgba(255, 255, 255, 0.95);
     padding: 2rem;
     border-radius: 12px;
@@ -116,7 +135,7 @@ const description =
     margin: 0 1rem;
   }
 
-  .construction-card h1 {
+  .hero-card h1 {
     font-size: 2.5rem;
     color: #000;
     border: none;
@@ -124,31 +143,24 @@ const description =
     margin-bottom: 1rem;
   }
 
-  .notice {
-    font-family: "DM Mono", monospace;
-    font-size: 1.2rem;
-    color: #000;
-    margin: 1rem 0;
-  }
-
-  .description {
+  .hero-description {
     font-size: 1.1rem;
     line-height: 1.5;
     color: #333;
     margin-bottom: 1.5rem;
   }
 
-  .description a {
+  .hero-description a {
     color: inherit;
     text-decoration: none;
     border-bottom: 1px solid currentColor;
   }
 
-  .description a:hover {
+  .hero-description a:hover {
     opacity: 0.8;
   }
 
-  .construction-links {
+  .hero-links {
     display: flex;
     gap: 1rem;
     justify-content: center;
@@ -157,7 +169,7 @@ const description =
     margin: 0 auto;
   }
 
-  .construction-links a {
+  .hero-links a {
     padding: 0.8rem 1.5rem;
     font-family: "DM Mono", monospace;
     text-decoration: none;
@@ -168,7 +180,7 @@ const description =
     display: inline-block;
   }
 
-  .construction-links a:focus-visible {
+  .hero-links a:focus-visible {
     outline: 2px solid var(--focus-color, #5f5f5f);
     outline-offset: 2px;
   }
@@ -209,24 +221,24 @@ const description =
       min-height: 300px;
     }
 
-    .construction-card {
+    .hero-card {
       padding: 1rem;
       margin: 0 2rem;
     }
 
-    .construction-card h1 {
+    .hero-card h1 {
       font-size: 1.5rem;
     }
 
-    .construction-card p {
+    .hero-card p {
       font-size: 0.8rem;
     }
 
-    .construction-links {
+    .hero-links {
       gap: 0.75rem;
     }
 
-    .construction-links a {
+    .hero-links a {
       min-width: 0;
       width: auto;
       padding: 0.8rem 1.2rem;
