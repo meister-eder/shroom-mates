@@ -87,9 +87,12 @@ const description =
     right: 0;
     width: 100%;
     height: auto;
+    aspect-ratio: 1200 / 800;
     z-index: 1;
     object-fit: cover;
     object-position: right bottom;
+    /* Ensure dimensions are preserved to prevent layout shift */
+    min-height: 400px;
   }
 
   .title-wrapper {
@@ -202,6 +205,8 @@ const description =
     .hero-background {
       width: 180%;
       object-position: right bottom;
+      aspect-ratio: 1200 / 800;
+      min-height: 300px;
     }
 
     .construction-card {
