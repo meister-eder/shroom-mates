@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const title = "Über uns";
+const description =
+  "Lerne die shroom-mates kennen - leidenschaftliche Pilzzüchter aus Leipzig, die für nachhaltige Landwirtschaft und höchste Qualität stehen.";
+---
+
+<Layout title={title} description={description}>
+  <main>
+    <h1 transition:animate="fade">Über uns</h1>
+    <div class="content" transition:animate="slide">
+      <p>
+        Wir sind die shroom-mates - leidenschaftliche Pilzzüchter aus Leipzig
+        mit einer Mission: die frischesten und geschmackvollsten Pilze direkt
+        vom Erzeuger zu euch zu bringen.
+      </p>
+
+      <h2>Unsere Geschichte</h2>
+      <p>
+        Gegründet von Pilz-Enthusiasten, begann shroom-mates mit einer einfachen
+        Idee: Gourmet-Pilze direkt von unserem Hof auf euren Tisch zu bringen.
+      </p>
+
+      <h2>Unsere Philosophie</h2>
+      <p>
+        Nachhaltigkeit, Qualität und lokale Produktion stehen im Zentrum unserer
+        Arbeit.
+      </p>
+
+      <h2>Unser Team</h2>
+      <p>
+        Leidenschaftliche Züchter mit langjähriger Erfahrung in der
+        Pilzkultivierung.
+      </p>
+
+      <div class="placeholder">
+        <p>
+          <em
+            >Weitere Informationen über unser Team und unsere Arbeitsweise
+            folgen bald...</em>
+        </p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    font-size: 20px;
+    line-height: 1.6;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin: 3rem 0;
+  }
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h2 {
+    margin-top: 2rem;
+    font-size: 1.8rem;
+  }
+  .placeholder {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border-left: 4px solid #5f5f5f;
+    font-style: italic;
+  }
+</style>

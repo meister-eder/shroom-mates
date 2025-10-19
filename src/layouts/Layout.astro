@@ -23,7 +23,7 @@ const defaultOgImage =
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang="de" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -41,7 +41,7 @@ const defaultOgImage =
     />
 
     <!-- SEO and Open Graph -->
-    <title>{title} | Shroom-Mates</title>
+    <title transition:animate="fade">{title} | Shroom-Mates</title>
     <link rel="canonical" href={canonicalURL} />
 
     <meta property="og:title" content={`${title} | Shroom-Mates`} />
@@ -66,7 +66,7 @@ const defaultOgImage =
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
 
-    <ClientRouter />
+    <ClientRouter fallback="swap" />
   </head>
   <body>
     <!-- Skip link for keyboard navigation -->
@@ -78,6 +78,7 @@ const defaultOgImage =
         id="main-content"
         class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
         role="main"
+        transition:animate="slide"
       >
         <slot />
       </main>
@@ -125,6 +126,61 @@ const defaultOgImage =
         import "../scripts/hamburger.js";
       </script>
 
+      <script>
+        // Ensure hamburger menu works after view transitions
+        document.addEventListener("astro:page-load", () => {
+          // Re-initialize hamburger menu functionality after each page load
+          const hamburger = document.querySelector(".hamburger");
+          const navLinks = document.querySelector(".nav-links");
+          const nav = document.querySelector("nav");
+
+          if (hamburger && navLinks && nav) {
+            // Remove any existing listeners to avoid duplicates
+            hamburger.replaceWith(hamburger.cloneNode(true));
+            const newHamburger = document.querySelector(".hamburger");
+
+            newHamburger?.addEventListener("click", () => {
+              const isExpanded =
+                newHamburger.getAttribute("aria-expanded") === "true";
+
+              newHamburger.setAttribute(
+                "aria-expanded",
+                (!isExpanded).toString()
+              );
+              navLinks.classList.toggle("active");
+              nav.classList.toggle("menu-open");
+            });
+          }
+        });
+
+        // Check for View Transitions API support
+        const hasViewTransitions = document.startViewTransition !== undefined;
+        console.log("Native View Transitions supported:", hasViewTransitions);
+        if (!hasViewTransitions) {
+          console.log(
+            "Using fallback transitions for better browser compatibility"
+          );
+
+          // Add CSS-based transition effects for fallback
+          document.addEventListener("astro:before-preparation", () => {
+            const main = document.querySelector(".site-main");
+            if (main) {
+              main.classList.add("astro-transitioning");
+            }
+          });
+
+          document.addEventListener("astro:after-swap", () => {
+            const main = document.querySelector(".site-main");
+            if (main) {
+              // Small delay to ensure smooth transition
+              setTimeout(() => {
+                main.classList.remove("astro-transitioning");
+              }, 50);
+            }
+          });
+        }
+      </script>
+
       <style is:global>
         @import url("../styles/global.css");
 
@@ -168,6 +224,17 @@ const defaultOgImage =
         :focus-visible {
           outline: 2px solid var(--focus-color);
           outline-offset: 2px;
+        }
+
+        /* Fallback transitions for browsers without View Transitions API */
+        @media (prefers-reduced-motion: no-preference) {
+          .site-main {
+            transition: opacity 0.2s ease-in-out;
+          }
+
+          .site-main.astro-transitioning {
+            opacity: 0.8;
+          }
         }
 
         html {

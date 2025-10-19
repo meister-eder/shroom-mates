@@ -2,7 +2,7 @@
 
 ---
 
-<header role="banner">
+<header role="banner" transition:persist="header">
   <nav role="navigation" aria-label="Hauptnavigation">
     <div class="logo">
       <a href="/" aria-label="Shroom-Mates Startseite">shroom-mates</a>
@@ -19,8 +19,12 @@
       </span>
     </button>
     <ul class="nav-links" id="nav-links" role="list">
-      <li><a href="/contact">Kontakt</a></li>
-      <li><a href="/impressum">Impressum</a></li>
+      <li><a href="/unsere-pilze">Unsere Pilze</a></li>
+      <li><a href="/rezepte">Rezepte</a></li>
+      <li><a href="/ueber-uns">Über uns</a></li>
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/news">News</a></li>
+      <li><a href="/kontakt">Kontakt</a></li>
     </ul>
   </nav>
 </header>
@@ -164,9 +168,11 @@
       background: white;
       flex-direction: column;
       align-items: center;
-      padding: 1rem;
+      padding: 1.5rem;
       gap: 1rem;
       border-bottom: 2px solid #5f5f5f;
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
     }
 
     .nav-links.active {
@@ -184,6 +190,19 @@
 
     nav.menu-open .hamburger-inner::after {
       transform: translateY(-10px) rotate(-90deg);
+    }
+
+    .nav-links a {
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      min-width: 140px;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .nav-links {
+      gap: 1rem;
     }
 
     .nav-links a {
