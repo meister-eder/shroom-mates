@@ -14,7 +14,7 @@
 }
 
 html {
-	font-family: "DM Mono", system-ui, monospace, sans-serif;
+	font-family: "Geist Sans", system-ui, sans-serif;
 	background: var(--bg-color);
 	background-size: 20px 20px;
 	background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
