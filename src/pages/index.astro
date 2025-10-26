@@ -5,6 +5,7 @@ import AboutUsSection from "../components/AboutUsSection.astro";
 import ImageGallery from "../components/ImageGallery.astro";
 import UpcomingDates from "../components/UpcomingDates.astro";
 import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
+import ValuesSection from "../components/ValuesSection.astro";
 
 const title = "Hi, wir sind die shroom-mates!";
 const description =
@@ -60,6 +61,7 @@ const description =
     </section>
 
     <!-- New sections -->
+    <ValuesSection />
     <AboutUsSection />
     <ImageGallery />
     <UpcomingDates />
@@ -94,17 +96,17 @@ const description =
     position: relative;
     margin: 0;
     overflow: hidden;
-    border-bottom: 2px solid #000;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-bottom: 2px solid #000;
   }
 
   .hero-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center 75%;
     transform: scale(1.2);
     position: absolute;
     top: 0;
@@ -148,10 +150,7 @@ const description =
   .hero-teaser {
     width: 100%;
     background: var(--bg-color);
-    padding: 2rem;
-    padding-top: calc(
-      var(--navbar-height) + 2rem
-    ); /* navbar height + section padding */
+    padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -220,14 +219,7 @@ const description =
     }
 
     .scroll-arrow {
-      bottom: 6rem;
-    }
-
-    .hero-teaser {
-      padding: 1.5rem;
-      padding-top: calc(
-        var(--navbar-height-mobile) + 1.5rem
-      ); /* adjusted navbar height on mobile + section padding */
+      bottom: 4rem;
     }
 
     .teaser-wrapper {

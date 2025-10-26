@@ -1,0 +1,108 @@
+---
+import SvgHeading from "./SvgHeading.astro";
+
+export interface Props {
+  svgSrc: string; // Path to SVG in public directory, e.g., '/assets/headings/nachhaltig.svg'
+  title: string; // Accessible title for the SVG
+  description: string;
+}
+
+const { svgSrc, title, description } = Astro.props;
+---
+
+<article class="value-card">
+  <div class="value-card__header">
+    <SvgHeading tag="h3" src={svgSrc} alt={title} class="value-card__heading" />
+  </div>
+  <p class="value-card__description">{description}</p>
+</article>
+
+<style>
+  .value-card {
+    background: var(--bg-color);
+    border: 2px solid #000;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .value-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .value-card__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .value-card :global(.value-card__heading) {
+    font-size: 1.2rem !important;
+    color: var(--text-color);
+  }
+
+  .value-card :global(.value-card__heading svg) {
+    max-width: 100%;
+    max-height: 2rem;
+    height: auto;
+    width: auto;
+    overflow: visible;
+  }
+
+  .value-card__description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin: 0;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .value-card {
+      padding: 1.25rem;
+    }
+
+    .value-card :global(.value-card__heading) {
+      font-size: 1.1rem !important;
+    }
+
+    .value-card :global(.value-card__heading svg) {
+      max-height: 1.8rem;
+    }
+
+    .value-card__description {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .value-card {
+      padding: 1rem;
+    }
+
+    .value-card :global(.value-card__heading) {
+      font-size: 1rem !important;
+    }
+
+    .value-card :global(.value-card__heading svg) {
+      max-height: 1.5rem;
+    }
+
+    .value-card__description {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+  }
+
+  /* Ensure proper focus states for accessibility */
+  .value-card:focus-within {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
+  }
+</style>
