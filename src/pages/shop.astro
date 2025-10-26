@@ -1,19 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { fade } from "astro:transitions";
 
 const title = "Shop";
 const description =
   "Unser Online-Shop für frische Pilze ist bald verfügbar. Hier könnt ihr schon bald unsere Produkte direkt bestellen.";
-
-const customFade = fade({ duration: "0.6s" });
 ---
 
 <Layout title={title} description={description}>
   <main>
-    <h1 transition:animate="fade">Shop</h1>
-    <div class="content" transition:animate="slide">
-      <div class="coming-soon" transition:animate={customFade}>
+    <h1>Shop</h1>
+    <div class="content">
+      <div class="coming-soon">
         <h2>🍄 Bald verfügbar! 🍄</h2>
         <p>
           Wir arbeiten mit Hochdruck an unserem Online-Shop, über den ihr schon

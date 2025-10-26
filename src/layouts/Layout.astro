@@ -1,6 +1,6 @@
 ---
 import "@fontsource/geist-sans";
-import { ClientRouter } from "astro:transitions";
+import { ViewTransitions } from "astro:transitions";
 import Header from "../components/Header.astro";
 
 interface Props {
@@ -23,11 +23,12 @@ const defaultOgImage =
 ---
 
 <!doctype html>
-<html lang="de" transition:animate="none">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ViewTransitions />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -44,7 +45,7 @@ const defaultOgImage =
     />
 
     <!-- SEO and Open Graph -->
-    <title transition:animate="fade">{title} | shroom-mates</title>
+    <title>{title} | shroom-mates</title>
     <link rel="canonical" href={canonicalURL} />
 
     <meta property="og:title" content={`${title} | shroom-mates`} />
@@ -68,8 +69,6 @@ const defaultOgImage =
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
-
-    <ClientRouter fallback="swap" />
   </head>
   <body>
     <!-- Skip link for keyboard navigation -->
@@ -81,7 +80,6 @@ const defaultOgImage =
         id="main-content"
         class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
         role="main"
-        transition:animate="slide"
       >
         <slot />
       </main>
