@@ -33,7 +33,9 @@ try {
       return `style="${styles};fill:currentColor"`;
     })
     // For paths without any fill specified, add fill attribute
-    .replace(/<path(?![^>]*fill)/g, '<path fill="currentColor"');
+    .replace(/<path(?![^>]*fill)/g, '<path fill="currentColor"')
+    // Remove aria-label attributes from the SVG content itself to prevent text rendering
+    .replace(/aria-label="[^"]*"/g, "");
 } catch (e) {
   error = `SVG file not found at: ${src}`;
   console.error(error);

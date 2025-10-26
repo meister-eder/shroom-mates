@@ -3,10 +3,15 @@ function setupHamburgerMenu() {
   const nav = document.querySelector("nav");
   const navLinks = document.querySelector(".nav-links");
 
-  if (!hamburger || !nav || !navLinks) return;
+  if (!hamburger || !nav || !navLinks) {
+    console.log("Hamburger menu elements not found");
+    return null;
+  }
 
-  // Store event listeners so we can remove them later
-  const toggleMenu = () => {
+  console.log("Setting up hamburger menu");
+
+  const toggleMenu = (e) => {
+    e.stopPropagation();
     const isOpen = nav.classList.contains("menu-open");
 
     if (isOpen) {
@@ -47,7 +52,8 @@ function setupHamburgerMenu() {
   document.addEventListener("click", closeMenuOutside);
   document.addEventListener("keydown", handleKeydown);
 
-  for (const link of navLinks.querySelectorAll("a")) {
+  const links = navLinks.querySelectorAll("a");
+  for (const link of links) {
     link.addEventListener("click", closeMenu);
   }
 
@@ -56,29 +62,37 @@ function setupHamburgerMenu() {
     hamburger.removeEventListener("click", toggleMenu);
     document.removeEventListener("click", closeMenuOutside);
     document.removeEventListener("keydown", handleKeydown);
-    for (const link of navLinks.querySelectorAll("a")) {
+    for (const link of links) {
       link.removeEventListener("click", closeMenu);
     }
   };
 }
 
-let cleanup = null;
+// Global cleanup reference
+window.hamburgerCleanup = null;
 
 // Clean up old listeners before setting up new ones
 document.addEventListener("astro:before-preparation", () => {
-  if (cleanup) {
-    cleanup();
-    cleanup = null;
+  if (window.hamburgerCleanup) {
+    window.hamburgerCleanup();
+    window.hamburgerCleanup = null;
   }
 });
 
-// Setup on initial load and after each navigation
-document.addEventListener("DOMContentLoaded", () => {
-  if (cleanup) cleanup();
-  cleanup = setupHamburgerMenu();
-});
+// Setup on initial load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    window.hamburgerCleanup = setupHamburgerMenu();
+  });
+} else {
+  // DOM already loaded
+  window.hamburgerCleanup = setupHamburgerMenu();
+}
 
+// Setup after each Astro page load
 document.addEventListener("astro:page-load", () => {
-  if (cleanup) cleanup();
-  cleanup = setupHamburgerMenu();
+  if (window.hamburgerCleanup) {
+    window.hamburgerCleanup();
+  }
+  window.hamburgerCleanup = setupHamburgerMenu();
 });

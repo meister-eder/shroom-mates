@@ -28,7 +28,10 @@ const defaultOgImage =
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
 
     <!-- Preload critical font -->
@@ -127,32 +130,6 @@ const defaultOgImage =
       </script>
 
       <script>
-        // Ensure hamburger menu works after view transitions
-        document.addEventListener("astro:page-load", () => {
-          // Re-initialize hamburger menu functionality after each page load
-          const hamburger = document.querySelector(".hamburger");
-          const navLinks = document.querySelector(".nav-links");
-          const nav = document.querySelector("nav");
-
-          if (hamburger && navLinks && nav) {
-            // Remove any existing listeners to avoid duplicates
-            hamburger.replaceWith(hamburger.cloneNode(true));
-            const newHamburger = document.querySelector(".hamburger");
-
-            newHamburger?.addEventListener("click", () => {
-              const isExpanded =
-                newHamburger.getAttribute("aria-expanded") === "true";
-
-              newHamburger.setAttribute(
-                "aria-expanded",
-                (!isExpanded).toString()
-              );
-              navLinks.classList.toggle("active");
-              nav.classList.toggle("menu-open");
-            });
-          }
-        });
-
         // Check for View Transitions API support
         const hasViewTransitions = document.startViewTransition !== undefined;
         console.log("Native View Transitions supported:", hasViewTransitions);
