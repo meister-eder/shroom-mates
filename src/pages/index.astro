@@ -113,7 +113,7 @@ const description =
 
   .scroll-arrow {
     position: absolute;
-    bottom: 2rem;
+    bottom: 6rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -149,6 +149,9 @@ const description =
     width: 100%;
     background: var(--bg-color);
     padding: 2rem;
+    padding-top: calc(
+      var(--navbar-height) + 2rem
+    ); /* navbar height + section padding */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -156,6 +159,9 @@ const description =
     min-height: auto;
     max-height: none;
     position: relative;
+    scroll-margin-top: var(
+      --navbar-height
+    ); /* offset for fixed navbar when scrolling to anchor */
   }
 
   .teaser-wrapper {
@@ -214,11 +220,14 @@ const description =
     }
 
     .scroll-arrow {
-      bottom: 1.5rem;
+      bottom: 6rem;
     }
 
     .hero-teaser {
       padding: 1.5rem;
+      padding-top: calc(
+        var(--navbar-height-mobile) + 1.5rem
+      ); /* adjusted navbar height on mobile + section padding */
     }
 
     .teaser-wrapper {
@@ -263,5 +272,33 @@ const description =
   }
 </style>
 
-```
+<script>
+  // Smooth scroll with navbar offset
+  document.addEventListener("DOMContentLoaded", () => {
+    const scrollArrow = document.querySelector(".scroll-arrow");
+    if (scrollArrow) {
+      scrollArrow.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = document.querySelector("#content");
+        if (target) {
+          // Get navbar height from CSS variable
+          const navbarHeight =
+            parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--navbar-height"
+              )
+            ) * 16; // Convert rem to pixels (assuming 1rem = 16px)
 
+          const targetPosition =
+            target.getBoundingClientRect().top +
+            window.pageYOffset -
+            navbarHeight;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth",
+          });
+        }
+      });
+    }
+  });
+</script>

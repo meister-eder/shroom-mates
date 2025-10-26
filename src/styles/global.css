@@ -12,6 +12,8 @@
 	--text-color: #1d1d1d;
 	--bg-color: #ffffff;
 	--bg-accent: #fdfcea;
+	--navbar-height: 6rem;
+	--navbar-height-mobile: 5rem;
 }
 
 html {
