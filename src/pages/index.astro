@@ -20,9 +20,24 @@ const description =
         class="hero-image"
         loading="eager"
       />
+      <a href="#content" class="scroll-arrow" aria-label="Scroll down">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </a>
     </section>
 
-    <section class="hero-teaser">
+    <section class="hero-teaser" id="content">
       <div class="teaser-wrapper">
         <h1 class="hero-title">
           Hi, wir sind die <span class="no-wrap">shroom-mates!</span>
@@ -75,11 +90,14 @@ const description =
 
   .hero {
     width: 100%;
-    height: 90vh;
+    height: 100vh;
     position: relative;
     margin: 0;
     overflow: hidden;
     border-bottom: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .hero-image {
@@ -88,6 +106,43 @@ const description =
     object-fit: cover;
     object-position: center;
     transform: scale(1.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .scroll-arrow {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    color: #ffffff;
+    cursor: pointer;
+    animation: bounce 2s infinite;
+    transition: opacity 0.3s ease;
+    text-decoration: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  .scroll-arrow:hover {
+    opacity: 0.7;
+  }
+
+  @keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    40% {
+      transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+      transform: translateX(-50%) translateY(-5px);
+    }
   }
 
   .hero-teaser {
@@ -155,7 +210,11 @@ const description =
 
   @media (max-width: 768px) {
     .hero {
-      height: 70vh;
+      height: 100vh;
+    }
+
+    .scroll-arrow {
+      bottom: 1.5rem;
     }
 
     .hero-teaser {
