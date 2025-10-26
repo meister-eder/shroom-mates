@@ -67,14 +67,18 @@ const styles = {
   .svg-heading {
     /* The component's font-size will control the SVG size */
     font-size: 3rem; /* Default size, can be overridden */
-    line-height: 1;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    overflow: visible;
   }
 
   .svg-heading svg {
     /* Use `em` to scale the SVG relative to the parent's font-size */
     height: 1.2em;
     width: auto;
-    vertical-align: middle;
+    display: block;
+    overflow: visible;
   }
 
   .error-message {
