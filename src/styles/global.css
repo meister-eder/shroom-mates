@@ -9,8 +9,8 @@
 		rgb(10, 10, 10) 60%
 	);
 	--focus-color: #5f5f5f;
-	--text-color: #000;
-	--bg-color: #ffffff;
+	--text-color: #1d1d1d;
+	--bg-color: #f1f1f1;
 	--bg-accent: #fdfcea;
 }
 
@@ -22,6 +22,14 @@ html {
 		linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
 	color: var(--text-color);
 	font-display: swap; /* Improve font loading performance */
+}
+
+body {
+	color: var(--text-color);
+}
+
+* {
+	color: inherit;
 }
 
 /* Reduce motion for users who prefer it */

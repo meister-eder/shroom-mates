@@ -1,59 +1,45 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
-import heroImage from "../assets/images/shroom-mates-drawing.png";
 import AboutUsSection from "../components/AboutUsSection.astro";
 import ImageGallery from "../components/ImageGallery.astro";
 import UpcomingDates from "../components/UpcomingDates.astro";
 import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
 
-const title = "Hi, wir sind die shroom-mates";
+const title = "Hi, wir sind die shroom-mates!";
 const description =
-  "Hochwertige Austernpilze vom Egenberger Samstagsmarkt in Leipzig. Frisch kultiviert und nachhaltig angebaut von den shroom-mates. Kostproben gibt es auf dem Samstagsmarkt.";
+  "Hochwertige Edelpilze aus Leipzig, Plagwitz. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.";
 ---
 
 <Layout title={title} description={description} isLandingPage={true}>
   <main class="landing-main">
     <section class="hero">
-      <!-- Background image will be handled by CSS for better performance -->
-      <Image
-        src={heroImage}
-        alt=""
-        class="hero-background"
+      <img
+        src="/assets/hero_rose_tasse.jpg"
+        alt="Rosafarbene Austernpilze in einer Tasse"
+        class="hero-image"
         loading="eager"
-        priority
-        width={1200}
-        height={800}
-        format="webp"
       />
-      <div class="title-wrapper">
-        <div class="hero-card">
-          <h1>{title}</h1>
-          <p class="hero-description">
-            Hochwertige Austernpilze vom Egenberger Samstagsmarkt in Leipzig.
-            Frisch kultiviert und nachhaltig angebaut von den shroom-mates.
+    </section>
+
+    <section class="hero-teaser">
+      <div class="teaser-wrapper">
+        <h1 class="hero-title">
+          Hi, wir sind die <span class="no-wrap">shroom-mates!</span>
+        </h1>
+        <div class="teaser-content-row">
+          <img
+            src="/assets/logo_with_shrooms.png"
+            alt="Shroom-Mates Logo mit Pilzen"
+            class="walking-logo"
+            width="200"
+            height="200"
+            loading="eager"
+          />
+          <p class="teaser-text">
+            Wir züchten feinste Edelpilze mit regionalen Rohstoffen, direkt in
+            der Plagwitzer Markthalle in Leipzig.
           </p>
-          <p class="hero-description">
-            Kostproben gibt es auf dem <a
-              href="https://samstagsmarkt.de/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Egenberger Samstagsmarkt Website (öffnet in neuem Tab)"
-              >Egenberger Samstagsmarkt</a
-            >. Aktuelle Verkaufstermine werden auf Instagram bekanntgegeben.
-          </p>
-          <div class="hero-links">
-            <a
-              href="https://www.instagram.com/shroom_mates_le/"
-              class="social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Folgt uns auf Instagram (öffnet in neuem Tab)"
-            >
-              Folgt uns auf Instagram
-            </a>
-            <a href="/kontakt" class="contact-link"> Kontakt </a>
-          </div>
         </div>
       </div>
     </section>
@@ -89,160 +75,134 @@ const description =
 
   .hero {
     width: 100%;
-    min-height: calc(100vh - 60px);
-    padding-bottom: 60px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 6rem;
+    height: 90vh;
     position: relative;
     margin: 0;
     overflow: hidden;
+    border-bottom: 2px solid #000;
   }
 
-  .hero-background {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+  .hero-image {
     width: 100%;
-    height: auto;
-    aspect-ratio: 1200 / 800;
-    z-index: 1;
+    height: 100%;
     object-fit: cover;
-    object-position: right bottom;
-    /* Ensure dimensions are preserved to prevent layout shift */
-    min-height: 400px;
+    object-position: center;
+    transform: scale(1.2);
   }
 
-  .title-wrapper {
+  .hero-teaser {
+    width: 100%;
+    background: var(--bg-color);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-    z-index: 2;
-    margin-top: 6rem;
+    min-height: auto;
+    max-height: none;
+    position: relative;
   }
 
-  .hero-card {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
-    border-radius: 12px;
-    border: 2px solid #000;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.8);
-    max-width: 500px;
-    width: 85%;
-    margin: 0 1rem;
-  }
-
-  .hero-card h1 {
-    font-size: 2.5rem;
-    color: #000;
-    border: none;
-    padding: 0;
-    margin-bottom: 1rem;
-  }
-
-  .hero-description {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-description a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-  }
-
-  .hero-description a:hover {
-    opacity: 0.8;
-  }
-
-  .hero-links {
+  .teaser-wrapper {
+    max-width: 1200px;
+    width: 100%;
     display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    max-width: 400px;
-    margin: 0 auto;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
   }
 
-  .hero-links a {
-    padding: 0.8rem 1.5rem;
-    font-family: "DM Mono", monospace;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all var(--duration, 0.2s) ease;
-    min-width: 200px;
+  .hero-title {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.2;
     text-align: center;
-    display: inline-block;
+    width: 100%;
+    font-family: monospace;
+    font-weight: bold;
   }
 
-  .hero-links a:focus-visible {
-    outline: 2px solid var(--focus-color, #5f5f5f);
-    outline-offset: 2px;
+  .teaser-content-row {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    width: 100%;
   }
 
-  .social-link {
-    background: #000;
-    color: #fff;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  .walking-logo {
+    width: 200px;
+    height: auto;
+    flex-shrink: 0;
+    position: relative;
+    bottom: -2rem;
+    z-index: 20;
   }
 
-  .social-link:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  .teaser-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin: 0;
+    flex: 1;
+    text-align: left;
   }
 
-  .contact-link {
-    border: 2px solid #000;
-    color: #000;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .contact-link:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  .no-wrap {
+    white-space: nowrap;
   }
 
   @media (max-width: 768px) {
     .hero {
-      padding-bottom: 0;
-      padding-top: 0;
-      min-height: 100vh;
+      height: 70vh;
     }
 
-    .hero-background {
-      width: 180%;
-      object-position: right bottom;
-      aspect-ratio: 1200 / 800;
-      min-height: 300px;
+    .hero-teaser {
+      padding: 1.5rem;
     }
 
-    .hero-card {
-      padding: 1rem;
-      margin: 0 2rem;
+    .teaser-wrapper {
+      gap: 1rem;
     }
 
-    .hero-card h1 {
-      font-size: 1.5rem;
+    .hero-title {
+      font-size: 1.6rem;
+      text-align: center;
     }
 
-    .hero-card p {
-      font-size: 0.8rem;
+    .teaser-content-row {
+      gap: 1.5rem;
     }
 
-    .hero-links {
-      gap: 0.75rem;
+    .walking-logo {
+      width: 120px;
+      bottom: -1rem;
     }
 
-    .hero-links a {
-      min-width: 0;
-      width: auto;
-      padding: 0.8rem 1.2rem;
-      font-size: 0.8rem;
+    .teaser-text {
+      font-size: 1rem;
+      line-height: 1.4;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .walking-logo {
+      width: 80px;
+      bottom: -0.5rem;
+    }
+
+    .teaser-content-row {
+      gap: 1rem;
+    }
+
+    .teaser-text {
+      font-size: 0.9rem;
+      line-height: 1.3;
     }
   }
 </style>
+
+```
+

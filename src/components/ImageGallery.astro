@@ -30,7 +30,7 @@ import img9970 from "../assets/images/IMG_9970.jpeg";
       <div class="gallery-item">
         <Image
           src={heroOyster}
-          alt="Hochwertige Austernpilze"
+          alt="Hochwertige Edelpilze"
           width={350}
           height={300}
           format="webp"
@@ -78,7 +78,7 @@ import img9970 from "../assets/images/IMG_9970.jpeg";
 <style>
   .image-gallery {
     padding: 4rem 1rem;
-    background: #fff;
+    background: var(--bg-color);
     border-top: 3px solid #000;
     width: 100%;
     box-sizing: border-box;
@@ -95,14 +95,14 @@ import img9970 from "../assets/images/IMG_9970.jpeg";
 
   .gallery-container h2 {
     font-size: 2.5rem;
-    color: #000;
+    color: var(--text-color);
     margin-bottom: 1rem;
     font-family: "DM Mono", monospace;
   }
 
   .gallery-subtitle {
     font-size: 1.2rem;
-    color: #666;
+    color: var(--text-color);
     margin-bottom: 3rem;
     max-width: 600px;
     margin-left: auto;
@@ -124,7 +124,7 @@ import img9970 from "../assets/images/IMG_9970.jpeg";
     border: 3px solid #000;
     border-radius: 12px;
     overflow: hidden;
-    background: #fff;
+    background: var(--bg-color);
     transition: all 0.3s ease;
     cursor: pointer;
   }

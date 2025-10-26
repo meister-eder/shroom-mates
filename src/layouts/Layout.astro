@@ -12,14 +12,14 @@ interface Props {
 
 const {
   title,
-  description = "Hochwertige Austernpilze vom Egenberger Samstagsmarkt in Leipzig. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.",
+  description = "Hochwertige Edelpilze aus Leipzig, Plagwitz. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.",
   ogImage,
   isLandingPage = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultOgImage =
-  ogImage || new URL("/favicon.svg", Astro.site).toString();
+  ogImage || new URL("/favicon.ico", Astro.site).toString();
 ---
 
 <!doctype html>
@@ -44,27 +44,27 @@ const defaultOgImage =
     />
 
     <!-- SEO and Open Graph -->
-    <title transition:animate="fade">{title} | Shroom-Mates</title>
+    <title transition:animate="fade">{title} | shroom-mates</title>
     <link rel="canonical" href={canonicalURL} />
 
-    <meta property="og:title" content={`${title} | Shroom-Mates`} />
+    <meta property="og:title" content={`${title} | shroom-mates`} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:site_name" content="Shroom-Mates" />
+    <meta property="og:site_name" content="shroom-mates" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_DE" />
     <meta property="og:image" content={defaultOgImage} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={`${title} | Shroom-Mates`} />
+    <meta name="twitter:title" content={`${title} | shroom-mates`} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={defaultOgImage} />
 
     <!-- Additional meta tags -->
     <meta name="robots" content="index, follow" />
-    <meta name="author" content="Shroom-Mates" />
-    <meta name="theme-color" content="#ff4908" />
+    <meta name="author" content="shroom-mates" />
+    <meta name="theme-color" content="#fdfcea" />
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -163,9 +163,6 @@ const defaultOgImage =
 
         :root {
           --duration: 0.2s;
-          --focus-color: #5f5f5f;
-          --text-color: #000;
-          --bg-color: #ffffff;
         }
 
         /* Accessibility utilities */
