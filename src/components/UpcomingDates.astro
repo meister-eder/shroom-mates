@@ -50,10 +50,10 @@ function formatDate(dateString: string) {
 }
 ---
 
-<section class="upcoming-dates" id="dates">
-  <div class="dates-container">
-    <h2>Nächste Termine</h2>
-    <p class="dates-subtitle">
+<section class="section section--alt-bg upcoming-dates" id="dates">
+  <div class="section-container dates-container">
+    <h2 class="section-heading">Nächste Termine</h2>
+    <p class="section-subtitle">
       Besucht uns auf dem Egenberger Samstagsmarkt und probiert unsere frischen
       Austernpilze!
     </p>
@@ -109,44 +109,24 @@ function formatDate(dateString: string) {
           Instagram
         </a> bekanntgegeben.
       </p>
-      <a href="/kontakt" class="contact-button"> Fragen? Schreibt uns! </a>
+      <a href="/kontakt" class="btn btn--primary"> Fragen? Schreibt uns! </a>
     </div>
   </div>
 </section>
 
 <style>
+  /* Component-specific overrides and styles */
+
   .upcoming-dates {
-    padding: 4rem 1rem;
-    background: #f8f8f8;
-    border-top: 3px solid #000;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    /* Section base styles inherited from global .section and .section--alt-bg */
   }
 
   .dates-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    /* Container base styles inherited from global .section-container */
     text-align: center;
-    width: 100%;
-    box-sizing: border-box;
   }
 
-  .dates-container h2 {
-    font-size: 2.5rem;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-    font-family: "DM Mono", monospace;
-  }
-
-  .dates-subtitle {
-    font-size: 1.2rem;
-    color: var(--text-color);
-    margin-bottom: 3rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  /* Removed .section-heading and .section-subtitle - now global */
 
   .dates-grid {
     display: grid;
@@ -275,38 +255,16 @@ function formatDate(dateString: string) {
     border-bottom: 1px solid currentColor;
   }
 
-  .dates-cta a:not(.contact-button):hover {
+  .dates-cta a:not(.btn):hover {
     opacity: 0.8;
   }
 
-  .contact-button {
-    display: inline-block;
-    padding: 0.8rem 2rem;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 6px;
-    font-family: "DM Mono", monospace;
-    transition: all 0.3s ease;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .contact-button:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-  }
+  /* Removed .contact-button - now using global .btn .btn--primary */
 
   @media (max-width: 768px) {
-    .upcoming-dates {
-      padding: 3rem 0.5rem;
-    }
-
     .dates-container {
-      padding: 0 0.5rem;
-    }
-
-    .dates-container h2 {
-      font-size: 2rem;
+      /* Responsive container adjustments inherited from global */
+      text-align: center;
     }
 
     .dates-grid {

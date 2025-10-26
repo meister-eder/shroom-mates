@@ -6,10 +6,10 @@ import whitePearlTasse from "../assets/images/white_pearl_tasse_cutout.png";
 import img9970 from "../assets/images/IMG_9970.jpeg";
 ---
 
-<section class="image-gallery" id="gallery">
-  <div class="gallery-container">
-    <h2>Unsere Pilze</h2>
-    <p class="gallery-subtitle">Frische Austernpilze in höchster Qualität</p>
+<section class="section image-gallery" id="gallery">
+  <div class="section-container gallery-container">
+    <h2 class="section-heading">Unsere Pilze</h2>
+    <p class="section-subtitle">Frische Austernpilze in höchster Qualität</p>
 
     <div class="gallery-grid">
       <div class="gallery-item featured">
@@ -76,38 +76,18 @@ import img9970 from "../assets/images/IMG_9970.jpeg";
 </section>
 
 <style>
+  /* Component-specific overrides and styles */
+
   .image-gallery {
-    padding: 4rem 1rem;
-    background: var(--bg-color);
-    border-top: 3px solid #000;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    /* Section base styles inherited from global .section */
   }
 
   .gallery-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    /* Container base styles inherited from global .section-container */
     text-align: center;
-    width: 100%;
-    box-sizing: border-box;
   }
 
-  .gallery-container h2 {
-    font-size: 2.5rem;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-    font-family: "DM Mono", monospace;
-  }
-
-  .gallery-subtitle {
-    font-size: 1.2rem;
-    color: var(--text-color);
-    margin-bottom: 3rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  /* Removed .section-heading and .section-subtitle - now global */
 
   .gallery-grid {
     display: grid;
@@ -191,16 +171,9 @@ import img9970 from "../assets/images/IMG_9970.jpeg";
   }
 
   @media (max-width: 768px) {
-    .image-gallery {
-      padding: 3rem 0.5rem;
-    }
-
     .gallery-container {
-      padding: 0 0.5rem;
-    }
-
-    .gallery-container h2 {
-      font-size: 2rem;
+      /* Responsive container adjustments inherited from global */
+      text-align: center;
     }
 
     .gallery-grid {

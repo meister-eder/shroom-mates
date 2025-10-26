@@ -5,8 +5,8 @@ import seitlingTasse from "../assets/images/seitling_tasse_cutout.png";
 import SvgHeading from "./SvgHeading.astro";
 ---
 
-<section class="about-us" id="about">
-  <div class="about-container">
+<section class="section about-us" id="about">
+  <div class="section-container about-container">
     <div class="about-content">
       <SvgHeading
         tag="h2"
@@ -60,24 +60,18 @@ import SvgHeading from "./SvgHeading.astro";
 </section>
 
 <style>
+  /* Component-specific overrides and styles */
+
   .about-us {
-    padding: 4rem 1rem;
-    background: #var(--bg-color);
-    border-top: 3px solid #000;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    /* Section base styles inherited from global .section */
   }
 
   .about-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    /* Container base styles inherited from global .section-container */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
     align-items: center;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .about-content .about-us-heading {
@@ -133,14 +127,9 @@ import SvgHeading from "./SvgHeading.astro";
   }
 
   @media (max-width: 768px) {
-    .about-us {
-      padding: 3rem 0.5rem;
-    }
-
     .about-container {
       grid-template-columns: 1fr;
       gap: 3rem;
-      padding: 0 0.5rem;
     }
 
     .about-content h2 {

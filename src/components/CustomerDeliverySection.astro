@@ -58,10 +58,10 @@ const customerTypes = [
 ];
 ---
 
-<section class="customer-delivery" id="customers">
-  <div class="delivery-container">
-    <h2>Unsere Kunden</h2>
-    <p class="delivery-subtitle">
+<section class="section customer-delivery" id="customers">
+  <div class="section-container delivery-container">
+    <h2 class="section-heading">Unsere Kunden</h2>
+    <p class="section-subtitle">
       Wir beliefern Leipzig und Umgebung mit frischen, hochwertigen
       Austernpilzen
     </p>
@@ -116,12 +116,12 @@ const customerTypes = [
           individuelles Angebot!
         </p>
         <div class="cta-buttons">
-          <a href="/kontakt" class="primary-button"> Jetzt anfragen </a>
+          <a href="/kontakt" class="btn btn--primary"> Jetzt anfragen </a>
           <a
             href="https://www.instagram.com/shroom_mates_le/"
             target="_blank"
             rel="noopener noreferrer"
-            class="secondary-button"
+            class="btn btn--secondary"
           >
             Instagram folgen
           </a>
@@ -146,39 +146,17 @@ const customerTypes = [
 </section>
 
 <style>
+  /* Component-specific overrides and styles */
+
   .customer-delivery {
-    padding: 4rem 1rem;
-    background: var(--bg-color);
-    border-top: 3px solid #000;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    /* Section base styles inherited from global .section */
   }
 
   .delivery-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+    /* Container base styles inherited from global .section-container */
   }
 
-  .delivery-container h2 {
-    font-size: 2.5rem;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-    font-family: "DM Mono", monospace;
-    text-align: center;
-  }
-
-  .delivery-subtitle {
-    font-size: 1.2rem;
-    color: var(--text-color);
-    margin-bottom: 3rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
+  /* Removed .section-heading and .section-subtitle - now global */
 
   .content-grid {
     display: grid;
@@ -316,40 +294,7 @@ const customerTypes = [
     flex-wrap: wrap;
   }
 
-  .primary-button,
-  .secondary-button {
-    padding: 0.8rem 2rem;
-    text-decoration: none;
-    border-radius: 6px;
-    font-family: "DM Mono", monospace;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-align: center;
-  }
-
-  .primary-button {
-    background: #000;
-    color: #fff;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .primary-button:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .secondary-button {
-    border: 2px solid #000;
-    color: var(--text-color);
-    background: #fff;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  .secondary-button:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
-  }
+  /* Removed .primary-button and .secondary-button - now global .btn variants */
 
   .cta-info {
     display: flex;
@@ -373,16 +318,8 @@ const customerTypes = [
   }
 
   @media (max-width: 768px) {
-    .customer-delivery {
-      padding: 3rem 0.5rem;
-    }
-
     .delivery-container {
-      padding: 0 0.5rem;
-    }
-
-    .delivery-container h2 {
-      font-size: 2rem;
+      /* Responsive container adjustments inherited from global */
     }
 
     .content-grid {
@@ -403,11 +340,7 @@ const customerTypes = [
       flex-direction: column;
     }
 
-    .primary-button,
-    .secondary-button {
-      width: 100%;
-      box-sizing: border-box;
-    }
+    /* Button responsive styles inherited from global .btn */
   }
 
   @media (max-width: 480px) {
