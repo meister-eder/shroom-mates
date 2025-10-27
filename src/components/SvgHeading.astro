@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 
 export interface Props {
-  tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
   src: string; // Path to SVG relative to the `public` directory, e.g., '/assets/my-heading.svg'
   color?: string; // Optional: CSS color value, e.g., 'rgb(var(--accent))'
   class?: string;

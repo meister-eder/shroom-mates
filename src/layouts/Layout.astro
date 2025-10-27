@@ -35,15 +35,6 @@ const defaultOgImage =
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Preload critical font -->
-    <link
-      rel="preload"
-      href="/node_modules/@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-
     <!-- SEO and Open Graph -->
     <title>{title} | shroom-mates</title>
     <link rel="canonical" href={canonicalURL} />
@@ -79,7 +70,7 @@ const defaultOgImage =
       <main
         id="main-content"
         class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
-        role="main"
+        aria-label="Seiteninhalt"
       >
         <slot />
       </main>

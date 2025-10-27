@@ -6,6 +6,8 @@ import ImageGallery from "../components/ImageGallery.astro";
 import UpcomingDates from "../components/UpcomingDates.astro";
 import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
 import ValuesSection from "../components/ValuesSection.astro";
+import heroRoseTasse from "../assets/images/hero_rose_tasse.jpg";
+import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
 
 const title = "Hi, wir sind die shroom-mates!";
 const description =
@@ -15,13 +17,17 @@ const description =
 <Layout title={title} description={description} isLandingPage={true}>
   <main class="landing-main">
     <section class="hero">
-      <img
-        src="/assets/hero_rose_tasse.jpg"
+      <Image
+        src={heroRoseTasse}
         alt="Rosafarbene Austernpilze in einer Tasse"
         class="hero-image"
-        loading="eager"
+        width={1920}
+        height={1080}
+        priority
+        format="webp"
+        decoding="async"
       />
-      <a href="#content" class="scroll-arrow" aria-label="Scroll down">
+      <a href="#content" class="scroll-arrow" aria-label="Zum Inhalt scrollen">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="40"
@@ -32,6 +38,8 @@ const description =
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
@@ -44,13 +52,14 @@ const description =
           Hi, wir sind die <span class="no-wrap">shroom-mates!</span>
         </h1>
         <div class="teaser-content-row">
-          <img
-            src="/assets/logo_with_shrooms.png"
+          <Image
+            src={logoWithShrooms}
             alt="Shroom-Mates Logo mit Pilzen"
             class="walking-logo"
-            width="200"
-            height="200"
+            width={200}
+            height={200}
             loading="eager"
+            format="webp"
           />
           <p class="teaser-text">
             Wir züchten feinste Edelpilze mit regionalen Rohstoffen, direkt in
