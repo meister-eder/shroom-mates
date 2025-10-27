@@ -28,7 +28,7 @@ const values = [
   aria-labelledby="values-heading"
 >
   <div class="section-container">
-    <h2 id="values-heading" class="sr-only">Unsere Werte</h2>
+    <h2 id="values-heading" class="values-heading">Unsere Werte</h2>
     <div class="values-grid">
       {
         values.map((value) => (
@@ -47,6 +47,17 @@ const values = [
   .values-section {
     padding: 4rem 2rem;
     border-top: 2px solid #000;
+  }
+
+  .values-heading {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin: 0 auto 3rem;
+    line-height: 1.2;
+    text-align: center;
+    font-family: monospace;
+    font-weight: bold;
+    max-width: 1200px;
   }
 
   .values-grid {
@@ -77,6 +88,11 @@ const values = [
       padding: 3rem 1.5rem;
     }
 
+    .values-heading {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
     .values-grid {
       grid-template-columns: 1fr;
       gap: 1.5rem;
@@ -94,6 +110,11 @@ const values = [
   @media (max-width: 480px) {
     .values-section {
       padding: 2rem 1rem;
+    }
+
+    .values-heading {
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
     }
 
     .values-grid {

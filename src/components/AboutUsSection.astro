@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
-import heroOyster from "../assets/images/hero_oyster.png";
-import seitlingTasse from "../assets/images/seitling_tasse_cutout.png";
+// import { Image } from "astro:assets";
+// import heroOyster from "../assets/images/hero_oyster.png";
+// import seitlingTasse from "../assets/images/seitling_tasse_cutout.png";
 import SvgHeading from "./SvgHeading.astro";
 ---
 
@@ -34,7 +34,8 @@ import SvgHeading from "./SvgHeading.astro";
         </p>
       </div>
     </div>
-    <div class="about-images">
+    <!-- Images commented out for release -->
+    <!-- <div class="about-images">
       <div class="image-wrapper large">
         <Image
           src={heroOyster}
@@ -55,7 +56,7 @@ import SvgHeading from "./SvgHeading.astro";
           loading="lazy"
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </section>
 
@@ -68,10 +69,11 @@ import SvgHeading from "./SvgHeading.astro";
 
   .about-container {
     /* Container base styles inherited from global .section-container */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
   }
 
   .about-content .about-us-heading {
@@ -94,7 +96,8 @@ import SvgHeading from "./SvgHeading.astro";
     margin: 0;
   }
 
-  .about-images {
+  /* Images styles commented out for release */
+  /* .about-images {
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -124,15 +127,10 @@ import SvgHeading from "./SvgHeading.astro";
     height: 100%;
     object-fit: cover;
     display: block;
-  }
+  } */
 
   @media (max-width: 768px) {
-    .about-container {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-    }
-
-    .about-content h2 {
+    .about-content .about-us-heading {
       font-size: 2rem;
       text-align: center;
     }
@@ -140,7 +138,16 @@ import SvgHeading from "./SvgHeading.astro";
     .about-text p {
       font-size: 1rem;
     }
+  }
 
+  @media (max-width: 480px) {
+    .about-content .about-us-heading {
+      font-size: 1.8rem;
+    }
+  }
+
+  /* Media queries for images commented out for release */
+  /* @media (max-width: 768px) {
     .about-images {
       flex-direction: row;
       gap: 0.3rem;
@@ -167,14 +174,6 @@ import SvgHeading from "./SvgHeading.astro";
   }
 
   @media (max-width: 480px) {
-    .about-container {
-      gap: 2rem;
-    }
-
-    .about-content h2 {
-      font-size: 1.8rem;
-    }
-
     .about-images {
       flex-direction: column;
       gap: 1.5rem;
@@ -184,5 +183,5 @@ import SvgHeading from "./SvgHeading.astro";
     .image-wrapper.small {
       max-width: 100%;
     }
-  }
+  } */
 </style>
