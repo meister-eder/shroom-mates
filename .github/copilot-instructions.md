@@ -8,7 +8,8 @@ This project is a static website built with Astro 5, focused on **maximum perfor
 - **Language**: TypeScript (strict mode)
 - **Build Tool**: Bun
 - **Deployment Target**: Static hosting (shroom-mates.de)
-- **Design System**: Custom with DM Mono font, hand-drawn aesthetic
+- **Design System**: Custom with Geist font, playful aesthetic
+- **Image Handling**: Astro Image component with aggressive optimization
 - **Code Quality**: Biome for formatting and linting
 
 ## Core Principles
