@@ -273,18 +273,16 @@ const description =
         e.preventDefault();
         const target = document.querySelector("#content");
         if (target) {
-          // Get navbar height from CSS variable
-          const navbarHeight =
-            parseFloat(
-              getComputedStyle(document.documentElement).getPropertyValue(
-                "--navbar-height"
-              )
-            ) * 16; // Convert rem to pixels (assuming 1rem = 16px)
+          // Get the navbar element to calculate its actual height
+          const navbar = document.querySelector("header");
+          const navbarHeight = navbar ? navbar.offsetHeight : 0;
 
+          // Calculate the exact position to scroll to
           const targetPosition =
             target.getBoundingClientRect().top +
             window.pageYOffset -
             navbarHeight;
+
           window.scrollTo({
             top: targetPosition,
             behavior: "smooth",
