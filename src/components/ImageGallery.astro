@@ -1,0 +1,220 @@
+---
+import { Image } from "astro:assets";
+import heroOyster from "../assets/images/hero_oyster.png";
+import seitlingTasse from "../assets/images/seitling_tasse_cutout.png";
+import whitePearlTasse from "../assets/images/white_pearl_tasse_cutout.png";
+import img9970 from "../assets/images/IMG_9970.jpeg";
+---
+
+<section class="section image-gallery" id="gallery">
+  <div class="section-container gallery-container">
+    <h2 class="section-heading">Unsere Pilze</h2>
+    <p class="section-subtitle">Frische Austernpilze in höchster Qualität</p>
+
+    <div class="gallery-grid">
+      <div class="gallery-item featured">
+        <Image
+          src={img9970}
+          alt="Frische Austernpilze der shroom-mates"
+          width={500}
+          height={400}
+          format="webp"
+          loading="lazy"
+        />
+        <div class="item-overlay">
+          <h3>Frisch geerntet</h3>
+          <p>Direkt vom Substrat zu dir</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <Image
+          src={heroOyster}
+          alt="Hochwertige Edelpilze"
+          width={350}
+          height={300}
+          format="webp"
+          loading="lazy"
+        />
+        <div class="item-overlay">
+          <h3>Premium Qualität</h3>
+          <p>Nachhaltig angebaut</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <Image
+          src={seitlingTasse}
+          alt="Austernpilze artistically presented"
+          width={350}
+          height={300}
+          format="webp"
+          loading="lazy"
+        />
+        <div class="item-overlay">
+          <h3>Vielseitig</h3>
+          <p>Perfekt für jede Küche</p>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <Image
+          src={whitePearlTasse}
+          alt="White Pearl Austernpilze"
+          width={350}
+          height={300}
+          format="webp"
+          loading="lazy"
+        />
+        <div class="item-overlay">
+          <h3>Verschiedene Sorten</h3>
+          <p>Je nach Saison</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Component-specific overrides and styles */
+
+  .image-gallery {
+    /* Section base styles inherited from global .section */
+  }
+
+  .gallery-container {
+    /* Container base styles inherited from global .section-container */
+    text-align: center;
+  }
+
+  /* Removed .section-heading and .section-subtitle - now global */
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+    grid-template-areas:
+      "featured item2 item3"
+      "featured item4 item4";
+  }
+
+  .gallery-item {
+    position: relative;
+    border: 3px solid #000;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .gallery-item.featured {
+    grid-area: featured;
+  }
+
+  .gallery-item:nth-child(2) {
+    grid-area: item2;
+  }
+
+  .gallery-item:nth-child(3) {
+    grid-area: item3;
+  }
+
+  .gallery-item:nth-child(4) {
+    grid-area: item4;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.05);
+  }
+
+  .item-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: #fff;
+    padding: 2rem 1.5rem 1.5rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-item:hover .item-overlay {
+    transform: translateY(0);
+  }
+
+  .item-overlay h3 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+    font-family: "DM Mono", monospace;
+  }
+
+  .item-overlay p {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .gallery-container {
+      /* Responsive container adjustments inherited from global */
+      text-align: center;
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "featured featured"
+        "item2 item3"
+        "item4 item4";
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .gallery-item {
+      aspect-ratio: 4/3;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .gallery-item.featured {
+      aspect-ratio: 16/9;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .gallery-grid {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "featured"
+        "item2"
+        "item3"
+        "item4";
+    }
+
+    .gallery-item {
+      aspect-ratio: 4/3;
+    }
+
+    .item-overlay {
+      transform: translateY(0);
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+      padding: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,131 @@
+---
+import ValueCard from "./ValueCard.astro";
+
+const values = [
+  {
+    svgSrc: "/assets/headings/nachhaltig.svg",
+    title: "Nachhaltig",
+    description:
+      "Wir verwenden ausschließlich regionale Rohstoffe und setzen auf umweltfreundliche Anbaumethoden. Unsere Pilze wachsen auf natürlichen Substraten ohne künstliche Zusätze.",
+  },
+  {
+    svgSrc: "/assets/headings/regional.svg",
+    title: "Regional",
+    description:
+      "Direkt aus Leipzig-Plagwitz für Leipzig. Kurze Transportwege garantieren Frische und reduzieren unseren CO2-Fußabdruck. Wir unterstützen lokale Lieferanten und die regionale Wirtschaft.",
+  },
+  {
+    svgSrc: "/assets/headings/transparent.svg",
+    title: "Transparent",
+    description:
+      "Bei uns kannst du sehen, wo und wie deine Pilze wachsen. Von der Kultur bis zur Ernte – wir zeigen dir gerne jeden Schritt unseres Produktionsprozesses.",
+  },
+];
+---
+
+<section
+  class="values-section section section--checkered"
+  aria-labelledby="values-heading"
+>
+  <div class="section-container">
+    <!-- <h2 id="values-heading" class="values-heading">Unsere Werte</h2> -->
+    <div class="values-grid">
+      {
+        values.map((value) => (
+          <ValueCard
+            svgSrc={value.svgSrc}
+            title={value.title}
+            description={value.description}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .values-section {
+    padding: 4rem 2rem;
+    border-top: 2px solid #000;
+  }
+
+  .values-heading {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin: 0 auto 3rem;
+    line-height: 1.2;
+    text-align: center;
+    font-family: monospace;
+    font-weight: bold;
+    max-width: 1200px;
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Screen reader only class for accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Mobile: Stack cards vertically */
+  @media (max-width: 768px) {
+    .values-section {
+      padding: 3rem 1.5rem;
+    }
+
+    .values-heading {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .values-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  /* Desktop: Cards side by side */
+  @media (min-width: 769px) {
+    .values-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Extra small screens */
+  @media (max-width: 480px) {
+    .values-section {
+      padding: 2rem 1rem;
+    }
+
+    .values-heading {
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .values-grid {
+      gap: 1.25rem;
+    }
+  }
+
+  /* Large screens: max width constraint */
+  @media (min-width: 1400px) {
+    .values-grid {
+      max-width: 1400px;
+    }
+  }
+</style>

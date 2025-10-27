@@ -1,39 +1,81 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import heroImage from "../assets/images/shroom-mates-drawing.png";
-import Card from "../components/Card.astro";
+import { Image } from "astro:assets";
+import AboutUsSection from "../components/AboutUsSection.astro";
+// import ImageGallery from "../components/ImageGallery.astro";
+// import UpcomingDates from "../components/UpcomingDates.astro";
+// import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
+import ValuesSection from "../components/ValuesSection.astro";
+import heroRoseTasse from "../assets/images/hero_rose_tasse.jpg";
+import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
+
+const title = "Hi, wir sind die shroom-mates!";
+const description =
+  "Hochwertige Edelpilze aus Leipzig, Plagwitz. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.";
 ---
 
-<Layout title="Welcome to shroom-mates" isLandingPage={true}>
+<Layout title={title} description={description} isLandingPage={true}>
   <main class="landing-main">
-    <section class="hero" style={`background-image: url(${heroImage.src})`}>
-      <div class="title-wrapper">
-        <div class="construction-card">
-          <h1>Hi, wir sind die shroom-mates</h1>
-          <p class="notice">🚧 Hier wächst gerade eine neue Website 🚧</p>
-          <p class="description">
-            Während diese Seite noch kultiviert wird, kannst du uns schon mal
-            auf Instagram besuchen oder direkt kontaktieren.
+    <section class="hero">
+      <Image
+        src={heroRoseTasse}
+        alt="Rosafarbene Austernpilze in einer Tasse"
+        class="hero-image"
+        width={1920}
+        height={1080}
+        priority
+        format="webp"
+        decoding="async"
+      />
+      <a href="#content" class="scroll-arrow" aria-label="Zum Inhalt scrollen">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </a>
+    </section>
+
+    <section class="hero-teaser" id="content">
+      <div class="teaser-wrapper">
+        <h1 class="hero-title">
+          Hi, wir sind die <span class="no-wrap">shroom-mates!</span>
+        </h1>
+        <div class="teaser-content-row">
+          <Image
+            src={logoWithShrooms}
+            alt="Shroom-Mates Logo mit Pilzen"
+            class="walking-logo"
+            width={200}
+            height={200}
+            loading="eager"
+            format="webp"
+          />
+          <p class="teaser-text">
+            Wir züchten feinste Edelpilze mit regionalen Rohstoffen, direkt in
+            der Plagwitzer Markthalle in Leipzig.
           </p>
-          <p class="description">
-            Kostproben gibt es schon jetzt auf dem <a
-              href="https://samstagsmarkt.de/"
-              target="_blank">Egenberger Samstagsmarkt</a
-            >. Die Verkaufstermine werden auf Instagram bekanntgegeben.
-          </p>
-          <div class="construction-links">
-            <a
-              href="https://www.instagram.com/shroom_mates_le/"
-              class="social-link"
-              target="_blank"
-            >
-              Folgt uns auf Instagram
-            </a>
-            <a href="/contact" class="contact-link"> Kontakt </a>
-          </div>
         </div>
       </div>
     </section>
+
+    <!-- New sections -->
+    <ValuesSection />
+    <AboutUsSection />
+    <!-- Commented out for release -->
+    <!-- <ImageGallery /> -->
+    <!-- <UpcomingDates /> -->
+    <!-- <CustomerDeliverySection /> -->
   </main>
 </Layout>
 
@@ -45,148 +87,218 @@ import Card from "../components/Card.astro";
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure sections flow properly */
+  .landing-main > :global(section) {
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .hero {
     width: 100%;
-    min-height: calc(100vh - 60px);
-    padding-bottom: 60px;
-    background-size: 100% auto;
-    background-position: bottom;
-    background-repeat: no-repeat;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 6rem;
+    height: 100vh;
     position: relative;
     margin: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid #000;
   }
 
-  .title-wrapper {
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top 30%;
+    transform: scale(1.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .scroll-arrow {
+    position: absolute;
+    bottom: 8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    color: #ffffff;
+    cursor: pointer;
+    animation: bounce 2s infinite;
+    transition: opacity 0.3s ease;
+    text-decoration: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  .scroll-arrow:hover {
+    opacity: 0.7;
+  }
+
+  @keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    40% {
+      transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+      transform: translateX(-50%) translateY(-5px);
+    }
+  }
+
+  .hero-teaser {
+    width: 100%;
+    background: var(--bg-color);
+    padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-    z-index: 2;
-    margin-top: 6rem;
+    min-height: auto;
+    max-height: none;
+    position: relative;
+    scroll-margin-top: var(
+      --navbar-height
+    ); /* offset for fixed navbar when scrolling to anchor */
   }
 
-  .construction-card {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
-    border-radius: 12px;
-    border: 2px solid #000;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.8);
-    max-width: 500px;
-    width: 85%;
-    margin: 0 1rem;
-  }
-
-  .construction-card h1 {
-    font-size: 2.5rem;
-    color: #000;
-    border: none;
-    padding: 0;
-    margin-bottom: 1rem;
-  }
-
-  .notice {
-    font-family: "DM Mono", monospace;
-    font-size: 1.2rem;
-    color: #000;
-    margin: 1rem 0;
-  }
-
-  .description {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-
-  .description a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-  }
-
-  .description a:hover {
-    opacity: 0.8;
-  }
-
-  .construction-links {
+  .teaser-wrapper {
+    max-width: 1200px;
+    width: 100%;
     display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    max-width: 400px;
-    margin: 0 auto;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
   }
 
-  .construction-links a {
-    padding: 0.8rem 1.5rem;
-    font-family: "DM Mono", monospace;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s;
-    min-width: 200px;
+  .hero-title {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.2;
     text-align: center;
+    width: 100%;
+    font-family: monospace;
+    font-weight: bold;
   }
 
-  .social-link {
-    background: #000;
-    color: #fff;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  .teaser-content-row {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    width: 100%;
   }
 
-  .social-link:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  .walking-logo {
+    width: 200px;
+    height: auto;
+    flex-shrink: 0;
+    position: relative;
+    bottom: -2rem;
+    z-index: 20;
   }
 
-  .contact-link {
-    border: 2px solid #000;
-    color: #000;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  .teaser-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin: 0;
+    flex: 1;
+    text-align: left;
   }
 
-  .contact-link:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  .no-wrap {
+    white-space: nowrap;
   }
 
   @media (max-width: 768px) {
     .hero {
-      padding-bottom: 0;
-      background-size: 180% auto;
-      background-position: right bottom;
-      padding-top: 0;
-      min-height: 100vh;
+      height: 100vh;
     }
 
-    .construction-card {
-      padding: 1rem;
-      margin: 0 2rem;
+    .scroll-arrow {
+      bottom: 2rem;
     }
 
-    .construction-card h1 {
-      font-size: 1.5rem;
+    .teaser-wrapper {
+      gap: 1rem;
     }
 
-    .construction-card p {
-      font-size: 0.8rem;
+    .hero-title {
+      font-size: 1.6rem;
+      text-align: center;
     }
 
-    .construction-links {
-      gap: 0.75rem;
+    .teaser-content-row {
+      gap: 1.5rem;
     }
 
-    .construction-links a {
-      min-width: 0;
-      width: auto;
-      padding: 0.8rem 1.2rem;
-      font-size: 0.8rem;
+    .walking-logo {
+      width: 120px;
+      bottom: -1rem;
+    }
+
+    .teaser-text {
+      font-size: 1rem;
+      line-height: 1.4;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .walking-logo {
+      width: 80px;
+      bottom: -0.5rem;
+    }
+
+    .teaser-content-row {
+      gap: 1rem;
+    }
+
+    .teaser-text {
+      font-size: 0.9rem;
+      line-height: 1.3;
     }
   }
 </style>
+
+<script>
+  // Smooth scroll with navbar offset
+  document.addEventListener("DOMContentLoaded", () => {
+    const scrollArrow = document.querySelector(".scroll-arrow");
+    if (scrollArrow) {
+      scrollArrow.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = document.querySelector("#content");
+        if (target) {
+          // Get the navbar element to calculate its actual height
+          const navbar = document.querySelector("header");
+          const navbarHeight = navbar ? navbar.offsetHeight : 0;
+
+          // Calculate the exact position to scroll to
+          const targetPosition =
+            target.getBoundingClientRect().top +
+            window.pageYOffset -
+            navbarHeight;
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth",
+          });
+        }
+      });
+    }
+  });
+</script>

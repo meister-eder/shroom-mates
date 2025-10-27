@@ -1,19 +1,75 @@
 ---
-
+import SvgHeading from "./SvgHeading.astro";
+import { Image } from "astro:assets";
+import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
 ---
 
-<header>
-  <nav>
-    <div class="logo">
-      <a href="/">shroom-mates</a>
-    </div>
-    <button class="hamburger" aria-label="Menu">
+<header role="banner" transition:persist="header">
+  <nav role="navigation" aria-label="Hauptnavigation">
+    <a href="/" class="desktop-logo" aria-label="Shroom-Mates Startseite">
+      <Image
+        src={logoWithShrooms}
+        alt="Shroom-Mates Logo"
+        width={120}
+        height={120}
+        loading="eager"
+        format="webp"
+      />
+    </a>
+
+    <button
+      class="hamburger"
+      aria-label="Navigationsmenü öffnen"
+      aria-expanded="false"
+      aria-controls="nav-links"
+      type="button"
+    >
       <span class="hamburger-box">
         <span class="hamburger-inner"></span>
       </span>
     </button>
-    <ul class="nav-links">
-      <li><a href="/contact">Kontakt</a></li>
+
+    <div class="logo">
+      <a href="/" aria-label="Shroom-Mates Startseite">
+        <SvgHeading
+          tag="div"
+          src="/assets/headings/logo_font.svg"
+          alt="shroom-mates"
+          color="var(--accent)"
+        />
+      </a>
+    </div>
+
+    <a
+      href="https://www.instagram.com/shroom_mates_le/"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Besuche uns auf Instagram"
+      class="instagram-link"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
+          fill="currentColor"></path>
+      </svg>
+    </a>
+
+    <ul class="nav-links" id="nav-links" role="list">
+      <!-- Commented out for release -->
+      <!-- <li><a href="/unsere-pilze">Unsere Pilze</a></li> -->
+      <!-- <li><a href="/rezepte">Rezepte</a></li> -->
+      <!-- <li><a href="/ueber-uns">Über uns</a></li> -->
+      <!-- <li><a href="/shop">Shop</a></li> -->
+      <!-- <li><a href="/news">News</a></li> -->
+      <li><a href="/kontakt">Kontakt</a></li>
       <li><a href="/impressum">Impressum</a></li>
     </ul>
   </nav>
@@ -26,64 +82,28 @@
     left: 0;
     width: 100%;
     z-index: 1000;
-    background: white;
-    border-bottom: 2px solid #5f5f5f;
+    background: var(--bg-accent);
+    border-bottom: 2px solid #000;
   }
 
   nav {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 0.5rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
+    gap: 1rem;
+    min-height: 64px;
   }
 
-  .logo {
-    margin: 0 0rem;
-  }
-
-  .logo a {
-    font-family: "DM Mono", monospace;
-    font-size: 1.25rem;
-    color: #000;
-    text-decoration: none;
-    padding: 0.2rem 0.9rem;
-    background-color: #fdfdfd;
-    box-shadow: 4px 4px #000;
-    transition: all 0.2s;
-  }
-
-  .logo a:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px #000;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 1.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .nav-links a {
-    color: #000;
-    text-decoration: none;
-    font-family: "DM Mono", monospace;
-    font-size: 1.1rem;
-    padding: 0.5rem 0.75rem;
-    transition: all 0.2s;
-  }
-
-  .nav-links a:hover {
-    background-color: #fdfdfd;
-    box-shadow: 3px 3px #5f5f5f;
+  .desktop-logo {
+    display: none;
   }
 
   .hamburger {
-    display: none;
+    grid-column: 1;
     border: none;
     background: none;
     cursor: pointer;
@@ -92,10 +112,102 @@
     height: 40px;
     position: relative;
     z-index: 2;
+    border-radius: 12px;
+    transition: all 0.2s ease;
   }
 
-  .hamburger:hover {
-    transform: translate(2px, 2px);
+  .logo {
+    grid-column: 2;
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    max-width: 140px;
+  }
+
+  .logo a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .logo :global(.svg-heading) {
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .logo :global(.svg-heading svg) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .instagram-link {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    color: var(--accent);
+    transition: all 0.2s;
+    padding: 0.5rem;
+  }
+
+  .instagram-link:hover {
+    transform: scale(1.1);
+  }
+
+  .instagram-link:focus-visible {
+    outline: 2px solid var(--focus-color, #5f5f5f);
+    outline-offset: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-accent);
+    flex-direction: column;
+    align-items: center;
+    border-top: 0px solid #000;
+    border-bottom: 2px solid #000;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.3s ease,
+      padding 0.3s ease,
+      border-top-width 0.3s ease;
+    padding: 0 1.5rem;
+  }
+
+  .nav-links.active {
+    max-height: 500px;
+    padding: 1.5rem;
+    border-top-width: 2px;
+  }
+
+  .nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-family: "DM Mono", monospace;
+    font-size: 1.1rem;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    display: inline-block;
+  }
+
+  .nav-links a:hover {
+    border-bottom-color: var(--accent);
+    transform: scale(1.1);
+  }
+
+  .hamburger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .hamburger-box {
@@ -116,9 +228,10 @@
   .hamburger-inner::after {
     width: 30px;
     height: 3px;
-    background-color: #000;
+    background-color: var(--accent);
     position: absolute;
     transition: transform 0.15s ease;
+    border-radius: 3px;
   }
 
   .hamburger-inner::before,
@@ -135,44 +248,93 @@
     bottom: -10px;
   }
 
-  @media (max-width: 768px) {
-    nav {
-      padding: 0.75rem 1.5rem;
+  nav.menu-open .hamburger-inner {
+    transform: rotate(45deg);
+  }
+
+  nav.menu-open .hamburger-inner::before {
+    transform: translateY(10px) rotate(0deg);
+    opacity: 0;
+  }
+
+  nav.menu-open .hamburger-inner::after {
+    transform: translateY(-10px) rotate(-90deg);
+  }
+
+  @media (min-width: 769px) {
+    .hamburger {
+      display: none;
     }
 
-    .hamburger {
-      display: block;
+    .desktop-logo {
+      display: flex;
+      align-items: center;
+      grid-column: 1;
+      grid-row: 1;
+      position: relative;
+      z-index: 10;
+    }
+
+    .desktop-logo img {
+      height: 80px;
+      width: auto;
+      margin-top: 15px;
+    }
+
+    nav {
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto;
+    }
+
+    .logo {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+    }
+
+    .instagram-link {
+      grid-column: 3;
+      grid-row: 1;
     }
 
     .nav-links {
-      display: none;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
-      background: white;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
+      position: static;
+      flex-direction: row;
+      max-height: none;
+      overflow: visible;
+      padding: 0;
+      border-bottom: none;
+      background: transparent;
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      padding: 0.25rem 1rem;
+    }
+
+    .logo {
+      max-width: 100px;
+    }
+
+    .logo :global(.svg-heading) {
+      font-size: 0.5rem;
+    }
+
+    .nav-links a {
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      min-width: 140px;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .nav-links {
       gap: 1rem;
-      border-bottom: 2px solid #5f5f5f;
-    }
-
-    .nav-links.active {
-      display: flex;
-    }
-
-    nav.menu-open .hamburger-inner {
-      transform: rotate(45deg);
-    }
-
-    nav.menu-open .hamburger-inner::before {
-      transform: translateY(10px) rotate(0deg);
-      opacity: 0;
-    }
-
-    nav.menu-open .hamburger-inner::after {
-      transform: translateY(-10px) rotate(-90deg);
     }
 
     .nav-links a {

@@ -1,64 +1,114 @@
 ---
-import "@fontsource/dm-mono";
-import { ClientRouter } from "astro:transitions";
+import "@fontsource/geist-sans";
+import { ViewTransitions } from "astro:transitions";
 import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
   title: string;
+  description?: string;
+  ogImage?: string;
   isLandingPage?: boolean;
 }
 
-const { title, isLandingPage = false } = Astro.props;
+const {
+  title,
+  description = "Hochwertige Edelpilze aus Leipzig, Plagwitz. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.",
+  ogImage,
+  isLandingPage = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const defaultOgImage =
+  ogImage || new URL("/favicon.ico", Astro.site).toString();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <ViewTransitions />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <ClientRouter />
+
+    <!-- SEO and Open Graph -->
+    <title>{title} | shroom-mates</title>
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:title" content={`${title} | shroom-mates`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="shroom-mates" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:image" content={defaultOgImage} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | shroom-mates`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={defaultOgImage} />
+
+    <!-- Additional meta tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="shroom-mates" />
+    <meta name="theme-color" content="#fdfcea" />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>
+    <!-- Skip link for keyboard navigation -->
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
     <div class="site-wrapper">
       <Header />
-      <main class={`site-`}>
+      <main
+        id="main-content"
+        class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
+        aria-label="Seiteninhalt"
+      >
         <slot />
       </main>
 
-      <footer>
-        <p>
-          ©️ 2025 shroom-mates, built with 🍄 and <a
-            href="https://github.com/meister-eder/shroom-mates"
-            target="_blank">free software</a
-          > in Leipzig
-        </p>
-        <p>
-          <a
-            class="insta-link"
-            href="https://www.instagram.com/shroom_mates_le/"
-            target="_blank"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 448 512"
-              d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
-              height="22"
-              ><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-              <path
-                d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
-              ></path></svg
-            ></a
-          >
-          <a href="/impressum">Impressum</a>
-          <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
-        </p>
-      </footer>
+      <Footer />
 
       <script>
         import "../scripts/hamburger.js";
+      </script>
+
+      <script>
+        // Check for View Transitions API support
+        const hasViewTransitions = document.startViewTransition !== undefined;
+        console.log("Native View Transitions supported:", hasViewTransitions);
+        if (!hasViewTransitions) {
+          console.log(
+            "Using fallback transitions for better browser compatibility"
+          );
+
+          // Add CSS-based transition effects for fallback
+          document.addEventListener("astro:before-preparation", () => {
+            const main = document.querySelector(".site-main");
+            if (main) {
+              main.classList.add("astro-transitioning");
+            }
+          });
+
+          document.addEventListener("astro:after-swap", () => {
+            const main = document.querySelector(".site-main");
+            if (main) {
+              // Small delay to ensure smooth transition
+              setTimeout(() => {
+                main.classList.remove("astro-transitioning");
+              }, 50);
+            }
+          });
+        }
       </script>
 
       <style is:global>
@@ -68,16 +118,69 @@ const { title, isLandingPage = false } = Astro.props;
           --duration: 0.2s;
         }
 
+        /* Accessibility utilities */
+        .skip-link {
+          position: absolute;
+          top: -40px;
+          left: 6px;
+          background: var(--text-color);
+          color: var(--bg-color);
+          padding: 8px;
+          text-decoration: none;
+          z-index: 1001;
+          border-radius: 4px;
+        }
+
+        .skip-link:focus {
+          top: 6px;
+        }
+
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        /* Focus styles */
+        :focus-visible {
+          outline: 2px solid var(--focus-color);
+          outline-offset: 2px;
+        }
+
+        /* Fallback transitions for browsers without View Transitions API */
+        @media (prefers-reduced-motion: no-preference) {
+          .site-main {
+            transition: opacity 0.2s ease-in-out;
+          }
+
+          .site-main.astro-transitioning {
+            opacity: 0.8;
+          }
+        }
+
         html {
           height: 100%;
           margin: 0;
           padding: 0;
+          scroll-behavior: smooth;
+          overflow-x: hidden;
         }
 
         body {
           min-height: 100%;
           margin: 0;
           padding: 0;
+          overflow-x: hidden;
+        }
+
+        * {
+          box-sizing: border-box;
         }
 
         .site-wrapper {
@@ -102,35 +205,13 @@ const { title, isLandingPage = false } = Astro.props;
         .site-main.with-nav-spacing {
           max-width: 1200px;
           margin: 0 auto;
-          padding-top: 6rem;
+          padding-top: var(--navbar-height);
         }
 
-        footer {
-          flex-shrink: 0;
-          width: 100%;
-          background-color: rgb(228, 228, 228);
-          z-index: 1;
-          position: relative;
-        }
-
-        footer > p {
-          margin: 0;
-          padding: 1rem 2rem;
-          text-align: center;
-        }
-
-        footer a {
-          color: inherit;
-          text-decoration: none;
-          border-bottom: 1px solid currentColor;
-        }
-
-        footer a:hover {
-          opacity: 0.8;
-        }
-
-        .insta-link {
-          text-decoration: none;
+        /* Improve image loading */
+        img {
+          height: auto;
+          max-width: 100%;
         }
       </style>
     </div>

@@ -1,0 +1,194 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const title = "Kontakt";
+const description =
+  "Schreib uns eine Nachricht! Kontaktiere die shroom-mates für Fragen zu unseren Austernpilzen, Verkaufsterminen oder anderen Anliegen.";
+---
+
+<Layout title={title} description={description}>
+  <section class="contact-section">
+    <h1>Schreib uns was Nettes</h1>
+    <div class="content">
+      <form method="POST" id="form">
+        <input
+          type="hidden"
+          name="access_key"
+          value="d69f2b91-fe55-4258-97a9-6bb53285b5e2"
+        />
+        <div class="form-group">
+          <label for="name">Dein Name</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Nachricht</label>
+          <textarea id="message" name="message" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-button">Abschicken</button>
+        <div id="result"></div>
+      </form>
+    </div>
+    <script is:inline>
+      const form = document.getElementById("form");
+      const result = document.getElementById("result");
+
+      form.addEventListener("submit", function (e) {
+        const formData = new FormData(form);
+        e.preventDefault();
+
+        const object = Object.fromEntries(formData);
+        const json = JSON.stringify(object);
+
+        result.innerHTML = "Bitte warten...";
+
+        fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: json,
+        })
+          .then(async (response) => {
+            let json = await response.json();
+            if (response.status == 200) {
+              result.innerHTML = json.message;
+            } else {
+              console.log(response);
+              result.innerHTML = json.message;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            result.innerHTML = "Ups, das hat nicht geklappt...";
+          })
+          .then(function () {
+            form.reset();
+            setTimeout(() => {
+              result.style.display = "none";
+            }, 3000);
+          });
+      });
+    </script>
+  </section>
+
+  <style>
+    .contact-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 70vh;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: center;
+      margin: 0 0 3rem 0;
+      color: var(--text-color);
+      font-family: monospace;
+    }
+
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 2px solid var(--focus-color);
+      border-radius: 6px;
+      font-family: inherit;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--text-color);
+    }
+
+    textarea {
+      height: 150px;
+      resize: vertical;
+    }
+
+    .submit-button {
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: "DM Mono", monospace;
+      background: #000;
+      color: #fff;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .submit-button:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    #result {
+      margin-top: 1rem;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    @media (max-width: 768px) {
+      .contact-section {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .submit-button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      input,
+      textarea {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</Layout>

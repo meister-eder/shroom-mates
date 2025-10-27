@@ -1,0 +1,64 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const title = "Rezepte";
+const description =
+  "Köstliche Rezeptideen für die Zubereitung unserer frischen Pilze. Entdecke kreative Zubereitungsarten von den shroom-mates.";
+---
+
+<Layout title={title} description={description}>
+  <main>
+    <h1>Rezepte & Zubereitungstipps</h1>
+    <div class="content">
+      <p>
+        Hier sammeln wir unsere liebsten Rezepte und Zubereitungstipps für
+        unsere frischen Pilze.
+      </p>
+
+      <h2>Austernpilz-Klassiker</h2>
+      <p>Einfache und bewährte Rezepte für den perfekten Pilzgenuss.</p>
+
+      <h2>Kreative Ideen</h2>
+      <p>Innovative Zubereitungsarten und außergewöhnliche Kombinationen.</p>
+
+      <h2>Zubereitungstipps</h2>
+      <p>Tipps zur optimalen Lagerung und Vorbereitung unserer Pilze.</p>
+
+      <div class="placeholder">
+        <p><em>Rezeptsammlung wird derzeit zusammengestellt...</em></p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    font-size: 20px;
+    line-height: 1.6;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin: 3rem 0;
+  }
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h2 {
+    margin-top: 2rem;
+    font-size: 1.8rem;
+  }
+  .placeholder {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border-left: 4px solid #5f5f5f;
+    font-style: italic;
+  }
+</style>

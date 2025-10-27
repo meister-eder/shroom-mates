@@ -10,7 +10,7 @@ const { text, color = "black" } = Astro.props;
 <style define:vars={{ color }}>
   .box {
     font-size: 1rem;
-    background-color: #fdfdfd;
+    background-color: var(--bg-color);
     box-shadow: 6px 6px var(--color);
     padding: 10px;
   }

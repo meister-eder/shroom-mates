@@ -1,0 +1,95 @@
+---
+import { promises as fs } from "fs";
+import path from "path";
+
+export interface Props {
+  tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+  src: string; // Path to SVG relative to the `public` directory, e.g., '/assets/my-heading.svg'
+  color?: string; // Optional: CSS color value, e.g., 'rgb(var(--accent))'
+  class?: string;
+  alt: string; // Required for accessibility
+}
+
+const { tag: Tag, src, color, class: className, alt } = Astro.props;
+
+// Read the SVG file from the public directory
+const svgPath = path.join(process.cwd(), "public", src);
+let svgContent = "";
+let error = "";
+
+try {
+  const rawSvg = await fs.readFile(svgPath, "utf-8");
+  // Replace fill attributes with 'currentColor' to allow CSS styling.
+  // This makes the SVG inherit the color from its parent.
+  svgContent = rawSvg
+    .replace(/fill="[^"]*"/g, 'fill="currentColor"')
+    // Also handle inline styles that might have fill defined
+    .replace(/style="([^"]*)"/g, (match, styles) => {
+      // If the style already has a fill, replace it
+      if (styles.includes("fill:")) {
+        return `style="${styles.replace(/fill:[^;"]*/g, "fill:currentColor")}"`;
+      }
+      // If no fill in style, add it
+      return `style="${styles};fill:currentColor"`;
+    })
+    // For paths without any fill specified, add fill attribute
+    .replace(/<path(?![^>]*fill)/g, '<path fill="currentColor"')
+    // Remove aria-label attributes from the SVG content itself to prevent text rendering
+    .replace(/aria-label="[^"]*"/g, "");
+} catch (e) {
+  error = `SVG file not found at: ${src}`;
+  console.error(error);
+}
+
+// Define styles. The color is set via an inline style variable.
+// The size is controlled by the `em` unit, making it relative to font-size.
+const styles = {
+  color: color || "var(--accent)", // Use provided color or default to app's primary text color
+};
+---
+
+<Tag
+  class:list={["svg-heading", className]}
+  style={styles}
+  role="heading"
+  aria-label={alt}
+>
+  {
+    error ? (
+      <span class="error-message">{error}</span>
+    ) : (
+      <Fragment set:html={svgContent} />
+    )
+  }
+</Tag>
+
+<style>
+  .svg-heading {
+    /* The component's font-size will control the SVG size */
+    font-size: 3rem; /* Default size, can be overridden */
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    padding: 0.2em 0;
+  }
+
+  .svg-heading svg {
+    /* Use `em` to scale the SVG relative to the parent's font-size */
+    height: auto;
+    width: auto;
+    max-height: 1.5em;
+    display: block;
+    overflow: visible;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 1rem;
+    background-color: #ffdddd;
+    border: 1px solid red;
+    padding: 0.5em;
+    display: inline-block;
+  }
+</style>

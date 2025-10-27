@@ -1,0 +1,102 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const title = "Shop";
+const description =
+  "Unser Online-Shop für frische Pilze ist bald verfügbar. Hier könnt ihr schon bald unsere Produkte direkt bestellen.";
+---
+
+<Layout title={title} description={description}>
+  <main>
+    <h1>Shop</h1>
+    <div class="content">
+      <div class="coming-soon">
+        <h2>🍄 Bald verfügbar! 🍄</h2>
+        <p>
+          Wir arbeiten mit Hochdruck an unserem Online-Shop, über den ihr schon
+          bald unsere frischen Pilze direkt bestellen könnt.
+        </p>
+
+        <h3>Was euch erwartet:</h3>
+        <ul>
+          <li>Frische Austernpilze in verschiedenen Sorten</li>
+          <li>Pilzsets zum Selberzüchten</li>
+          <li>Saisonale Spezialitäten</li>
+          <li>Bequeme Online-Bestellung</li>
+          <li>Schnelle Lieferung in Leipzig und Umgebung</li>
+        </ul>
+
+        <p>
+          Bis dahin findet ihr uns jeden Samstag auf dem Egenberger Markt in
+          Leipzig!
+        </p>
+
+        <div class="notify">
+          <p>
+            <strong>Interesse?</strong> Schreibt uns gerne eine E-Mail an
+            <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+            und wir informieren euch, sobald der Shop verfügbar ist.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    font-size: 20px;
+    line-height: 1.6;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin: 3rem 0;
+  }
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .coming-soon {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #5f5f5f;
+  }
+  h3 {
+    font-size: 1.8rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  ul {
+    text-align: left;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+  li {
+    margin-bottom: 0.5rem;
+  }
+  .notify {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border: 2px solid #5f5f5f;
+    border-radius: 8px;
+  }
+  a {
+    color: #5f5f5f;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+  a:hover {
+    opacity: 0.8;
+  }
+</style>

@@ -1,0 +1,89 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const title = "News";
+const description =
+  "Aktuelle Neuigkeiten von den shroom-mates: Markttermine, neue Sorten, Events und alles rund um unsere Pilzzucht in Leipzig.";
+---
+
+<Layout title={title} description={description}>
+  <main>
+    <h1>News & Updates</h1>
+    <div class="content">
+      <p>
+        Hier haltet ihr euch über die neuesten Entwicklungen bei den
+        shroom-mates auf dem Laufenden.
+      </p>
+
+      <article class="news-placeholder">
+        <h2>Willkommen auf unserer neuen Website!</h2>
+        <p class="date">Oktober 2025</p>
+        <p>
+          Wir freuen uns, euch unsere brandneue Website präsentieren zu können.
+          Hier findet ihr ab sofort alle Informationen zu unseren Produkten,
+          Marktzeiten und vieles mehr.
+        </p>
+      </article>
+
+      <article class="news-placeholder">
+        <h2>Regelmäßig auf dem Egenberger Markt</h2>
+        <p class="date">Samstags</p>
+        <p>
+          Ihr findet uns jeden Samstag mit frischen Austernpilzen auf dem
+          Egenberger Samstagsmarkt in Leipzig. Kommt gerne vorbei!
+        </p>
+      </article>
+
+      <div class="placeholder">
+        <p><em>Weitere News und Updates folgen bald...</em></p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    font-size: 20px;
+    line-height: 1.6;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin: 3rem 0;
+  }
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  article {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  article:last-of-type {
+    border-bottom: none;
+  }
+  article h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #5f5f5f;
+  }
+  .date {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+  .placeholder {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border-left: 4px solid #5f5f5f;
+    font-style: italic;
+  }
+</style>
