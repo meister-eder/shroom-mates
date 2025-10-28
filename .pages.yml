@@ -4,22 +4,27 @@
 
 # Media Configuration
 # Configure where images and media files are stored
+# IMPORTANT: Images in src/assets/ get optimized by Astro's Image component
+# while files in public/ are served as-is without optimization
 media:
   - name: images
-    label: Bilder
+    label: Bilder (Optimiert)
     input: src/assets/images
-    output: /assets/images
+    output: src/assets/images
     categories: [image, video]
+    description: Images here will be optimized by Astro
   - name: headings
     label: Überschriften (SVG)
     input: public/assets/headings
     output: /assets/headings
     categories: [image]
+    description: SVG files served from public directory
   - name: public-assets
     label: Öffentliche Dateien
     input: public/assets
     output: /assets
     categories: [image, document]
+    description: Static files served without optimization
 
 # Content Configuration
 # Define content types and their structure

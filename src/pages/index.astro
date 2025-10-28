@@ -16,81 +16,34 @@ if (!landingPageContent) {
   throw new Error("Landing page content not found");
 }
 
-// Define proper type for Vite's image glob imports
-type ImageModule = {
-  default: ImageMetadata;
-};
+// With the image() helper in the schema, Astro automatically resolves paths to ImageMetadata
+// No need for manual image resolution - it's all type-safe!
+const {
+  heroImage,
+  heroImageAlt,
+  logoImage,
+  logoImageAlt,
+  heroTitle,
+  teaserText,
+} = landingPageContent.data;
 
-// Import all images from assets using Vite's glob import
-const allImages = import.meta.glob<ImageModule>("/src/assets/images/*", {
-  eager: true,
-});
-
-// Helper function to get image - returns ImageMetadata or undefined
-function getImageFromAssets(imagePath: string): ImageMetadata | undefined {
-  // Extract just the filename
-  const filename = imagePath.split("/").pop() || imagePath;
-
-  // Try to find in imported assets
-  for (const path in allImages) {
-    if (path.endsWith(filename)) {
-      const module = allImages[path];
-      return module.default;
-    }
-  }
-
-  return undefined;
-}
-
-// Get images with proper typing - ensure we always return the correct type
-const heroImageAsset = getImageFromAssets(landingPageContent.data.heroImage);
-const heroImageSrc: ImageMetadata | string =
-  heroImageAsset !== undefined
-    ? heroImageAsset
-    : landingPageContent.data.heroImage;
-
-const logoImageAsset = getImageFromAssets(landingPageContent.data.logoImage);
-const logoImageSrc: ImageMetadata | string =
-  logoImageAsset !== undefined
-    ? logoImageAsset
-    : landingPageContent.data.logoImage;
-
-// Type guard to check if a value is ImageMetadata
-function isImageMetadata(src: ImageMetadata | string): src is ImageMetadata {
-  return typeof src === "object" && src !== null && "src" in src;
-}
-
-const title = landingPageContent.data.heroTitle;
-const description = landingPageContent.data.teaserText;
+const title = heroTitle;
+const description = teaserText;
 ---
 
 <Layout title={title} description={description} isLandingPage={true}>
   <main class="landing-main">
     <section class="hero">
-      {
-        isImageMetadata(heroImageSrc) ? (
-          <Image
-            src={heroImageSrc}
-            alt={landingPageContent.data.heroImageAlt}
-            class="hero-image"
-            width={1920}
-            height={1080}
-            priority
-            format="webp"
-            decoding="async"
-          />
-        ) : (
-          <img
-            src={heroImageSrc}
-            alt={landingPageContent.data.heroImageAlt}
-            class="hero-image"
-            width={1920}
-            height={1080}
-            loading="eager"
-            decoding="async"
-          />
-        )
-      }
+      <Image
+        src={heroImage}
+        alt={heroImageAlt}
+        class="hero-image"
+        width={1920}
+        height={1080}
+        priority
+        format="webp"
+        decoding="async"
+      />
       <a href="#content" class="scroll-arrow" aria-label="Zum Inhalt scrollen">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -114,45 +67,30 @@ const description = landingPageContent.data.teaserText;
       <div class="teaser-wrapper">
         <h1 class="hero-title">
           {
-            landingPageContent.data.heroTitle
-              .split("shroom-mates")
-              .map((part, index) =>
-                index === 0 ? (
-                  <>
-                    {part}
-                    <span class="no-wrap">shroom-mates!</span>
-                  </>
-                ) : (
-                  part
-                )
+            heroTitle.split("shroom-mates").map((part, index) =>
+              index === 0 ? (
+                <>
+                  {part}
+                  <span class="no-wrap">shroom-mates!</span>
+                </>
+              ) : (
+                part
               )
+            )
           }
         </h1>
         <div class="teaser-content-row">
-          {
-            isImageMetadata(logoImageSrc) ? (
-              <Image
-                src={logoImageSrc}
-                alt={landingPageContent.data.logoImageAlt}
-                class="walking-logo"
-                width={200}
-                height={200}
-                loading="eager"
-                format="webp"
-              />
-            ) : (
-              <img
-                src={logoImageSrc}
-                alt={landingPageContent.data.logoImageAlt}
-                class="walking-logo"
-                width={200}
-                height={200}
-                loading="eager"
-              />
-            )
-          }
+          <Image
+            src={logoImage}
+            alt={logoImageAlt}
+            class="walking-logo"
+            width={200}
+            height={200}
+            loading="eager"
+            format="webp"
+          />
           <p class="teaser-text">
-            {landingPageContent.data.teaserText}
+            {teaserText}
           </p>
         </div>
       </div>

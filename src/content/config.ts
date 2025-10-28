@@ -21,19 +21,24 @@ const aboutUs = defineCollection({
 // Define the landing-page collection - unified content for the index page
 const landingPage = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/landing-page' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
-    heroImage: z.string(),
+    // Use image() helper for optimized images in src/assets/
+    // These paths will be automatically resolved to ImageMetadata
+    heroImage: image(),
     heroImageAlt: z.string(),
-    logoImage: z.string(),
+    logoImage: image(),
     logoImageAlt: z.string(),
     heroTitle: z.string(),
     teaserText: z.string(),
     values: z.array(z.object({
       title: z.string(),
+      // SVG headings are stored in public/ directory, so they remain strings
+      // PagesCMS outputs them to /assets/headings/ which is publicly accessible
       headingSvg: z.string(),
       description: z.string(),
     })),
+    // SVG heading for about section (public directory)
     aboutUsHeadingSvg: z.string(),
     aboutUsTitle: z.string(),
   }),
