@@ -1,6 +1,6 @@
 ---
 import { promises as fs } from "fs";
-import path from "path";
+import * as path from "path";
 
 export interface Props {
   tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
@@ -24,7 +24,7 @@ try {
   svgContent = rawSvg
     .replace(/fill="[^"]*"/g, 'fill="currentColor"')
     // Also handle inline styles that might have fill defined
-    .replace(/style="([^"]*)"/g, (match, styles) => {
+    .replace(/style="([^"]*)"/g, (_match, styles) => {
       // If the style already has a fill, replace it
       if (styles.includes("fill:")) {
         return `style="${styles.replace(/fill:[^;"]*/g, "fill:currentColor")}"`;
