@@ -1,6 +1,5 @@
 ---
 title: Transparent
-order: 3
+order: 2
 ---
-
-Bei uns kannst du sehen, wo und wie deine Pilze wachsen. Von der Kultur bis zur Ernte – wir zeigen dir gerne jeden Schritt unseres Produktionsprozesses.
+Bei uns kannst du sehen, wo und wie deine Pilze wachsen. Von den Sporen bis zur Ernte machen wir alles selbst.
