@@ -26,7 +26,6 @@ pnpm-debug.log*
 .playwright-mcp
 # Dependencies
 node_modules/
-package-lock.json
 
 # Build outputs
 dist/

@@ -10,6 +10,11 @@ media:
     input: src/assets/images
     output: /assets/images
     categories: [image, video]
+  - name: headings
+    label: Überschriften (SVG)
+    input: public/assets/headings
+    output: /assets/headings
+    categories: [image]
   - name: public-assets
     label: Öffentliche Dateien
     input: public/assets
@@ -19,57 +24,116 @@ media:
 # Content Configuration
 # Define content types and their structure
 content:
-  # Values Collection
-  # Three value cards on the landing page
-  - name: values
-    label: Werte-Karten
-    type: collection
-    path: src/content/values
+  # Landing Page - Unified content for index page
+  # Contains hero section, teaser, values cards, and about us section
+  - name: landing-page
+    label: Startseite
+    type: file
+    path: src/content/landing-page/content.md
     format: yaml-frontmatter
-    view:
-      fields: [title, order]
-      primary: title
-      sort: [order]
-      default:
-        sort: order
-        order: asc
     fields:
       - name: title
-        label: Titel
+        label: Seitentitel
         type: string
         required: true
-      - name: order
-        label: Reihenfolge
-        type: number
+      
+      # Hero Section
+      - name: heroImage
+        label: Hero-Bild
+        type: image
         required: true
-      - name: body
-        label: Beschreibung
+        description: Hero-Bild für die Startseite hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: heroImageAlt
+        label: Hero-Bild Alt-Text
+        type: string
+        required: true
+      - name: logoImage
+        label: Logo-Bild
+        type: image
+        required: true
+        description: Logo-Bild mit Pilzen hochladen
+        options:
+          media: images
+          extensions: [png, svg, webp]
+          categories: [image]
+      - name: logoImageAlt
+        label: Logo-Bild Alt-Text
+        type: string
+        required: true
+      - name: heroTitle
+        label: Hero-Überschrift
+        type: string
+        required: true
+      - name: teaserText
+        label: Teaser-Text
         type: text
         required: true
-
-  # About Us Section
-  # Content for the about us section with markdown paragraphs
-  - name: about-us
-    label: Über Uns
-    type: file
-    path: src/content/about-us/content.md
-    format: yaml-frontmatter
-    fields:
-      - name: title
-        label: Titel
+      
+      # Values Section - List of value cards
+      - name: values
+        label: Werte-Karten
+        type: object
+        list:
+          min: 1
+          max: 3
+          collapsible:
+            collapsed: false
+            summary: "{title} (#{index})"
+        fields:
+          - name: title
+            label: Titel (für Barrierefreiheit)
+            type: string
+            required: true
+            description: Text-Titel für Screen-Reader, wird nicht in der Überschrift angezeigt
+          - name: headingSvg
+            label: Überschrift SVG
+            type: image
+            required: true
+            description: SVG-Datei für die Überschrift hochladen
+            options:
+              media: headings
+              extensions: [svg]
+              categories: [image]
+          - name: description
+            label: Beschreibung
+            type: text
+            required: true
+      
+      # About Us Section
+      - name: aboutUsHeadingSvg
+        label: Über Uns Überschrift SVG
+        type: image
+        required: true
+        description: SVG-Datei für die "Über Uns" Überschrift hochladen
+        options:
+          media: headings
+          extensions: [svg]
+          categories: [image]
+      - name: aboutUsTitle
+        label: Über Uns Titel (für Barrierefreiheit)
         type: string
         required: true
+        description: Text-Titel für Screen-Reader
+      
+      # About Us Content (body)
       - name: body
-        label: Inhalt
+        label: Über Uns Inhalt
         type: rich-text
         required: true
+        options:
+          media: false
 
 # Components
-# Reusable field groups
+# Reusable field groups (currently not used but available for future use)
 components:
   # SEO Meta Information
   seo:
     label: SEO-Einstellungen
+    type: object
     fields:
       - name: metaTitle
         label: Meta-Titel
