@@ -1,0 +1,212 @@
+# PagesCMS Configuration for Shroom-Mates
+# This file configures the content management system for the shroom-mates.de website
+# Documentation: https://pagescms.org/docs/configuration
+
+# Media Configuration
+# Configure where images and media files are stored
+media:
+  - name: images
+    label: Bilder
+    input: src/assets/images
+    output: /assets/images
+    categories: [image, video]
+  - name: public-assets
+    label: Öffentliche Dateien
+    input: public/assets
+    output: /assets
+    categories: [image, document]
+
+# Content Configuration
+# Define content types and their structure
+content:
+  # News/Blog Posts Collection
+  # Future-ready collection for news articles and blog posts
+  - name: news
+    label: Neuigkeiten
+    type: collection
+    path: src/content/news
+    format: yaml-frontmatter
+    view:
+      fields: [title, date, published]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Titel
+        type: string
+        required: true
+      - name: description
+        label: Kurzbeschreibung
+        type: string
+        required: true
+      - name: date
+        label: Datum
+        type: date
+        required: true
+      - name: published
+        label: Veröffentlicht
+        type: boolean
+        default: false
+      - name: author
+        label: Autor
+        type: string
+        default: "shroom-mates Team"
+      - name: image
+        label: Beitragsbild
+        type: image
+        required: false
+      - name: content
+        label: Inhalt
+        type: rich-text
+        required: true
+
+  # Recipe Collection
+  # Collection for mushroom recipes
+  - name: recipes
+    label: Rezepte
+    type: collection
+    path: src/content/recipes
+    format: yaml-frontmatter
+    view:
+      fields: [title, difficulty, cookingTime]
+      primary: title
+      sort: [title, difficulty]
+      default:
+        sort: title
+        order: asc
+    fields:
+      - name: title
+        label: Rezeptname
+        type: string
+        required: true
+      - name: description
+        label: Beschreibung
+        type: string
+        required: true
+      - name: image
+        label: Rezeptbild
+        type: image
+        required: false
+      - name: difficulty
+        label: Schwierigkeit
+        type: select
+        options:
+          - label: Einfach
+            value: easy
+          - label: Mittel
+            value: medium
+          - label: Schwer
+            value: hard
+        default: medium
+      - name: cookingTime
+        label: Zubereitungszeit (Minuten)
+        type: number
+        required: true
+      - name: servings
+        label: Portionen
+        type: number
+        default: 4
+      - name: ingredients
+        label: Zutaten
+        type: list
+        fields:
+          - name: item
+            label: Zutat
+            type: string
+      - name: instructions
+        label: Anleitung
+        type: rich-text
+        required: true
+      - name: tips
+        label: Tipps
+        type: rich-text
+        required: false
+
+  # Mushroom Types/Products
+  # Information about different mushroom varieties
+  - name: mushrooms
+    label: Pilzsorten
+    type: collection
+    path: src/content/mushrooms
+    format: yaml-frontmatter
+    view:
+      fields: [name, scientificName, availability]
+      primary: name
+      sort: [name]
+      default:
+        sort: name
+        order: asc
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - name: scientificName
+        label: Wissenschaftlicher Name
+        type: string
+        required: false
+      - name: description
+        label: Beschreibung
+        type: rich-text
+        required: true
+      - name: image
+        label: Bild
+        type: image
+        required: false
+      - name: availability
+        label: Verfügbarkeit
+        type: select
+        options:
+          - label: Ganzjährig
+            value: year-round
+          - label: Saisonal
+            value: seasonal
+          - label: Auf Anfrage
+            value: on-request
+        default: year-round
+      - name: season
+        label: Saison
+        type: string
+        required: false
+      - name: price
+        label: Preis (pro 100g in EUR)
+        type: number
+        required: false
+      - name: characteristics
+        label: Eigenschaften
+        type: list
+        fields:
+          - name: characteristic
+            label: Eigenschaft
+            type: string
+      - name: culinaryUses
+        label: Verwendung in der Küche
+        type: rich-text
+        required: false
+      - name: nutritionalInfo
+        label: Nährwertangaben
+        type: rich-text
+        required: false
+
+# Components
+# Reusable field groups
+components:
+  # SEO Meta Information
+  seo:
+    label: SEO-Einstellungen
+    fields:
+      - name: metaTitle
+        label: Meta-Titel
+        type: string
+        required: false
+      - name: metaDescription
+        label: Meta-Beschreibung
+        type: string
+        required: false
+      - name: ogImage
+        label: Social Media Bild
+        type: image
+        required: false
