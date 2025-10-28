@@ -1,26 +1,29 @@
 ---
+import { getCollection, render } from 'astro:content';
 import ValueCard from "./ValueCard.astro";
 
-const values = [
-  {
-    svgSrc: "/assets/headings/nachhaltig.svg",
-    title: "Nachhaltig",
-    description:
-      "Wir verwenden ausschließlich regionale Rohstoffe und setzen auf umweltfreundliche Anbaumethoden. Unsere Pilze wachsen auf natürlichen Substraten ohne künstliche Zusätze.",
-  },
-  {
-    svgSrc: "/assets/headings/regional.svg",
-    title: "Regional",
-    description:
-      "Direkt aus Leipzig-Plagwitz für Leipzig. Kurze Transportwege garantieren Frische und reduzieren unseren CO2-Fußabdruck. Wir unterstützen lokale Lieferanten und die regionale Wirtschaft.",
-  },
-  {
-    svgSrc: "/assets/headings/transparent.svg",
-    title: "Transparent",
-    description:
-      "Bei uns kannst du sehen, wo und wie deine Pilze wachsen. Von der Kultur bis zur Ernte – wir zeigen dir gerne jeden Schritt unseres Produktionsprozesses.",
-  },
-];
+// Fetch values from content collection
+const valuesEntries = await getCollection('values');
+// Sort by order
+const sortedValues = valuesEntries.sort((a, b) => a.data.order - b.data.order);
+
+// Map the content data to include the SVG sources
+const svgMap: Record<string, string> = {
+  "Nachhaltig": "/assets/headings/nachhaltig.svg",
+  "Regional": "/assets/headings/regional.svg",
+  "Transparent": "/assets/headings/transparent.svg",
+};
+
+const values = await Promise.all(
+  sortedValues.map(async (entry) => {
+    const { Content } = await render(entry);
+    return {
+      svgSrc: svgMap[entry.data.title] || "",
+      title: entry.data.title,
+      Content,
+    };
+  })
+);
 ---
 
 <section
@@ -35,8 +38,9 @@ const values = [
           <ValueCard
             svgSrc={value.svgSrc}
             title={value.title}
-            description={value.description}
-          />
+          >
+            <value.Content />
+          </ValueCard>
         ))
       }
     </div>

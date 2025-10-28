@@ -50,22 +50,18 @@ This project is configured to work with [PagesCMS](https://pagescms.org/), a use
 
 ### Content Collections
 
-The `.pages.yml` configuration file sets up three content collections:
+The `.pages.yml` configuration file sets up two content collections using Astro's Content Collections feature:
 
-#### 🗞️ Neuigkeiten (News)
-- Blog posts and news updates
-- Fields: Title, description, date, author, image, content
-- Path: `src/content/news/`
+#### 🎯 Werte-Karten (Values)
+- Three value cards displayed on the landing page
+- Fields: Title (string), Order (number), Description (short text)
+- Path: `src/content/values/`
+- Files: `nachhaltig.md`, `regional.md`, `transparent.md`
 
-#### 🍳 Rezepte (Recipes)
-- Mushroom recipes with cooking instructions
-- Fields: Title, description, difficulty, cooking time, servings, ingredients, instructions, tips
-- Path: `src/content/recipes/`
-
-#### 🍄 Pilzsorten (Mushroom Varieties)
-- Information about different mushroom types
-- Fields: Name, scientific name, description, image, availability, season, price, characteristics, culinary uses, nutritional info
-- Path: `src/content/mushrooms/`
+#### 📖 Über Uns (About Us)
+- Rich markdown content for the about us section
+- Fields: Title (string), Content (markdown with multiple paragraphs)
+- Path: `src/content/about-us/content.md`
 
 ### Media Management
 
@@ -76,16 +72,22 @@ Two media folders are configured:
 
 ### Using Content in Astro
 
-Once you create content through PagesCMS, you can use Astro's [Content Collections](https://docs.astro.build/en/guides/content-collections/) to integrate it into your pages.
+The content is managed through Astro's Content Collections API with the Content Layer:
 
-Example:
 ```typescript
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 
-const news = await getCollection('news');
-const recipes = await getCollection('recipes');
-const mushrooms = await getCollection('mushrooms');
+// Get all values (sorted by order)
+const values = await getCollection('values');
+
+// Get the about-us content
+const aboutUs = await getEntry('about-us', 'content');
+
+// Render the markdown content
+const { Content } = await render(aboutUs);
 ```
+
+The collections are defined in `src/content/config.ts` using the `glob()` loader for local markdown files.
 
 ## 📝 License
 
