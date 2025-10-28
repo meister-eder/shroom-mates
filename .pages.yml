@@ -70,25 +70,7 @@ content:
         label: Werte-Karten
         type: list
         required: true
-        fields:
-          - name: title
-            label: Titel (für Barrierefreiheit)
-            type: string
-            required: true
-            hint: Text-Titel für Screen-Reader, wird nicht angezeigt
-          - name: order
-            label: Reihenfolge
-            type: number
-            required: true
-          - name: headingSvg
-            label: Überschrift SVG
-            type: string
-            required: true
-            hint: Voller Pfad zur SVG-Datei (z.B. /assets/headings/nachhaltig.svg)
-          - name: description
-            label: Beschreibung
-            type: text
-            required: true
+        component: valueCard
       
       # About Us Section
       - name: aboutUsHeadingSvg
@@ -156,6 +138,30 @@ content:
 # Components
 # Reusable field groups
 components:
+  # Value Card Component
+  # Used for the value cards on the landing page
+  valueCard:
+    label: Werte-Karte
+    fields:
+      - name: title
+        label: Titel (für Barrierefreiheit)
+        type: string
+        required: true
+        hint: Text-Titel für Screen-Reader, wird nicht angezeigt
+      - name: order
+        label: Reihenfolge
+        type: number
+        required: true
+      - name: headingSvg
+        label: Überschrift SVG
+        type: string
+        required: true
+        hint: Voller Pfad zur SVG-Datei (z.B. /assets/headings/nachhaltig.svg)
+      - name: description
+        label: Beschreibung
+        type: text
+        required: true
+  
   # SEO Meta Information
   seo:
     label: SEO-Einstellungen
