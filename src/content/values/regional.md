@@ -1,6 +1,5 @@
 ---
 title: Regional
-order: 2
+order: 3
 ---
-
-Direkt aus Leipzig-Plagwitz für Leipzig. Kurze Transportwege garantieren Frische und reduzieren unseren CO2-Fußabdruck. Wir unterstützen lokale Lieferanten und die regionale Wirtschaft.
+Direkt aus der Plagwitzer Markthalle für Leipzig. Kurze Transportwege garantieren Frische und reduzieren unseren CO2-Fußabdruck. Wir unterstützen lokale Lieferanten und die regionale Wirtschaft.
