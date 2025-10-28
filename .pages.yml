@@ -40,18 +40,26 @@ content:
       # Hero Section
       - name: heroImage
         label: Hero-Bild
-        type: string
+        type: image
         required: true
-        hint: Dateiname des Hero-Bildes (z.B. hero_rose_tasse.jpg)
+        description: Hero-Bild für die Startseite hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
       - name: heroImageAlt
         label: Hero-Bild Alt-Text
         type: string
         required: true
       - name: logoImage
         label: Logo-Bild
-        type: string
+        type: image
         required: true
-        hint: Dateiname des Logo-Bildes (z.B. logo_with_shrooms.png)
+        description: Logo-Bild mit Pilzen hochladen
+        options:
+          media: images
+          extensions: [png, svg, webp]
+          categories: [image]
       - name: logoImageAlt
         label: Logo-Bild Alt-Text
         type: string
@@ -65,30 +73,65 @@ content:
         type: text
         required: true
       
-      # Values Section
+      # Values Section - List of value cards
       - name: values
         label: Werte-Karten
-        type: list
-        required: true
-        component: valueCard
+        type: object
+        list:
+          min: 1
+          max: 3
+          collapsible:
+            collapsed: false
+            summary: "{title} (Position {order})"
+        fields:
+          - name: title
+            label: Titel (für Barrierefreiheit)
+            type: string
+            required: true
+            description: Text-Titel für Screen-Reader, wird nicht in der Überschrift angezeigt
+          - name: order
+            label: Reihenfolge
+            type: number
+            required: true
+            options:
+              min: 1
+          - name: headingSvg
+            label: Überschrift SVG
+            type: image
+            required: true
+            description: SVG-Datei für die Überschrift hochladen
+            options:
+              media: headings
+              extensions: [svg]
+              categories: [image]
+          - name: description
+            label: Beschreibung
+            type: text
+            required: true
       
       # About Us Section
       - name: aboutUsHeadingSvg
         label: Über Uns Überschrift SVG
-        type: string
+        type: image
         required: true
-        hint: Voller Pfad zur SVG-Datei (z.B. /assets/headings/ueber_uns.svg)
+        description: SVG-Datei für die "Über Uns" Überschrift hochladen
+        options:
+          media: headings
+          extensions: [svg]
+          categories: [image]
       - name: aboutUsTitle
         label: Über Uns Titel (für Barrierefreiheit)
         type: string
         required: true
-        hint: Text-Titel für Screen-Reader
+        description: Text-Titel für Screen-Reader
       
       # About Us Content (body)
       - name: body
         label: Über Uns Inhalt
         type: rich-text
         required: true
+        options:
+          media: false
 
   # Values Collection (kept for backward compatibility)
   # Three value cards on the landing page
@@ -136,35 +179,12 @@ content:
         required: true
 
 # Components
-# Reusable field groups
+# Reusable field groups (currently not used but available for future use)
 components:
-  # Value Card Component
-  # Used for the value cards on the landing page
-  valueCard:
-    label: Werte-Karte
-    fields:
-      - name: title
-        label: Titel (für Barrierefreiheit)
-        type: string
-        required: true
-        hint: Text-Titel für Screen-Reader, wird nicht angezeigt
-      - name: order
-        label: Reihenfolge
-        type: number
-        required: true
-      - name: headingSvg
-        label: Überschrift SVG
-        type: string
-        required: true
-        hint: Voller Pfad zur SVG-Datei (z.B. /assets/headings/nachhaltig.svg)
-      - name: description
-        label: Beschreibung
-        type: text
-        required: true
-  
   # SEO Meta Information
   seo:
     label: SEO-Einstellungen
+    type: object
     fields:
       - name: metaTitle
         label: Meta-Titel

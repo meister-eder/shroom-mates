@@ -1,25 +1,53 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
 import AboutUsSection from "../components/AboutUsSection.astro";
 // import ImageGallery from "../components/ImageGallery.astro";
 // import UpcomingDates from "../components/UpcomingDates.astro";
 // import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
 import ValuesSection from "../components/ValuesSection.astro";
-import heroRoseTasse from "../assets/images/hero_rose_tasse.jpg";
-import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
 
-const title = "Hi, wir sind die shroom-mates!";
-const description =
-  "Hochwertige Edelpilze aus Leipzig, Plagwitz. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.";
+// Get the landing page content
+const landingPageEntries = await getCollection("landing-page");
+const landingPageContent = landingPageEntries[0];
+
+// Import all images from assets using Vite's glob import
+// @ts-ignore - Vite's import.meta.glob is available at build time
+const allImages: Record<string, { default: ImageMetadata }> = import.meta.glob(
+  "/src/assets/images/*",
+  { eager: true }
+);
+
+// Helper function to get image - returns ImageMetadata or public path string
+function getImageSource(imagePath: string) {
+  // Extract just the filename
+  const filename = imagePath.split("/").pop() || imagePath;
+
+  // Try to find in imported assets
+  for (const path in allImages) {
+    if (path.endsWith(filename)) {
+      return allImages[path].default;
+    }
+  }
+
+  // Fall back to public path (CMS uploaded images)
+  return imagePath;
+}
+
+const heroImage = getImageSource(landingPageContent.data.heroImage);
+const logoImage = getImageSource(landingPageContent.data.logoImage);
+
+const title = landingPageContent.data.heroTitle;
+const description = landingPageContent.data.teaserText;
 ---
 
 <Layout title={title} description={description} isLandingPage={true}>
   <main class="landing-main">
     <section class="hero">
       <Image
-        src={heroRoseTasse}
-        alt="Rosafarbene Austernpilze in einer Tasse"
+        src={heroImage}
+        alt={landingPageContent.data.heroImageAlt}
         class="hero-image"
         width={1920}
         height={1080}
@@ -49,12 +77,25 @@ const description =
     <section class="hero-teaser" id="content">
       <div class="teaser-wrapper">
         <h1 class="hero-title">
-          Hi, wir sind die <span class="no-wrap">shroom-mates!</span>
+          {
+            landingPageContent.data.heroTitle
+              .split("shroom-mates")
+              .map((part, index) =>
+                index === 0 ? (
+                  <>
+                    {part}
+                    <span class="no-wrap">shroom-mates!</span>
+                  </>
+                ) : (
+                  part
+                )
+              )
+          }
         </h1>
         <div class="teaser-content-row">
           <Image
-            src={logoWithShrooms}
-            alt="Shroom-Mates Logo mit Pilzen"
+            src={logoImage}
+            alt={landingPageContent.data.logoImageAlt}
             class="walking-logo"
             width={200}
             height={200}
@@ -62,8 +103,7 @@ const description =
             format="webp"
           />
           <p class="teaser-text">
-            Wir züchten feinste Edelpilze mit regionalen Rohstoffen, direkt in
-            der Plagwitzer Markthalle in Leipzig.
+            {landingPageContent.data.teaserText}
           </p>
         </div>
       </div>

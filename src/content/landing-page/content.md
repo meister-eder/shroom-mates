@@ -1,8 +1,8 @@
 ---
 title: Landing Page
-heroImage: hero_rose_tasse.jpg
+heroImage: /assets/images/hero_rose_tasse.jpg
 heroImageAlt: Rosafarbene Austernpilze in einer Tasse
-logoImage: logo_with_shrooms.png
+logoImage: /assets/images/logo_with_shrooms.png
 logoImageAlt: Shroom-Mates Logo mit Pilzen
 heroTitle: Hi, wir sind die shroom-mates!
 teaserText: Wir züchten feinste Edelpilze mit regionalen Rohstoffen, direkt in der Plagwitzer Markthalle in Leipzig.
