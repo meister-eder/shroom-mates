@@ -31,7 +31,6 @@ const landingPage = defineCollection({
     teaserText: z.string(),
     values: z.array(z.object({
       title: z.string(),
-      order: z.number(),
       headingSvg: z.string(),
       description: z.string(),
     })),
