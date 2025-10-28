@@ -9,15 +9,14 @@ import AboutUsSection from "../components/AboutUsSection.astro";
 import ValuesSection from "../components/ValuesSection.astro";
 
 // Get the landing page content
-const landingPageEntries = await getCollection("landingPage");
+const landingPageEntries = await getCollection("landing-page");
 const landingPageContent = landingPageEntries[0];
 
 // Import all images from assets using Vite's glob import
 // @ts-ignore - Vite's import.meta.glob is available at build time
-const allImages: Record<string, { default: ImageMetadata }> = import.meta.glob(
-  "/src/assets/images/*",
-  { eager: true }
-);
+const allImages = import.meta.glob("/src/assets/images/*", {
+  eager: true,
+}) as Record<string, { default: any }>;
 
 // Helper function to get image - returns ImageMetadata or public path string
 function getImageSource(imagePath: string) {

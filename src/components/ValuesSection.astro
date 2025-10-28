@@ -1,5 +1,5 @@
 ---
-import { getEntry } from "astro:content";
+import { getEntry, type CollectionEntry } from "astro:content";
 import ValueCard from "./ValueCard.astro";
 
 // Fetch landing page content
@@ -12,6 +12,8 @@ if (!landingPageEntry) {
 // Get the values from landing page data
 // Values are already in the correct order from PagesCMS (drag-and-drop ordering)
 const values = landingPageEntry.data.values;
+
+type ValueType = CollectionEntry<"landing-page">["data"]["values"][number];
 ---
 
 <section
@@ -22,7 +24,7 @@ const values = landingPageEntry.data.values;
     <!-- <h2 id="values-heading" class="values-heading">Unsere Werte</h2> -->
     <div class="values-grid">
       {
-        values.map((value) => (
+        values.map((value: ValueType) => (
           <ValueCard
             svgSrc={value.headingSvg}
             title={value.title}
