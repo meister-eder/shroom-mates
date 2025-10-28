@@ -82,19 +82,13 @@ content:
           max: 3
           collapsible:
             collapsed: false
-            summary: "{title} (Position {order})"
+            summary: "{title} (#{index})"
         fields:
           - name: title
             label: Titel (für Barrierefreiheit)
             type: string
             required: true
             description: Text-Titel für Screen-Reader, wird nicht in der Überschrift angezeigt
-          - name: order
-            label: Reihenfolge
-            type: number
-            required: true
-            options:
-              min: 1
           - name: headingSvg
             label: Überschrift SVG
             type: image
@@ -132,51 +126,6 @@ content:
         required: true
         options:
           media: false
-
-  # Values Collection (kept for backward compatibility)
-  # Three value cards on the landing page
-  - name: values
-    label: Werte-Karten (Alt)
-    type: collection
-    path: src/content/values
-    format: yaml-frontmatter
-    view:
-      fields: [title, order]
-      primary: title
-      sort: [order]
-      default:
-        sort: order
-        order: asc
-    fields:
-      - name: title
-        label: Titel
-        type: string
-        required: true
-      - name: order
-        label: Reihenfolge
-        type: number
-        required: true
-      - name: body
-        label: Beschreibung
-        type: text
-        required: true
-
-  # About Us Section (kept for backward compatibility)
-  # Content for the about us section with markdown paragraphs
-  - name: about-us
-    label: Über Uns (Alt)
-    type: file
-    path: src/content/about-us/content.md
-    format: yaml-frontmatter
-    fields:
-      - name: title
-        label: Titel
-        type: string
-        required: true
-      - name: body
-        label: Inhalt
-        type: rich-text
-        required: true
 
 # Components
 # Reusable field groups (currently not used but available for future use)
