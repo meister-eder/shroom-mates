@@ -9,7 +9,7 @@ import AboutUsSection from "../components/AboutUsSection.astro";
 import ValuesSection from "../components/ValuesSection.astro";
 
 // Get the landing page content
-const landingPageEntries = await getCollection("landing-page");
+const landingPageEntries = await getCollection("landingPage");
 const landingPageContent = landingPageEntries[0];
 
 // Import all images from assets using Vite's glob import

@@ -9,16 +9,19 @@ teaserText: Wir züchten feinste Edelpilze mit regionalen Rohstoffen, direkt in
   der Plagwitzer Markthalle in Leipzig.
 values:
   - title: Nachhaltig
+    order: 1
     headingSvg: /assets/headings/nachhaltig.svg
     description: Wir verwenden ausschließlich regionale Rohstoffe und setzen auf
       umweltfreundliche Anbaumethoden. Unsere Pilze wachsen auf natürlichen
       Substraten ohne künstliche Zusätze.
   - title: Regional
+    order: 2
     headingSvg: /assets/headings/regional.svg
     description: Direkt aus der Plagwitzer Markthalle für Leipzig. Kurze
       Transportwege garantieren Frische und reduzieren unseren CO2-Fußabdruck.
       Wir unterstützen lokale Lieferanten und die regionale Wirtschaft.
   - title: Transparent
+    order: 3
     headingSvg: /assets/headings/transparent.svg
     description: Bei uns kannst du sehen, wo und wie deine Pilze wachsen. Von den
       Sporen bis zur Ernte machen wir alles selbst.

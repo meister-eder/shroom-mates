@@ -42,6 +42,6 @@ const landingPage = defineCollection({
 
 export const collections = {
   values,
-  'about-us': aboutUs,
-  'landing-page': landingPage,
+  aboutUs,
+  landingPage,
 };
