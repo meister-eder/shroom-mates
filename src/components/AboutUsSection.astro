@@ -2,14 +2,15 @@
 import { getEntry, render } from 'astro:content';
 import SvgHeading from "./SvgHeading.astro";
 
-// Fetch the about-us content
-const aboutUsEntry = await getEntry('about-us', 'content');
+// Fetch the landing page content
+const landingPageEntry = await getEntry('landing-page', 'content');
 
-if (!aboutUsEntry) {
-  throw new Error('Could not find about-us content');
+if (!landingPageEntry) {
+  throw new Error('Could not find landing-page content');
 }
 
-const { Content } = await render(aboutUsEntry);
+const { Content } = await render(landingPageEntry);
+const { aboutUsHeadingSvg, aboutUsTitle } = landingPageEntry.data;
 ---
 
 <section class="section about-us" id="about">
@@ -17,8 +18,8 @@ const { Content } = await render(aboutUsEntry);
     <div class="about-content">
       <SvgHeading
         tag="h2"
-        src="/assets/headings/ueber_uns.svg"
-        alt="Über uns"
+        src={aboutUsHeadingSvg}
+        alt={aboutUsTitle}
         class="about-us-heading"
       />
       <div class="about-text">

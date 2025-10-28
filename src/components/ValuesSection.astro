@@ -1,29 +1,19 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getEntry } from 'astro:content';
 import ValueCard from "./ValueCard.astro";
 
-// Fetch values from content collection
-const valuesEntries = await getCollection('values');
+// Fetch landing page content
+const landingPageEntry = await getEntry('landing-page', 'content');
+
+if (!landingPageEntry) {
+  throw new Error('Could not find landing-page content');
+}
+
+// Get the values from landing page data
+const values = landingPageEntry.data.values;
+
 // Sort by order
-const sortedValues = valuesEntries.sort((a, b) => a.data.order - b.data.order);
-
-// Map the content data to include the SVG sources
-const svgMap: Record<string, string> = {
-  "Nachhaltig": "/assets/headings/nachhaltig.svg",
-  "Regional": "/assets/headings/regional.svg",
-  "Transparent": "/assets/headings/transparent.svg",
-};
-
-const values = await Promise.all(
-  sortedValues.map(async (entry) => {
-    const { Content } = await render(entry);
-    return {
-      svgSrc: svgMap[entry.data.title] || "",
-      title: entry.data.title,
-      Content,
-    };
-  })
-);
+const sortedValues = values.sort((a, b) => a.order - b.order);
 ---
 
 <section
@@ -34,13 +24,12 @@ const values = await Promise.all(
     <!-- <h2 id="values-heading" class="values-heading">Unsere Werte</h2> -->
     <div class="values-grid">
       {
-        values.map((value) => (
+        sortedValues.map((value) => (
           <ValueCard
-            svgSrc={value.svgSrc}
+            svgSrc={value.headingSvg}
             title={value.title}
-          >
-            <value.Content />
-          </ValueCard>
+            description={value.description}
+          />
         ))
       }
     </div>

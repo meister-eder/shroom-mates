@@ -10,6 +10,11 @@ media:
     input: src/assets/images
     output: /assets/images
     categories: [image, video]
+  - name: headings
+    label: Überschriften (SVG)
+    input: public/assets/headings
+    output: /assets/headings
+    categories: [image]
   - name: public-assets
     label: Öffentliche Dateien
     input: public/assets
@@ -19,10 +24,94 @@ media:
 # Content Configuration
 # Define content types and their structure
 content:
-  # Values Collection
+  # Landing Page - Unified content for index page
+  # Contains hero section, teaser, values cards, and about us section
+  - name: landing-page
+    label: Startseite
+    type: file
+    path: src/content/landing-page/content.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Seitentitel
+        type: string
+        required: true
+      
+      # Hero Section
+      - name: heroImage
+        label: Hero-Bild
+        type: string
+        required: true
+        hint: Dateiname des Hero-Bildes (z.B. hero_rose_tasse.jpg)
+      - name: heroImageAlt
+        label: Hero-Bild Alt-Text
+        type: string
+        required: true
+      - name: logoImage
+        label: Logo-Bild
+        type: string
+        required: true
+        hint: Dateiname des Logo-Bildes (z.B. logo_with_shrooms.png)
+      - name: logoImageAlt
+        label: Logo-Bild Alt-Text
+        type: string
+        required: true
+      - name: heroTitle
+        label: Hero-Überschrift
+        type: string
+        required: true
+      - name: teaserText
+        label: Teaser-Text
+        type: text
+        required: true
+      
+      # Values Section
+      - name: values
+        label: Werte-Karten
+        type: list
+        required: true
+        fields:
+          - name: title
+            label: Titel (für Barrierefreiheit)
+            type: string
+            required: true
+            hint: Text-Titel für Screen-Reader, wird nicht angezeigt
+          - name: order
+            label: Reihenfolge
+            type: number
+            required: true
+          - name: headingSvg
+            label: Überschrift SVG
+            type: string
+            required: true
+            hint: Voller Pfad zur SVG-Datei (z.B. /assets/headings/nachhaltig.svg)
+          - name: description
+            label: Beschreibung
+            type: text
+            required: true
+      
+      # About Us Section
+      - name: aboutUsHeadingSvg
+        label: Über Uns Überschrift SVG
+        type: string
+        required: true
+        hint: Voller Pfad zur SVG-Datei (z.B. /assets/headings/ueber_uns.svg)
+      - name: aboutUsTitle
+        label: Über Uns Titel (für Barrierefreiheit)
+        type: string
+        required: true
+        hint: Text-Titel für Screen-Reader
+      
+      # About Us Content (body)
+      - name: body
+        label: Über Uns Inhalt
+        type: rich-text
+        required: true
+
+  # Values Collection (kept for backward compatibility)
   # Three value cards on the landing page
   - name: values
-    label: Werte-Karten
+    label: Werte-Karten (Alt)
     type: collection
     path: src/content/values
     format: yaml-frontmatter
@@ -47,10 +136,10 @@ content:
         type: text
         required: true
 
-  # About Us Section
+  # About Us Section (kept for backward compatibility)
   # Content for the about us section with markdown paragraphs
   - name: about-us
-    label: Über Uns
+    label: Über Uns (Alt)
     type: file
     path: src/content/about-us/content.md
     format: yaml-frontmatter
