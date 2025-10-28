@@ -1,0 +1,85 @@
+# PagesCMS Configuration for Shroom-Mates
+# This file configures the content management system for the shroom-mates.de website
+# Documentation: https://pagescms.org/docs/configuration
+
+# Media Configuration
+# Configure where images and media files are stored
+media:
+  - name: images
+    label: Bilder
+    input: src/assets/images
+    output: /assets/images
+    categories: [image, video]
+  - name: public-assets
+    label: Öffentliche Dateien
+    input: public/assets
+    output: /assets
+    categories: [image, document]
+
+# Content Configuration
+# Define content types and their structure
+content:
+  # Values Collection
+  # Three value cards on the landing page
+  - name: values
+    label: Werte-Karten
+    type: collection
+    path: src/content/values
+    format: yaml-frontmatter
+    view:
+      fields: [title, order]
+      primary: title
+      sort: [order]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: Titel
+        type: string
+        required: true
+      - name: order
+        label: Reihenfolge
+        type: number
+        required: true
+      - name: body
+        label: Beschreibung
+        type: text
+        required: true
+
+  # About Us Section
+  # Content for the about us section with markdown paragraphs
+  - name: about-us
+    label: Über Uns
+    type: file
+    path: src/content/about-us/content.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Titel
+        type: string
+        required: true
+      - name: body
+        label: Inhalt
+        type: rich-text
+        required: true
+
+# Components
+# Reusable field groups
+components:
+  # SEO Meta Information
+  seo:
+    label: SEO-Einstellungen
+    fields:
+      - name: metaTitle
+        label: Meta-Titel
+        type: string
+        required: false
+      - name: metaDescription
+        label: Meta-Beschreibung
+        type: string
+        required: false
+      - name: ogImage
+        label: Social Media Bild
+        type: image
+        required: false

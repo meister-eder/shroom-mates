@@ -1,8 +1,15 @@
 ---
-// import { Image } from "astro:assets";
-// import heroOyster from "../assets/images/hero_oyster.png";
-// import seitlingTasse from "../assets/images/seitling_tasse_cutout.png";
+import { getEntry, render } from 'astro:content';
 import SvgHeading from "./SvgHeading.astro";
+
+// Fetch the about-us content
+const aboutUsEntry = await getEntry('about-us', 'content');
+
+if (!aboutUsEntry) {
+  throw new Error('Could not find about-us content');
+}
+
+const { Content } = await render(aboutUsEntry);
 ---
 
 <section class="section about-us" id="about">
@@ -15,48 +22,9 @@ import SvgHeading from "./SvgHeading.astro";
         class="about-us-heading"
       />
       <div class="about-text">
-        <p>
-          Wir sind die shroom-mates aus Leipzig und kultivieren mit viel Liebe
-          hochwertige Edelpilze. Unsere Pilze wachsen auf nachhaltig
-          produziertem Substrat aus regionalen Rohstoffen unter optimalen
-          Bedingungen.
-        </p>
-        <p>
-          Von der Herstellung des Substrats bis zur Ernte achten wir auf höchste
-          Qualität. Unsere Austernpilze werden frisch geerntet und direkt an
-          unsere Kunden auf dem Egenberger Samstagsmarkt verkauft.
-        </p>
-        <p>
-          Nachhaltigkeit steht bei uns im Mittelpunkt: Wir verwenden
-          ausschließlich natürliche Materialien und arbeiten ressourcenschonend.
-          So entstehen nicht nur köstliche, sondern auch umweltfreundlich
-          produzierte Pilze.
-        </p>
+        <Content />
       </div>
     </div>
-    <!-- Images commented out for release -->
-    <!-- <div class="about-images">
-      <div class="image-wrapper large">
-        <Image
-          src={heroOyster}
-          alt="Frische Austernpilze der shroom-mates"
-          width={400}
-          height={300}
-          format="webp"
-          loading="lazy"
-        />
-      </div>
-      <div class="image-wrapper small">
-        <Image
-          src={seitlingTasse}
-          alt="Austernpilze in einer Tasse präsentiert"
-          width={250}
-          height={250}
-          format="webp"
-          loading="lazy"
-        />
-      </div>
-    </div> -->
   </div>
 </section>
 
@@ -89,45 +57,12 @@ import SvgHeading from "./SvgHeading.astro";
     gap: 1.5rem;
   }
 
-  .about-text p {
+  .about-text :global(p) {
     font-size: 1.1rem;
     line-height: 1.6;
     color: var(--text-color);
     margin: 0;
   }
-
-  /* Images styles commented out for release */
-  /* .about-images {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    position: relative;
-  }
-
-  .image-wrapper {
-    border: 3px solid #000;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
-    background: var(--bg-color);
-  }
-
-  .image-wrapper.large {
-    transform: rotate(-2deg);
-  }
-
-  .image-wrapper.small {
-    transform: rotate(3deg);
-    align-self: flex-end;
-    margin-top: -1rem;
-  }
-
-  .image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  } */
 
   @media (max-width: 768px) {
     .about-content .about-us-heading {
@@ -135,7 +70,7 @@ import SvgHeading from "./SvgHeading.astro";
       text-align: center;
     }
 
-    .about-text p {
+    .about-text :global(p) {
       font-size: 1rem;
     }
   }
@@ -145,43 +80,4 @@ import SvgHeading from "./SvgHeading.astro";
       font-size: 1.8rem;
     }
   }
-
-  /* Media queries for images commented out for release */
-  /* @media (max-width: 768px) {
-    .about-images {
-      flex-direction: row;
-      gap: 0.3rem;
-      justify-content: space-between;
-      width: 100%;
-      overflow: hidden;
-      box-sizing: border-box;
-    }
-
-    .image-wrapper.large {
-      flex: 1;
-      max-width: 57%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .image-wrapper.small {
-      flex: 1;
-      max-width: 37%;
-      min-width: 0;
-      margin-top: 2rem;
-      box-sizing: border-box;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .about-images {
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .image-wrapper.large,
-    .image-wrapper.small {
-      max-width: 100%;
-    }
-  } */
 </style>

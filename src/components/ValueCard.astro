@@ -4,7 +4,7 @@ import SvgHeading from "./SvgHeading.astro";
 export interface Props {
   svgSrc: string; // Path to SVG in public directory, e.g., '/assets/headings/nachhaltig.svg'
   title: string; // Accessible title for the SVG
-  description: string;
+  description?: string; // Optional for backwards compatibility
 }
 
 const { svgSrc, title, description } = Astro.props;
@@ -14,7 +14,10 @@ const { svgSrc, title, description } = Astro.props;
   <div class="value-card__header">
     <SvgHeading tag="h3" src={svgSrc} alt={title} class="value-card__heading" />
   </div>
-  <p class="value-card__description">{description}</p>
+  <div class="value-card__description">
+    {description && <p>{description}</p>}
+    <slot />
+  </div>
 </article>
 
 <style>
@@ -61,8 +64,11 @@ const { svgSrc, title, description } = Astro.props;
     font-size: 1rem;
     line-height: 1.6;
     color: var(--text-color);
-    margin: 0;
     text-align: center;
+  }
+
+  .value-card__description :global(p) {
+    margin: 0;
   }
 
   @media (max-width: 768px) {
