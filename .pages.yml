@@ -131,6 +131,76 @@ content:
         required: true
         options:
           media: false
+      
+      # Mushroom Showcase Section
+      - name: mushroomShowcaseHeadingSvg
+        label: Pilz-Showcase Überschrift SVG
+        type: image
+        required: true
+        description: SVG-Datei für die Pilz-Showcase Überschrift hochladen
+        options:
+          media: headings
+          extensions: [svg]
+          categories: [image]
+      - name: mushroomShowcaseTitle
+        label: Pilz-Showcase Titel (für Barrierefreiheit)
+        type: string
+        required: true
+        description: Text-Titel für Screen-Reader
+      - name: mushroomShowcaseImage
+        label: Pilz-Showcase Bild
+        type: image
+        required: true
+        description: Hochauflösendes Pilzbild hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: mushroomShowcaseImageAlt
+        label: Pilz-Showcase Bild Alt-Text
+        type: string
+        required: true
+      - name: mushroomShowcaseText
+        label: Pilz-Showcase Text
+        type: text
+        required: true
+        description: Kurzer Text über die Pilze
+
+  # Mushrooms Collection - for "Unsere Pilze" page
+  # Each entry represents a mushroom type with image and description
+  - name: mushrooms
+    label: Pilze
+    type: collection
+    path: src/content/mushrooms
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Pilzsorte
+        type: string
+        required: true
+      - name: order
+        label: Reihenfolge
+        type: number
+        required: true
+        description: Niedrigere Zahlen erscheinen zuerst
+      - name: image
+        label: Pilz-Bild
+        type: image
+        required: true
+        description: Hochauflösendes Bild der Pilzsorte hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: imageAlt
+        label: Bild Alt-Text
+        type: string
+        required: true
+      - name: body
+        label: Beschreibung
+        type: rich-text
+        required: true
+        description: Ausführliche Beschreibung der Pilzsorte
 
 # Components
 # Reusable field groups (currently not used but available for future use)
