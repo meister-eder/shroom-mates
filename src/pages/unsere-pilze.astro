@@ -1,61 +1,308 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { getCollection, render } from "astro:content";
 
 const title = "Unsere Pilze";
 const description =
   "Entdecke unsere vielfältige Auswahl an frischen, nachhaltig angebauten Pilzen von den shroom-mates in Leipzig.";
+
+// Get all mushrooms and sort by order
+const mushroomsEntries = await getCollection("mushrooms");
+const sortedMushrooms = mushroomsEntries.sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Layout title={title} description={description}>
   <main>
     <h1>Unsere Pilze</h1>
-    <div class="content">
+    <div class="intro">
       <p>
-        Hier findest du bald eine Übersicht über unsere verschiedenen
-        Pilzsorten, Anbaumethoden und Qualitätsstandards.
+        Entdecke unsere Auswahl an frischen, nachhaltig angebauten Pilzen. 
+        Jede Sorte wird mit Sorgfalt kultiviert und zum perfekten Zeitpunkt geerntet.
       </p>
-
-      <h2>Austernpilze</h2>
-      <p>Unsere Spezialität - frische Austernpilze in verschiedenen Sorten.</p>
-
-      <h2>Weitere Sorten</h2>
-      <p>Informationen zu weiteren Pilzsorten folgen bald.</p>
-
-      <div class="placeholder">
-        <p><em>Inhalte werden derzeit überarbeitet...</em></p>
-      </div>
     </div>
+    
+    <div class="mushrooms-grid">
+      {
+        sortedMushrooms.map(async (mushroom) => {
+          const { Content } = await render(mushroom);
+          return (
+            <article class="mushroom-card">
+              <div class="mushroom-image-wrapper">
+                <Image
+                  src={mushroom.data.image}
+                  alt={mushroom.data.imageAlt}
+                  width={800}
+                  height={600}
+                  format="webp"
+                  loading="lazy"
+                  class="mushroom-image"
+                />
+              </div>
+              <div class="mushroom-content">
+                <h2>{mushroom.data.title}</h2>
+                <div class="mushroom-description">
+                  <Content />
+                </div>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+    
+    {sortedMushrooms.length === 0 && (
+      <div class="no-content">
+        <p>Derzeit sind keine Pilzsorten verfügbar. Bitte schauen Sie später wieder vorbei.</p>
+      </div>
+    )}
   </main>
 </Layout>
 
 <style>
   main {
-    font-size: 20px;
-    line-height: 1.6;
     padding: 2rem;
     min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
   }
+
   h1 {
     font-size: 3rem;
     font-weight: 700;
-    line-height: 1;
+    line-height: 1.2;
     text-align: center;
-    margin: 3rem 0;
+    margin: 3rem 0 2rem;
+    color: var(--text-color);
   }
-  .content {
+
+  .intro {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
+    margin: 0 auto 4rem;
+    text-align: center;
   }
-  h2 {
-    margin-top: 2rem;
-    font-size: 1.8rem;
+
+  .intro p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-color);
   }
-  .placeholder {
+
+  .mushrooms-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
     margin-top: 3rem;
+  }
+
+  .mushroom-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
     padding: 2rem;
-    background-color: #f5f5f5;
-    border-left: 4px solid #5f5f5f;
+    background: var(--bg-color);
+    border: 3px solid #000;
+    border-radius: 12px;
+  }
+
+  .mushroom-card:nth-child(even) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mushroom-card:nth-child(even) .mushroom-image-wrapper {
+    order: 2;
+  }
+
+  .mushroom-card:nth-child(even) .mushroom-content {
+    order: 1;
+  }
+
+  .mushroom-image-wrapper {
+    width: 100%;
+    border: 3px solid #000;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .mushroom-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+  }
+
+  .mushroom-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .mushroom-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--text-color);
+  }
+
+  .mushroom-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-color);
+  }
+
+  /* Style the rendered markdown content */
+  .mushroom-description :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem;
+    color: var(--text-color);
+  }
+
+  .mushroom-description :global(h3) {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.75rem;
+    color: var(--text-color);
+  }
+
+  .mushroom-description :global(p) {
+    margin: 1rem 0;
+  }
+
+  .mushroom-description :global(ul),
+  .mushroom-description :global(ol) {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .mushroom-description :global(li) {
+    margin: 0.5rem 0;
+  }
+
+  .mushroom-description :global(strong) {
+    font-weight: 600;
+  }
+
+  .mushroom-description :global(em) {
     font-style: italic;
+  }
+
+  .no-content {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-color);
+  }
+
+  .no-content p {
+    font-size: 1.2rem;
+    opacity: 0.7;
+  }
+
+  /* Tablet breakpoint */
+  @media (max-width: 968px) {
+    .mushrooms-grid {
+      gap: 3rem;
+    }
+
+    .mushroom-card {
+      gap: 2rem;
+      padding: 1.5rem;
+    }
+
+    .mushroom-content h2 {
+      font-size: 1.8rem;
+    }
+
+    .mushroom-description {
+      font-size: 1rem;
+    }
+  }
+
+  /* Mobile breakpoint */
+  @media (max-width: 768px) {
+    main {
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 2rem 0 1.5rem;
+    }
+
+    .intro {
+      margin-bottom: 3rem;
+    }
+
+    .intro p {
+      font-size: 1.1rem;
+    }
+
+    .mushroom-card {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    .mushroom-card:nth-child(even) {
+      grid-template-columns: 1fr;
+    }
+
+    .mushroom-card:nth-child(even) .mushroom-image-wrapper {
+      order: 1;
+    }
+
+    .mushroom-card:nth-child(even) .mushroom-content {
+      order: 2;
+    }
+
+    .mushroom-content h2 {
+      font-size: 1.6rem;
+    }
+
+    .mushroom-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .mushroom-description :global(h2) {
+      font-size: 1.3rem;
+    }
+
+    .mushroom-description :global(h3) {
+      font-size: 1.15rem;
+    }
+  }
+
+  /* Small mobile breakpoint */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2rem;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .intro p {
+      font-size: 1rem;
+    }
+
+    .mushrooms-grid {
+      gap: 2rem;
+    }
+
+    .mushroom-card {
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .mushroom-content h2 {
+      font-size: 1.5rem;
+    }
+
+    .mushroom-description {
+      font-size: 0.9rem;
+    }
   }
 </style>
