@@ -1,0 +1,215 @@
+---
+import { getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import SvgHeading from "./SvgHeading.astro";
+
+// Fetch the landing page content
+const landingPageEntry = await getEntry('landing-page', 'content');
+
+if (!landingPageEntry) {
+  throw new Error('Could not find landing-page content');
+}
+
+const { 
+  mushroomShowcaseHeadingSvg, 
+  mushroomShowcaseTitle,
+  mushroomShowcaseImage,
+  mushroomShowcaseImageAlt,
+  mushroomShowcaseText
+} = landingPageEntry.data;
+---
+
+<section class="section mushroom-showcase" id="mushroom-showcase">
+  <div class="section-container showcase-container">
+    <SvgHeading
+      tag="h2"
+      src={mushroomShowcaseHeadingSvg}
+      alt={mushroomShowcaseTitle}
+      class="showcase-heading"
+    />
+    <div class="showcase-content">
+      <div class="showcase-image-wrapper">
+        <Image
+          src={mushroomShowcaseImage}
+          alt={mushroomShowcaseImageAlt}
+          width={600}
+          height={450}
+          format="webp"
+          loading="lazy"
+          class="showcase-image"
+        />
+      </div>
+      <div class="showcase-text">
+        <p>{mushroomShowcaseText}</p>
+        <a href="/unsere-pilze" class="showcase-link">
+          Mehr über unsere Pilze erfahren
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .mushroom-showcase {
+    background: var(--bg-color);
+    border-top: 2px solid #000;
+  }
+
+  .showcase-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .showcase-heading {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin-bottom: 3rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .showcase-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    width: 100%;
+    align-items: center;
+  }
+
+  .showcase-image-wrapper {
+    width: 100%;
+    border: 3px solid #000;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .showcase-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .showcase-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .showcase-text p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin: 0;
+  }
+
+  .showcase-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: var(--text-color);
+    color: var(--bg-color);
+    text-decoration: none;
+    border: 3px solid #000;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+  }
+
+  .showcase-link:hover {
+    background: var(--bg-color);
+    color: var(--text-color);
+    transform: translateY(-2px);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .showcase-link:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 2px;
+  }
+
+  .showcase-link svg {
+    transition: transform 0.3s ease;
+  }
+
+  .showcase-link:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Tablet breakpoint */
+  @media (max-width: 968px) {
+    .showcase-content {
+      gap: 3rem;
+    }
+
+    .showcase-text p {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Mobile breakpoint */
+  @media (max-width: 768px) {
+    .showcase-heading {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .showcase-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .showcase-text p {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .showcase-link {
+      font-size: 1rem;
+      padding: 0.875rem 1.5rem;
+    }
+  }
+
+  /* Small mobile breakpoint */
+  @media (max-width: 480px) {
+    .showcase-heading {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .showcase-content {
+      gap: 1.5rem;
+    }
+
+    .showcase-text p {
+      font-size: 0.95rem;
+    }
+
+    .showcase-link {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

@@ -41,6 +41,23 @@ const landingPage = defineCollection({
     // SVG heading for about section (public directory)
     aboutUsHeadingSvg: z.string(),
     aboutUsTitle: z.string(),
+    // Mushroom showcase section
+    mushroomShowcaseHeadingSvg: z.string(),
+    mushroomShowcaseTitle: z.string(),
+    mushroomShowcaseImage: image(),
+    mushroomShowcaseImageAlt: z.string(),
+    mushroomShowcaseText: z.string(),
+  }),
+});
+
+// Define the mushrooms collection for "Unsere Pilze" page
+const mushrooms = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/mushrooms' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    order: z.number(),
+    image: image(),
+    imageAlt: z.string(),
   }),
 });
 
@@ -48,4 +65,5 @@ export const collections = {
   values,
   aboutUs,
   'landing-page': landingPage,
+  mushrooms,
 };
