@@ -76,15 +76,23 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
 </header>
 
 <script>
-  // Shrink navbar on scroll for better UX and accessibility
+  // Shrink navbar on scroll for better UX and accessibility (desktop only)
   function setupShrinkingNavbar() {
     const header = document.querySelector("header");
     if (!header) return;
 
     const scrollThreshold = 50; // Start shrinking after 50px scroll
+    const mobileBreakpoint = 768; // Match CSS breakpoint
 
     function handleScroll() {
       if (!header) return; // Additional check for TypeScript
+
+      // Only apply shrinking effect on desktop
+      if (window.innerWidth <= mobileBreakpoint) {
+        header.classList.remove("scrolled");
+        return;
+      }
+
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > scrollThreshold) {
@@ -96,6 +104,9 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
 
     // Use passive event listener for better scroll performance
     window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Also handle window resize to ensure proper state
+    window.addEventListener("resize", handleScroll, { passive: true });
 
     // Check initial state
     handleScroll();
@@ -133,27 +144,29 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     transition: all 0.3s ease-in-out;
   }
 
-  /* Scrolled state - shrink navbar */
-  header.scrolled nav {
-    min-height: 48px;
-    padding: 0.25rem 2rem;
-  }
+  /* Scrolled state - shrink navbar (desktop only) */
+  @media (min-width: 769px) {
+    header.scrolled nav {
+      min-height: 48px;
+      padding: 0.25rem 2rem;
+    }
 
-  header.scrolled .desktop-logo img {
-    height: 60px !important;
-    margin-top: 10px !important;
-  }
+    header.scrolled .desktop-logo img {
+      height: 60px !important;
+      margin-top: 10px !important;
+    }
 
-  header.scrolled .logo {
-    max-width: 130px; /* Increased from 110px to prevent text cutoff */
-  }
+    header.scrolled .logo {
+      max-width: 130px; /* Increased from 110px to prevent text cutoff */
+    }
 
-  header.scrolled .logo :global(.svg-heading) {
-    font-size: 0.85rem;
-  }
+    header.scrolled .logo :global(.svg-heading) {
+      font-size: 0.85rem;
+    }
 
-  header.scrolled .logo :global(.svg-heading svg) {
-    overflow: visible; /* Ensure SVG text isn't clipped */
+    header.scrolled .logo :global(.svg-heading svg) {
+      overflow: visible; /* Ensure SVG text isn't clipped */
+    }
   }
 
   .desktop-logo {
