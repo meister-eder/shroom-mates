@@ -21,7 +21,7 @@ const mushrooms = mushroomsCollection
   }));
 
 // Helper: choose readable text color (black or white) based on a hex/rgb background
-const readableTextColor = (bg) => {
+const readableTextColor = (bg: string | undefined): string => {
   if (!bg) return "#111";
   try {
     // Normalize hex shorthand
@@ -42,7 +42,9 @@ const readableTextColor = (bg) => {
       // Try rgb(...) format
       const rgbMatch = bg.match(/rgba?\(([^)]+)\)/i);
       if (rgbMatch) {
-        const parts = rgbMatch[1].split(",").map((s) => parseFloat(s.trim()));
+        const parts = rgbMatch[1]
+          .split(",")
+          .map((s: string) => parseFloat(s.trim()));
         r = parts[0];
         g = parts[1];
         b = parts[2];

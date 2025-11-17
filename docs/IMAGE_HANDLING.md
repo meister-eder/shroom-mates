@@ -167,13 +167,15 @@ const { aboutUsHeadingSvg, values } = landingPageContent.data;
 
 Located in `.pages.yml`:
 
+**CRITICAL:** The `output` path in PagesCMS determines what gets written into the markdown frontmatter. For Astro content collections, this must be a **relative path from the content file location**, not an absolute path.
+
 ```yaml
 media:
   # Optimized images go to src/assets/
   - name: images
     label: Bilder (Optimiert)
     input: src/assets/images
-    output: src/assets/images  # ✅ Changed from /assets/images
+    output: ../../assets/images  # ✅ RELATIVE path from content file (e.g., src/content/mushrooms/)
     categories: [image, video]
     description: Images here will be optimized by Astro
   
@@ -288,8 +290,22 @@ schema: ({ image }) => z.object({
 ```yaml
 # PagesCMS .pages.yml
 input: src/assets/images
-output: src/assets/images  # Not /assets/images
+output: ../../assets/images  # Relative path from content file location
 ```
+
+### Issue: PagesCMS uploads images with wrong paths
+
+**Problem:** PagesCMS writes `src/assets/images/photo.jpg` instead of `../../assets/images/photo.jpg`
+**Solution:** The `output` field controls what gets written to markdown. Set it to the relative path:
+```yaml
+# In .pages.yml
+media:
+  - name: images
+    input: src/assets/images      # Where file is saved in repo
+    output: ../../assets/images   # What gets written in markdown
+```
+
+**Why:** Astro's `image()` helper expects relative paths from the content file location, not absolute file system paths.
 
 ## Performance Benefits
 
