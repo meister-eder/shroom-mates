@@ -150,6 +150,7 @@ const readableTextColor = (bg: string | undefined): string => {
     line-height: 1.2;
     text-align: center;
     margin: 0;
+    margin-top: var(--navbar-height);
     padding: 3rem 2rem 2rem;
     color: var(--text-color);
     background: #ffffff;
@@ -266,8 +267,9 @@ const readableTextColor = (bg: string | undefined): string => {
   @media (max-width: 768px) {
     h1 {
       font-size: 2.5rem;
-      margin: 2rem 0 1.5rem;
-      padding: 0 1.5rem;
+      margin-top: var(--navbar-height-mobile);
+      margin-bottom: 1.5rem;
+      padding: 2rem 1.5rem 0;
     }
 
     .intro {
