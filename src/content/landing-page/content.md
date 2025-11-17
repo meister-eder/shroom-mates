@@ -26,9 +26,9 @@ aboutUsHeadingSvg: /assets/headings/ueber_uns.svg
 aboutUsTitle: Über Uns
 mushroomShowcaseHeadingSvg: /assets/headings/unsere_pilze.svg
 mushroomShowcaseTitle: Unsere Pilze
-mushroomShowcaseImage: ../../assets/images/IMG_9970.jpeg
-mushroomShowcaseImageAlt: Frische Austernpilze der shroom-mates in höchster Qualität
-mushroomShowcaseText: Unsere frischen Austernpilze werden mit Sorgfalt und Leidenschaft in der Plagwitzer Markthalle kultiviert. Jeder Pilz wächst auf nachhaltig produziertem Substrat aus regionalen Rohstoffen und wird zum perfekten Zeitpunkt geerntet – für maximalen Geschmack und höchste Qualität.
+mushroomShowcaseImage: ../../assets/images/mushrooms.jpg
+mushroomShowcaseImageAlt: Frische Pilze der shroom-mates
+mushroomShowcaseGrowingMethodsText: Wir kultivieren unsere Edelpilze mit viel Sorgfalt auf nachhaltig produziertem Substrat aus regionalen Bio-Rohstoffen. Jeder Pilz wird zum perfekten Zeitpunkt von Hand geerntet – für höchste Qualität und vollstes Aroma.
 ---
 Wir sind die shroom-mates Emmi und Tim aus Leipzig und kultivieren mit viel Liebe hochwertige Edelpilze. Unsere Pilze wachsen auf nachhaltig produziertem Substrat aus regionalen Rohstoffen unter optimalen Bedingungen.
 

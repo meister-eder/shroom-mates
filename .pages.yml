@@ -162,11 +162,11 @@ content:
         label: Pilz-Showcase Bild Alt-Text
         type: string
         required: true
-      - name: mushroomShowcaseText
+      - name: mushroomShowcaseGrowingMethodsText
         label: Pilz-Showcase Text
         type: text
-        required: true
-        description: Kurzer Text über die Pilze
+        required: false
+        description: Kurzer Text über Anbaumethoden und Qualität
 
   # Mushrooms Collection - Individual mushroom types for "Unsere Pilze" page
   - name: mushrooms

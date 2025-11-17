@@ -59,7 +59,8 @@ const landingPage = defineCollection({
     mushroomShowcaseTitle: z.string(),
     mushroomShowcaseImage: image(),
     mushroomShowcaseImageAlt: z.string(),
-    mushroomShowcaseText: z.string(),
+    // Description of growing methods to display before mushrooms
+    mushroomShowcaseGrowingMethodsText: z.string().optional(),
   }),
 });
 
