@@ -1,32 +1,92 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
-import { getEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
 const title = "Unsere Pilze";
 const description =
   "Entdecke unsere vielfältige Auswahl an frischen, nachhaltig angebauten Pilzen von den shroom-mates in Leipzig.";
+const noBackground = true;
 
-// Get mushrooms from landing page content (same pattern as values)
-const landingPageEntry = await getEntry("landing-page", "content");
+// Get mushrooms from the mushrooms collection
+const mushroomsCollection = await getCollection("mushrooms");
+const mushrooms = mushroomsCollection
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((entry) => ({
+    title: entry.data.title,
+    image: entry.data.image,
+    imageAlt: entry.data.imageAlt,
+    description: entry.body,
+    color: entry.data.color,
+  }));
 
-if (!landingPageEntry) {
-  throw new Error("Could not find landing-page content");
-}
+// Helper: choose readable text color (black or white) based on a hex/rgb background
+const readableTextColor = (bg) => {
+  if (!bg) return "#111";
+  try {
+    // Normalize hex shorthand
+    const hexMatch = bg.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    let r, g, b;
+    if (hexMatch) {
+      const hex = hexMatch[1];
+      if (hex.length === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+      } else {
+        r = parseInt(hex.slice(0, 2), 16);
+        g = parseInt(hex.slice(2, 4), 16);
+        b = parseInt(hex.slice(4, 6), 16);
+      }
+    } else {
+      // Try rgb(...) format
+      const rgbMatch = bg.match(/rgba?\(([^)]+)\)/i);
+      if (rgbMatch) {
+        const parts = rgbMatch[1].split(",").map((s) => parseFloat(s.trim()));
+        r = parts[0];
+        g = parts[1];
+        b = parts[2];
+      } else {
+        return "#111";
+      }
+    }
 
-const mushrooms = landingPageEntry.data.mushrooms || [];
+    // Perceived luminance
+    const [R, G, B] = [r, g, b].map((c) => {
+      const v = c / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    const lum = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+    return lum > 0.5 ? "#111" : "#fff";
+  } catch (e) {
+    return "#111";
+  }
+};
 ---
 
+<style is:global>
+  /* Remove checkered background for this page only */
+  body:has(.full-width-page) {
+    background: #ffffff;
+    background-image: none;
+  }
+
+  html:has(.full-width-page) {
+    background: #ffffff;
+    background-image: none;
+  }
+</style>
+
 <Layout title={title} description={description}>
-  <main>
+  <main class="full-width-page">
     <h1>Unsere Pilze</h1>
     <div class="intro">
       <p>
-        Entdecke unsere Auswahl an frischen, nachhaltig angebauten Pilzen. 
-        Jede Sorte wird mit Sorgfalt kultiviert und zum perfekten Zeitpunkt geerntet.
+        Entdecke unsere Auswahl an frischen, nachhaltig angebauten Pilzen. Jede
+        Sorte wird mit Sorgfalt kultiviert und zum perfekten Zeitpunkt geerntet.
       </p>
     </div>
-    
+
     <div class="mushrooms-grid">
       {
         mushrooms.map((mushroom, index) => (
@@ -43,7 +103,14 @@ const mushrooms = landingPageEntry.data.mushrooms || [];
                 priority={index === 0}
               />
             </div>
-            <div class="mushroom-content">
+            <div
+              class="mushroom-content"
+              style={
+                mushroom.color
+                  ? `background-color: ${mushroom.color}; color: ${readableTextColor(mushroom.color)};`
+                  : ""
+              }
+            >
               <h2>{mushroom.title}</h2>
               <p class="mushroom-description">{mushroom.description}</p>
             </div>
@@ -51,21 +118,28 @@ const mushrooms = landingPageEntry.data.mushrooms || [];
         ))
       }
     </div>
-    
-    {mushrooms.length === 0 && (
-      <div class="no-content">
-        <p>Derzeit sind keine Pilzsorten verfügbar. Bitte schauen Sie später wieder vorbei.</p>
-      </div>
-    )}
+
+    {
+      mushrooms.length === 0 && (
+        <div class="no-content">
+          <p>
+            Derzeit sind keine Pilzsorten verfügbar. Bitte schauen Sie später
+            wieder vorbei.
+          </p>
+        </div>
+      )
+    }
   </main>
 </Layout>
 
 <style>
-  main {
-    padding: 0;
+  .full-width-page {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
     min-height: 100vh;
-    width: 100%;
-    background: var(--bg-color);
+    width: 100% !important;
+    background: #ffffff;
   }
 
   h1 {
@@ -76,7 +150,7 @@ const mushrooms = landingPageEntry.data.mushrooms || [];
     margin: 0;
     padding: 3rem 2rem 2rem;
     color: var(--text-color);
-    background: var(--bg-color);
+    background: #ffffff;
   }
 
   .intro {
@@ -84,7 +158,7 @@ const mushrooms = landingPageEntry.data.mushrooms || [];
     margin: 0 auto;
     padding: 0 2rem 4rem;
     text-align: center;
-    background: var(--bg-color);
+    background: #ffffff;
   }
 
   .intro p {
@@ -97,15 +171,18 @@ const mushrooms = landingPageEntry.data.mushrooms || [];
     display: flex;
     flex-direction: column;
     gap: 0;
-    width: 100%;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
 
   .mushroom-card {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
-    align-items: center;
+    align-items: stretch;
     min-height: 60vh;
+    width: 100%;
   }
 
   .mushroom-card:nth-child(even) .mushroom-image-wrapper {
@@ -136,8 +213,8 @@ const mushrooms = landingPageEntry.data.mushrooms || [];
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding: 3rem 4rem;
-    background: var(--bg-color);
+    padding: 4rem 6rem;
+    background: #ffffff;
     height: 100%;
     justify-content: center;
   }
