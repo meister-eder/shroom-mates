@@ -165,39 +165,53 @@ content:
         type: text
         required: true
         description: Kurzer Text über die Pilze
-      
-      # Mushrooms Array - for "Unsere Pilze" page
-      - name: mushrooms
-        label: Pilze-Übersicht
-        type: object
-        list:
-          min: 0
-          collapsible:
-            collapsed: false
-            summary: "{title} (#{index})"
-        fields:
-          - name: title
-            label: Pilzsorte
-            type: string
-            required: true
-          - name: image
-            label: Pilz-Bild
-            type: image
-            required: true
-            description: Hochauflösendes Bild der Pilzsorte hochladen
-            options:
-              media: images
-              extensions: [jpg, jpeg, png, webp]
-              categories: [image]
-          - name: imageAlt
-            label: Bild Alt-Text
-            type: string
-            required: true
-          - name: description
-            label: Beschreibung
-            type: text
-            required: true
-            description: Kurze Beschreibung der Pilzsorte
+
+  # Mushrooms Collection - Individual mushroom types for "Unsere Pilze" page
+  - name: mushrooms
+    label: Pilzsorten
+    type: collection
+    path: src/content/mushrooms
+    format: yaml-frontmatter
+    extension: md
+    fields:
+      - name: title
+        label: Pilzsorte
+        type: string
+        required: true
+        description: Name der Pilzsorte (z.B. "Austernpilze")
+      - name: image
+        label: Pilz-Bild
+        type: image
+        required: true
+        description: Hochauflösendes Bild der Pilzsorte hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: imageAlt
+        label: Bild Alt-Text
+        type: string
+        required: true
+        description: Beschreibender Alt-Text für das Bild (Barrierefreiheit)
+      - name: color
+        label: Hintergrundfarbe
+        type: string
+        required: false
+        description: Hex-Farbe für den Textbox-Hintergrund (z.B. "#f6efe6")
+        default: "#ffffff"
+      - name: order
+        label: Sortierung
+        type: number
+        required: true
+        description: Reihenfolge auf der Seite (1, 2, 3, ...)
+        default: 1
+      - name: body
+        label: Beschreibung
+        type: rich-text
+        required: true
+        description: Ausführliche Beschreibung der Pilzsorte
+        options:
+          media: false
 
 # Components
 # Reusable field groups (currently not used but available for future use)
