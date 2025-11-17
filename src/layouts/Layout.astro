@@ -13,14 +13,103 @@ interface Props {
 
 const {
   title,
-  description = "Hochwertige Edelpilze aus Leipzig, Plagwitz. Frisch kultiviert und nachhaltig angebaut von den shroom-mates.",
+  description = "Hochwertige Edelpilze aus Leipzig-Plagwitz. Frisch kultiviert, nachhaltig angebaut, regional verfügbar. Rosenseitling, Pioppino, Lion's Mane und mehr von den shroom-mates.",
   ogImage,
   isLandingPage = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Use a better default image - the logo with mushrooms
 const defaultOgImage =
-  ogImage || new URL("/favicon.ico", Astro.site).toString();
+  ogImage ||
+  new URL("/assets/logo_with_shrooms_and_text.png", Astro.site).toString();
+
+// Structured data for local business SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://shroom-mates.de",
+  name: "shroom-mates",
+  image: new URL(
+    "/assets/logo_with_shrooms_and_text.png",
+    Astro.site
+  ).toString(),
+  description: description,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Markranstädter Straße 8",
+    addressLocality: "Leipzig",
+    addressRegion: "Sachsen",
+    postalCode: "04229",
+    addressCountry: "DE",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: "51.3296",
+    longitude: "12.3177",
+  },
+  url: "https://shroom-mates.de",
+  email: "hey@shroom-mates.de",
+  priceRange: "$$",
+  areaServed: {
+    "@type": "City",
+    name: "Leipzig",
+  },
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Edelpilze",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Rosenseitling",
+          description: "Rosa Austernpilze",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Pioppino",
+          description: "Südlicher Schüppling",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Lion's Mane",
+          description: "Igelstachelbart",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "White Pearl",
+          description: "Weißer Austernpilz",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Maitake",
+          description: "Klapperschwamm",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Growkits",
+          description: "Pilzzuchtsets zum Selberziehen",
+        },
+      },
+    ],
+  },
+};
 ---
 
 <!doctype html>
@@ -37,27 +126,63 @@ const defaultOgImage =
     <meta name="generator" content={Astro.generator} />
 
     <!-- SEO and Open Graph -->
-    <title>{title} | shroom-mates</title>
+    <title>{title}</title>
     <link rel="canonical" href={canonicalURL} />
 
-    <meta property="og:title" content={`${title} | shroom-mates`} />
+    <!-- Structured Data for Local Business SEO -->
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    />
+
+    <!-- Location/Geo Targeting -->
+    <meta name="geo.region" content="DE-SN" />
+    <meta name="geo.placename" content="Leipzig" />
+    <meta name="geo.position" content="51.325545403892036;12.330445796958628" />
+    <meta name="ICBM" content="51.325545403892036, 2.330445796958628" />
+
+    <!-- Keywords for local search -->
+    <meta
+      name="keywords"
+      content="Edelpilze Leipzig, Austernpilze Leipzig, Pilze Leipzig, Plagwitz, regionale Pilze, nachhaltige Pilze, frische Pilze, Markthalle Leipzig, Bio Pilze"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content="shroom-mates" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_DE" />
     <meta property="og:image" content={defaultOgImage} />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta
+      property="og:image:alt"
+      content="shroom-mates Logo - Edelpilze aus Leipzig"
+    />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={`${title} | shroom-mates`} />
+    <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={defaultOgImage} />
+    <meta
+      name="twitter:image:alt"
+      content="shroom-mates Logo - Edelpilze aus Leipzig"
+    />
 
     <!-- Additional meta tags -->
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="shroom-mates" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="author" content="shroom-mates - Emmelie Kunz & Tim Eder" />
     <meta name="theme-color" content="#fdfcea" />
+
+    <!-- Language alternates (for future expansion) -->
+    <link rel="alternate" hreflang="de" href={canonicalURL} />
+    <link rel="alternate" hreflang="x-default" href={canonicalURL} />
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
