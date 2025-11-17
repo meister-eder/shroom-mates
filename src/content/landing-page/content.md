@@ -4,7 +4,7 @@ heroImage: ../../assets/images/hero_rose_tasse.jpg
 heroImageAlt: Rosafarbene Austernpilze in einer Tasse
 logoImage: ../../assets/images/logo_with_shrooms.png
 logoImageAlt: Shroom-Mates Logo mit Pilzen
-heroTitle: Wir sind Emmi & Tim – die shroom-mates.
+heroTitle: Wir sind Emmi & Tim – die shroom-mates
 teaserText: >-
   Wir haben uns in das Thema Pilzzucht verliebt und bauen seitdem Edelpilze in
   unserer eigenen kleinen Farm an. Alles, was wir anbieten, entsteht bei uns vor
@@ -35,9 +35,9 @@ mushroomShowcaseGrowingMethodsText: >2-
    Wir probieren gerne Neues aus und züchten abwechslungsreiche und besondere
   Pilzsorten. Je nach Jahreszeit wechselt unser Sortiment. Unsere Pilze wachsen
   auf nachhaltig produziertem Substrat mit regionalen Bio-Rohstoffen – ganz ohne
-  künstliche Zusätze.
-  Wir achten darauf, dass die Bedingungen stimmen, damit sie gesund, lecker und
-  aromatisch sind. Jeder Pilz wird zum richtigen Zeitpunkt von Hand geerntet.
+  künstliche Zusätze. Wir achten darauf, dass die Bedingungen stimmen, damit sie
+  gesund, lecker und aromatisch sind. Jeder Pilz wird zum richtigen Zeitpunkt
+  von Hand geerntet.
 ---
 Wir züchten Edelpilze in unserer kleinen Pilzfarm in der Plagwitzer Markthalle in Leipzig. Angefangen hat das Ganze, weil wir beide Spaß daran haben, Dinge selbst zu machen – und weil wir irgendwann gemerkt haben, wie spannend Pilze eigentlich sind. Seitdem wachsen bei uns Austernpilze, Pioppinos, Lion’s Mane und andere Sorten, die wir mit viel Geduld und Handarbeit kultivieren.
 
