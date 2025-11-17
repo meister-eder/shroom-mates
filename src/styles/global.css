@@ -12,8 +12,10 @@
 	--text-color: #1d1d1d;
 	--bg-color: #ffffff;
 	--bg-accent: #fdfcea;
-	--navbar-height: 6rem;
-	--navbar-height-mobile: 5rem;
+	--navbar-height: 7.5rem;
+	--navbar-height-scrolled: 5.5rem;
+	--navbar-height-mobile: 4.5rem;
+	--navbar-height-mobile-scrolled: 3.5rem;
 }
 
 html {

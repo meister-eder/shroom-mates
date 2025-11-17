@@ -75,6 +75,39 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
   </nav>
 </header>
 
+<script>
+  // Shrink navbar on scroll for better UX and accessibility
+  function setupShrinkingNavbar() {
+    const header = document.querySelector("header");
+    if (!header) return;
+
+    const scrollThreshold = 50; // Start shrinking after 50px scroll
+
+    function handleScroll() {
+      if (!header) return; // Additional check for TypeScript
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > scrollThreshold) {
+        header.classList.add("scrolled");
+      } else {
+        header.classList.remove("scrolled");
+      }
+    }
+
+    // Use passive event listener for better scroll performance
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Check initial state
+    handleScroll();
+  }
+
+  // Run on page load
+  setupShrinkingNavbar();
+
+  // Re-run after view transitions (Astro page navigation)
+  document.addEventListener("astro:after-swap", setupShrinkingNavbar);
+</script>
+
 <style>
   header {
     position: fixed;
@@ -84,6 +117,7 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     z-index: 1000;
     background: var(--bg-accent);
     border-bottom: 2px solid #000;
+    transition: all 0.3s ease-in-out;
   }
 
   nav {
@@ -96,6 +130,30 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     position: relative;
     gap: 1rem;
     min-height: 64px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Scrolled state - shrink navbar */
+  header.scrolled nav {
+    min-height: 48px;
+    padding: 0.25rem 2rem;
+  }
+
+  header.scrolled .desktop-logo img {
+    height: 60px !important;
+    margin-top: 10px !important;
+  }
+
+  header.scrolled .logo {
+    max-width: 130px; /* Increased from 110px to prevent text cutoff */
+  }
+
+  header.scrolled .logo :global(.svg-heading) {
+    font-size: 0.85rem;
+  }
+
+  header.scrolled .logo :global(.svg-heading svg) {
+    overflow: visible; /* Ensure SVG text isn't clipped */
   }
 
   .desktop-logo {
@@ -122,6 +180,7 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     display: flex;
     align-items: center;
     max-width: 140px;
+    transition: all 0.3s ease-in-out;
   }
 
   .logo a {
@@ -134,6 +193,7 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
   .logo :global(.svg-heading) {
     font-size: 1rem;
     width: 100%;
+    transition: all 0.3s ease-in-out;
   }
 
   .logo :global(.svg-heading svg) {
@@ -301,6 +361,7 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
       height: 80px;
       width: auto;
       margin-top: 15px;
+      transition: all 0.3s ease-in-out;
     }
 
     nav {
@@ -339,11 +400,15 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     }
 
     .logo {
-      max-width: 100px;
+      max-width: 120px; /* Increased from 100px to prevent text cutoff on mobile */
     }
 
     .logo :global(.svg-heading) {
       font-size: 0.5rem;
+    }
+
+    .logo :global(.svg-heading svg) {
+      overflow: visible; /* Ensure SVG text isn't clipped on mobile */
     }
 
     .nav-links a {
