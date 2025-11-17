@@ -195,14 +195,36 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     font-family: "DM Mono", monospace;
     font-size: 1.1rem;
     padding: 0.5rem 0.75rem;
-    transition: all 0.2s;
-    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease;
     display: inline-block;
+    position: relative;
   }
 
-  .nav-links a:hover {
-    border-bottom-color: var(--accent);
-    transform: scale(1.1);
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 2px;
+    background: var(--accent);
+    width: 0;
+    transition: width 0.3s ease;
+  }
+
+  .nav-links a:hover::after,
+  .nav-links a:focus-visible::after {
+    width: calc(100% - 1.5rem);
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus-visible {
+    color: var(--accent);
+  }
+
+  .nav-links a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .hamburger:focus-visible {
