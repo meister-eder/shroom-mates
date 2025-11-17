@@ -1,6 +1,5 @@
 ---
 title: Rosa Austernpilze
-order: 2
 image: ../../assets/images/hero_rose_tasse.jpg
 imageAlt: Rosa Austernpilze in einer Tasse
 ---

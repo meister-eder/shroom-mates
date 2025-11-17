@@ -1,6 +1,5 @@
 ---
 title: Austernpilze
-order: 1
 image: ../../assets/images/IMG_9970.jpeg
 imageAlt: Frische Austernpilze der shroom-mates
 ---
