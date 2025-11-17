@@ -55,7 +55,6 @@ const mushrooms = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/mushrooms' }),
   schema: ({ image }) => z.object({
     title: z.string(),
-    order: z.number(),
     image: image(),
     imageAlt: z.string(),
   }),
