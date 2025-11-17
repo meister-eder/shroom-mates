@@ -81,18 +81,21 @@ const readableTextColor = (bg: string | undefined): string => {
 
 <Layout title={title} description={description}>
   <main class="full-width-page">
-    <h1>Unsere Pilze</h1>
-    <div class="intro">
-      <p>
-        Entdecke unsere Auswahl an frischen, nachhaltig angebauten Pilzen. Jede
-        Sorte wird mit Sorgfalt kultiviert und zum perfekten Zeitpunkt geerntet.
-      </p>
-    </div>
-
     <div class="mushrooms-grid">
       {
         mushrooms.map((mushroom, index) => (
           <article class="mushroom-card">
+            <div
+              class="mushroom-content"
+              style={
+                mushroom.color
+                  ? `background-color: ${mushroom.color}; color: ${readableTextColor(mushroom.color)};`
+                  : ""
+              }
+            >
+              <h2>{mushroom.title}</h2>
+              <p class="mushroom-description">{mushroom.description}</p>
+            </div>
             <div class="mushroom-image-wrapper">
               <Image
                 src={mushroom.image}
@@ -104,17 +107,6 @@ const readableTextColor = (bg: string | undefined): string => {
                 class="mushroom-image"
                 priority={index === 0}
               />
-            </div>
-            <div
-              class="mushroom-content"
-              style={
-                mushroom.color
-                  ? `background-color: ${mushroom.color}; color: ${readableTextColor(mushroom.color)};`
-                  : ""
-              }
-            >
-              <h2>{mushroom.title}</h2>
-              <p class="mushroom-description">{mushroom.description}</p>
             </div>
           </article>
         ))
@@ -142,32 +134,12 @@ const readableTextColor = (bg: string | undefined): string => {
     min-height: 100vh;
     width: 100% !important;
     background: #ffffff;
-  }
-
-  h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1.2;
-    text-align: center;
-    margin: 0;
     margin-top: var(--navbar-height);
-    padding: 3rem 2rem 2rem;
-    color: var(--text-color);
-    background: #ffffff;
   }
 
-  .intro {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 2rem 4rem;
-    text-align: center;
-    background: #ffffff;
-  }
-
-  .intro p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    color: var(--text-color);
+  /* Remove parent padding for flush layout */
+  :global(.site-main:has(.full-width-page)) {
+    padding-top: 0 !important;
   }
 
   .mushrooms-grid {
@@ -188,11 +160,11 @@ const readableTextColor = (bg: string | undefined): string => {
     width: 100%;
   }
 
-  .mushroom-card:nth-child(even) .mushroom-image-wrapper {
+  .mushroom-card:nth-child(even) .mushroom-content {
     order: 2;
   }
 
-  .mushroom-card:nth-child(even) .mushroom-content {
+  .mushroom-card:nth-child(even) .mushroom-image-wrapper {
     order: 1;
   }
 
@@ -265,33 +237,29 @@ const readableTextColor = (bg: string | undefined): string => {
 
   /* Mobile breakpoint */
   @media (max-width: 768px) {
-    h1 {
-      font-size: 2.5rem;
+    .full-width-page {
       margin-top: var(--navbar-height-mobile);
-      margin-bottom: 1.5rem;
-      padding: 2rem 1.5rem 0;
+      padding-top: 0 !important;
     }
 
-    .intro {
-      margin-bottom: 3rem;
-      padding: 0 1.5rem;
-    }
-
-    .intro p {
-      font-size: 1.1rem;
+    /* Adjust parent to remove gap - match actual navbar height */
+    :global(.site-main:has(.full-width-page)) {
+      margin-top: 64px !important;
     }
 
     .mushroom-card {
       grid-template-columns: 1fr;
       min-height: auto;
+      display: flex;
+      flex-direction: column;
     }
 
-    .mushroom-card:nth-child(even) .mushroom-image-wrapper {
-      order: 1;
+    .mushroom-content {
+      order: 1 !important;
     }
 
-    .mushroom-card:nth-child(even) .mushroom-content {
-      order: 2;
+    .mushroom-image-wrapper {
+      order: 2 !important;
     }
 
     .mushroom-image-wrapper {
@@ -318,20 +286,6 @@ const readableTextColor = (bg: string | undefined): string => {
 
   /* Small mobile breakpoint */
   @media (max-width: 480px) {
-    h1 {
-      font-size: 2rem;
-      margin: 1.5rem 0 1rem;
-      padding: 0 1rem;
-    }
-
-    .intro {
-      padding: 0 1rem;
-    }
-
-    .intro p {
-      font-size: 1rem;
-    }
-
     .mushroom-image-wrapper {
       min-height: 40vh;
     }
