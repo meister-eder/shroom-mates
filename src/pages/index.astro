@@ -20,6 +20,7 @@ if (!landingPageContent) {
 // With the image() helper in the schema, Astro automatically resolves paths to ImageMetadata
 // No need for manual image resolution - it's all type-safe!
 const {
+  title,
   heroImage,
   heroImageAlt,
   logoImage,
@@ -28,11 +29,17 @@ const {
   teaserText,
 } = landingPageContent.data;
 
-const title = heroTitle;
+// Use the proper title from content.md for SEO, not heroTitle
+const pageTitle = title;
 const description = teaserText;
 ---
 
-<Layout title={title} description={description} isLandingPage={true}>
+<Layout 
+  title={pageTitle} 
+  description={description} 
+  ogImage={heroImage.src}
+  isLandingPage={true}
+>
   <main class="landing-main">
     <section class="hero">
       <Image
