@@ -205,7 +205,13 @@ const defaultOgImage =
         .site-main.with-nav-spacing {
           max-width: 1200px;
           margin: 0 auto;
-          padding-top: var(--navbar-height);
+          margin-top: var(--navbar-height);
+        }
+        
+        @media (max-width: 768px) {
+          .site-main.with-nav-spacing {
+            margin-top: var(--navbar-height-mobile);
+          }
         }
 
         /* Improve image loading */

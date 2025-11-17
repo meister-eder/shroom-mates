@@ -165,38 +165,39 @@ content:
         type: text
         required: true
         description: Kurzer Text über die Pilze
-
-  # Mushrooms Collection - for "Unsere Pilze" page
-  # Each entry represents a mushroom type with image and description
-  # Entries are displayed in the order they appear in the collection
-  - name: mushrooms
-    label: Pilze
-    type: collection
-    path: src/content/mushrooms
-    format: yaml-frontmatter
-    fields:
-      - name: title
-        label: Pilzsorte
-        type: string
-        required: true
-      - name: image
-        label: Pilz-Bild
-        type: image
-        required: true
-        description: Hochauflösendes Bild der Pilzsorte hochladen
-        options:
-          media: images
-          extensions: [jpg, jpeg, png, webp]
-          categories: [image]
-      - name: imageAlt
-        label: Bild Alt-Text
-        type: string
-        required: true
-      - name: body
-        label: Beschreibung
-        type: rich-text
-        required: true
-        description: Kurze Beschreibung der Pilzsorte
+      
+      # Mushrooms Array - for "Unsere Pilze" page
+      - name: mushrooms
+        label: Pilze-Übersicht
+        type: object
+        list:
+          min: 0
+          collapsible:
+            collapsed: false
+            summary: "{title} (#{index})"
+        fields:
+          - name: title
+            label: Pilzsorte
+            type: string
+            required: true
+          - name: image
+            label: Pilz-Bild
+            type: image
+            required: true
+            description: Hochauflösendes Bild der Pilzsorte hochladen
+            options:
+              media: images
+              extensions: [jpg, jpeg, png, webp]
+              categories: [image]
+          - name: imageAlt
+            label: Bild Alt-Text
+            type: string
+            required: true
+          - name: description
+            label: Beschreibung
+            type: text
+            required: true
+            description: Kurze Beschreibung der Pilzsorte
 
 # Components
 # Reusable field groups (currently not used but available for future use)
