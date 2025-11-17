@@ -6,11 +6,13 @@
 # Configure where images and media files are stored
 # IMPORTANT: Images in src/assets/ get optimized by Astro's Image component
 # while files in public/ are served as-is without optimization
+# The 'output' path is what gets written in the markdown frontmatter
+# It must be relative to the content file location (e.g., src/content/mushrooms/)
 media:
   - name: images
     label: Bilder (Optimiert)
     input: src/assets/images
-    output: src/assets/images
+    output: ../../assets/images
     categories: [image, video]
     description: Images here will be optimized by Astro
   - name: headings
