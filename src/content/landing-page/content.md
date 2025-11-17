@@ -29,6 +29,15 @@ mushroomShowcaseTitle: Unsere Pilze
 mushroomShowcaseImage: ../../assets/images/IMG_9970.jpeg
 mushroomShowcaseImageAlt: Frische Austernpilze der shroom-mates in höchster Qualität
 mushroomShowcaseText: Unsere frischen Austernpilze werden mit Sorgfalt und Leidenschaft in der Plagwitzer Markthalle kultiviert. Jeder Pilz wächst auf nachhaltig produziertem Substrat aus regionalen Rohstoffen und wird zum perfekten Zeitpunkt geerntet – für maximalen Geschmack und höchste Qualität.
+mushrooms:
+  - title: Austernpilze
+    image: ../../assets/images/IMG_9970.jpeg
+    imageAlt: Frische Austernpilze der shroom-mates
+    description: Unsere Austernpilze (Pleurotus ostreatus) sind die Spezialität unseres Betriebs. Sie zeichnen sich durch ihr zartes Fleisch und ihr mildes, leicht nussiges Aroma aus.
+  - title: Rosa Austernpilze
+    image: ../../assets/images/hero_rose_tasse.jpg
+    imageAlt: Rosa Austernpilze in einer Tasse
+    description: Die Rosa Austernpilze (Pleurotus djamor) sind eine besondere Variante der Austernpilze mit ihrer charakteristischen rosa bis pinken Färbung. Sie sind nicht nur ein optisches Highlight, sondern begeistern auch geschmacklich.
 ---
 Wir sind die shroom-mates Emmi und Tim aus Leipzig und kultivieren mit viel Liebe hochwertige Edelpilze. Unsere Pilze wachsen auf nachhaltig produziertem Substrat aus regionalen Rohstoffen unter optimalen Bedingungen.
 

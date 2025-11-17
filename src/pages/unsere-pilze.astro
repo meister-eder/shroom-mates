@@ -1,14 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
-import { getCollection, render } from "astro:content";
+import { getEntry } from "astro:content";
 
 const title = "Unsere Pilze";
 const description =
   "Entdecke unsere vielfältige Auswahl an frischen, nachhaltig angebauten Pilzen von den shroom-mates in Leipzig.";
 
-// Get all mushrooms - they will be in the order they are defined in the collection
-const mushroomsEntries = await getCollection("mushrooms");
+// Get mushrooms from landing page content (same pattern as values)
+const landingPageEntry = await getEntry("landing-page", "content");
+
+if (!landingPageEntry) {
+  throw new Error("Could not find landing-page content");
+}
+
+const mushrooms = landingPageEntry.data.mushrooms || [];
 ---
 
 <Layout title={title} description={description}>
@@ -23,35 +29,30 @@ const mushroomsEntries = await getCollection("mushrooms");
     
     <div class="mushrooms-grid">
       {
-        mushroomsEntries.map(async (mushroom, index) => {
-          const { Content } = await render(mushroom);
-          return (
-            <article class="mushroom-card">
-              <div class="mushroom-image-wrapper">
-                <Image
-                  src={mushroom.data.image}
-                  alt={mushroom.data.imageAlt}
-                  width={1920}
-                  height={1080}
-                  format="webp"
-                  loading="lazy"
-                  class="mushroom-image"
-                  priority={index === 0}
-                />
-              </div>
-              <div class="mushroom-content">
-                <h2>{mushroom.data.title}</h2>
-                <div class="mushroom-description">
-                  <Content />
-                </div>
-              </div>
-            </article>
-          );
-        })
+        mushrooms.map((mushroom, index) => (
+          <article class="mushroom-card">
+            <div class="mushroom-image-wrapper">
+              <Image
+                src={mushroom.image}
+                alt={mushroom.imageAlt}
+                width={1920}
+                height={1080}
+                format="webp"
+                loading="lazy"
+                class="mushroom-image"
+                priority={index === 0}
+              />
+            </div>
+            <div class="mushroom-content">
+              <h2>{mushroom.title}</h2>
+              <p class="mushroom-description">{mushroom.description}</p>
+            </div>
+          </article>
+        ))
       }
     </div>
     
-    {mushroomsEntries.length === 0 && (
+    {mushrooms.length === 0 && (
       <div class="no-content">
         <p>Derzeit sind keine Pilzsorten verfügbar. Bitte schauen Sie später wieder vorbei.</p>
       </div>
@@ -64,6 +65,7 @@ const mushroomsEntries = await getCollection("mushrooms");
     padding: 0;
     min-height: 100vh;
     width: 100%;
+    background: var(--bg-color);
   }
 
   h1 {
@@ -71,16 +73,18 @@ const mushroomsEntries = await getCollection("mushrooms");
     font-weight: 700;
     line-height: 1.2;
     text-align: center;
-    margin: 3rem 0 2rem;
-    padding: 0 2rem;
+    margin: 0;
+    padding: 3rem 2rem 2rem;
     color: var(--text-color);
+    background: var(--bg-color);
   }
 
   .intro {
     max-width: 800px;
-    margin: 0 auto 4rem;
-    padding: 0 2rem;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
     text-align: center;
+    background: var(--bg-color);
   }
 
   .intro p {
@@ -93,6 +97,7 @@ const mushroomsEntries = await getCollection("mushrooms");
     display: flex;
     flex-direction: column;
     gap: 0;
+    width: 100%;
   }
 
   .mushroom-card {
@@ -149,58 +154,7 @@ const mushroomsEntries = await getCollection("mushrooms");
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--text-color);
-    max-height: 20rem;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Limit content display - only show first paragraph and heading */
-  .mushroom-description :global(h2 ~ *),
-  .mushroom-description :global(h3 ~ *) {
-    display: none;
-  }
-
-  .mushroom-description :global(h2:first-child ~ p:first-of-type),
-  .mushroom-description :global(p:first-child) {
-    display: block;
-  }
-
-  /* Style the rendered markdown content */
-  .mushroom-description :global(h2) {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 0.75rem 0;
-    color: var(--text-color);
-    display: none;
-  }
-
-  .mushroom-description :global(h3) {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin: 0 0 0.75rem 0;
-    color: var(--text-color);
-    display: none;
-  }
-
-  .mushroom-description :global(p) {
     margin: 0;
-  }
-
-  .mushroom-description :global(p:first-child) {
-    margin: 0;
-  }
-
-  .mushroom-description :global(ul),
-  .mushroom-description :global(ol) {
-    display: none;
-  }
-
-  .mushroom-description :global(strong) {
-    font-weight: 600;
-  }
-
-  .mushroom-description :global(em) {
-    font-style: italic;
   }
 
   .no-content {

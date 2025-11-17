@@ -47,16 +47,13 @@ const landingPage = defineCollection({
     mushroomShowcaseImage: image(),
     mushroomShowcaseImageAlt: z.string(),
     mushroomShowcaseText: z.string(),
-  }),
-});
-
-// Define the mushrooms collection for "Unsere Pilze" page
-const mushrooms = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/mushrooms' }),
-  schema: ({ image }) => z.object({
-    title: z.string(),
-    image: image(),
-    imageAlt: z.string(),
+    // Mushrooms array for "Unsere Pilze" page
+    mushrooms: z.array(z.object({
+      title: z.string(),
+      image: image(),
+      imageAlt: z.string(),
+      description: z.string(),
+    })),
   }),
 });
 
@@ -64,5 +61,4 @@ export const collections = {
   values,
   aboutUs,
   'landing-page': landingPage,
-  mushrooms,
 };
