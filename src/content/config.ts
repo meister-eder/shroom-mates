@@ -51,9 +51,6 @@ const landingPage = defineCollection({
       headingSvg: z.string(),
       description: z.string(),
     })),
-    // SVG heading for about section (public directory)
-    aboutUsHeadingSvg: z.string(),
-    aboutUsTitle: z.string(),
     // Mushroom showcase section
     mushroomShowcaseHeadingSvg: z.string(),
     mushroomShowcaseTitle: z.string(),
@@ -64,9 +61,27 @@ const landingPage = defineCollection({
   }),
 });
 
+// Define the about-us-page collection - content for the about us page
+const aboutUsPage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/about-us-page' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    heroTitle: z.string(),
+    heroSubtitle: z.string().optional(),
+    // Multiple images for lab photos and team photos
+    images: z.array(z.object({
+      image: image(),
+      alt: z.string(),
+      caption: z.string().optional(),
+    })),
+  }),
+});
+
 export const collections = {
   values,
   aboutUs,
   'landing-page': landingPage,
   mushrooms,
+  'about-us-page': aboutUsPage,
 };

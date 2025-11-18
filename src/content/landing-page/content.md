@@ -6,12 +6,8 @@ logoImage: ../../assets/images/logo_with_shrooms.png
 logoImageAlt: Shroom-Mates Logo mit Pilzen
 heroTitle: Wir sind Emmi & Tim – die shroom-mates
 teaserText: >-
-  Wir haben uns in das Thema Pilzzucht verliebt und bauen seitdem Edelpilze in
-  unserer eigenen kleinen Farm an. Alles, was wir anbieten, entsteht bei uns vor
-  Ort in Leipzig – von der Kultur bis zur Ernte.
-
-  Uns ist wichtig, sauber zu arbeiten, gute Rohstoffe zu verwenden und ein
-  Produkt anzubieten, hinter dem wir wirklich stehen.
+  Wir züchten Edelpilze in unserer kleinen Farm in Leipzig. Von der Kultur bis
+  zur Ernte – alles aus eigener Hand.
 values:
   - title: Nachhaltig
     headingSvg: /assets/headings/nachhaltig.svg
@@ -25,8 +21,6 @@ values:
     headingSvg: /assets/headings/transparent.svg
     description: "Bei uns kannst du sehen, wo und wie deine Pilze wachsen. Von den
       Sporen bis zur Ernte machen wir alles selbst. "
-aboutUsHeadingSvg: /assets/headings/ueber_uns.svg
-aboutUsTitle: Über Uns
 mushroomShowcaseHeadingSvg: /assets/headings/unsere_pilze.svg
 mushroomShowcaseTitle: Unsere Pilze
 mushroomShowcaseImage: ../../assets/images/mushrooms.jpg
@@ -39,6 +33,3 @@ mushroomShowcaseGrowingMethodsText: >2-
   gesund, lecker und aromatisch sind. Jeder Pilz wird zum richtigen Zeitpunkt
   von Hand geerntet.
 ---
-Wir züchten Edelpilze in unserer kleinen Pilzfarm in der Plagwitzer Markthalle in Leipzig. Mit viel Geduld und Handarbeit kultivieren wir verschiedene Sorten wie Austernpilze, Pioppinos und Lion's Mane.
-
-Uns ist wichtig, dass alles transparent und regional bleibt. Wir arbeiten mit Bio-Rohstoffen aus der Umgebung und ernten alles frisch. Mehr über uns erfahrt ihr auf unserer [Über uns](/ueber-uns) Seite.

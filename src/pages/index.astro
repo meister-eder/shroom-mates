@@ -2,7 +2,6 @@
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import AboutUsSection from "../components/AboutUsSection.astro";
 import MushroomShowcaseSection from "../components/MushroomShowcaseSection.astro";
 // import ImageGallery from "../components/ImageGallery.astro";
 // import UpcomingDates from "../components/UpcomingDates.astro";
@@ -97,16 +96,16 @@ const description = teaserText;
             loading="eager"
             format="webp"
           />
-          <p class="teaser-text">
-            {teaserText}
-          </p>
+          <div class="teaser-text">
+            <p>{teaserText}</p>
+            <a href="/ueber-uns" class="about-link">Mehr über uns erfahren →</a>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- New sections -->
     <ValuesSection />
-    <AboutUsSection />
     <MushroomShowcaseSection />
     <!-- Commented out for release -->
     <!-- <ImageGallery /> -->
@@ -253,6 +252,30 @@ const description = teaserText;
     margin: 0;
     flex: 1;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .teaser-text p {
+    margin: 0;
+  }
+
+  .about-link {
+    color: var(--text-color);
+    text-decoration: underline;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+    display: inline-block;
+  }
+
+  .about-link:hover {
+    opacity: 0.7;
+  }
+
+  .about-link:focus-visible {
+    outline: 2px solid var(--text-color);
+    outline-offset: 4px;
   }
 
   .no-wrap {
