@@ -220,32 +220,33 @@ content:
         description: Optional: Untertitel unter der Hauptüberschrift
       - name: images
         label: Bilder-Galerie
-        type: list
+        type: object
         list:
           min: 1
           max: 10
-        item:
-          type: object
-          fields:
-            - name: image
-              label: Bild
-              type: image
-              required: true
-              description: Bild aus dem Labor, Team-Fotos, oder Pilzfotos
-              options:
-                media: images
-                extensions: [jpg, jpeg, png, webp]
-                categories: [image]
-            - name: alt
-              label: Alt-Text
-              type: string
-              required: true
-              description: Beschreibender Alt-Text für Barrierefreiheit
-            - name: caption
-              label: Bildunterschrift
-              type: string
-              required: false
-              description: Optional: Kurze Beschreibung des Bildes
+          collapsible:
+            collapsed: false
+            summary: "Bild #{index}: {alt}"
+        fields:
+          - name: image
+            label: Bild
+            type: image
+            required: true
+            description: Bild aus dem Labor, Team-Fotos, oder Pilzfotos
+            options:
+              media: images
+              extensions: [jpg, jpeg, png, webp]
+              categories: [image]
+          - name: alt
+            label: Alt-Text
+            type: string
+            required: true
+            description: Beschreibender Alt-Text für Barrierefreiheit
+          - name: caption
+            label: Bildunterschrift
+            type: string
+            required: false
+            description: Optional: Kurze Beschreibung des Bildes
       - name: body
         label: Inhalt
         type: rich-text
