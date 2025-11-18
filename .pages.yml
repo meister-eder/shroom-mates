@@ -110,30 +110,6 @@ content:
             type: text
             required: true
       
-      # About Us Section
-      - name: aboutUsHeadingSvg
-        label: Über Uns Überschrift SVG
-        type: image
-        required: true
-        description: SVG-Datei für die "Über Uns" Überschrift hochladen
-        options:
-          media: headings
-          extensions: [svg]
-          categories: [image]
-      - name: aboutUsTitle
-        label: Über Uns Titel (für Barrierefreiheit)
-        type: string
-        required: true
-        description: Text-Titel für Screen-Reader
-      
-      # About Us Content (body)
-      - name: body
-        label: Über Uns Inhalt
-        type: rich-text
-        required: true
-        options:
-          media: false
-      
       # Mushroom Showcase Section
       - name: mushroomShowcaseHeadingSvg
         label: Pilz-Showcase Überschrift SVG
@@ -212,6 +188,70 @@ content:
         type: rich-text
         required: true
         description: Ausführliche Beschreibung der Pilzsorte
+        options:
+          media: false
+
+  # About Us Page - Content for the about us page
+  - name: about-us-page
+    label: Über Uns Seite
+    type: file
+    path: src/content/about-us-page/content.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Seitentitel
+        type: string
+        required: true
+        description: SEO-optimierter Titel für die Seite
+      - name: description
+        label: Meta-Beschreibung
+        type: text
+        required: true
+        description: SEO-Beschreibung für Suchmaschinen
+      - name: heroTitle
+        label: Haupt-Überschrift
+        type: string
+        required: true
+        description: Große Überschrift auf der Seite
+      - name: heroSubtitle
+        label: Untertitel
+        type: string
+        required: false
+        description: Optional: Untertitel unter der Hauptüberschrift
+      - name: images
+        label: Bilder-Galerie
+        type: object
+        list:
+          min: 1
+          max: 10
+          collapsible:
+            collapsed: false
+            summary: "Bild #{index}: {alt}"
+        fields:
+          - name: image
+            label: Bild
+            type: image
+            required: true
+            description: Bild aus dem Labor, Team-Fotos, oder Pilzfotos
+            options:
+              media: images
+              extensions: [jpg, jpeg, png, webp]
+              categories: [image]
+          - name: alt
+            label: Alt-Text
+            type: string
+            required: true
+            description: Beschreibender Alt-Text für Barrierefreiheit
+          - name: caption
+            label: Bildunterschrift
+            type: string
+            required: false
+            description: Optional: Kurze Beschreibung des Bildes
+      - name: body
+        label: Inhalt
+        type: rich-text
+        required: true
+        description: Ausführlicher Text über das Team, Arbeitsweise, Werte etc.
         options:
           media: false
 

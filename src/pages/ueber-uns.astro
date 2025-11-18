@@ -1,79 +1,241 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { getEntry, render } from "astro:content";
 
-const title = "Über uns | shroom-mates";
-const description =
-  "Wir sind Emmi und Tim, die shroom-mates aus Leipzig-Plagwitz. Leidenschaftliche Pilzzüchter mit Fokus auf nachhaltige Produktion, regionale Bio-Rohstoffe und höchste Qualität.";
+// Get the about-us-page content
+const aboutUsEntry = await getEntry("about-us-page", "content");
+
+if (!aboutUsEntry) {
+  throw new Error("About us page content not found");
+}
+
+const { Content } = await render(aboutUsEntry);
+const { title, description, heroTitle, heroSubtitle, images } =
+  aboutUsEntry.data;
 ---
 
 <Layout title={title} description={description}>
-  <main>
-    <h1>Über uns</h1>
-    <div class="content">
-      <p>
-        Wir sind die shroom-mates - leidenschaftliche Pilzzüchter aus Leipzig
-        mit einer Mission: die frischesten und geschmackvollsten Pilze direkt
-        vom Erzeuger zu euch zu bringen.
-      </p>
+  <main aria-label="About us page content">
+    <div class="hero-section">
+      <h1>{heroTitle}</h1>
+      {heroSubtitle && <p class="subtitle">{heroSubtitle}</p>}
+    </div>
 
-      <h2>Unsere Geschichte</h2>
-      <p>
-        Gegründet von Pilz-Enthusiasten, begann shroom-mates mit einer einfachen
-        Idee: Gourmet-Pilze direkt von unserem Hof auf euren Tisch zu bringen.
-      </p>
+    <div class="content-wrapper">
+      <!-- Main content from CMS -->
+      <article class="content-text">
+        <Content />
+      </article>
 
-      <h2>Unsere Philosophie</h2>
-      <p>
-        Nachhaltigkeit, Qualität und lokale Produktion stehen im Zentrum unserer
-        Arbeit.
-      </p>
-
-      <h2>Unser Team</h2>
-      <p>
-        Leidenschaftliche Züchter mit langjähriger Erfahrung in der
-        Pilzkultivierung.
-      </p>
-
-      <div class="placeholder">
-        <p>
-          <em
-            >Weitere Informationen über unser Team und unsere Arbeitsweise
-            folgen bald...</em
-          >
-        </p>
-      </div>
+      <!-- Image gallery -->
+      <section class="image-gallery" aria-label="Photo gallery">
+        <h2 class="sr-only">Bilder aus unserer Pilzfarm</h2>
+        <div class="gallery-grid">
+          {
+            images.map((item, index) => (
+              <figure class="gallery-item">
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  width={800}
+                  height={600}
+                  loading={index < 2 ? "eager" : "lazy"}
+                  format="webp"
+                  decoding="async"
+                  class="gallery-image"
+                />
+                {item.caption && (
+                  <figcaption class="image-caption">{item.caption}</figcaption>
+                )}
+              </figure>
+            ))
+          }
+        </div>
+      </section>
     </div>
   </main>
 </Layout>
 
 <style>
   main {
-    font-size: 20px;
-    line-height: 1.6;
-    padding: 2rem;
     min-height: 100vh;
+    padding: 0;
   }
-  h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1;
+
+  .hero-section {
+    padding: 4rem 2rem 3rem;
     text-align: center;
-    margin: 3rem 0;
+    background: var(--bg-color);
+    border-bottom: 2px solid var(--text-color);
   }
-  .content {
-    max-width: 800px;
+
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-color);
+    margin: 0 0 1rem;
+  }
+
+  .subtitle {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    color: var(--text-color);
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .content-wrapper {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
   }
-  h2 {
-    margin-top: 2rem;
-    font-size: 1.8rem;
+
+  .content-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-color);
   }
-  .placeholder {
-    margin-top: 3rem;
-    padding: 2rem;
-    background-color: #f5f5f5;
-    border-left: 4px solid #5f5f5f;
+
+  .content-text :global(h2) {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1rem;
+    line-height: 1.2;
+  }
+
+  .content-text :global(h3) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 2rem 0 0.8rem;
+    line-height: 1.3;
+  }
+
+  .content-text :global(p) {
+    margin: 0 0 1.5rem;
+  }
+
+  .content-text :global(ul),
+  .content-text :global(ol) {
+    margin: 0 0 1.5rem;
+    padding-left: 2rem;
+  }
+
+  .content-text :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .content-text :global(strong) {
+    font-weight: 700;
+  }
+
+  .content-text :global(em) {
     font-style: italic;
+  }
+
+  .image-gallery {
+    width: 100%;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
+  }
+
+  .gallery-item {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    background: var(--bg-color);
+    border: 2px solid var(--text-color);
+    padding: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  .gallery-item:hover {
+    transform: translateY(-4px);
+  }
+
+  .gallery-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--text-color);
+  }
+
+  .image-caption {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    text-align: center;
+    line-height: 1.4;
+    font-style: italic;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 3rem 1.5rem 2rem;
+    }
+
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+      gap: 3rem;
+    }
+
+    .content-text {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .content-text :global(h2) {
+      font-size: 1.6rem;
+      margin: 2rem 0 0.8rem;
+    }
+
+    .content-text :global(h3) {
+      font-size: 1.3rem;
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section {
+      padding: 2.5rem 1rem 1.5rem;
+    }
+
+    .content-wrapper {
+      padding: 1.5rem 1rem;
+      gap: 2rem;
+    }
+
+    .gallery-grid {
+      gap: 1rem;
+    }
+
+    .gallery-item {
+      padding: 0.75rem;
+    }
   }
 </style>
