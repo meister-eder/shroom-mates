@@ -165,6 +165,11 @@ const readableTextColor = (bg: string | undefined): string => {
     align-items: stretch;
     min-height: 60vh;
     width: 100%;
+    border-bottom: 2px solid #000;
+  }
+
+  .mushroom-card:last-child {
+    border-bottom: none;
   }
 
   .mushroom-card:nth-child(even) .mushroom-content {
