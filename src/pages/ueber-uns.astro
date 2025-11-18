@@ -33,11 +33,11 @@ const { title, description, heroTitle, heroSubtitle, images } =
         <h2 class="sr-only">Bilder aus unserer Pilzfarm</h2>
         <div class="gallery-grid">
           {
-            images.map((item, index) => (
+            images.map((img, index) => (
               <figure class="gallery-item">
                 <Image
-                  src={item.image}
-                  alt={item.alt}
+                  src={img}
+                  alt={`Bild ${index + 1} aus unserer Pilzfarm`}
                   width={800}
                   height={600}
                   loading={index < 2 ? "eager" : "lazy"}
@@ -45,9 +45,6 @@ const { title, description, heroTitle, heroSubtitle, images } =
                   decoding="async"
                   class="gallery-image"
                 />
-                {item.caption && (
-                  <figcaption class="image-caption">{item.caption}</figcaption>
-                )}
               </figure>
             ))
           }
@@ -168,14 +165,6 @@ const { title, description, heroTitle, heroSubtitle, images } =
     object-fit: cover;
     aspect-ratio: 4 / 3;
     border: 1px solid var(--text-color);
-  }
-
-  .image-caption {
-    font-size: 0.95rem;
-    color: var(--text-color);
-    text-align: center;
-    line-height: 1.4;
-    font-style: italic;
   }
 
   .sr-only {

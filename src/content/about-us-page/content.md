@@ -4,15 +4,9 @@ description: Wir sind Emmi und Tim, die shroom-mates aus Leipzig-Plagwitz. Leide
 heroTitle: Über uns
 heroSubtitle: Die shroom-mates aus Leipzig
 images:
-  - image: ../../assets/images/mushrooms.jpg
-    alt: Frische Edelpilze in unserer Farm
-    caption: Unsere Pilze werden täglich frisch geerntet
-  - image: ../../assets/images/hero_rose_tasse.jpg
-    alt: Rosafarbene Austernpilze
-    caption: Besondere Sorten aus eigener Zucht
-  - image: ../../assets/images/logo_with_shrooms.png
-    alt: Labor und Arbeitsbereich
-    caption: Saubere Arbeit mit hochwertigen Rohstoffen
+  - ../../assets/images/mushrooms.jpg
+  - ../../assets/images/hero_rose_tasse.jpg
+  - ../../assets/images/logo_with_shrooms.png
 ---
 
 ## Wer wir sind
