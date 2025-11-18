@@ -39,8 +39,6 @@ mushroomShowcaseGrowingMethodsText: >2-
   gesund, lecker und aromatisch sind. Jeder Pilz wird zum richtigen Zeitpunkt
   von Hand geerntet.
 ---
-Wir züchten Edelpilze in unserer kleinen Pilzfarm in der Plagwitzer Markthalle in Leipzig. Angefangen hat das Ganze, weil wir beide Spaß daran haben, Dinge selbst zu machen – und weil wir irgendwann gemerkt haben, wie spannend Pilze eigentlich sind. Seitdem wachsen bei uns Austernpilze, Pioppinos, Lion’s Mane und andere Sorten, die wir mit viel Geduld und Handarbeit kultivieren.
+Wir züchten Edelpilze in unserer kleinen Pilzfarm in der Plagwitzer Markthalle in Leipzig. Mit viel Geduld und Handarbeit kultivieren wir verschiedene Sorten wie Austernpilze, Pioppinos und Lion's Mane.
 
-Uns ist wichtig, dass alles transparent und regional bleibt. Wir arbeiten mit Bio-Rohstoffen aus der Umgebung, setzen unsere Kulturen selbst an und ernten alles frisch.
-
-Unsere Pilze verkaufen wir an Leipziger Restaurants und auf dem Egenberger Samstagsmarkt. Schreibt uns gerne an, wenn ihr auch Interesse habt!
+Uns ist wichtig, dass alles transparent und regional bleibt. Wir arbeiten mit Bio-Rohstoffen aus der Umgebung und ernten alles frisch. Mehr über uns erfahrt ihr auf unserer [Über uns](/ueber-uns) Seite.
