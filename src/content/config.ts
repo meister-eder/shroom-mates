@@ -68,7 +68,7 @@ const aboutUsPage = defineCollection({
     title: z.string(),
     description: z.string(),
     heroTitle: z.string(),
-    heroSubtitle: z.string().optional(),
+    heroSubtitle: z.string(),
     // Multiple images for lab photos and team photos
     // With PagesCMS multiple image field, this becomes an array of image paths
     images: z.array(image()),

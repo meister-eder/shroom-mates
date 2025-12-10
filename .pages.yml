@@ -216,12 +216,12 @@ content:
       - name: heroSubtitle
         label: Untertitel
         type: string
-        required: false
-        description: Optional: Untertitel unter der Hauptüberschrift
+        required: true
+        description: Untertitel unter der Hauptüberschrift
       - name: body
         label: Inhalt
         type: rich-text
-        required: false
+        required: true
         description: Ausführlicher Text über das Team, Arbeitsweise, Werte etc.
         options:
           media: false
