@@ -218,6 +218,13 @@ content:
         type: string
         required: false
         description: Optional: Untertitel unter der Hauptüberschrift
+      - name: body
+        label: Inhalt
+        type: rich-text
+        required: false
+        description: Ausführlicher Text über das Team, Arbeitsweise, Werte etc.
+        options:
+          media: false
       - name: images
         label: Bilder-Galerie
         type: image
@@ -228,15 +235,7 @@ content:
           extensions: [jpg, jpeg, png, webp]
           categories: [image]
           multiple:
-            min: 1
             max: 10
-      - name: body
-        label: Inhalt
-        type: rich-text
-        required: true
-        description: Ausführlicher Text über das Team, Arbeitsweise, Werte etc.
-        options:
-          media: false
 
   # Growkits Page - Generic instructions for all growkits
   - name: growkits-page
@@ -302,12 +301,10 @@ content:
       - name: body
         label: Anleitung
         type: rich-text
-        required: true
+        required: false
         description: Allgemeine Anleitung für alle Growkits (Markdown)
         options:
           media: false
-
-  # Growkits Collection - Variety-specific notes for each growkit type
   - name: growkits
     label: Growkit Sorten
     type: collection
@@ -347,10 +344,10 @@ content:
         description: Reihenfolge auf der Seite (1, 2, 3, ...)
         default: 1
       - name: body
-        label: Sortenspezifische Hinweise
+        label: Beschreibung
         type: rich-text
         required: true
-        description: Besondere Tipps und Hinweise für diese Pilzsorte
+        description: Ausführliche Beschreibung des Growkits
         options:
           media: false
 
