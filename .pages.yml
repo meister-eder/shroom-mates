@@ -238,6 +238,162 @@ content:
         options:
           media: false
 
+  # Growkits Page - Generic instructions for all growkits
+  - name: growkits-page
+    label: Growkits Seite
+    type: file
+    path: src/content/growkits-page/content.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Seitentitel
+        type: string
+        required: true
+        description: SEO-optimierter Titel für die Seite
+      - name: description
+        label: Meta-Beschreibung
+        type: text
+        required: true
+        description: SEO-Beschreibung für Suchmaschinen
+      - name: heroTitle
+        label: Haupt-Überschrift
+        type: string
+        required: true
+        description: Große Überschrift auf der Seite
+      - name: heroSubtitle
+        label: Untertitel
+        type: string
+        required: false
+        description: Optional: Untertitel unter der Hauptüberschrift
+      - name: heroImage
+        label: Hero-Bild
+        type: image
+        required: false
+        description: Optional: Bild für die Seite
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: heroImageAlt
+        label: Hero-Bild Alt-Text
+        type: string
+        required: false
+        description: Beschreibender Alt-Text für das Hero-Bild
+      - name: ctaTitle
+        label: CTA Überschrift
+        type: string
+        required: false
+        description: Überschrift für den Call-to-Action Bereich
+      - name: ctaText
+        label: CTA Text
+        type: text
+        required: false
+        description: Text für den Call-to-Action Bereich
+      - name: ctaButtonText
+        label: CTA Button Text
+        type: string
+        required: false
+        description: Text für den Button (z.B. "Kontakt aufnehmen")
+      - name: ctaButtonLink
+        label: CTA Button Link
+        type: string
+        required: false
+        description: Link für den Button (z.B. "/kontakt")
+      - name: body
+        label: Anleitung
+        type: rich-text
+        required: true
+        description: Allgemeine Anleitung für alle Growkits (Markdown)
+        options:
+          media: false
+
+  # Growkits Collection - Variety-specific notes for each growkit type
+  - name: growkits
+    label: Growkit Sorten
+    type: collection
+    path: src/content/growkits
+    format: yaml-frontmatter
+    extension: md
+    fields:
+      - name: title
+        label: Growkit Name
+        type: string
+        required: true
+        description: Name des Growkits (z.B. "Lion's Mane Growkit")
+      - name: image
+        label: Growkit-Bild
+        type: image
+        required: true
+        description: Bild des Pilzes oder Growkits hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: imageAlt
+        label: Bild Alt-Text
+        type: string
+        required: true
+        description: Beschreibender Alt-Text für das Bild (Barrierefreiheit)
+      - name: color
+        label: Hintergrundfarbe
+        type: string
+        required: false
+        description: Hex-Farbe für den Abschnitt-Hintergrund (z.B. "#ffe4ec")
+        default: "#ffffff"
+      - name: order
+        label: Sortierung
+        type: number
+        required: true
+        description: Reihenfolge auf der Seite (1, 2, 3, ...)
+        default: 1
+      - name: body
+        label: Sortenspezifische Hinweise
+        type: rich-text
+        required: true
+        description: Besondere Tipps und Hinweise für diese Pilzsorte
+        options:
+          media: false
+
+  # FAQ Page - FAQ items as an array in a single file
+  - name: faq-page
+    label: FAQ Seite
+    type: file
+    path: src/content/faq-page/content.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Seitentitel
+        type: string
+        required: true
+        description: SEO-Titel für die FAQ-Seite
+      - name: description
+        label: Meta-Beschreibung
+        type: text
+        required: true
+        description: SEO-Beschreibung für Suchmaschinen
+      - name: faqs
+        label: FAQ Einträge
+        type: object
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: "{question}"
+        fields:
+          - name: question
+            label: Frage
+            type: string
+            required: true
+          - name: answer
+            label: Antwort
+            type: text
+            required: true
+          - name: link
+            label: Link (optional)
+            type: string
+            required: false
+            description: Link zu einer Seite mit mehr Informationen (z.B. "/growkits")
+
 # Components
 # Reusable field groups (currently not used but available for future use)
 components:

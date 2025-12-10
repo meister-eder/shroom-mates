@@ -75,10 +75,60 @@ const aboutUsPage = defineCollection({
   }),
 });
 
+// Define the growkits-page collection - generic instructions for all growkits
+const growkitsPage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/growkits-page' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    heroTitle: z.string(),
+    heroSubtitle: z.string().optional(),
+    // Optional hero/intro image for the growkits tutorial page
+    heroImage: image().optional(),
+    heroImageAlt: z.string().optional(),
+    // CTA section content
+    ctaTitle: z.string().optional(),
+    ctaText: z.string().optional(),
+    ctaButtonText: z.string().optional(),
+    ctaButtonLink: z.string().optional(),
+  }),
+});
+
+// Define the growkits collection - variety-specific notes for each growkit type
+const growkits = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/growkits' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    image: image(),
+    imageAlt: z.string(),
+    // Background color for the growkit section (e.g. "#fff7e6" or "rgba(255,255,255,0.9)")
+    color: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
+// Define the FAQ page collection - FAQ items as an array in a single file
+const faqPage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/faq-page' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    // FAQ items as an array
+    faqs: z.array(z.object({
+      question: z.string(),
+      answer: z.string(),
+      link: z.string().optional(),
+    })),
+  }),
+});
+
 export const collections = {
   values,
   aboutUs,
   'landing-page': landingPage,
   mushrooms,
   'about-us-page': aboutUsPage,
+  'growkits-page': growkitsPage,
+  growkits,
+  'faq-page': faqPage,
 };
