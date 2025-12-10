@@ -262,8 +262,8 @@ content:
       - name: heroSubtitle
         label: Untertitel
         type: string
-        required: false
-        description: Optional: Untertitel unter der Hauptüberschrift
+        required: true
+        description: Untertitel unter der Hauptüberschrift
       - name: heroImage
         label: Hero-Bild
         type: image
@@ -281,27 +281,27 @@ content:
       - name: ctaTitle
         label: CTA Überschrift
         type: string
-        required: false
+        required: true
         description: Überschrift für den Call-to-Action Bereich
       - name: ctaText
         label: CTA Text
         type: text
-        required: false
+        required: true
         description: Text für den Call-to-Action Bereich
       - name: ctaButtonText
         label: CTA Button Text
         type: string
-        required: false
+        required: true
         description: Text für den Button (z.B. "Kontakt aufnehmen")
       - name: ctaButtonLink
         label: CTA Button Link
         type: string
-        required: false
+        required: true
         description: Link für den Button (z.B. "/kontakt")
       - name: body
         label: Anleitung
         type: rich-text
-        required: false
+        required: true
         description: Allgemeine Anleitung für alle Growkits (Markdown)
         options:
           media: false

@@ -82,15 +82,15 @@ const growkitsPage = defineCollection({
     title: z.string(),
     description: z.string(),
     heroTitle: z.string(),
-    heroSubtitle: z.string().optional(),
+    heroSubtitle: z.string(),
     // Hero/intro image for the growkits tutorial page
     heroImage: image(),
     heroImageAlt: z.string(),
     // CTA section content
-    ctaTitle: z.string().optional(),
-    ctaText: z.string().optional(),
-    ctaButtonText: z.string().optional(),
-    ctaButtonLink: z.string().optional(),
+    ctaTitle: z.string(),
+    ctaText: z.string(),
+    ctaButtonText: z.string(),
+    ctaButtonLink: z.string(),
   }),
 });
 
