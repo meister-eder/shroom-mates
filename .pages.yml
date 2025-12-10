@@ -267,8 +267,8 @@ content:
       - name: heroImage
         label: Hero-Bild
         type: image
-        required: false
-        description: Optional: Bild für die Seite
+        required: true
+        description: Bild für die Seite
         options:
           media: images
           extensions: [jpg, jpeg, png, webp]
@@ -276,7 +276,7 @@ content:
       - name: heroImageAlt
         label: Hero-Bild Alt-Text
         type: string
-        required: false
+        required: true
         description: Beschreibender Alt-Text für das Hero-Bild
       - name: ctaTitle
         label: CTA Überschrift

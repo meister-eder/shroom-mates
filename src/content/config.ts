@@ -83,9 +83,9 @@ const growkitsPage = defineCollection({
     description: z.string(),
     heroTitle: z.string(),
     heroSubtitle: z.string().optional(),
-    // Optional hero/intro image for the growkits tutorial page
-    heroImage: image().optional(),
-    heroImageAlt: z.string().optional(),
+    // Hero/intro image for the growkits tutorial page
+    heroImage: image(),
+    heroImageAlt: z.string(),
     // CTA section content
     ctaTitle: z.string().optional(),
     ctaText: z.string().optional(),
