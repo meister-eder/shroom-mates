@@ -1,6 +1,6 @@
 ---
 title: Growkits Anleitung | shroom-mates
-description: Lerne, wie du mit unseren Growkits ganz einfach zuhause frische Pilze züchten kannst. Schritt-für-Schritt Anleitung für Lion's Mane, Rosenseitlinge und White Pearl.
+description: "Lerne, wie du mit unseren Growkits ganz einfach zuhause frische Pilze züchten kannst. Schritt-für-Schritt Anleitung für Lion's Mane, Rosenseitlinge und White Pearl."
 heroTitle: Pilze selber züchten
 heroSubtitle: Mit unseren Growkits erntest du in wenigen Wochen frische Pilze zuhause
 heroImage: ../../assets/images/mushrooms.jpg
