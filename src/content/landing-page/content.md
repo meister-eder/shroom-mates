@@ -4,9 +4,8 @@ heroImage: ../../assets/images/hero_rose_tasse.jpg
 heroImageAlt: Rosafarbene Austernpilze in einer Tasse
 logoImage: ../../assets/images/logo_with_shrooms.png
 logoImageAlt: Shroom-Mates Logo mit Pilzen
-heroTitle: Wir sind die shroom-mates!
-teaserText: In unserer kleinen Farm in der Plagwitzer Markthalle in Leipzig
-  züchten wir feinste Edelpilze.
+heroTitle: Die shroom-mates – Deine Pilzzucht in Leipzig
+teaserText: In unserer Farm in der Plagwitzer Markthalle in Leipzig züchten wir feinste Edelpilze.
 values:
   - title: Nachhaltig
     headingSvg: /assets/headings/nachhaltig.svg

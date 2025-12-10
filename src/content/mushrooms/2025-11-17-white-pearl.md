@@ -1,7 +1,7 @@
 ---
 title: White Pearl
 image: ../../assets/images/white_pearl.jpg
-imageAlt: Ein White Pearl Austernpilz in der Nahaufnahme
+imageAlt: White Pearl Austernpilze aus Leipzig-Plagwitz - shroom-mates
 color: "#7e8503"
 order: 3
 ---

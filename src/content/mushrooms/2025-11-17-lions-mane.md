@@ -1,7 +1,7 @@
 ---
 title: Lion's mane
 image: ../../assets/images/lions_mane.jpg
-imageAlt: Ein Igel-Stachelbart in der Nahaufnahme
+imageAlt: Lion's Mane Vitalpilz aus Leipzig - Igel-Stachelbart von shroom-mates
 color: "#b0b1f1"
 order: 2
 ---

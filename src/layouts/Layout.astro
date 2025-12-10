@@ -9,13 +9,15 @@ interface Props {
   description?: string;
   ogImage?: string;
   isLandingPage?: boolean;
+  noindex?: boolean;
 }
 
 const {
   title,
-  description = "Hochwertige Edelpilze aus Leipzig-Plagwitz. Frisch kultiviert, nachhaltig angebaut, regional verfügbar. Rosenseitling, Pioppino, Lion's Mane und mehr von den shroom-mates.",
+  description = "Hochwertige regionale Edelpilze aus Leipzig-Plagwitz. Rosenseitling, Pioppino, Lion's Mane , Maitake Austernpilze und mehr von den shroom-mates.",
   ogImage,
   isLandingPage = false,
+  noindex = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -61,6 +63,9 @@ const structuredData = {
     itemListElement: [
       {
         "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
         itemOffered: {
           "@type": "Product",
           name: "Rosenseitling",
@@ -69,6 +74,9 @@ const structuredData = {
       },
       {
         "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
         itemOffered: {
           "@type": "Product",
           name: "Pioppino",
@@ -77,6 +85,9 @@ const structuredData = {
       },
       {
         "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
         itemOffered: {
           "@type": "Product",
           name: "Lion's Mane",
@@ -85,6 +96,9 @@ const structuredData = {
       },
       {
         "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
         itemOffered: {
           "@type": "Product",
           name: "White Pearl",
@@ -93,6 +107,9 @@ const structuredData = {
       },
       {
         "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
         itemOffered: {
           "@type": "Product",
           name: "Maitake",
@@ -101,6 +118,9 @@ const structuredData = {
       },
       {
         "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
         itemOffered: {
           "@type": "Product",
           name: "Growkits",
@@ -177,10 +197,16 @@ const structuredData = {
     />
 
     <!-- Additional meta tags -->
-    <meta
-      name="robots"
-      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-    />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+      )
+    }
     <meta name="author" content="shroom-mates - Emmelie Kunz & Tim Eder" />
     <meta name="theme-color" content="#fdfcea" />
 

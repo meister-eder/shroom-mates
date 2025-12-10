@@ -1,7 +1,7 @@
 ---
 title: Rosenseitling
 image: ../../assets/images/hero_rose_tasse.jpg
-imageAlt: Rosa Austernpilze in einer Tasse
+imageAlt: Frische Rosenseitlinge aus der shroom-mates Pilzzucht Leipzig
 color: "#f5cbcd"
 order: 1
 ---

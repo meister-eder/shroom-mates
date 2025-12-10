@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import LocationInfo from "../components/LocationInfo.astro";
+import FAQ from "../components/FAQ.astro";
 
 const title = "Kontakt | shroom-mates";
 const description =
@@ -9,6 +11,10 @@ const description =
 <Layout title={title} description={description}>
   <section class="contact-section">
     <h1>Schreib uns was Nettes</h1>
+    <p class="contact-intro">
+      Hast du Fragen zu unseren Pilzen, den Verkaufsterminen oder möchtest du
+      eine Bestellung aufgeben? Wir freuen uns von dir zu hören!
+    </p>
     <div class="content">
       <form method="POST" id="form">
         <input
@@ -92,9 +98,18 @@ const description =
       font-weight: 700;
       line-height: 1.2;
       text-align: center;
-      margin: 0 0 3rem 0;
+      margin: 0 0 1rem 0;
       color: var(--text-color);
       font-family: monospace;
+    }
+
+    .contact-intro {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 3rem auto;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--text-color);
     }
 
     .content {
@@ -191,4 +206,7 @@ const description =
       }
     }
   </style>
+
+  <LocationInfo />
+  <FAQ />
 </Layout>

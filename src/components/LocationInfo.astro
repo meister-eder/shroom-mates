@@ -1,0 +1,383 @@
+---
+/**
+ * LocationInfo Component
+ * Displays market location with embedded Google Maps and auto-calculated next market date.
+ * Includes Event structured data for SEO (recurring last Saturday of month from Jan 2026).
+ */
+
+// Calculate the next "last Saturday of the month" starting from January 2026
+function getLastSaturdayOfMonth(year: number, month: number): Date {
+  // month is 0-indexed (0 = January)
+  const lastDay = new Date(year, month + 1, 0); // Last day of the month
+  const dayOfWeek = lastDay.getDay(); // 0 = Sunday, 6 = Saturday
+  const daysToSubtract = dayOfWeek === 6 ? 0 : dayOfWeek + 1;
+  lastDay.setDate(lastDay.getDate() - daysToSubtract);
+  return lastDay;
+}
+
+function getNextMarketDates(count: number = 3): Date[] {
+  const dates: Date[] = [];
+  const now = new Date();
+  // Start from January 2026
+  let year = 2026;
+  let month = 0; // January
+
+  // If we're already past January 2026, start from the current month
+  if (
+    now.getFullYear() > 2026 ||
+    (now.getFullYear() === 2026 && now.getMonth() >= 0)
+  ) {
+    year = now.getFullYear();
+    month = now.getMonth();
+  }
+
+  while (dates.length < count) {
+    const lastSaturday = getLastSaturdayOfMonth(year, month);
+
+    // Only add future dates (or dates from Jan 2026 onwards if we're before that)
+    const startDate = new Date(2026, 0, 1);
+    if (lastSaturday >= startDate && lastSaturday > now) {
+      dates.push(lastSaturday);
+    }
+
+    // Move to next month
+    month++;
+    if (month > 11) {
+      month = 0;
+      year++;
+    }
+
+    // Safety: don't go beyond 2027 in initial calculation
+    if (year > 2027 && dates.length === 0) break;
+  }
+
+  return dates;
+}
+
+// Format date in German
+function formatDateGerman(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  return date.toLocaleDateString("de-DE", options);
+}
+
+// Format date for Schema.org (ISO 8601)
+function formatDateISO(date: Date, time: string): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}T${time}`;
+}
+
+const nextMarketDates = getNextMarketDates(3);
+const nextMarketDate = nextMarketDates[0];
+
+// Event Schema for the recurring market (next occurrence)
+const eventSchema = nextMarketDate
+  ? {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      name: "shroom-mates auf dem Egenberger Samstagsmarkt",
+      description:
+        "Frische Edelpilze aus Leipzig - Rosenseitling, Pioppino, Lion's Mane und mehr. Jeden letzten Samstag im Monat auf dem Egenberger Markt.",
+      startDate: formatDateISO(nextMarketDate, "09:00:00"),
+      endDate: formatDateISO(nextMarketDate, "14:00:00"),
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      eventStatus: "https://schema.org/EventScheduled",
+      location: {
+        "@type": "Place",
+        name: "Egenberger Samstagsmarkt",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Markranstädter Straße 8",
+          addressLocality: "Leipzig",
+          postalCode: "04229",
+          addressCountry: "DE",
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: "51.325590526888526",
+          longitude: "12.329992718061352",
+        },
+      },
+      organizer: {
+        "@type": "LocalBusiness",
+        name: "shroom-mates",
+        url: "https://shroom-mates.de",
+      },
+      performer: {
+        "@type": "LocalBusiness",
+        name: "shroom-mates",
+      },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
+        validFrom: "2026-01-01",
+        url: "https://shroom-mates.de/kontakt",
+      },
+      eventSchedule: {
+        "@type": "Schedule",
+        repeatFrequency: "P1M",
+        byDay: "https://schema.org/Saturday",
+        scheduleTimezone: "Europe/Berlin",
+        startDate: "2026-01-01",
+        startTime: "09:00:00",
+        endTime: "13:00:00",
+      },
+    }
+  : null;
+
+// Google Maps embed URL for shroom-mates location (Markranstädter Str. 8, 04229 Leipzig)
+// Using the simpler q= parameter format which works better for embedding
+const mapsEmbedUrl =
+  "https://www.google.com/maps?q=shroom-mates+Leipzig,+Markranstädter+Straße+8,+04229+Leipzig&output=embed";
+const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
+---
+
+<!-- Event Schema for SEO -->{
+  eventSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(eventSchema)} />
+  )
+}
+
+<section class="location-info" aria-label="Standort und Markttermine">
+  <h2>Finde uns auf dem Markt</h2>
+
+  <div class="location-content">
+    <div class="market-info">
+      <div class="market-card">
+        <h3>Egenberger Samstagsmarkt - Plagwitzer Markthalle</h3>
+        <address>
+          Markranstädter Straße 8<br />
+          04229 Leipzig
+        </address>
+        <p class="market-times">
+          <strong>Jeden letzten Samstag im Monat</strong><br />
+          9:00 – 14:00 Uhr
+        </p>
+        <p class="market-note">
+          <em>Ab Januar 2026</em>
+        </p>
+      </div>
+
+      {
+        nextMarketDates.length > 0 && (
+          <div class="upcoming-dates">
+            <h4>Nächste Termine:</h4>
+            <ul>
+              {nextMarketDates.map((date, index) => (
+                <li class={index === 0 ? "next-date" : ""}>
+                  {index === 0 && <span class="badge">Nächster Termin</span>}
+                  {formatDateGerman(date)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <a
+        href={mapsLinkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="maps-link"
+        aria-label="Standort in Google Maps öffnen"
+      >
+        📍 In Google Maps öffnen
+      </a>
+    </div>
+
+    <div class="map-container">
+      <iframe
+        src={mapsEmbedUrl}
+        width="100%"
+        height="450"
+        style="border:0; display:block;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Karte zur shroom-mates Pilzzucht in Leipzig, Markranstädter Straße 8"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<style>
+  .location-info {
+    margin-top: 3rem;
+    padding: 2rem;
+    border-top: 2px solid var(--focus-color, #000);
+  }
+
+  .location-info h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+  }
+
+  .location-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .market-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .market-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--focus-color, #000);
+  }
+
+  .market-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .market-card address {
+    font-style: normal;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .market-times {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .market-note {
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .upcoming-dates {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--focus-color, #000);
+  }
+
+  .upcoming-dates h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .upcoming-dates ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .upcoming-dates li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+
+  .upcoming-dates li:last-child {
+    border-bottom: none;
+  }
+
+  .upcoming-dates li.next-date {
+    font-weight: 600;
+    padding-top: 0.75rem;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    font-weight: 500;
+  }
+
+  .maps-link {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .maps-link:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .maps-link:focus-visible {
+    outline: 2px solid var(--focus-color, #000);
+    outline-offset: 2px;
+  }
+
+  .map-container {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid var(--focus-color, #000);
+    min-height: 450px;
+    height: 450px;
+    width: 100%;
+    position: relative;
+  }
+
+  .map-container iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .location-content {
+      grid-template-columns: 1fr;
+    }
+
+    .location-info {
+      padding: 1.5rem;
+    }
+
+    .location-info h2 {
+      font-size: 1.5rem;
+    }
+
+    .map-container {
+      min-height: 300px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .location-info {
+      padding: 1rem;
+    }
+
+    .market-card,
+    .upcoming-dates {
+      padding: 1rem;
+    }
+  }
+</style>

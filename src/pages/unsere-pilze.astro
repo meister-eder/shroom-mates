@@ -21,9 +21,62 @@ const mushrooms = await Promise.all(
         imageAlt: entry.data.imageAlt,
         Content, // Rendered component instead of raw body
         color: entry.data.color,
+        slug: entry.id,
       };
     })
 );
+
+// Generate Product Schema for each mushroom (without pricing)
+const productSchemas = mushrooms.map((mushroom) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: mushroom.title,
+  description: `Frische ${mushroom.title} aus nachhaltiger Zucht in Leipzig. Erhältlich auf dem Egenberger Samstagsmarkt.`,
+  image: mushroom.image.src,
+  brand: {
+    "@type": "Brand",
+    name: "shroom-mates",
+  },
+  offers: {
+    "@type": "Offer",
+    availability: "https://schema.org/InStock",
+    itemCondition: "https://schema.org/NewCondition",
+    price: "0",
+    priceCurrency: "EUR",
+    priceSpecification: {
+      "@type": "PriceSpecification",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+    seller: {
+      "@type": "LocalBusiness",
+      name: "shroom-mates",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Markranstädter Straße 8",
+        addressLocality: "Leipzig",
+        postalCode: "04229",
+        addressCountry: "DE",
+      },
+    },
+    url: "https://shroom-mates.de/kontakt",
+    availableAtOrFrom: {
+      "@type": "Place",
+      name: "Egenberger Samstagsmarkt",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Leipzig",
+        addressCountry: "DE",
+      },
+    },
+  },
+  category: "Edelpilze",
+  isRelatedTo: {
+    "@type": "Product",
+    name: "Growkit",
+    description: "Pilzzuchtset zum Selberziehen",
+  },
+}));
 
 // Helper: choose readable text color (black or white) based on a hex/rgb background
 const readableTextColor = (bg: string | undefined): string => {
@@ -85,6 +138,13 @@ const readableTextColor = (bg: string | undefined): string => {
 </style>
 
 <Layout title={title} description={description}>
+  <!-- Product Schema for each mushroom -->
+  {
+    productSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))
+  }
+
   <main class="full-width-page">
     <div class="mushrooms-grid">
       {

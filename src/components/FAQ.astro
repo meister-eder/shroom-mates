@@ -1,0 +1,241 @@
+---
+/**
+ * FAQ Component
+ * Displays frequently asked questions with FAQPage structured data for SEO.
+ * Helps capture featured snippets for common mushroom-related queries in Leipzig.
+ */
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+const faqs: FAQItem[] = [
+  {
+    question: "Wo kann ich eure Pilze kaufen?",
+    answer:
+      "Ab Januar 2026 findest du uns jeden letzten Samstag im Monat von 9:00 bis 14:00 Uhr auf dem Egenberger Samstagsmarkt in Leipzig. Dort verkaufen wir frische Edelpilze direkt aus unserer Zucht in der Plagwitzer Markthalle. Für größere Mengen oder Lieferungen kontaktiere uns gerne per E-Mail.",
+  },
+  {
+    question: "Welche Pilzsorten züchtet ihr?",
+    answer:
+      "Wir züchten verschiedene Gourmet-Pilzsorten: Rosenseitlinge, Pioppino, Lion's Mane (Igelstachelbart), White Pearl, Black Pearl, Maitake und weitere saisonale Sorten. Unser Sortiment wechselt je nach Jahreszeit, sodass du immer etwas Besonderes findest.",
+  },
+  {
+    question: "Sind eure Pilze bio-zertifiziert?",
+    answer:
+      "Wir arbeiten nach ökologischen Prinzipien und verwenden ausschließlich regionale Rohstoffe in Bio-Qualität für unser Substrat. Eine offizielle Bio-Zertifizierung haben wir derzeit nicht, da der Zertifizierungsprozess für kleine Betriebe sehr aufwendig ist.",
+  },
+  {
+    question: "Wie lagert man frische Pilze richtig?",
+    answer:
+      "Am besten lagerst du frische Pilze im Kühlschrank bei 2-7°C in einer Papiertüte oder Backpapier eingewickelt. So bleiben sie etwa 5-7 Tage haltbar. Je frischer, desto besser schmecken sie aber. Vermeide Plastiktüten, da sich darin Feuchtigkeit sammelt.",
+  },
+  {
+    question: "Liefert ihr auch nach Hause?",
+    answer:
+      "Aktuell bieten wir keine reguläre Hauslieferung an. Für Gastronomie, Restaurants oder größere Bestellungen in Leipzig und Umgebung können wir jedoch individuelle Lieferungen arrangieren. Schreib uns einfach eine E-Mail an hey@shroom-mates.de mit deinen Wünschen.",
+  },
+  {
+    question: "Was ist ein Growkit und wie funktioniert es?",
+    answer:
+      "Ein Growkit ist ein fertiges Pilzzuchtset für Zuhause. Es enthält besiedeltes Substrat, aus dem innerhalb von 1-2 Wochen frische Pilze wachsen. Du musst das Kit nur regelmäßig befeuchten und an einem hellen Ort ohne direkte Sonneneinstrahlung aufstellen. Bald sind Growkits bei uns im Shop erhältlich!",
+  },
+];
+
+// Generate FAQPage Schema for SEO
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
+---
+
+<!-- FAQPage Schema for SEO -->
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+<section class="faq-section" aria-label="Häufig gestellte Fragen">
+  <h2>Häufig gestellte Fragen</h2>
+
+  <div class="faq-list">
+    {
+      faqs.map((faq, index) => (
+        <details class="faq-item">
+          <summary>
+            <span class="question-text">{faq.question}</span>
+            <span class="toggle-icon" aria-hidden="true">
+              +
+            </span>
+          </summary>
+          <div class="answer">
+            <p>{faq.answer}</p>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+
+  <div class="more-questions">
+    <p>
+      Weitere Fragen? <a href="mailto:hey@shroom-mates.de"
+        >Schreib uns eine E-Mail</a
+      > oder nutze das Kontaktformular oben.
+    </p>
+  </div>
+</section>
+
+<style>
+  .faq-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    border-top: 2px solid var(--focus-color, #000);
+  }
+
+  .faq-section h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+  }
+
+  .faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    background: #fff;
+    border: 2px solid var(--focus-color, #000);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .faq-item summary {
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    list-style: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:focus-visible {
+    outline: 2px solid var(--focus-color, #000);
+    outline-offset: -2px;
+  }
+
+  .question-text {
+    flex: 1;
+  }
+
+  .toggle-icon {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #666;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  .answer {
+    padding: 0 1.5rem 1.5rem;
+    border-top: 1px solid #eee;
+  }
+
+  .answer p {
+    margin: 1rem 0 0;
+    line-height: 1.7;
+    color: var(--text-color, #333);
+  }
+
+  .more-questions {
+    max-width: 800px;
+    margin: 2rem auto 0;
+    text-align: center;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 8px;
+    border: 2px solid var(--focus-color, #000);
+  }
+
+  .more-questions p {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .more-questions a {
+    color: var(--text-color, #000);
+    font-weight: 600;
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+  }
+
+  .more-questions a:hover {
+    opacity: 0.7;
+  }
+
+  .more-questions a:focus-visible {
+    outline: 2px solid var(--focus-color, #000);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .faq-section {
+      padding: 1.5rem;
+    }
+
+    .faq-section h2 {
+      font-size: 1.5rem;
+    }
+
+    .faq-item summary {
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+    }
+
+    .answer {
+      padding: 0 1.25rem 1.25rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .faq-section {
+      padding: 1rem;
+    }
+
+    .faq-item summary {
+      padding: 0.875rem 1rem;
+      font-size: 0.95rem;
+    }
+
+    .answer {
+      padding: 0 1rem 1rem;
+    }
+
+    .answer p {
+      font-size: 0.95rem;
+    }
+  }
+</style>
