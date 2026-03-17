@@ -37,7 +37,8 @@ export const readableTextColor = (bg: string | undefined): string => {
     });
     const lum = 0.2126 * R + 0.7152 * G + 0.0722 * B;
     return lum > 0.5 ? "#111" : "#fff";
-  } catch {
+  } catch (error) {
+    console.warn(`Failed to parse color "${bg}":`, error);
     return "#111";
   }
 };

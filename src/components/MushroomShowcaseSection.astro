@@ -51,7 +51,7 @@ const {
         width={1920}
         height={1080}
         format="webp"
-        loading="lazy"
+        loading="eager"
         class="showcase-image"
       />
     </div>
@@ -60,9 +60,8 @@ const {
 
 <style>
   .mushroom-showcase {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    width: calc(100vw - var(--scrollbar-width, 0px));
+    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
     background: #ffffff;
     padding: 0;
     overflow: hidden;

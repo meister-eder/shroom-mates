@@ -1,8 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import ProductCard from "../components/ProductCard.astro";
 import { getCollection, getEntry, render } from "astro:content";
-import { readableTextColor } from "../utils/color";
 
 // Get the growkits page content (generic instructions)
 const growkitsPageEntry = await getEntry("growkits-page", "content");
@@ -183,32 +183,16 @@ const productSchemas = growkits.map((growkit) => ({
 
         <div class="varieties-grid">
           {growkits.map((growkit) => (
-            <article class="variety-card" id={growkit.slug}>
-              <div
-                class="variety-content"
-                style={
-                  growkit.color
-                    ? `background-color: ${growkit.color}; color: ${readableTextColor(growkit.color)};`
-                    : ""
-                }
-              >
-                <h3>{growkit.title}</h3>
-                <div class="variety-description">
-                  <growkit.Content />
-                </div>
-              </div>
-              <div class="variety-image-wrapper">
-                <Image
-                  src={growkit.image}
-                  alt={growkit.imageAlt}
-                  width={800}
-                  height={600}
-                  format="webp"
-                  loading="lazy"
-                  class="variety-image"
-                />
-              </div>
-            </article>
+            <ProductCard
+              title={growkit.title}
+              image={growkit.image}
+              imageAlt={growkit.imageAlt}
+              color={growkit.color}
+              headingLevel={3}
+              id={growkit.slug}
+            >
+              <growkit.Content />
+            </ProductCard>
           ))}
         </div>
       </section>
@@ -235,10 +219,9 @@ const productSchemas = growkits.map((growkit) => ({
   /* Hero Section - similar to index page */
   .hero {
     position: relative;
-    width: 100vw;
+    width: calc(100vw - var(--scrollbar-width, 0px));
     height: 70vh;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
     overflow: hidden;
   }
 
@@ -363,124 +346,8 @@ const productSchemas = growkits.map((growkit) => ({
     display: flex;
     flex-direction: column;
     gap: 0;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-  }
-
-  .variety-card {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    align-items: stretch;
-    min-height: 50vh;
-    width: 100%;
-    border-top: 2px solid #000;
-    background: #ffffff;
-  }
-
-  .variety-card:last-child {
-    border-bottom: 2px solid #000;
-  }
-
-  .variety-card:nth-child(even) .variety-content {
-    order: 2;
-  }
-
-  .variety-card:nth-child(even) .variety-image-wrapper {
-    order: 1;
-  }
-
-  .variety-image-wrapper {
-    width: 100%;
-    height: 100%;
-    min-height: 50vh;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .variety-image {
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    min-height: 50vh;
-  }
-
-  .variety-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 3rem 4rem;
-    background: #ffffff;
-    height: 100%;
-    justify-content: center;
-  }
-
-  .variety-content h3 {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin: 0 0 0.5rem 0;
-    color: inherit;
-  }
-
-  .variety-description {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: inherit;
-  }
-
-  .variety-description :global(h2) {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin: 1.5rem 0 0.75rem 0;
-  }
-
-  .variety-description :global(h2:first-child) {
-    margin-top: 0;
-  }
-
-  .variety-description :global(h3) {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 1.25rem 0 0.5rem 0;
-  }
-
-  .variety-description :global(p) {
-    margin: 0 0 0.75rem 0;
-  }
-
-  .variety-description :global(p:last-child) {
-    margin-bottom: 0;
-  }
-
-  .variety-description :global(ul),
-  .variety-description :global(ol) {
-    margin: 0.75rem 0;
-    padding-left: 1.25rem;
-  }
-
-  .variety-description :global(li) {
-    margin: 0.35rem 0;
-  }
-
-  .variety-description :global(strong) {
-    font-weight: 700;
-  }
-
-  .variety-description :global(em) {
-    font-style: italic;
-  }
-
-  .variety-description :global(a) {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .variety-description :global(a:hover) {
-    text-decoration-thickness: 2px;
+    width: calc(100vw - var(--scrollbar-width, 0px));
+    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
   }
 
   /* CTA Section */
@@ -546,14 +413,6 @@ const productSchemas = growkits.map((growkit) => ({
       padding: 1.5rem;
     }
 
-    .variety-content {
-      padding: 2rem 2.5rem;
-    }
-
-    .variety-content h3 {
-      font-size: 1.7rem;
-    }
-
     .section-heading {
       font-size: 1.7rem;
     }
@@ -598,35 +457,6 @@ const productSchemas = growkits.map((growkit) => ({
       padding: 0 1.5rem;
     }
 
-    .variety-card {
-      grid-template-columns: 1fr;
-      min-height: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .variety-content {
-      order: 1 !important;
-      padding: 2rem 1.5rem;
-    }
-
-    .variety-image-wrapper {
-      order: 2 !important;
-      min-height: 40vh;
-    }
-
-    .variety-image {
-      min-height: 40vh;
-    }
-
-    .variety-content h3 {
-      font-size: 1.5rem;
-    }
-
-    .variety-description {
-      font-size: 0.95rem;
-    }
-
     .cta-section {
       padding: 2rem 1.5rem;
     }
@@ -648,26 +478,6 @@ const productSchemas = growkits.map((growkit) => ({
 
     .growkits-section h1 {
       font-size: 1.5rem;
-    }
-
-    .variety-image-wrapper {
-      min-height: 35vh;
-    }
-
-    .variety-image {
-      min-height: 35vh;
-    }
-
-    .variety-content {
-      padding: 1.5rem 1rem;
-    }
-
-    .variety-content h3 {
-      font-size: 1.3rem;
-    }
-
-    .variety-description {
-      font-size: 0.9rem;
     }
   }
 </style>

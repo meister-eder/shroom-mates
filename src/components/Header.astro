@@ -86,10 +86,11 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
     const scrollThreshold = 50; // Start shrinking after 50px scroll
     const mobileBreakpoint = 768; // Match CSS breakpoint
 
-    function handleScroll() {
-      if (!header) return; // Additional check for TypeScript
+    let ticking = false;
 
-      // Only apply shrinking effect on desktop
+    function handleScroll() {
+      if (!header) return;
+
       if (window.innerWidth <= mobileBreakpoint) {
         header.classList.remove("scrolled");
         return;
@@ -104,10 +105,17 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
       }
     }
 
-    // Use passive event listener for better scroll performance
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
 
-    // Also handle window resize to ensure proper state
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
 
     // Check initial state

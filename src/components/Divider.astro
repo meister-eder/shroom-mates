@@ -3,9 +3,9 @@
 const { text = "🍄🍄🍄 🍄🍄🍄 🍄🍄🍄" } = Astro.props;
 ---
 
-<div class="divider-container">
+<div class="divider-container" role="presentation">
   <div class="divider-line">
-    <span class="moving-text">{text}</span>
+    <span class="moving-text" aria-hidden="true">{text}</span>
   </div>
 </div>
 

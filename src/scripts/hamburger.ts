@@ -1,16 +1,15 @@
-function setupHamburgerMenu() {
-  const hamburger = document.querySelector(".hamburger");
-  const nav = document.querySelector("nav");
-  const navLinks = document.querySelector(".nav-links");
+let cleanupFn: (() => void) | null = null;
+
+function setupHamburgerMenu(): (() => void) | null {
+  const hamburger = document.querySelector<HTMLButtonElement>(".hamburger");
+  const nav = document.querySelector<HTMLElement>("nav");
+  const navLinks = document.querySelector<HTMLElement>(".nav-links");
 
   if (!hamburger || !nav || !navLinks) {
-    console.log("Hamburger menu elements not found");
     return null;
   }
 
-  console.log("Setting up hamburger menu");
-
-  const toggleMenu = (e) => {
+  const toggleMenu = (e: Event) => {
     e.stopPropagation();
     const isOpen = nav.classList.contains("menu-open");
 
@@ -34,20 +33,19 @@ function setupHamburgerMenu() {
     hamburger.setAttribute("aria-label", "Navigationsmenü öffnen");
   };
 
-  const closeMenuOutside = (e) => {
-    if (!nav.contains(e.target) && nav.classList.contains("menu-open")) {
+  const closeMenuOutside = (e: MouseEvent) => {
+    if (!nav.contains(e.target as Node) && nav.classList.contains("menu-open")) {
       closeMenu();
     }
   };
 
-  const handleKeydown = (e) => {
+  const handleKeydown = (e: KeyboardEvent) => {
     if (e.key === "Escape" && nav.classList.contains("menu-open")) {
       closeMenu();
       hamburger.focus();
     }
   };
 
-  // Add event listeners
   hamburger.addEventListener("click", toggleMenu);
   document.addEventListener("click", closeMenuOutside);
   document.addEventListener("keydown", handleKeydown);
@@ -57,7 +55,6 @@ function setupHamburgerMenu() {
     link.addEventListener("click", closeMenu);
   }
 
-  // Cleanup function
   return () => {
     hamburger.removeEventListener("click", toggleMenu);
     document.removeEventListener("click", closeMenuOutside);
@@ -68,31 +65,24 @@ function setupHamburgerMenu() {
   };
 }
 
-// Global cleanup reference
-window.hamburgerCleanup = null;
-
-// Clean up old listeners before setting up new ones
 document.addEventListener("astro:before-preparation", () => {
-  if (window.hamburgerCleanup) {
-    window.hamburgerCleanup();
-    window.hamburgerCleanup = null;
+  if (cleanupFn) {
+    cleanupFn();
+    cleanupFn = null;
   }
 });
 
-// Setup on initial load
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
-    window.hamburgerCleanup = setupHamburgerMenu();
+    cleanupFn = setupHamburgerMenu();
   });
 } else {
-  // DOM already loaded
-  window.hamburgerCleanup = setupHamburgerMenu();
+  cleanupFn = setupHamburgerMenu();
 }
 
-// Setup after each Astro page load
 document.addEventListener("astro:page-load", () => {
-  if (window.hamburgerCleanup) {
-    window.hamburgerCleanup();
+  if (cleanupFn) {
+    cleanupFn();
   }
-  window.hamburgerCleanup = setupHamburgerMenu();
+  cleanupFn = setupHamburgerMenu();
 });

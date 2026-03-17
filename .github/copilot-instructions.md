@@ -69,14 +69,18 @@ import heroImage from '../assets/images/hero.jpg';
 // In astro.config.mjs - configure static asset caching
 export default defineConfig({
   build: {
-    assets: 'assets', // Hash assets for cache busting
+    assets: 'assets',
+    inlineStylesheets: 'auto',
   },
-  // Enable image optimization
   image: {
     service: {
-      entrypoint: 'astro/assets/services/sharp'
-    }
-  }
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        quality: 85,
+      },
+    },
+    breakpoints: [320, 640, 768, 1024, 1280, 1600],
+  },
 });
 ```
 
@@ -145,41 +149,76 @@ export default defineConfig({
 ```
 src/
 ├── components/           # Reusable UI components
-│   ├── ui/              # Basic UI elements (Button, Card, etc.)
-│   ├── layout/          # Layout components (Header, Footer)
-│   └── forms/           # Form-specific components
-├── layouts/             # Page layouts
-├── pages/               # Route pages
-├── assets/              # Images, icons (optimized by Astro)
-├── styles/              # Global styles and utilities
-└── types/               # TypeScript definitions
+│   ├── ProductCard.astro     # Shared card for mushrooms, growkits & tinkturen
+│   ├── Header.astro          # Site header with scroll-shrink behavior
+│   ├── Footer.astro          # Site footer
+│   ├── SvgHeading.astro      # SVG-based decorative headings
+│   ├── Divider.astro         # Animated emoji divider (aria-hidden)
+│   ├── ValuesSection.astro   # Values grid with ValueCard children
+│   ├── FAQ.astro             # FAQ accordion
+│   ├── ImageGallery.astro    # Image gallery grid
+│   ├── LocationInfo.astro    # Location & map embed
+│   └── UpcomingDates.astro   # Market dates listing
+├── layouts/
+│   └── Layout.astro      # Main layout (supports noBackground prop)
+├── pages/                # Route pages
+├── content/              # Astro Content Collections (Markdown)
+│   ├── config.ts             # Collection schemas
+│   ├── mushrooms/            # Mushroom entries
+│   ├── growkits/             # Growkit entries
+│   ├── tinkturen/            # Tincture entries
+│   └── ...                   # Page content collections
+├── scripts/              # Client-side TypeScript
+│   ├── hamburger.ts          # Mobile nav (module-scoped cleanup)
+│   └── contact-form.ts      # Contact form submission handler
+├── assets/               # Images, icons (optimized by Astro)
+├── styles/               # Global styles and utilities
+└── utils/
+    └── color.ts          # Readable text color contrast helper
 ```
+
+### Key Reusable Components
+
+#### ProductCard.astro
+Used across mushrooms, growkits, and tinkturen pages for consistent product display:
+```astro
+<ProductCard
+  title="Lion's Mane"
+  image={lionsManeImage}
+  imageAlt="Frischer Lion's Mane Pilz"
+  color="#f0e6d3"
+  headingLevel={3}
+  subtitle="Hericium erinaceus"
+  id="lions-mane"
+>
+  <p>Description content via slot</p>
+</ProductCard>
+```
+Props: `title`, `image`, `imageAlt`, `color?`, `headingLevel?` (2|3), `subtitle?`, `id?`, `imageWidth?`, `imageHeight?`
+
+#### Layout.astro
+Main layout with props: `title`, `description?`, `ogImage?`, `isLandingPage?`, `noindex?`, `noBackground?`
+- `noBackground` removes the checkered background pattern (used on unsere-pilze page)
 
 ### Component Best Practices
 ```astro
 ---
-// Component props interface
+// Always define a Props interface
 interface Props {
   title: string;
   description?: string;
-  level?: 1 | 2 | 3 | 4 | 5 | 6; // For heading levels
-  className?: string;
+  level?: 2 | 3; // For heading levels
 }
 
-const { 
-  title, 
-  description, 
-  level = 2, 
-  className = '' 
-} = Astro.props;
+const { title, description, level = 2 } = Astro.props;
 
-// Dynamic heading component for semantic hierarchy
-const HeadingTag = `h${level}` as keyof HTMLElementTagNameMap;
+// Dynamic heading for semantic hierarchy
+const HeadingTag = `h${level}` as "h2" | "h3";
 ---
 
-<div class={`card ${className}`}>
-  <HeadingTag class="card-title">{title}</HeadingTag>
-  {description && <p class="card-description">{description}</p>}
+<div class="card">
+  <HeadingTag>{title}</HeadingTag>
+  {description && <p>{description}</p>}
   <slot />
 </div>
 ```
@@ -251,6 +290,23 @@ export default defineConfig({
   outline-offset: 2px;
 }
 ```
+
+### Full-Bleed Layouts
+When creating full-width sections that break out of their container, use scrollbar-aware widths to prevent horizontal overflow:
+```css
+/* ✅ CORRECT: Accounts for scrollbar on Windows/Linux */
+.full-bleed {
+  width: calc(100vw - var(--scrollbar-width, 0px));
+  margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+}
+
+/* ❌ INCORRECT: Causes horizontal scrollbar */
+.full-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+```
+The `--scrollbar-width` CSS variable is set dynamically by Layout.astro.
 
 ## Error Handling and Edge Cases
 
@@ -339,10 +395,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ## Development Workflow
 
 ### Code Quality Requirements
-- **Biome formatting**: Run `bun run format` before commits
-- **Type safety**: Fix all TypeScript errors
+- **Biome formatting**: Run `bun run format` before commits (if configured)
+- **Type safety**: All scripts must be TypeScript — no `.js` files in `src/scripts/`
 - **Accessibility testing**: Test with screen readers and keyboard navigation
 - **Performance testing**: Check Lighthouse scores regularly
+- **No global scope pollution**: Use module-scoped variables, not `window.*`
+- **Scroll handlers**: Always throttle with `requestAnimationFrame`
 
 ### Testing Checklist
 - [ ] Lighthouse performance score 95+

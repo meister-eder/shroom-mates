@@ -8,25 +8,42 @@ Geschäftswebsite für [shroom-mates.de](https://shroom-mates.de), ein Leipziger
 ```text
 /
 ├── public/
-│   └── images/            # Static mushroom images
+│   └── assets/headings/     # SVG heading assets
 ├── src/
 │   ├── assets/
-│   │   └── images/       # Processed images and videos
-│   ├── components/       # Reusable Astro components
-│   ├── data/
-│   │   └── mushrooms.ts  # Mushroom database
-│   ├── layouts/         # Page layouts
-│   ├── pages/          # Route pages
-│   ├── scripts/        # Client-side JavaScript
-│   └── styles/         # Global CSS styles
+│   │   └── images/          # Processed images (optimized by Astro)
+│   ├── components/          # Reusable Astro components
+│   │   ├── ProductCard.astro    # Shared product/mushroom card layout
+│   │   ├── Header.astro         # Site header with shrinking navbar
+│   │   ├── Footer.astro         # Site footer
+│   │   └── ...                  # Section & UI components
+│   ├── content/             # Content collections (Astro Content Layer)
+│   │   ├── config.ts            # Collection schemas
+│   │   ├── mushrooms/           # Mushroom product entries
+│   │   ├── growkits/            # Growkit product entries
+│   │   ├── tinkturen/           # Tincture product entries
+│   │   └── ...                  # Page content (landing, FAQ, etc.)
+│   ├── layouts/
+│   │   └── Layout.astro     # Main page layout
+│   ├── pages/               # Route pages
+│   ├── scripts/             # Client-side TypeScript
+│   │   ├── hamburger.ts         # Mobile navigation
+│   │   └── contact-form.ts     # Contact form submission
+│   ├── styles/
+│   │   └── global.css       # Global styles & design tokens
+│   └── utils/
+│       └── color.ts         # Color contrast utilities
 └── package.json
 ```
 
 ## 🛠️ Tech Stack
 
-- [Astro](https://astro.build)
-- TypeScript
-- CSS
+- [Astro 5](https://astro.build) (Static Site Generation)
+- TypeScript (strict mode)
+- [Bun](https://bun.sh) (package manager & runtime)
+- [Biome](https://biomejs.dev) (formatting & linting)
+- [Sharp](https://sharp.pixelplumbing.com) (image optimization)
+- Astro Content Collections (Markdown/MDX content)
 
 ## 🧞 Development Commands
 
@@ -34,7 +51,7 @@ Geschäftswebsite für [shroom-mates.de](https://shroom-mates.de), ein Leipziger
 | :-------------------- | :----------------------------------------------- |
 | `bun install`         | Installs dependencies                            |
 | `bun run dev`         | Starts local dev server at `localhost:4321`      |
-| `bun run build`       | Build production site to `./dist/`               |
+| `bun run build`       | Type-check & build production site to `./dist/`  |
 | `bun run preview`     | Preview build locally                            |
 
 ## 📝 Content Management with PagesCMS
