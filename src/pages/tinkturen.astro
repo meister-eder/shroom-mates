@@ -1,8 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import ProductCard from "../components/ProductCard.astro";
 import { getCollection, getEntry, render } from "astro:content";
-import { readableTextColor } from "../utils/color";
 
 // Get the tinkturen page content
 const tinkturenPageEntry = await getEntry("tinkturen-page", "content");
@@ -123,35 +123,16 @@ const productSchemas = tinkturen.map((tinktur) => ({
 			<section class="products-section" aria-label="Unsere Tinkturen">
 				<div class="products-grid">
 					{tinkturen.map((tinktur) => (
-						<article class="product-card" id={tinktur.slug}>
-							<div
-								class="product-content"
-								style={
-									tinktur.color
-										? `background-color: ${tinktur.color}; color: ${readableTextColor(tinktur.color)};`
-										: ""
-								}
-							>
-								<h2>{tinktur.title}</h2>
-								<p class="botanical-name">
-									<em>{tinktur.botanicalName}</em>
-								</p>
-								<div class="product-description">
-									<tinktur.Content />
-								</div>
-							</div>
-							<div class="product-image-wrapper">
-								<Image
-									src={tinktur.image}
-									alt={tinktur.imageAlt}
-									width={800}
-									height={600}
-									format="webp"
-									loading="lazy"
-									class="product-image"
-								/>
-							</div>
-						</article>
+						<ProductCard
+							title={tinktur.title}
+							image={tinktur.image}
+							imageAlt={tinktur.imageAlt}
+							color={tinktur.color}
+							subtitle={tinktur.botanicalName}
+							id={tinktur.slug}
+						>
+							<tinktur.Content />
+						</ProductCard>
 					))}
 				</div>
 			</section>
@@ -288,132 +269,8 @@ const productSchemas = tinkturen.map((tinktur) => ({
 		display: flex;
 		flex-direction: column;
 		gap: 0;
-		width: 100vw;
-		margin-left: calc(50% - 50vw);
-		margin-right: calc(50% - 50vw);
-	}
-
-	.product-card {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0;
-		align-items: stretch;
-		min-height: 50vh;
-		width: 100%;
-		border-top: 2px solid #000;
-		background: #ffffff;
-	}
-
-	.product-card:last-child {
-		border-bottom: 2px solid #000;
-	}
-
-	.product-card:nth-child(even) .product-content {
-		order: 2;
-	}
-
-	.product-card:nth-child(even) .product-image-wrapper {
-		order: 1;
-	}
-
-	.product-image-wrapper {
-		width: 100%;
-		height: 100%;
-		min-height: 50vh;
-		overflow: hidden;
-		position: relative;
-	}
-
-	.product-image {
-		width: 100%;
-		height: 100%;
-		display: block;
-		object-fit: cover;
-		min-height: 50vh;
-	}
-
-	.product-content {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		padding: 3rem 4rem;
-		background: #ffffff;
-		height: 100%;
-		justify-content: center;
-	}
-
-	.product-content h2 {
-		font-size: 2rem;
-		font-weight: 700;
-		line-height: 1.2;
-		margin: 0 0 0.25rem 0;
-		color: inherit;
-		font-family: monospace;
-	}
-
-	.botanical-name {
-		font-size: 1.05rem;
-		margin: 0 0 1rem 0;
-		opacity: 0.8;
-		color: inherit;
-	}
-
-	.product-description {
-		font-size: 1rem;
-		line-height: 1.7;
-		color: inherit;
-	}
-
-	.product-description :global(h2) {
-		font-size: 1.3rem;
-		font-weight: 600;
-		margin: 1.5rem 0 0.75rem 0;
-	}
-
-	.product-description :global(h2:first-child) {
-		margin-top: 0;
-	}
-
-	.product-description :global(h3) {
-		font-size: 1.1rem;
-		font-weight: 600;
-		margin: 1.25rem 0 0.5rem 0;
-	}
-
-	.product-description :global(p) {
-		margin: 0 0 0.75rem 0;
-	}
-
-	.product-description :global(p:last-child) {
-		margin-bottom: 0;
-	}
-
-	.product-description :global(ul),
-	.product-description :global(ol) {
-		margin: 0.75rem 0;
-		padding-left: 1.25rem;
-	}
-
-	.product-description :global(li) {
-		margin: 0.35rem 0;
-	}
-
-	.product-description :global(strong) {
-		font-weight: 700;
-	}
-
-	.product-description :global(em) {
-		font-style: italic;
-	}
-
-	.product-description :global(a) {
-		color: inherit;
-		text-decoration: underline;
-		text-underline-offset: 2px;
-	}
-
-	.product-description :global(a:hover) {
-		text-decoration-thickness: 2px;
+		width: calc(100vw - var(--scrollbar-width, 0px));
+		margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
 	}
 
 	/* Quellen Section */
@@ -494,14 +351,6 @@ const productSchemas = tinkturen.map((tinktur) => ({
 		.intro-grid {
 			grid-template-columns: 1fr;
 		}
-
-		.product-content {
-			padding: 2rem 2.5rem;
-		}
-
-		.product-content h2 {
-			font-size: 1.7rem;
-		}
 	}
 
 	/* Mobile breakpoint */
@@ -530,35 +379,6 @@ const productSchemas = tinkturen.map((tinktur) => ({
 			padding: 2rem 0;
 		}
 
-		.product-card {
-			grid-template-columns: 1fr;
-			min-height: auto;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.product-content {
-			order: 1 !important;
-			padding: 2rem 1.5rem;
-		}
-
-		.product-image-wrapper {
-			order: 2 !important;
-			min-height: 40vh;
-		}
-
-		.product-image {
-			min-height: 40vh;
-		}
-
-		.product-content h2 {
-			font-size: 1.5rem;
-		}
-
-		.product-description {
-			font-size: 0.95rem;
-		}
-
 		.quellen-section {
 			padding: 2rem 1.5rem 1.5rem;
 		}
@@ -580,26 +400,6 @@ const productSchemas = tinkturen.map((tinktur) => ({
 	@media (max-width: 480px) {
 		.page-header h1 {
 			font-size: 1.5rem;
-		}
-
-		.product-image-wrapper {
-			min-height: 35vh;
-		}
-
-		.product-image {
-			min-height: 35vh;
-		}
-
-		.product-content {
-			padding: 1.5rem 1rem;
-		}
-
-		.product-content h2 {
-			font-size: 1.3rem;
-		}
-
-		.product-description {
-			font-size: 0.9rem;
 		}
 	}
 </style>

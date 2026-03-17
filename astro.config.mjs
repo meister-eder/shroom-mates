@@ -1,6 +1,5 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import AutoImport from "astro-auto-import";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
@@ -12,11 +11,12 @@ export default defineConfig({
     inlineStylesheets: "auto", // Inline small stylesheets for performance
   },
   image: {
-    // Configure image optimization
     service: {
       entrypoint: "astro/assets/services/sharp",
+      config: {
+        quality: 85,
+      },
     },
-    // Define responsive image breakpoints
     breakpoints: [320, 640, 768, 1024, 1280, 1600],
   },
   // Performance optimizations
@@ -31,11 +31,5 @@ export default defineConfig({
       },
     },
   },
-  integrations: [
-    AutoImport({
-      imports: ["./src/components/A.astro"],
-    }),
-    mdx(),
-    sitemap(),
-  ],
+  integrations: [mdx(), sitemap()],
 });

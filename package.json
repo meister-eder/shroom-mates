@@ -15,7 +15,6 @@
 		"@astrojs/sitemap": "^3.6.0",
 		"@fontsource/geist-sans": "^5.2.5",
 		"astro": "^5.15.1",
-		"astro-auto-import": "^0.4.5",
 		"typescript": "^5.9.3"
 	},
 	"devDependencies": {
