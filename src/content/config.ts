@@ -122,6 +122,38 @@ const faqPage = defineCollection({
   }),
 });
 
+// Define the tinkturen-page collection - page-level content for the tinctures page
+const tinkturenPage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/tinkturen-page' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    heroTitle: z.string(),
+    heroSubtitle: z.string().optional(),
+    heroImage: image(),
+    heroImageAlt: z.string(),
+    introText: z.string(),
+    disclaimerText: z.string(),
+    quellen: z.array(z.object({
+      title: z.string(),
+      url: z.string(),
+    })),
+  }),
+});
+
+// Define the tinkturen collection - individual tincture products
+const tinkturen = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/tinkturen' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    botanicalName: z.string(),
+    image: image(),
+    imageAlt: z.string(),
+    color: z.string().optional(),
+    order: z.number(),
+  }),
+});
+
 export const collections = {
   values,
   aboutUs,
@@ -131,4 +163,6 @@ export const collections = {
   'growkits-page': growkitsPage,
   growkits,
   'faq-page': faqPage,
+  'tinkturen-page': tinkturenPage,
+  tinkturen,
 };

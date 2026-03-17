@@ -62,7 +62,7 @@ import heroImage from '../assets/images/hero.jpg';
 - **Primary**: WebP with AVIF fallback for modern browsers
 - **Legacy**: Automatic PNG/JPEG fallback
 - **Responsive**: Always generate srcset for different screen sizes
-- **Compression**: Quality 80-85 for photos, 90+ for graphics with text
+- **Compression**: Quality 85-90 for photos, 90+ for graphics with text
 
 ### Caching Headers
 ```javascript
