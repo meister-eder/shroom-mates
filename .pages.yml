@@ -391,6 +391,129 @@ content:
             required: false
             description: Link zu einer Seite mit mehr Informationen (z.B. "/growkits")
 
+  # Tinkturen Page - Page-level content for the tinctures page
+  - name: tinkturen-page
+    label: Tinkturen Seite
+    type: file
+    path: src/content/tinkturen-page/content.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Seitentitel
+        type: string
+        required: true
+        description: SEO-optimierter Titel für die Seite
+      - name: description
+        label: Meta-Beschreibung
+        type: text
+        required: true
+        description: SEO-Beschreibung für Suchmaschinen
+      - name: heroTitle
+        label: Haupt-Überschrift
+        type: string
+        required: true
+        description: Große Überschrift auf der Seite
+      - name: heroSubtitle
+        label: Untertitel
+        type: string
+        required: false
+        description: Untertitel unter der Hauptüberschrift
+      - name: heroImage
+        label: Hero-Bild
+        type: image
+        required: true
+        description: Bild für die Tinkturen-Seite
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: heroImageAlt
+        label: Hero-Bild Alt-Text
+        type: string
+        required: true
+        description: Beschreibender Alt-Text für das Hero-Bild
+      - name: introText
+        label: Einleitungstext
+        type: text
+        required: true
+        description: Allgemeiner Einleitungstext über die Tinkturen (Herstellung, Dosierung etc.)
+      - name: disclaimerText
+        label: Disclaimer-Text
+        type: text
+        required: true
+        description: Rechtlicher Hinweis am Seitenende (HCVO-konform)
+      - name: quellen
+        label: Wissenschaftliche Quellen
+        type: object
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: title
+            label: Quellenbezeichnung
+            type: string
+            required: true
+            description: Titel oder Beschreibung der Quelle
+          - name: url
+            label: URL
+            type: string
+            required: true
+            description: Link zur wissenschaftlichen Quelle
+
+  # Tinkturen Collection - Individual tincture products
+  - name: tinkturen
+    label: Tinkturen Produkte
+    type: collection
+    path: src/content/tinkturen
+    format: yaml-frontmatter
+    extension: md
+    fields:
+      - name: title
+        label: Produktname
+        type: string
+        required: true
+        description: Name der Tinktur (z.B. "Lion's Mane Extrakt")
+      - name: botanicalName
+        label: Botanischer Name
+        type: string
+        required: true
+        description: Lateinischer/botanischer Name (z.B. "Hericium erinaceus · Igelstachelbart")
+      - name: image
+        label: Produkt-Bild
+        type: image
+        required: true
+        description: Bild der Tinktur oder des Pilzes hochladen
+        options:
+          media: images
+          extensions: [jpg, jpeg, png, webp]
+          categories: [image]
+      - name: imageAlt
+        label: Bild Alt-Text
+        type: string
+        required: true
+        description: Beschreibender Alt-Text für das Bild (Barrierefreiheit)
+      - name: color
+        label: Hintergrundfarbe
+        type: string
+        required: false
+        description: Hex-Farbe für den Abschnitt-Hintergrund (z.B. "#b0b1f1")
+        default: "#ffffff"
+      - name: order
+        label: Sortierung
+        type: number
+        required: true
+        description: Reihenfolge auf der Seite (1, 2, 3, ...)
+        default: 1
+      - name: body
+        label: Beschreibung
+        type: rich-text
+        required: true
+        description: Herstellung, Inhaltsstoffe und Wirkung der Tinktur (HCVO-konform formulieren)
+        options:
+          media: false
+
 # Components
 # Reusable field groups (currently not used but available for future use)
 components:
