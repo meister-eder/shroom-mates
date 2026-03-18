@@ -1,10 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
-import ProductCard from "../components/ProductCard.astro";
-import { getCollection, getEntry, render } from "astro:content";
+import { getEntry } from "astro:content";
+import { readableTextColor } from "../utils/color";
 
-// Get the tinkturen page content
 const tinkturenPageEntry = await getEntry("tinkturen-page", "content");
 if (!tinkturenPageEntry) {
 	throw new Error("Tinkturen page content not found");
@@ -19,39 +18,24 @@ const {
 	heroImageAlt,
 	introText,
 	disclaimerText,
+	tinctures,
 	quellen,
 } = tinkturenPageEntry.data;
 
-// Get tincture products from the collection
-const tinkturenCollection = await getCollection("tinkturen");
-const tinkturen = await Promise.all(
-	tinkturenCollection
-		.sort((a, b) => a.data.order - b.data.order)
-		.map(async (entry) => {
-			const { Content } = await render(entry);
-			return {
-				title: entry.data.title,
-				botanicalName: entry.data.botanicalName,
-				image: entry.data.image,
-				imageAlt: entry.data.imageAlt,
-				Content,
-				color: entry.data.color,
-				slug: entry.id,
-			};
-		}),
-);
+// Compute readable text colors for tincture accent backgrounds
+const processedTinctures = tinctures.map((t) => ({
+	...t,
+	textColor: t.color ? readableTextColor(t.color) : undefined,
+}));
 
-// Generate Product schema for each tincture
-const productSchemas = tinkturen.map((tinktur) => ({
+// Structured data for SEO
+const productSchemas = tinctures.map((t) => ({
 	"@context": "https://schema.org",
 	"@type": "Product",
-	name: tinktur.title,
-	description: `Handgemachte Pilztinktur – ${tinktur.title} (${tinktur.botanicalName}). Doppelextrakt aus eigener Zucht in Leipzig.`,
-	image: tinktur.image?.src || "",
-	brand: {
-		"@type": "Brand",
-		name: "shroom-mates",
-	},
+	name: t.title,
+	description: `Handgemachte Pilztinktur – ${t.title} (${t.botanicalName}). Doppelextrakt aus eigener Zucht in Leipzig.`,
+	image: t.image?.src || "",
+	brand: { "@type": "Brand", name: "shroom-mates" },
 	manufacturer: {
 		"@type": "Organization",
 		name: "shroom-mates",
@@ -77,83 +61,124 @@ const productSchemas = tinkturen.map((tinktur) => ({
 ---
 
 <Layout title={title} description={description} ogImage={heroImage?.src}>
-	<!-- Product Schemas for SEO -->
 	{
 		productSchemas.map((schema) => (
-			<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+			<script
+				type="application/ld+json"
+				set:html={JSON.stringify(schema)}
+			/>
 		))
 	}
 
-	<!-- Page Header -->
-	<section class="page-header" id="content">
-		<h1>{heroTitle}</h1>
-		{heroSubtitle && <p class="subtitle">{heroSubtitle}</p>}
+	<!-- Hero -->
+	<section class="hero" id="content">
+		<div class="hero-image-wrapper">
+			<Image
+				src={heroImage}
+				alt={heroImageAlt}
+				width={1400}
+				height={700}
+				format="webp"
+				class="hero-image"
+				loading="eager"
+			/>
+		</div>
+		<div class="hero-text">
+			<h1>{heroTitle}</h1>
+			{heroSubtitle && <p class="hero-subtitle">{heroSubtitle}</p>}
+		</div>
 	</section>
 
-	<!-- Intro Section -->
-	<section class="intro-section" aria-label="Über unsere Tinkturen">
-		<div class="intro-grid">
-			<div class="intro-text">
-				<p>{introText}</p>
+	<!-- Intro + Facts -->
+	<section class="intro" aria-label="Über unsere Tinkturen">
+		<div class="intro-text-card">
+			<p>{introText}</p>
+		</div>
+		<div class="facts">
+			<div class="fact">
+				<span class="fact-label">Herstellung</span>
+				<span class="fact-value"
+					>Doppelextrakt — Alkohol + Heißwasser</span
+				>
 			</div>
-			<div class="intro-facts">
-				<div class="fact-item">
-					<span class="fact-label">Herstellung</span>
-					<span class="fact-value">Doppelextrakt — Alkohol + Heißwasser</span>
-				</div>
-				<div class="fact-item">
-					<span class="fact-label">Herkunft</span>
-					<span class="fact-value">Eigene Indoor-Farm, Leipzig Plagwitz</span>
-				</div>
-				<div class="fact-item">
-					<span class="fact-label">Substrat</span>
-					<span class="fact-value">Regionales Bio-Substrat, ohne Zusätze</span>
-				</div>
-				<div class="fact-item">
-					<span class="fact-label">Dosierung</span>
-					<span class="fact-value">1–2 Pipetten täglich · 50 ml ≈ 25–50 Tagesdosen</span>
-				</div>
+			<div class="fact">
+				<span class="fact-label">Herkunft</span>
+				<span class="fact-value"
+					>Eigene Indoor-Farm, Leipzig Plagwitz</span
+				>
+			</div>
+			<div class="fact">
+				<span class="fact-label">Substrat</span>
+				<span class="fact-value"
+					>Regionales Bio-Substrat, ohne Zusätze</span
+				>
+			</div>
+			<div class="fact">
+				<span class="fact-label">Dosierung</span>
+				<span class="fact-value"
+					>1–2 Pipetten täglich · 50 ml ≈ 25–50 Tagesdosen</span
+				>
 			</div>
 		</div>
 	</section>
 
-	<!-- Tincture Products -->
-	{
-		tinkturen.length > 0 && (
-			<section class="products-section" aria-label="Unsere Tinkturen">
-				<div class="products-grid">
-					{tinkturen.map((tinktur) => (
-						<ProductCard
-							title={tinktur.title}
-							image={tinktur.image}
-							imageAlt={tinktur.imageAlt}
-							color={tinktur.color}
-							subtitle={tinktur.botanicalName}
-							id={tinktur.slug}
-						>
-							<tinktur.Content />
-						</ProductCard>
-					))}
-				</div>
-			</section>
-		)
-	}
+	<!-- Tincture Sections -->
+	<section class="tinctures" aria-label="Unsere Tinkturen">
+		{
+			processedTinctures.map((tincture, i) => (
+				<article
+					class={`tincture ${i % 2 === 1 ? "tincture--reversed" : ""}`}
+				>
+					<div class="tincture-image-wrapper">
+						<Image
+							src={tincture.image}
+							alt={tincture.imageAlt}
+							width={800}
+							height={800}
+							format="webp"
+							loading="lazy"
+							class="tincture-image"
+						/>
+					</div>
+					<div
+						class="tincture-content"
+						style={
+							tincture.color
+								? `background-color: ${tincture.color}; color: ${tincture.textColor}`
+								: ""
+						}
+					>
+						<div class="tincture-header">
+							<h2>{tincture.title}</h2>
+							<p class="botanical">
+								<em>{tincture.botanicalName}</em>
+							</p>
+						</div>
+						<p
+							class="tincture-description"
+							set:html={tincture.description}
+						/>
+					</div>
+				</article>
+			))
+		}
+	</section>
 
-	<!-- Quellen Section -->
+	<!-- Quellen -->
 	{
 		quellen && quellen.length > 0 && (
-			<section class="quellen-section" aria-label="Wissenschaftliche Quellen">
-				<div class="quellen-container">
+			<section class="quellen" aria-label="Wissenschaftliche Quellen">
+				<div class="quellen-card">
 					<h2>Quellen</h2>
-					<ol class="quellen-list">
-						{quellen.map((quelle) => (
-							<li>
+					<ol>
+						{quellen.map((q, i) => (
+							<li id={`quelle-${i + 1}`}>
 								<a
-									href={quelle.url}
+									href={q.url}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									{quelle.title}
+									{q.title}
 								</a>
 							</li>
 						))}
@@ -174,80 +199,95 @@ const productSchemas = tinkturen.map((tinktur) => ({
 </Layout>
 
 <style>
-	/* Page Header */
-	.page-header {
-		max-width: 800px;
-		margin: 0 auto;
-		padding: 3rem 2rem 1.5rem;
-		text-align: center;
+	/* ===== Hero ===== */
+	.hero {
+		width: calc(100vw - var(--scrollbar-width, 0px));
+		margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+		margin-top: -1.5rem;
 	}
 
-	.page-header h1 {
-		font-size: 2.5rem;
+	@media (max-width: 768px) {
+		.hero {
+			margin-top: -1rem;
+		}
+	}
+
+	.hero-image-wrapper {
+		overflow: hidden;
+	}
+
+	.hero-image {
+		width: 100%;
+		height: 40vh;
+		min-height: 240px;
+		object-fit: cover;
+		/* object-position: top; */
+		display: block;
+	}
+
+	.hero-text {
+		text-align: center;
+		padding: 1.75rem 1.5rem 1.25rem;
+	}
+
+	.hero-text h1 {
+		font-family: monospace;
+		font-size: 2rem;
 		font-weight: 700;
 		line-height: 1.2;
-		margin: 0 0 0.75rem 0;
-		color: var(--text-color);
-		font-family: monospace;
-	}
-
-	.subtitle {
-		max-width: 600px;
-		margin: 0 auto;
-		font-size: 1.1rem;
-		line-height: 1.6;
+		margin: 0 0 0.4rem;
 		color: var(--text-color);
 	}
 
-	/* Intro Section */
-	.intro-section {
+	.hero-subtitle {
+		font-size: 1.05rem;
+		margin: 0;
+		color: var(--focus-color);
+	}
+
+	/* ===== Intro ===== */
+	.intro {
 		max-width: 1000px;
 		margin: 0 auto;
-		padding: 1.5rem 2rem 3rem;
+		padding: 1.5rem 1.5rem 2.5rem;
 	}
 
-	.intro-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1.5rem;
-		align-items: start;
-	}
-
-	.intro-text {
+	.intro-text-card {
 		background: var(--bg-color);
 		border: 2px solid #000;
 		border-radius: 8px;
-		padding: 1.75rem;
+		padding: 1.5rem;
 		box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+		margin-bottom: 1.25rem;
 	}
 
-	.intro-text p {
+	.intro-text-card p {
 		font-size: 1rem;
 		line-height: 1.75;
 		margin: 0;
 		color: var(--text-color);
 	}
 
-	.intro-facts {
-		display: flex;
-		flex-direction: column;
+	.facts {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 		gap: 0.75rem;
 	}
 
-	.fact-item {
+	.fact {
 		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
 		background: var(--bg-color);
 		border: 2px solid #000;
 		border-radius: 8px;
-		padding: 1rem 1.25rem;
+		padding: 0.85rem 1rem;
 		box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.12);
 	}
 
 	.fact-label {
 		font-family: "DM Mono", monospace;
-		font-size: 0.75rem;
+		font-size: 0.7rem;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
@@ -255,81 +295,161 @@ const productSchemas = tinkturen.map((tinktur) => ({
 	}
 
 	.fact-value {
-		font-size: 0.95rem;
+		font-size: 0.85rem;
 		line-height: 1.4;
 		color: var(--text-color);
 	}
 
-	/* Products Section */
-	.products-section {
-		padding: 3rem 0;
+	/* ===== Tincture Sections ===== */
+	.tinctures {
+		padding: 1.5rem 0;
 	}
 
-	.products-grid {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
+	.tincture {
 		width: calc(100vw - var(--scrollbar-width, 0px));
 		margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+		border-top: 2px solid #000;
+		display: flex;
+		flex-direction: column;
 	}
 
-	/* Quellen Section */
-	.quellen-section {
+	.tincture:last-child {
+		border-bottom: 2px solid #000;
+	}
+
+	.tincture-image-wrapper {
+		overflow: hidden;
+		aspect-ratio: 4 / 3;
+	}
+
+	.tincture-image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top;
+		display: block;
+	}
+
+	.tincture-content {
+		padding: 2rem 1.5rem 2.5rem;
+		background: var(--bg-color);
+	}
+
+	.tincture-header {
+		margin-bottom: 1rem;
+	}
+
+	.tincture-header h2 {
+		font-family: monospace;
+		font-size: 1.75rem;
+		font-weight: 700;
+		line-height: 1.2;
+		margin: 0 0 0.25rem;
+	}
+
+	.botanical {
+		font-size: 0.9rem;
+		margin: 0;
+		opacity: 0.7;
+	}
+
+	.tincture-description {
+		font-size: 1rem;
+		line-height: 1.75;
+		margin: 0;
+	}
+
+	/* Citation superscripts inside set:html descriptions */
+	.tincture-description :global(sup) {
+		font-size: 0.65em;
+		line-height: 0;
+		vertical-align: super;
+	}
+
+	.tincture-description :global(sup a) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 1.4em;
+		height: 1.4em;
+		padding: 0 0.2em;
+		margin-left: 1px;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.1);
+		color: inherit;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.9em;
+		transition: background 0.15s;
+	}
+
+	.tincture-description :global(sup a:hover) {
+		background: rgba(0, 0, 0, 0.2);
+	}
+
+	.tincture-description :global(sup a:focus-visible) {
+		outline: 2px solid var(--focus-color, #000);
+		outline-offset: 2px;
+	}
+
+	/* ===== Quellen ===== */
+	.quellen {
 		max-width: 800px;
 		margin: 0 auto;
-		padding: 3rem 2rem 2rem;
+		padding: 3rem 1.5rem 2rem;
 	}
 
-	.quellen-container {
+	.quellen-card {
 		background: var(--bg-color);
-		border: 2px solid var(--focus-color, #000);
+		border: 2px solid #000;
 		border-radius: 8px;
-		padding: 2rem;
+		padding: 1.75rem;
 		box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
 	}
 
-	.quellen-container h2 {
-		font-size: 1.6rem;
-		font-weight: 700;
-		margin: 0 0 1rem 0;
-		color: var(--text-color);
+	.quellen-card h2 {
 		font-family: monospace;
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin: 0 0 1rem;
+		color: var(--text-color);
 	}
 
-	.quellen-list {
+	.quellen-card ol {
 		margin: 0;
 		padding-left: 1.5rem;
 		list-style-type: decimal;
 	}
 
-	.quellen-list li {
-		font-size: 0.95rem;
+	.quellen-card li {
+		font-size: 0.9rem;
 		line-height: 1.6;
 		margin: 0.5rem 0;
 		color: var(--text-color);
+		scroll-margin-top: calc(var(--navbar-height) + 1rem);
 	}
 
-	.quellen-list a {
+	.quellen-card a {
 		color: var(--accent);
 		text-decoration: underline;
 		text-underline-offset: 2px;
 		word-break: break-word;
 	}
 
-	.quellen-list a:hover {
+	.quellen-card a:hover {
 		text-decoration-thickness: 2px;
 	}
 
-	.quellen-list a:focus-visible {
+	.quellen-card a:focus-visible {
 		outline: 2px solid var(--focus-color, #000);
 		outline-offset: 2px;
 	}
 
-	/* Disclaimer Section */
+	/* ===== Disclaimer ===== */
 	.disclaimer-section {
 		max-width: 800px;
 		margin: 0 auto;
-		padding: 0 2rem 3rem;
+		padding: 0 1.5rem 3rem;
 	}
 
 	.disclaimer {
@@ -340,66 +460,96 @@ const productSchemas = tinkturen.map((tinktur) => ({
 		font-style: italic;
 		border-top: 1px solid #ddd;
 		padding-top: 1.5rem;
+		margin: 0;
 	}
 
-	/* Tablet breakpoint */
-	@media (max-width: 968px) {
-		.page-header h1 {
-			font-size: 2rem;
+	/* ===== Tablet ===== */
+	@media (min-width: 769px) {
+		.hero-image {
+			height: 50vh;
 		}
 
-		.intro-grid {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	/* Mobile breakpoint */
-	@media (max-width: 768px) {
-		.page-header {
-			padding: 2rem 1.5rem 1rem;
+		.hero-text {
+			padding: 2.5rem 2rem 1.75rem;
 		}
 
-		.page-header h1 {
-			font-size: 1.8rem;
+		.hero-text h1 {
+			font-size: 2.8rem;
 		}
 
-		.subtitle {
-			font-size: 1rem;
+		.intro {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 2rem;
+			align-items: start;
+			padding: 2.5rem 2rem 3.5rem;
 		}
 
-		.intro-section {
-			padding: 1rem 1.5rem 2rem;
+		.intro-text-card {
+			margin-bottom: 0;
 		}
 
-		.intro-text {
-			padding: 1.25rem;
+		.tincture {
+			flex-direction: row;
+			min-height: 50vh;
 		}
 
-		.products-section {
-			padding: 2rem 0;
+		.tincture--reversed {
+			flex-direction: row-reverse;
 		}
 
-		.quellen-section {
-			padding: 2rem 1.5rem 1.5rem;
+		.tincture-image-wrapper {
+			width: 50%;
+			aspect-ratio: auto;
+			min-height: 50vh;
+			flex-shrink: 0;
 		}
 
-		.quellen-container {
-			padding: 1.25rem;
+		.tincture-content {
+			width: 50%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding: 3rem 4rem;
 		}
 
-		.quellen-container h2 {
-			font-size: 1.4rem;
+		.tincture-header h2 {
+			font-size: 2.2rem;
+		}
+
+		.quellen {
+			padding: 4rem 2rem 3rem;
+		}
+
+		.quellen-card {
+			padding: 2rem;
 		}
 
 		.disclaimer-section {
-			padding: 0 1.5rem 2rem;
+			padding: 0 2rem 4rem;
 		}
 	}
 
-	/* Small mobile breakpoint */
+	/* ===== Small Mobile ===== */
 	@media (max-width: 480px) {
-		.page-header h1 {
+		.hero-text h1 {
+			font-size: 1.6rem;
+		}
+
+		.facts {
+			grid-template-columns: 1fr;
+		}
+
+		.tincture-header h2 {
 			font-size: 1.5rem;
+		}
+
+		.quellen-card {
+			padding: 1.25rem;
+		}
+
+		.quellen-card h2 {
+			font-size: 1.3rem;
 		}
 	}
 </style>

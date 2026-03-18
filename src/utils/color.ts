@@ -36,7 +36,10 @@ export const readableTextColor = (bg: string | undefined): string => {
       return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
     });
     const lum = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-    return lum > 0.5 ? "#111" : "#fff";
+    // Pick whichever text color gives a higher WCAG contrast ratio
+    const contrastWithWhite = 1.05 / (lum + 0.05);
+    const contrastWithDark = (lum + 0.05) / 0.05;
+    return contrastWithDark > contrastWithWhite ? "#111" : "#fff";
   } catch (error) {
     console.warn(`Failed to parse color "${bg}":`, error);
     return "#111";

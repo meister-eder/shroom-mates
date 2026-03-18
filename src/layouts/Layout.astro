@@ -36,7 +36,7 @@ const structuredData = {
   name: "shroom-mates",
   image: new URL(
     "/assets/logo_with_shrooms_and_text.png",
-    Astro.site
+    Astro.site,
   ).toString(),
   description: description,
   address: {
@@ -135,7 +135,7 @@ const structuredData = {
 ---
 
 <!doctype html>
-<html lang="de" class={noBackground ? 'no-background' : ''}>
+<html lang="de" class={noBackground ? "no-background" : ""}>
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -242,11 +242,42 @@ const structuredData = {
       <script>
         // Set scrollbar width CSS variable for full-bleed layouts
         function setScrollbarWidth() {
-          const width = window.innerWidth - document.documentElement.clientWidth;
-          document.documentElement.style.setProperty("--scrollbar-width", `${width}px`);
+          const width =
+            window.innerWidth - document.documentElement.clientWidth;
+          document.documentElement.style.setProperty(
+            "--scrollbar-width",
+            `${width}px`,
+          );
         }
         setScrollbarWidth();
         window.addEventListener("resize", setScrollbarWidth);
+      </script>
+
+      <script>
+        // Sync --navbar-height / --navbar-height-mobile to the real header offsetHeight
+        // so that content never sits behind or gaps below the fixed header.
+        // Uses ResizeObserver so it fires after layout (including CSS transitions).
+        function syncNavbarHeight() {
+          const header = document.querySelector("header");
+          if (!header) return;
+          const h = `${header.offsetHeight}px`;
+          document.documentElement.style.setProperty("--navbar-height", h);
+          document.documentElement.style.setProperty(
+            "--navbar-height-mobile",
+            h,
+          );
+        }
+
+        function observeHeader() {
+          const header = document.querySelector("header");
+          if (!header) return;
+          syncNavbarHeight();
+          const ro = new ResizeObserver(syncNavbarHeight);
+          ro.observe(header);
+        }
+
+        observeHeader();
+        document.addEventListener("astro:after-swap", observeHeader);
       </script>
 
       <script>
