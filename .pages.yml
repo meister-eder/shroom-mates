@@ -442,6 +442,13 @@ content:
         type: text
         required: true
         description: Rechtlicher Hinweis am Seitenende (HCVO-konform)
+      - name: tinctures
+        label: Tinkturen auf dieser Seite
+        type: string
+        list:
+          min: 1
+        required: true
+        description: Liste der Tinkturen-Slugs, die auf dieser Seite angezeigt werden. Die Reihenfolge bestimmt die Anzeige-Reihenfolge.
       - name: quellen
         label: Wissenschaftliche Quellen
         type: object
