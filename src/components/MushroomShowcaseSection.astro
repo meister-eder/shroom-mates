@@ -21,7 +21,7 @@ const {
 
 <section class="mushroom-showcase" id="mushroom-showcase">
   <div class="showcase-card">
-    <div class="showcase-content">
+    <div class="showcase-content reveal-left">
       <SvgHeading
         tag="h2"
         src={mushroomShowcaseHeadingSvg}
@@ -109,6 +109,11 @@ const {
     display: block;
     object-fit: cover;
     min-height: 60vh;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .showcase-card:hover .showcase-image {
+    transform: scale(1.03);
   }
 
   .growing-methods-text {

@@ -108,7 +108,8 @@ const description =
     input:focus,
     textarea:focus {
       outline: none;
-      border-color: var(--text-color);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 73, 8, 0.1);
     }
 
     textarea {
@@ -127,12 +128,18 @@ const description =
       background: #000;
       color: #fff;
       box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .submit-button:hover {
       transform: translate(2px, 2px);
       box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+      background: var(--accent);
+    }
+
+    .submit-button:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
     }
 
     #result {

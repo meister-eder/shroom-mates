@@ -39,7 +39,7 @@ const growkits = await Promise.all(
         color: entry.data.color,
         slug: entry.id,
       };
-    })
+    }),
 );
 
 // Generate HowTo Schema for SEO
@@ -165,7 +165,7 @@ const productSchemas = growkits.map((growkit) => ({
   }
 
   <!-- Main Content Section -->
-  <section class="growkits-section" id="content">
+  <section class="growkits-section reveal" id="content">
     <h1>{heroTitle}</h1>
     {heroSubtitle && <p class="intro">{heroSubtitle}</p>}
 
@@ -202,7 +202,7 @@ const productSchemas = growkits.map((growkit) => ({
   <!-- CTA Section -->
   {
     ctaTitle && (
-      <section class="cta-section" aria-label="Kontakt">
+      <section class="cta-section reveal" aria-label="Kontakt">
         <h2>{ctaTitle}</h2>
         {ctaText && <p>{ctaText}</p>}
         {ctaButtonText && ctaButtonLink && (
@@ -386,12 +386,18 @@ const productSchemas = growkits.map((growkit) => ({
     font-size: 1rem;
     font-family: "DM Mono", monospace;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .cta-button:hover {
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    background: var(--accent);
+  }
+
+  .cta-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
   }
 
   .cta-button:focus-visible {

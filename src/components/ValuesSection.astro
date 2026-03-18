@@ -24,12 +24,14 @@ type ValueType = CollectionEntry<"landing-page">["data"]["values"][number];
     <!-- <h2 id="values-heading" class="values-heading">Unsere Werte</h2> -->
     <div class="values-grid">
       {
-        values.map((value: ValueType) => (
-          <ValueCard
-            svgSrc={value.headingSvg}
-            title={value.title}
-            description={value.description}
-          />
+        values.map((value: ValueType, index: number) => (
+          <div class="reveal-scale" style={`--reveal-delay: ${index * 120}ms`}>
+            <ValueCard
+              svgSrc={value.headingSvg}
+              title={value.title}
+              description={value.description}
+            />
+          </div>
         ))
       }
     </div>

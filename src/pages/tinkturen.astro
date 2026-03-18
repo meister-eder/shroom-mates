@@ -90,7 +90,7 @@ const productSchemas = tinctures.map((t) => ({
 	</section>
 
 	<!-- Intro + Facts -->
-	<section class="intro" aria-label="Über unsere Tinkturen">
+	<section class="intro reveal" aria-label="Über unsere Tinkturen">
 		<div class="intro-text-card">
 			<p>{introText}</p>
 		</div>
@@ -283,6 +283,12 @@ const productSchemas = tinctures.map((t) => ({
 		border-radius: 8px;
 		padding: 0.85rem 1rem;
 		box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.12);
+		transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.fact:hover {
+		transform: translateY(-2px);
+		box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
 	}
 
 	.fact-label {
@@ -328,6 +334,11 @@ const productSchemas = tinctures.map((t) => ({
 		object-fit: cover;
 		object-position: top;
 		display: block;
+		transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.tincture:hover .tincture-image {
+		transform: scale(1.04);
 	}
 
 	.tincture-content {

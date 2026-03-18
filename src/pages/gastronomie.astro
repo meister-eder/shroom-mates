@@ -74,12 +74,12 @@ const gastroSchema = {
     </section>
 
     <main class="gastro-page">
-        <section class="title-section">
+        <section class="title-section reveal">
             <h1>{heroTitle}</h1>
             {heroSubtitle && <p class="subtitle">{heroSubtitle}</p>}
         </section>
 
-        <section class="intro-section" aria-label="Einleitung">
+        <section class="intro-section reveal" aria-label="Einleitung">
             <div class="content-grid">
                 <div class="text-content">
                     <h2>{introTitle}</h2>
@@ -93,8 +93,11 @@ const gastroSchema = {
             <h2>Unser Sortiment für die Gastronomie</h2>
             <div class="sorten-grid">
                 {
-                    sorten.map((sorte) => (
-                        <article class="sorte-card">
+                    sorten.map((sorte, index) => (
+                        <article
+                            class="sorte-card reveal-scale"
+                            style={`--reveal-delay: ${index * 100}ms`}
+                        >
                             <h3>{sorte.title}</h3>
                             <p>{sorte.description}</p>
                         </article>
@@ -106,11 +109,19 @@ const gastroSchema = {
         <section class="vorteile-section" aria-label="Vorteile für Gastronomen">
             <h2>Warum shroom-mates?</h2>
             <ul class="vorteile-list">
-                {vorteile.map((vorteil) => <li set:html={vorteil} />)}
+                {
+                    vorteile.map((vorteil, index) => (
+                        <li
+                            class="reveal"
+                            style={`--reveal-delay: ${index * 80}ms`}
+                            set:html={vorteil}
+                        />
+                    ))
+                }
             </ul>
         </section>
 
-        <section class="cta-section" aria-label="Kontakt aufnehmen">
+        <section class="cta-section reveal" aria-label="Kontakt aufnehmen">
             <h2>{ctaTitle}</h2>
             <p>{ctaText}</p>
             <div class="cta-buttons">
@@ -219,6 +230,13 @@ const gastroSchema = {
         border: 2px solid var(--text-color);
         border-radius: 12px;
         background: var(--bg-accent);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .sorte-card:hover {
+        transform: translateY(-3px) rotate(-0.5deg);
+        box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.15);
     }
 
     .sorte-card h3 {
@@ -262,6 +280,14 @@ const gastroSchema = {
         border: 2px solid var(--text-color);
         border-radius: 8px;
         background: var(--bg-color);
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .vorteile-list li:hover {
+        transform: translateX(4px);
+        box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.12);
+        border-color: var(--accent);
     }
 
     .cta-section {
@@ -303,13 +329,23 @@ const gastroSchema = {
         text-decoration: none;
         font-family: "DM Mono", monospace;
         box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         border: 2px solid var(--text-color);
     }
 
     .cta-button:hover {
         transform: translate(2px, 2px);
         box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button:active {
+        transform: translate(4px, 4px);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button.primary:hover {
+        background: var(--accent);
+        border-color: var(--accent);
     }
 
     .cta-button:focus-visible {

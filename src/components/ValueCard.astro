@@ -26,16 +26,18 @@ const { svgSrc, title, description } = Astro.props;
     border: 2px solid #000;
     border-radius: 12px;
     padding: 1.5rem;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     height: 100%;
     box-sizing: border-box;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
   }
 
   .value-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px) rotate(-0.8deg);
+    box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.15);
   }
 
   .value-card__header {

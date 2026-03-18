@@ -36,7 +36,13 @@ const contentStyle = color
 <article class="product-card" id={id}>
 	<div class="product-content" style={contentStyle}>
 		<HeadingTag>{title}</HeadingTag>
-		{subtitle && <p class="product-subtitle"><em>{subtitle}</em></p>}
+		{
+			subtitle && (
+				<p class="product-subtitle">
+					<em>{subtitle}</em>
+				</p>
+			)
+		}
 		<div class="product-description">
 			<slot />
 		</div>
@@ -92,6 +98,11 @@ const contentStyle = color
 		display: block;
 		object-fit: cover;
 		min-height: 50vh;
+		transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.product-card:hover .product-image {
+		transform: scale(1.04);
 	}
 
 	.product-content {
@@ -111,6 +122,12 @@ const contentStyle = color
 		line-height: 1.2;
 		margin: 0 0 0.5rem 0;
 		color: inherit;
+		transition: letter-spacing 0.3s ease;
+	}
+
+	.product-card:hover .product-content h2,
+	.product-card:hover .product-content h3 {
+		letter-spacing: 0.02em;
 	}
 
 	.product-subtitle {

@@ -154,8 +154,11 @@
     font-family: "DM Mono", monospace;
     font-size: 0.95rem;
     position: relative;
-    transition: color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      transform 0.2s ease;
     padding: 0.25rem 0;
+    display: inline-block;
   }
 
   .footer-link::after {
@@ -166,7 +169,7 @@
     width: 0;
     height: 2px;
     background: var(--accent);
-    transition: width 0.3s ease;
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .footer-link:hover::after,
@@ -177,6 +180,7 @@
   .footer-link:hover,
   .footer-link:focus-visible {
     color: var(--accent);
+    transform: translateX(-3px);
   }
 
   .email-link {
