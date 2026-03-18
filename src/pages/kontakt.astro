@@ -3,9 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import LocationInfo from "../components/LocationInfo.astro";
 import FAQ from "../components/FAQ.astro";
 
-const title = "Kontakt | shroom-mates";
+const title =
+  "Kontakt – Pilze, Growkits & Tinkturen bestellen in Leipzig | shroom-mates";
 const description =
-  "Kontaktiere die shroom-mates aus Leipzig-Plagwitz! Edel- und Vitalpilze, Growkits, Tinkturen – für Privat und Gastro. Schreib uns für ein Angebot.";
+  "Frische Pilze, Growkits oder Tinkturen bestellen in Leipzig? Kontaktiere shroom-mates in Plagwitz. Für Privatkunden und Gastronomie, Lieferung in Leipzig und Versand per Post.";
 ---
 
 <Layout title={title} description={description}>
@@ -13,8 +14,9 @@ const description =
     <h1>Schreib uns was Nettes</h1>
     <p class="contact-intro">
       Wir liefern an Privatkunden und Gastronomiebetriebe in Leipzig. Fragen zu
-      Pilzen, Growkits oder Tinkturen – oder ein konkretes Angebot? Schreib uns
-      einfach.
+      <a href="/unsere-pilze">Pilzen</a>, <a href="/growkits">Growkits</a> oder
+      <a href="/tinkturen">Tinkturen</a>? Oder brauchst du ein Angebot für dein
+      <a href="/gastronomie">Restaurant</a>? Schreib uns einfach.
     </p>
     <div class="content">
       <form method="POST" id="form">

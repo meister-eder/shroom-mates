@@ -3,9 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import ProductCard from "../components/ProductCard.astro";
 import { getCollection, render } from "astro:content";
 
-const title = "Unsere Edelpilze | shroom-mates";
+const title = "Frische Pilze kaufen in Leipzig – Edelpilze von shroom-mates";
 const description =
-  "Frische Edelpilze aus Leipzig: Rosenseitling, Pioppino, Lion's Mane und White Pearl. Nachhaltig angebaut in der Plagwitzer Markthalle mit regionalen Bio-Rohstoffen.";
+  "Frische Edelpilze direkt vom Züchter in Leipzig-Plagwitz: Rosenseitling, Pioppino, Lion's Mane, White Pearl & mehr. Für Privat und Gastronomie, nachhaltig angebaut mit regionalen Bio-Rohstoffen.";
 const noBackground = true;
 
 // Get mushrooms from the mushrooms collection and render their content
@@ -23,7 +23,7 @@ const mushrooms = await Promise.all(
         color: entry.data.color,
         slug: entry.id,
       };
-    })
+    }),
 );
 
 // Generate Product Schema for each mushroom (without pricing)

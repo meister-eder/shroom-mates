@@ -15,7 +15,7 @@ interface Props {
 
 const {
   title,
-  description = "Hochwertige regionale Edelpilze aus Leipzig-Plagwitz. Rosenseitling, Pioppino, Lion's Mane , Maitake Austernpilze und mehr von den shroom-mates.",
+  description = "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Plagwitz. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.",
   ogImage,
   isLandingPage = false,
   noindex = false,
@@ -32,13 +32,16 @@ const defaultOgImage =
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "https://shroom-mates.de",
+  "@id": "https://shroom-mates.de/#business",
   name: "shroom-mates",
+  alternateName: "shroom-mates GbR",
+  legalName: "shroom-mates GbR – Emmelie Kunz & Tim Eder",
   image: new URL(
     "/assets/logo_with_shrooms_and_text.png",
     Astro.site,
   ).toString(),
-  description: description,
+  description:
+    "Edelpilzzucht in Leipzig-Plagwitz. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Markranstädter Straße 8",
@@ -49,88 +52,155 @@ const structuredData = {
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: "51.3296",
-    longitude: "12.3177",
+    latitude: 51.325545,
+    longitude: 12.330446,
   },
   url: "https://shroom-mates.de",
   email: "hey@shroom-mates.de",
   priceRange: "$$",
-  areaServed: {
-    "@type": "City",
-    name: "Leipzig",
-  },
+  knowsLanguage: "de",
+  knowsAbout: [
+    "Edelpilze",
+    "Pilzzucht",
+    "Austernpilze",
+    "Lion's Mane",
+    "Growkits",
+    "Pilztinkturen",
+    "Vitalpilze",
+    "Pilze für Gastronomie",
+  ],
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Leipzig",
+      "@id": "https://www.wikidata.org/wiki/Q2079",
+    },
+    {
+      "@type": "State",
+      name: "Sachsen",
+    },
+  ],
+  sameAs: ["https://www.instagram.com/shroom_mates_le/"],
+  founder: [
+    { "@type": "Person", name: "Emmelie Kunz" },
+    { "@type": "Person", name: "Tim Eder" },
+  ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Edelpilze",
+    name: "Edelpilze, Growkits & Tinkturen aus Leipzig",
     itemListElement: [
       {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        itemOffered: {
-          "@type": "Product",
-          name: "Rosenseitling",
-          description: "Rosa Austernpilze",
-        },
+        "@type": "OfferCatalog",
+        name: "Frische Edelpilze",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Rosenseitling",
+              description:
+                "Rosa Austernpilze, zart und nussig, saisonal im Sommer",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Pioppino",
+              description: "Südlicher Schüppling, knackig und aromatisch",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Lion's Mane",
+              description:
+                "Igelstachelbart, Vitalpilz mit besonderem Geschmack",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "White Pearl",
+              description: "Weißer Austernpilz, vielseitig und ertragreich",
+            },
+          },
+        ],
       },
       {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        itemOffered: {
-          "@type": "Product",
-          name: "Pioppino",
-          description: "Südlicher Schüppling",
-        },
+        "@type": "OfferCatalog",
+        name: "Growkits: Pilze selber züchten",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Growkit",
+              description: "Pilzzuchtset für Zuhause, in 2-3 Wochen ernten",
+            },
+          },
+        ],
       },
       {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        itemOffered: {
-          "@type": "Product",
-          name: "Lion's Mane",
-          description: "Igelstachelbart",
-        },
-      },
-      {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        itemOffered: {
-          "@type": "Product",
-          name: "White Pearl",
-          description: "Weißer Austernpilz",
-        },
-      },
-      {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        itemOffered: {
-          "@type": "Product",
-          name: "Maitake",
-          description: "Klapperschwamm",
-        },
-      },
-      {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        itemOffered: {
-          "@type": "Product",
-          name: "Growkits",
-          description: "Pilzzuchtsets zum Selberziehen",
-        },
+        "@type": "OfferCatalog",
+        name: "Pilztinkturen & Extrakte",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Lion's Mane Tinktur",
+              description: "Handgemachter Doppelextrakt aus eigenem Anbau",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Reishi + Cordyceps Tinktur",
+              description: "Adaptogener Doppelextrakt, immunsystemstärkend",
+            },
+          },
+        ],
       },
     ],
   },
+};
+
+// Breadcrumb structured data
+const pathSegments = Astro.url.pathname.split("/").filter(Boolean);
+const breadcrumbItems = [
+  {
+    "@type": "ListItem",
+    position: 1,
+    name: "Startseite",
+    item: "https://shroom-mates.de/",
+  },
+];
+const breadcrumbNames: Record<string, string> = {
+  "unsere-pilze": "Unsere Pilze",
+  growkits: "Growkits",
+  tinkturen: "Tinkturen",
+  kontakt: "Kontakt",
+  "ueber-uns": "Über uns",
+  impressum: "Impressum",
+  faq: "Häufige Fragen",
+  gastronomie: "Gastronomie",
+};
+pathSegments.forEach((segment, index) => {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: index + 2,
+    name: breadcrumbNames[segment] || segment,
+    item: `https://shroom-mates.de/${pathSegments.slice(0, index + 1).join("/")}/`,
+  });
+});
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbItems,
 };
 ---
 
@@ -161,16 +231,26 @@ const structuredData = {
       set:html={JSON.stringify(structuredData)}
     />
 
+    <!-- Breadcrumb Structured Data -->
+    {
+      pathSegments.length > 0 && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(breadcrumbSchema)}
+        />
+      )
+    }
+
     <!-- Location/Geo Targeting -->
     <meta name="geo.region" content="DE-SN" />
     <meta name="geo.placename" content="Leipzig" />
     <meta name="geo.position" content="51.325545403892036;12.330445796958628" />
-    <meta name="ICBM" content="51.325545403892036, 2.330445796958628" />
+    <meta name="ICBM" content="51.325545403892036, 12.330445796958628" />
 
     <!-- Keywords for local search -->
     <meta
       name="keywords"
-      content="Edelpilze Leipzig, Vitalpilze Leipzig, Austernpilze Leipzig, Pilze Leipzig, Plagwitz, regionale Pilze, frische Pilze, Growkits Leipzig, Pilztinkturen Leipzig, Pilze Gastronomie Leipzig"
+      content="Pilze Leipzig, Edelpilze Leipzig, frische Pilze kaufen Leipzig, Pilze Gastronomie Leipzig, Pilzlieferant Leipzig, Austernpilze Leipzig, Vitalpilze Leipzig, Growkits Leipzig, Growkits kaufen, Pilze selber züchten, Pilzzuchtset, Pilztinkturen Leipzig, Pilzextrakte Leipzig, Lion's Mane Leipzig, Lion's Mane Tinktur, Reishi Tinktur, Pilzzucht Leipzig, Plagwitzer Markthalle, regionale Pilze Sachsen"
     />
 
     <!-- Open Graph -->

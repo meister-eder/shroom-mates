@@ -1,11 +1,11 @@
 ---
-title: shroom-mates | Edelpilze aus Leipzig
+title: shroom-mates – Frische Edelpilze, Growkits & Tinkturen aus Leipzig
 heroImage: ../../assets/images/hero_rose_tasse.jpg
 heroImageAlt: Rosafarbene Austernpilze in einer Tasse
 logoImage: ../../assets/images/logo_with_shrooms.png
 logoImageAlt: Shroom-Mates Logo mit Pilzen
 heroTitle: Hi, wir sind die shroom-mates!
-teaserText: Edel- und Vitalpilze aus der Plagwitzer Markthalle in Leipzig. Frisch, als Growkit oder als Tinktur – alles selbst gezüchtet.
+teaserText: Edel- und Vitalpilze aus der Plagwitzer Markthalle in Leipzig. Frisch für dich oder dein Restaurant, als Growkit zum Selberziehen oder als handgemachte Tinktur. Alles selbst gezüchtet.
 values:
   - title: Nachhaltig
     headingSvg: /assets/headings/nachhaltig.svg
