@@ -9,4 +9,4 @@ Die Rosenseitlinge (Pleurotus djamor) sind eine besondere Variante der Austernpi
 
 Sie sind viel zarter als klassische Austernpilze. Wenn man sie knusprig anbrät erinnern Geschmack und Textur an Speck.
 
-Auch als Growkit für Zuhause erhätlich!
+Auch als Growkit für Zuhause erhältlich!
