@@ -6,7 +6,7 @@ heroSubtitle: "Handgemacht von der Kultur zur Tinktur"
 heroImage: ../../assets/images/tinkturen.jpeg
 heroImageAlt: "Handgemachte Pilztinkturen von shroom-mates aus Leipzig"
 introText: >-
-  Wir bauen unsere Pilze selbst an — in unserer Farm in der Plagwitzer
+  Wir bauen unsere Pilze selbst an, in unserer Farm in der Plagwitzer
   Markthalle, ohne Zusätze, auf regionalem Bio-Substrat. Alle Tinkturen
   entstehen als Doppelextrakt: zuerst Alkohol-Mazeration, dann
   Heißwasserextrakt. Wir verarbeiten ausschließlich den Fruchtkörper,
@@ -21,11 +21,11 @@ tinctures:
     imageAlt: "Frischer Lion's Mane Pilz von shroom-mates – Grundlage für den Extrakt"
     color: "#b0b1f1"
     description: >-
-      Lion's Mane enthält Hericenone und Erinacine — Verbindungen, die so in
+      Lion's Mane enthält Hericenone und Erinacine, Verbindungen, die so in
       keinem anderen Pilz vorkommen. Sie können die Produktion des
-      Nervenwachstumsfaktors (NGF) anregen, der für die Gesundheit von
-      Nervenzellen eine wichtige Rolle
-      spielt.<sup><a href="#quelle-1" aria-label="Quelle 1">1</a></sup>
+      Nervenwachstumsfaktors (NGF) anregen, der Nervenzellen beim Wachstum und
+      bei der Reparatur
+      unterstützt.<sup><a href="#quelle-1" aria-label="Quelle 1">1</a></sup>
       Erste Humanstudien zeigen Hinweise auf verbesserte Konzentration und
       Reaktionszeit.<sup><a href="#quelle-2" aria-label="Quelle 2">2</a></sup>
   - title: "Reishi + Cordyceps"
@@ -34,8 +34,8 @@ tinctures:
     imageAlt: "Getrocknete Reishi-Pilze von shroom-mates – Basis des Doppelextrakts"
     color: "#f5cbcd"
     description: >-
-      Reishi und Cordyceps sind beide Adaptogene — sie unterstützen den Körper
-      dabei, besser mit Belastung umzugehen, auf unterschiedlichen Wegen.
+      Reishi und Cordyceps sind beide Adaptogene, die den Körper
+      bei Belastung unterstützen.
       Reishi enthält Polysaccharide und Triterpene, die entzündungshemmend
       wirken und das Immunsystem modulieren
       können.<sup><a href="#quelle-3" aria-label="Quelle 3">3</a></sup>
@@ -45,7 +45,8 @@ tinctures:
       Cordyceps regt den Energiestoffwechsel an und kann die
       Sauerstoffverwertung bei körperlicher Belastung
       verbessern.<sup><a href="#quelle-5" aria-label="Quelle 5">5</a></sup>
-      Traditionell wird er bei Erschöpfung und zur Unterstützung der Atemwege
+      In der traditionellen chinesischen Medizin wird er bei Erschöpfung und
+      Atemwegsbeschwerden
       eingesetzt.<sup><a href="#quelle-6" aria-label="Quelle 6">6</a></sup>
 quellen:
   - title: >-

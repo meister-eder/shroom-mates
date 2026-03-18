@@ -15,7 +15,7 @@ const { svgSrc, title, description } = Astro.props;
     <SvgHeading tag="h3" src={svgSrc} alt={title} class="value-card__heading" />
   </div>
   <div class="value-card__description">
-    {description && <p>{description}</p>}
+    {description && <p set:html={description} />}
     <slot />
   </div>
 </article>
