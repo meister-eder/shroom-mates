@@ -122,6 +122,32 @@ const faqPage = defineCollection({
   }),
 });
 
+// Define the gastronomie-page collection - content for the gastronomy/B2B page
+const gastronomiePage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/gastronomie-page' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    heroTitle: z.string(),
+    heroSubtitle: z.string().optional(),
+    heroImage: image(),
+    heroImageAlt: z.string(),
+    introTitle: z.string(),
+    introText: z.string(),
+    introText2: z.string().optional(),
+    sorten: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+    })),
+    vorteile: z.array(z.string()),
+    ctaTitle: z.string(),
+    ctaText: z.string(),
+    ctaButtonText: z.string(),
+    ctaButtonLink: z.string(),
+    ctaEmail: z.string().optional(),
+  }),
+});
+
 // Define the tinkturen-page collection - page-level content for the tinctures page
 // Tincture products are embedded here (not separate files) so citations can reference
 // a single shared quellen list via anchor links (#quelle-1, #quelle-2, …).
@@ -174,6 +200,7 @@ export const collections = {
   'growkits-page': growkitsPage,
   growkits,
   'faq-page': faqPage,
+  'gastronomie-page': gastronomiePage,
   'tinkturen-page': tinkturenPage,
   tinkturen,
 };

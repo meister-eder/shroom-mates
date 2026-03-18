@@ -1,0 +1,359 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { getEntry } from "astro:content";
+
+const gastroPageEntry = await getEntry("gastronomie-page", "content");
+if (!gastroPageEntry) {
+    throw new Error("Gastronomie page content not found");
+}
+
+const {
+    title,
+    description,
+    heroTitle,
+    heroSubtitle,
+    heroImage,
+    heroImageAlt,
+    introTitle,
+    introText,
+    introText2,
+    sorten,
+    vorteile,
+    ctaTitle,
+    ctaText,
+    ctaButtonText,
+    ctaButtonLink,
+    ctaEmail,
+} = gastroPageEntry.data;
+
+const gastroSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Pilzlieferung für Gastronomie in Leipzig",
+    description:
+        "Regelmäßige Lieferung frischer Edelpilze an Restaurants, Cafés und Gastronomiebetriebe in Leipzig und Umgebung.",
+    provider: {
+        "@type": "LocalBusiness",
+        name: "shroom-mates",
+        address: {
+            "@type": "PostalAddress",
+            streetAddress: "Markranstädter Straße 8",
+            addressLocality: "Leipzig",
+            addressRegion: "Sachsen",
+            postalCode: "04229",
+            addressCountry: "DE",
+        },
+    },
+    areaServed: {
+        "@type": "City",
+        name: "Leipzig",
+    },
+    serviceType: "Edelpilz-Lieferung",
+};
+---
+
+<Layout title={title} description={description} ogImage={heroImage?.src}>
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify(gastroSchema)}
+    />
+
+    <!-- Hero Section with Image -->
+    <section class="hero">
+        <Image
+            src={heroImage}
+            alt={heroImageAlt}
+            class="hero-image"
+            width={1920}
+            height={1080}
+            priority
+            format="webp"
+            decoding="async"
+        />
+    </section>
+
+    <main class="gastro-page">
+        <section class="title-section">
+            <h1>{heroTitle}</h1>
+            {heroSubtitle && <p class="subtitle">{heroSubtitle}</p>}
+        </section>
+
+        <section class="intro-section" aria-label="Einleitung">
+            <div class="content-grid">
+                <div class="text-content">
+                    <h2>{introTitle}</h2>
+                    <p>{introText}</p>
+                    {introText2 && <p>{introText2}</p>}
+                </div>
+            </div>
+        </section>
+
+        <section class="sorten-section" aria-label="Verfügbare Pilzsorten">
+            <h2>Unser Sortiment für die Gastronomie</h2>
+            <div class="sorten-grid">
+                {
+                    sorten.map((sorte) => (
+                        <article class="sorte-card">
+                            <h3>{sorte.title}</h3>
+                            <p>{sorte.description}</p>
+                        </article>
+                    ))
+                }
+            </div>
+        </section>
+
+        <section class="vorteile-section" aria-label="Vorteile für Gastronomen">
+            <h2>Warum shroom-mates?</h2>
+            <ul class="vorteile-list">
+                {vorteile.map((vorteil) => <li set:html={vorteil} />)}
+            </ul>
+        </section>
+
+        <section class="cta-section" aria-label="Kontakt aufnehmen">
+            <h2>{ctaTitle}</h2>
+            <p>{ctaText}</p>
+            <div class="cta-buttons">
+                <a href={ctaButtonLink} class="cta-button primary"
+                    >{ctaButtonText}</a
+                >
+                {
+                    ctaEmail && (
+                        <a
+                            href={`mailto:${ctaEmail}`}
+                            class="cta-button secondary"
+                        >
+                            {ctaEmail}
+                        </a>
+                    )
+                }
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    /* Hero Section - full-bleed image like growkits/tinkturen */
+    .hero {
+        position: relative;
+        width: calc(100vw - var(--scrollbar-width, 0px));
+        height: 70vh;
+        margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-bottom: 2px solid var(--text-color);
+    }
+
+    .gastro-page {
+        min-height: 30vh;
+    }
+
+    .title-section {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 3rem 2rem 1rem;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--text-color);
+        margin: 0 0 1rem;
+        font-family: monospace;
+    }
+
+    .subtitle {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: var(--text-color);
+        margin: 0;
+        opacity: 0.8;
+        line-height: 1.6;
+    }
+
+    .intro-section {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 2rem 3rem;
+    }
+
+    .text-content h2 {
+        font-size: 1.6rem;
+        margin: 0 0 1rem;
+        font-family: monospace;
+    }
+
+    .text-content p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin: 0 0 1rem;
+    }
+
+    .sorten-section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+
+    .sorten-section h2 {
+        font-size: 1.6rem;
+        text-align: center;
+        margin: 0 0 2rem;
+        font-family: monospace;
+    }
+
+    .sorten-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .sorte-card {
+        padding: 1.5rem;
+        border: 2px solid var(--text-color);
+        border-radius: 12px;
+        background: var(--bg-accent);
+    }
+
+    .sorte-card h3 {
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem;
+        font-family: monospace;
+    }
+
+    .sorte-card p {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .vorteile-section {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+
+    .vorteile-section h2 {
+        font-size: 1.6rem;
+        text-align: center;
+        margin: 0 0 2rem;
+        font-family: monospace;
+    }
+
+    .vorteile-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .vorteile-list li {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        padding: 1rem 1.25rem;
+        border: 2px solid var(--text-color);
+        border-radius: 8px;
+        background: var(--bg-color);
+    }
+
+    .cta-section {
+        text-align: center;
+        padding: 3rem 2rem 4rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .cta-section h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0 0 1rem;
+        font-family: monospace;
+    }
+
+    .cta-section p {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin: 0 0 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-button {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        font-family: "DM Mono", monospace;
+        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        border: 2px solid var(--text-color);
+    }
+
+    .cta-button:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-button:focus-visible {
+        outline: 2px solid var(--focus-color, #000);
+        outline-offset: 2px;
+    }
+
+    .cta-button.primary {
+        background: var(--text-color);
+        color: var(--bg-color);
+    }
+
+    .cta-button.secondary {
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            height: 50vh;
+        }
+
+        .title-section {
+            padding: 2rem 1.5rem 0.5rem;
+        }
+
+        .intro-section {
+            padding: 1.5rem;
+        }
+
+        .sorten-section {
+            padding: 2rem 1.5rem;
+        }
+
+        .sorten-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .vorteile-section {
+            padding: 2rem 1.5rem;
+        }
+
+        .cta-section {
+            padding: 2rem 1.5rem 3rem;
+        }
+    }
+</style>

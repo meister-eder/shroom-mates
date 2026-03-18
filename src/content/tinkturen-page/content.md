@@ -1,6 +1,6 @@
 ---
-title: "Pilztinkturen | shroom-mates – Handgemachte Doppelextrakte aus Leipzig"
-description: "Handgemachte Pilztinkturen als Doppelextrakt aus unserer Farm in Leipzig. Lion's Mane, Reishi & Cordyceps – regional angebaut, ohne Zusätze."
+title: "Pilztinkturen & Pilzextrakte aus Leipzig kaufen | shroom-mates"
+description: "Handgemachte Pilztinkturen & Pilzextrakte als Doppelextrakt aus Leipzig-Plagwitz. Lion's Mane, Reishi & Cordyceps aus eigenem Anbau auf regionalem Bio-Substrat, ohne Zusätze."
 heroTitle: "Unsere Pilztinkturen"
 heroSubtitle: "Handgemacht von der Kultur zur Tinktur"
 heroImage: ../../assets/images/tinkturen.jpeg
@@ -18,7 +18,7 @@ tinctures:
   - title: "Lion's Mane Extrakt"
     botanicalName: "Hericium erinaceus · Igelstachelbart"
     image: ../../assets/images/lions_mane.jpg
-    imageAlt: "Frischer Lion's Mane Pilz von shroom-mates – Grundlage für den Extrakt"
+    imageAlt: "Frischer Lion's Mane Pilz von shroom-mates, Grundlage für den Extrakt"
     color: "#b0b1f1"
     description: >-
       Lion's Mane enthält Hericenone und Erinacine, Verbindungen, die so in
@@ -31,7 +31,7 @@ tinctures:
   - title: "Reishi + Cordyceps"
     botanicalName: "Ganoderma lucidum & Cordyceps militaris"
     image: ../../assets/images/mushrooms.jpg
-    imageAlt: "Getrocknete Reishi-Pilze von shroom-mates – Basis des Doppelextrakts"
+    imageAlt: "Getrocknete Reishi-Pilze von shroom-mates, Basis des Doppelextrakts"
     color: "#f5cbcd"
     description: >-
       Reishi und Cordyceps sind beide Adaptogene, die den Körper
