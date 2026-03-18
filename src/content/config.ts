@@ -123,6 +123,8 @@ const faqPage = defineCollection({
 });
 
 // Define the tinkturen-page collection - page-level content for the tinctures page
+// Tincture products are embedded here (not separate files) so citations can reference
+// a single shared quellen list via anchor links (#quelle-1, #quelle-2, …).
 const tinkturenPage = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/tinkturen-page' }),
   schema: ({ image }) => z.object({
@@ -134,6 +136,15 @@ const tinkturenPage = defineCollection({
     heroImageAlt: z.string(),
     introText: z.string(),
     disclaimerText: z.string(),
+    tinctures: z.array(z.object({
+      title: z.string(),
+      botanicalName: z.string(),
+      image: image(),
+      imageAlt: z.string(),
+      color: z.string().optional(),
+      // Supports inline HTML for citation links, e.g. <sup><a href="#quelle-1">1</a></sup>
+      description: z.string(),
+    })),
     quellen: z.array(z.object({
       title: z.string(),
       url: z.string(),
