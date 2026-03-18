@@ -22,7 +22,7 @@ Unsere Growkits enthalten fertig besiedeltes Substrat – du brauchst weder Vork
 
 Schneide ein Loch in das Papier und anschließend ein 3cm großes Kreuz in die Plastikfolie. Nutze dafür ein sauberes Messer. Stelle dann das Growkit an einen hellen Ort **ohne direkte Sonneneinstrahlung und nicht über einer Heizung**. Ideal ist ein Platz in der Küche oder im Wohnzimmer mit indirektem Tageslicht.
 
-### 2\. Feuchtigkeit ist der Schlüssel
+### 2\. Feucht halten
 
 Pilze lieben es feucht! Besprühe das Kit **2-3 mal täglich** mit sauberem Leitungswasser aus einer Sprühflasche. Die Oberfläche sollte immer leicht feucht sein, aber nicht komplett durchtränkt.
 

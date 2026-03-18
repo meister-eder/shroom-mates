@@ -53,7 +53,7 @@ const faqSchema = {
             </span>
           </summary>
           <div class="answer">
-            <p>{faq.answer}</p>
+            <p set:html={faq.answer} />
             {faq.link && (
               <p class="faq-link">
                 <a href={faq.link}>Mehr erfahren →</a>

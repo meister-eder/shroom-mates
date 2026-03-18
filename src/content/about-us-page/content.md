@@ -11,27 +11,22 @@ images:
 
 ## Wer wir sind
 
-Wir sind Emmi und Tim – die shroom-mates. Was als Hobby begann, ist mittlerweile unsere Leidenschaft: die Zucht von hochwertigen Edelpilzen in Leipzig-Plagwitz.
+Wir sind Emmi und Tim – die shroom-mates. Angefangen haben wir mit ein paar Austernpilzen in der Küche. Inzwischen haben wir eine eigene Farm in der Plagwitzer Markthalle, wo wir verschiedene Edelpilze züchten.
 
-In unserer kleinen Pilzfarm in der Plagwitzer Markthalle kultivieren wir verschiedene Pilzsorten mit viel Sorgfalt und Handarbeit. Von Austernpilzen über Pioppinos bis hin zu Lion's Mane – jede Sorte bekommt bei uns die Aufmerksamkeit, die sie braucht.
+Austernpilze, Pioppinos, Lion's Mane – jede Sorte hat ihre eigenen Ansprüche, und genau das macht es spannend.
 
 ## Wie wir arbeiten
 
-**Nachhaltig und regional** – das sind unsere Leitprinzipien. Wir arbeiten mit Bio-Rohstoffen aus der Region und achten darauf, dass unser Substrat optimal auf die jeweilige Pilzsorte abgestimmt ist.
+Wir arbeiten mit Bio-Rohstoffen aus der Region und stimmen das Substrat auf die jeweilige Pilzsorte ab.
 
-Von der Herstellung des Substrats über die Beimpfung bis zur Ernte machen wir alles selbst. So können wir jeden Schritt kontrollieren und sicherstellen, dass nur beste Qualität bei euch ankommt.
+Substrat mischen, beimpfen, ernten – alles machen wir selbst. So haben wir jeden Schritt in der Hand.
 
-**Handarbeit statt Massenproduktion** – jeder Pilz wird zum perfekten Zeitpunkt von Hand geerntet. Das garantiert nicht nur maximalen Geschmack, sondern auch eine längere Haltbarkeit.
+Jeder Pilz wird von Hand geerntet, zum richtigen Zeitpunkt. Das merkt man am Geschmack, und er hält länger.
 
-## Unsere Werte
+## Das ist uns wichtig
 
-- **Transparenz**: Bei uns könnt ihr sehen, wo und wie eure Pilze wachsen
-- **Qualität**: Nur die besten Pilze schaffen es in den Verkauf
-- **Nachhaltigkeit**: Geschlossener Kreislauf, ressourcenschonende Produktion
-- **Regional**: Kurze Wege vom Substrat bis zum Kunden
+Bei uns könnt ihr sehen, wo und wie eure Pilze wachsen. Nur die besten schaffen es in den Verkauf. Wir arbeiten im geschlossenen Kreislauf, alles passiert in Plagwitz – vom Substrat bis zur Ernte. Kurze Wege, kein Zwischenhändler.
 
-## Unsere Vision
+## Wo ihr uns findet
 
-Wir möchten zeigen, dass Pilzzucht nicht kompliziert sein muss und dass frische, lokal produzierte Pilze einen Unterschied machen – im Geschmack und für die Umwelt.
-
-Besucht uns gerne auf dem Egenberger Samstagsmarkt oder schreibt uns, wenn ihr mehr über unsere Arbeit erfahren möchtet!
+Unsere Farm steckt in der Plagwitzer Markthalle in Leipzig. Frische Pilze, Growkits und Tinkturen gibt's direkt bei uns – schreibt uns einfach.
