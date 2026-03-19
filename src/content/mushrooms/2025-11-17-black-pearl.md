@@ -1,6 +1,6 @@
 ---
 title: Black Pearl
-image: ../../assets/images/black_pearl.jpg
+image: ../../assets/images/black pearl.jpg
 imageAlt: Black Pearl Edelpilze - Winterpilze aus der Leipziger Pilzzucht
 color: "#868174"
 order: 5
