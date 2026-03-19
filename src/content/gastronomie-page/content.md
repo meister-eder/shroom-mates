@@ -1,11 +1,11 @@
 ---
 title: "Pilze für Gastronomie in Leipzig – Frische Edelpilze für Restaurants | shroom-mates"
-description: "Frische Edelpilze für Restaurants, Cafés & Gastronomie in Leipzig. Regelmäßige Lieferung von Austernpilzen, Lion's Mane, Pioppino direkt vom Züchter in Plagwitz."
+description: "Frische Edelpilze für Restaurants, Cafés & Gastronomie in Leipzig. Regelmäßige Lieferung von Austernpilzen, Lion's Mane, Pioppino direkt aus der Farm in Plagwitz."
 heroTitle: "Frische Edelpilze für deine Küche"
 heroSubtitle: "Zuverlässige Pilzlieferung für Restaurants und Gastronomie in Leipzig"
 heroImage: "../../assets/images/mushrooms.jpg"
 heroImageAlt: "Frische Edelpilze für die Gastronomie in Leipzig"
-introTitle: "Direkt vom Züchter auf den Teller"
+introTitle: "Direkt von der Farm auf den Teller"
 introText: "Wir beliefern Restaurants, Cafés und Kantinen in Leipzig und Umgebung mit frischen Edelpilzen. Unsere Pilze wachsen in der Plagwitzer Markthalle. Vom Substrat bis zur Ernte machen wir alles selbst. Frischer geht's kaum, und du weißt genau, wo dein Essen herkommt."
 introText2: "Mengen, Sorten und Lieferrhythmus stimmen wir auf deinen Bedarf ab. Ob wöchentliche Lieferung oder Sonderbestellung für Events, wir machen beides möglich."
 sorten:
