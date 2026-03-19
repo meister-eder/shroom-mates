@@ -11,10 +11,12 @@ Der Lion's Mane (Igelstachelbart) sieht mit seinen langen, weißen Stacheln aus 
 
 ### Spezielle Tipps
 
-*   Lion's Mane mag es besonders feucht – besprühe ihn lieber **4-5 mal täglich** statt nur 2-3 mal.
-*   Kühler ist besser: ideal sind **16-20°C**. Bei zu warmen Temperaturen werden die Stacheln kürzer.
+*   Kühler ist besser: ideal sind **16-20°C**.
+    
 *   Ernte, wenn die Stacheln etwa **1-2 cm lang** sind und noch schön weiß aussehen. Warte nicht zu lange!
+    
 *   Lion's Mane braucht oft etwas länger als Austernpilze – manchmal bis zu **3 Wochen** für die erste Ernte.
+    
 
 ### Verwendung
 
