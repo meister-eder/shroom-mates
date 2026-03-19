@@ -10,7 +10,7 @@ const description =
 ---
 
 <Layout title={title} description={description}>
-  <section class="contact-section">
+  <section class="contact-hero">
     <h1>Schreib uns was Nettes</h1>
     <p class="contact-intro">
       Wir liefern an Privatkunden und Gastronomiebetriebe in Leipzig. Fragen zu
@@ -18,31 +18,36 @@ const description =
       <a href="/tinkturen">Tinkturen</a>? Oder brauchst du ein Angebot für dein
       <a href="/gastronomie">Restaurant</a>? Schreib uns einfach.
     </p>
+  </section>
+
+  <section class="contact-section">
     <div class="content">
-      <form method="POST" id="form">
-        <input
-          type="hidden"
-          name="access_key"
-          value="d69f2b91-fe55-4258-97a9-6bb53285b5e2"
-        />
-        <div class="form-group">
-          <label for="name">Dein Name</label>
-          <input type="text" id="name" name="name" required />
-        </div>
+      <div class="form-card">
+        <form method="POST" id="form">
+          <input
+            type="hidden"
+            name="access_key"
+            value="d69f2b91-fe55-4258-97a9-6bb53285b5e2"
+          />
+          <div class="form-group">
+            <label for="name">Dein Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
 
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required />
-        </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
 
-        <div class="form-group">
-          <label for="message">Nachricht</label>
-          <textarea id="message" name="message" required></textarea>
-        </div>
+          <div class="form-group">
+            <label for="message">Nachricht</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
 
-        <button type="submit" class="submit-button">Abschicken</button>
-        <div id="result" aria-live="polite"></div>
-      </form>
+          <button type="submit" class="submit-button">Abschicken</button>
+          <div id="result" aria-live="polite"></div>
+        </form>
+      </div>
     </div>
     <script>
       import "../scripts/contact-form.ts";
@@ -50,35 +55,71 @@ const description =
   </section>
 
   <style>
-    .contact-section {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-      min-height: 70vh;
+    .contact-hero {
+      width: calc(100vw - var(--scrollbar-width, 0px));
+      margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+      margin-top: -1.5rem;
+      background: var(--bg-accent);
+      border-bottom: 2px solid #000;
+      padding: 4rem 2rem 3.5rem;
+      text-align: center;
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: clamp(2rem, 4vw, 2.8rem);
       font-weight: 700;
       line-height: 1.2;
-      text-align: center;
-      margin: 0 0 1rem 0;
+      margin: 0 0 0.5rem 0;
       color: var(--text-color);
       font-family: monospace;
     }
 
+    h1::after {
+      content: "";
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: var(--accent);
+      margin: 0.75rem auto 0;
+      border-radius: 2px;
+    }
+
     .contact-intro {
-      text-align: center;
       max-width: 600px;
-      margin: 0 auto 3rem auto;
+      margin: 1.5rem auto 0 auto;
       font-size: 1.1rem;
       line-height: 1.6;
       color: var(--text-color);
     }
 
+    .contact-intro a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 600;
+    }
+
+    .contact-intro a:hover {
+      text-decoration-thickness: 2px;
+    }
+
+    .contact-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
     .content {
       max-width: 600px;
       margin: 0 auto;
+    }
+
+    .form-card {
+      background: var(--bg-color);
+      border: 2px solid #000;
+      border-radius: 8px;
+      padding: 2.5rem;
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
     }
 
     .form-group {
@@ -88,21 +129,27 @@ const description =
     label {
       display: block;
       margin-bottom: 0.5rem;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 0.9rem;
+      font-family: monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       color: var(--text-color);
     }
 
     input,
     textarea {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.75rem 1rem;
       font-size: 1rem;
-      border: 2px solid var(--focus-color);
+      border: 2px solid #ddd;
       border-radius: 6px;
       font-family: inherit;
-      background: var(--bg-color);
+      background: #fff;
       color: var(--text-color);
-      transition: border-color 0.2s ease;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     input:focus,
@@ -142,6 +189,11 @@ const description =
       box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
     }
 
+    .submit-button:focus-visible {
+      outline: 2px solid var(--focus-color, #000);
+      outline-offset: 2px;
+    }
+
     #result {
       margin-top: 1rem;
       padding: 1rem;
@@ -151,13 +203,17 @@ const description =
     }
 
     @media (max-width: 768px) {
-      .contact-section {
-        padding: 1.5rem;
+      .contact-hero {
+        padding: 3rem 1.5rem 2.5rem;
+        margin-top: -1rem;
       }
 
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 2rem;
+      .contact-section {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-card {
+        padding: 1.5rem;
       }
 
       .submit-button {
@@ -166,13 +222,17 @@ const description =
     }
 
     @media (max-width: 480px) {
-      h1 {
-        font-size: 1.6rem;
+      .contact-hero {
+        padding: 2.5rem 1rem 2rem;
+      }
+
+      .form-card {
+        padding: 1.25rem;
       }
 
       input,
       textarea {
-        padding: 0.6rem;
+        padding: 0.6rem 0.75rem;
         font-size: 0.95rem;
       }
     }
