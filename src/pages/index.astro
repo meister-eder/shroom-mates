@@ -72,7 +72,10 @@ const description = teaserText;
 
     <section class="hero-teaser" id="content">
       <div class="teaser-wrapper reveal">
-        <h1 class="hero-title">
+        <h1 class="sr-only">
+          Frische Edelpilze, Growkits &amp; Pilztinkturen aus Leipzig
+        </h1>
+        <p class="hero-title">
           {
             heroTitle.split("shroom-mates").map((part, index) =>
               index === 0 ? (
@@ -85,7 +88,7 @@ const description = teaserText;
               ),
             )
           }
-        </h1>
+        </p>
         <div class="teaser-content-row">
           <Image
             src={logoImage}

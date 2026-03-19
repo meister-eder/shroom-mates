@@ -29,4 +29,4 @@ Bei uns könnt ihr sehen, wo und wie eure Pilze wachsen. Nur die besten schaffen
 
 ## Wo ihr uns findet
 
-Unsere Farm steckt in der Plagwitzer Markthalle in Leipzig. [Frische Pilze](/unsere-pilze), [Growkits](/growkits) und [Tinkturen](/tinkturen) gibt's direkt bei uns. Wir beliefern auch [Restaurants und Gastronomiebetriebe](/gastronomie) in Leipzig – [schreibt uns einfach](/kontakt).
+Unsere Farm steckt in der Plagwitzer Markthalle in Leipzig. [Frische Pilze](/unsere-pilze/), [Growkits](/growkits/) und [Tinkturen](/tinkturen/) gibt's direkt bei uns. Wir beliefern auch [Restaurants und Gastronomiebetriebe](/gastronomie/) in Leipzig – [schreibt uns einfach](/kontakt/).

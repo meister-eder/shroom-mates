@@ -6,6 +6,13 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   site: "https://shroom-mates.de",
+  redirects: {
+    "/about": "/ueber-uns/",
+    "/shrooms": "/unsere-pilze/",
+    "/news": "/",
+    "/rezepte": "/",
+    "/shop": "/kontakt/",
+  },
   build: {
     assets: "assets",
     inlineStylesheets: "auto", // Inline small stylesheets for performance
@@ -31,5 +38,18 @@ export default defineConfig({
       },
     },
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) =>
+        ![
+          "https://shroom-mates.de/ueber-uns/",
+          "https://shroom-mates.de/about/",
+          "https://shroom-mates.de/shrooms/",
+          "https://shroom-mates.de/news/",
+          "https://shroom-mates.de/rezepte/",
+          "https://shroom-mates.de/shop/",
+        ].includes(page),
+    }),
+  ],
 });

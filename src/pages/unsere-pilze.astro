@@ -26,7 +26,7 @@ const mushrooms = await Promise.all(
     }),
 );
 
-// Generate Product Schema for each mushroom (without pricing)
+// Generate Product Schema for each mushroom (without offers — no online shop)
 const productSchemas = mushrooms.map((mushroom) => ({
   "@context": "https://schema.org",
   "@type": "Product",
@@ -36,39 +36,6 @@ const productSchemas = mushrooms.map((mushroom) => ({
   brand: {
     "@type": "Brand",
     name: "shroom-mates",
-  },
-  offers: {
-    "@type": "Offer",
-    availability: "https://schema.org/InStock",
-    itemCondition: "https://schema.org/NewCondition",
-    price: "0",
-    priceCurrency: "EUR",
-    priceSpecification: {
-      "@type": "PriceSpecification",
-      price: "0",
-      priceCurrency: "EUR",
-    },
-    seller: {
-      "@type": "LocalBusiness",
-      name: "shroom-mates",
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: "Markranstädter Straße 8",
-        addressLocality: "Leipzig",
-        postalCode: "04229",
-        addressCountry: "DE",
-      },
-    },
-    url: "https://shroom-mates.de/kontakt",
-    availableAtOrFrom: {
-      "@type": "Place",
-      name: "Egenberger Samstagsmarkt",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Leipzig",
-        addressCountry: "DE",
-      },
-    },
   },
   category: "Edelpilze",
   isRelatedTo: {
@@ -88,6 +55,9 @@ const productSchemas = mushrooms.map((mushroom) => ({
   }
 
   <main class="full-width-page">
+    <h1 class="sr-only">
+      Frische Pilze kaufen in Leipzig – Edelpilze von shroom-mates
+    </h1>
     <div class="mushrooms-grid">
       {
         mushrooms.map((mushroom) => (

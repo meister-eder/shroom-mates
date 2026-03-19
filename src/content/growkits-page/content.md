@@ -10,7 +10,7 @@ ctaText: Unsere Growkits sind bald auch in unserem Onlineshop erhältlich! Oder
   du schreibst uns einfach und kannst sie direkt in unserer Farm in Plagwitz
   abholen.
 ctaButtonText: Kontakt aufnehmen
-ctaButtonLink: /kontakt
+ctaButtonLink: /kontakt/
 ---
 ## So funktioniert's
 

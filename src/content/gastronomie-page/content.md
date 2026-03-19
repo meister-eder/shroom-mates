@@ -27,6 +27,6 @@ vorteile:
 ctaTitle: "Interesse? Lass uns reden."
 ctaText: "Schreib uns mit deinem Bedarf und wir machen dir ein Angebot. Oder komm direkt in unserer Farm in der Plagwitzer Markthalle vorbei."
 ctaButtonText: "Kontakt aufnehmen"
-ctaButtonLink: "/kontakt"
+ctaButtonLink: "/kontakt/"
 ctaEmail: "hey@shroom-mates.de"
 ---
