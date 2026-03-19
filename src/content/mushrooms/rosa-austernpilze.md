@@ -1,6 +1,6 @@
 ---
 title: Rosenseitling
-image: ../../assets/images/hero_rose_tasse.jpg
+image: ../../assets/images/rosenseitling_seite.jpg
 imageAlt: Frische Rosenseitlinge aus der shroom-mates Pilzzucht Leipzig
 color: "#f5cbcd"
 order: 1
