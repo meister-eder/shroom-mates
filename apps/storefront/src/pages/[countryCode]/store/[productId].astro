@@ -1,0 +1,98 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { retrieveProduct } from "@lib/data/products";
+import { getRegion } from "@lib/data/regions";
+import { getProductParams } from "@lib/params/product-params";
+import { getProductPrice } from "@lib/utils/get-product-price";
+import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
+import { ProductActions } from "@modules/products/components/product-details/ProductActions";
+import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
+
+export const getStaticPaths = getProductParams;
+
+const { countryCode, productId } = Astro.params;
+
+if (!countryCode || !productId) {
+  return Astro.redirect("/not-found");
+}
+
+const region = await getRegion(countryCode);
+
+if (!region) {
+  return Astro.redirect("/not-found");
+}
+
+let product: Awaited<ReturnType<typeof retrieveProduct>> | undefined;
+let error: Error | undefined;
+
+try {
+  product = await retrieveProduct(productId, region.id);
+} catch (e) {
+  error = e instanceof Error ? e : new Error("Unknown error");
+  console.error(error);
+}
+
+const {
+  title,
+  description,
+  images,
+  options,
+  variants,
+  material,
+  origin_country,
+  type,
+  weight,
+  length,
+  width,
+  height,
+} = product ?? {};
+
+const { cheapestPrice } = getProductPrice({
+  productVariants: variants ?? [],
+});
+---
+
+<Layout
+  title={title}
+  description={description ?? `Shop ${title} at the best price.`}
+  image={images?.[0]?.url}
+  type="product"
+>
+  {error && <p class="text-red-700">{error.message}</p>}
+  {
+    product && (
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 -mx-8 px-16">
+        <ImageCarouselWrapper
+          images={images ?? []}
+          alt={title ?? "Product image"}
+        />
+
+        <div class="flex flex-col gap-20">
+          <div class="flex flex-col gap-4">
+            <h1 class="text-4xl font-bold">{title}</h1>
+            <p class="text-gray-500">{description}</p>
+            <p class="text-4xl font-bold">{cheapestPrice?.calculated_price}</p>
+          </div>
+
+          <ProductActions
+            options={options ?? []}
+            variants={variants ?? []}
+            productId={productId}
+            regionId={region.id}
+            client:visible
+          />
+
+          <ProductAttributes
+            material={material}
+            origin_country={origin_country}
+            type={type}
+            weight={weight}
+            length={length}
+            width={width}
+            height={height}
+          />
+        </div>
+      </div>
+    )
+  }
+</Layout>

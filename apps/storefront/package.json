@@ -1,0 +1,35 @@
+{
+  "name": "@shroom-mates/storefront",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^10.0.4",
+    "@astrojs/react": "5.0.0",
+    "@hookform/resolvers": "^5.2.2",
+    "@medusajs/js-sdk": "^2.13.1",
+    "@nanostores/react": "^1.0.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "6.0.4",
+    "clsx": "^2.1.1",
+    "nanostores": "^1.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-hook-form": "^7.71.1",
+    "sharp": "^0.34.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@medusajs/types": "^2.13.1",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  }
+}

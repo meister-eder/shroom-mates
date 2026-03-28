@@ -1,0 +1,95 @@
+---
+import { getRegion } from "@lib/data/regions";
+import { CartSidebar } from "@modules/layout/components/CartSidebar";
+import { Nav } from "@modules/layout/components/Nav";
+import "@styles/global.css";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "product";
+  noindex?: boolean;
+}
+
+const SITE_NAME = "Astro + Medusa Starter";
+const DEFAULT_DESCRIPTION =
+  "E-commerce starter template built with Astro and Medusa for maximum performance.";
+
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  image,
+  type = "website",
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+
+const { countryCode } = Astro.params;
+
+if (!countryCode) {
+  return Astro.redirect("/not-found");
+}
+
+const region = await getRegion(countryCode);
+const regionId = region?.id || null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <ClientRouter />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link
+      rel="dns-prefetch"
+      href="//medusa-public-images.s3.eu-west-1.amazonaws.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://medusa-public-images.s3.eu-west-1.amazonaws.com"
+      crossorigin
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl.href} />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    {image && <meta property="og:image" content={image} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
+  </head>
+  <body>
+    <Nav client:load countryCode={countryCode} regionId={regionId} />
+    <slot />
+    <CartSidebar client:load countryCode={countryCode} />
+  </body>
+</html>
+
+<style>
+  body {
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 1440px;
+  }
+</style>
