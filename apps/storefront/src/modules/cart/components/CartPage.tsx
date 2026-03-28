@@ -34,34 +34,34 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
 
   const itemCount = cart?.items?.length ?? 0;
   const isEmpty = itemCount === 0;
-  const currencyCode = cart?.currency_code || "USD";
+  const currencyCode = cart?.currency_code || "EUR";
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-8">
       {isEmpty ? (
         <div className="text-center py-16">
-          <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
-          <p className="text-gray-600 mb-6">Start adding items to your cart</p>
+          <h1 className="text-3xl font-bold mb-4">Dein Warenkorb ist leer</h1>
+          <p className="text-gray-600 mb-6">Füge Artikel zu deinem Warenkorb hinzu</p>
           <a
             href={`/${countryCode}/store`}
-            className="inline-block bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors"
+            className="btn-accent inline-block"
           >
-            Continue Shopping
+            Weiter einkaufen
           </a>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column: Cart items */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl font-bold mb-6">Cart</h1>
+            <h1 className="text-3xl font-bold mb-6">Warenkorb</h1>
 
             {/* Cart items table */}
             <div className="border border-gray-200 rounded-md overflow-hidden">
               <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-700">
-                <div className="col-span-5">Item</div>
-                <div className="col-span-2 text-center">Quantity</div>
-                <div className="col-span-2 text-right">Price</div>
-                <div className="col-span-2 text-right">Total</div>
+                <div className="col-span-5">Artikel</div>
+                <div className="col-span-2 text-center">Anzahl</div>
+                <div className="col-span-2 text-right">Preis</div>
+                <div className="col-span-2 text-right">Gesamt</div>
                 <div className="col-span-1"></div>
               </div>
 
@@ -94,7 +94,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                         <h3 className="font-medium mb-1">{productTitle}</h3>
                         {variantTitle && (
                           <p className="text-sm text-gray-500">
-                            Variant: {variantTitle}
+                            Variante: {variantTitle}
                           </p>
                         )}
                       </div>
@@ -108,7 +108,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                             handleQuantityChange(item.id, quantity - 1)
                           }
                           className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                          aria-label="Decrease quantity"
+                          aria-label="Menge verringern"
                         >
                           −
                         </button>
@@ -121,7 +121,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                             )
                           }
                           className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
-                          aria-label="Quantity"
+                          aria-label="Menge"
                         >
                           {Array.from({ length: 10 }, (_, i) => i + 1).map(
                             (num) => (
@@ -136,7 +136,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                             handleQuantityChange(item.id, quantity + 1)
                           }
                           className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                          aria-label="Increase quantity"
+                          aria-label="Menge erhöhen"
                         >
                           +
                         </button>
@@ -164,7 +164,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                       <button
                         onClick={() => handleRemoveItem(item.id)}
                         className="text-red-600 hover:text-red-700"
-                        aria-label={`Remove ${productTitle} from cart`}
+                        aria-label={`${productTitle} aus dem Warenkorb entfernen`}
                       >
                         <svg
                           className="w-5 h-5"
@@ -190,13 +190,13 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
           {/* Right column: Order summary */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <h2 className="text-2xl font-bold mb-6">Summary</h2>
+              <h2 className="text-2xl font-bold mb-6">Zusammenfassung</h2>
 
               <div className="border border-gray-200 rounded-md p-6 space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">
-                      Subtotal (excl. shipping and taxes)
+                      Zwischensumme (exkl. Versand und MwSt.)
                     </span>
                     <span>
                       {convertToLocale({
@@ -207,7 +207,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
+                    <span className="text-gray-600">Versand</span>
                     <span>
                       {convertToLocale({
                         amount: cart?.shipping_total || 0,
@@ -217,7 +217,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Taxes</span>
+                    <span className="text-gray-600">MwSt.</span>
                     <span>
                       {convertToLocale({
                         amount: cart?.tax_total || 0,
@@ -228,7 +228,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
 
                   <div className="pt-4 border-t border-gray-200">
                     <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
+                      <span>Gesamt</span>
                       <span>
                         {convertToLocale({
                           amount: cart?.total || 0,
@@ -241,9 +241,14 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
 
                 <a
                   href={`/${countryCode}/checkout`}
-                  className="w-full block text-center bg-black text-white py-4 px-6 rounded-md hover:bg-gray-800 transition-colors mt-6"
+                  className="w-full block text-center text-white py-4 px-6 rounded-md transition-colors mt-6"
+                  style={{
+                    backgroundColor: "var(--accent, #ff4908)",
+                    border: "2px solid #000",
+                    fontFamily: '"DM Mono", monospace',
+                  }}
                 >
-                  Go to checkout
+                  Zur Kasse
                 </a>
               </div>
             </div>

@@ -81,7 +81,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
         ref={sidebarRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Shopping cart"
+        aria-label="Warenkorb"
         className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-xl transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -89,11 +89,11 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold">Cart</h2>
+            <h2 className="text-xl font-bold">Warenkorb</h2>
             <button
               onClick={closeCartSidebar}
               className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
-              aria-label="Close cart"
+              aria-label="Warenkorb schließen"
             >
               ×
             </button>
@@ -103,13 +103,14 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
           <div className="flex-1 overflow-y-auto p-6">
             {isEmpty ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <p className="text-gray-500 mb-4">Your cart is empty</p>
+                <p className="text-gray-500 mb-4">Dein Warenkorb ist leer</p>
                 <a
                   href={`/${countryCode}/store`}
                   onClick={closeCartSidebar}
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm hover:underline"
+                  style={{ color: "var(--accent, #ff4908)" }}
                 >
-                  Continue Shopping
+                  Weiter einkaufen
                 </a>
               </div>
             ) : (
@@ -150,11 +151,11 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                         </h3>
                         {variantTitle && (
                           <p className="text-xs text-gray-500 mb-1">
-                            Variant: {variantTitle}
+                            Variante: {variantTitle}
                           </p>
                         )}
                         <p className="text-xs text-gray-500 mb-2">
-                          Quantity: {item.quantity}
+                          Anzahl: {item.quantity}
                         </p>
                         <div className="flex items-center justify-between">
                           <p className="text-sm font-medium">
@@ -166,7 +167,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                           <button
                             onClick={() => handleRemoveItem(item.id)}
                             className="flex items-center gap-1 text-xs text-red-600 hover:text-red-700"
-                            aria-label={`Remove ${productTitle} from cart`}
+                            aria-label={`${productTitle} aus dem Warenkorb entfernen`}
                           >
                             <svg
                               className="w-4 h-4"
@@ -181,7 +182,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
-                            Remove
+                            Entfernen
                           </button>
                         </div>
                       </div>
@@ -196,20 +197,25 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
           {!isEmpty && (
             <div className="border-t border-gray-200 p-6 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Subtotal (excl. taxes)</span>
+                <span className="text-gray-600">Zwischensumme (exkl. MwSt.)</span>
                 <span className="font-medium">
                   {convertToLocale({
                     amount: cart?.item_subtotal || 0,
-                    currencyCode: cart?.currency_code || "USD",
+                    currencyCode: cart?.currency_code || "EUR",
                   })}
                 </span>
               </div>
               <a
                 href={`/${countryCode}/cart`}
                 onClick={closeCartSidebar}
-                className="block w-full bg-black text-white py-3 px-6 rounded-md text-center hover:bg-gray-800 transition-colors"
+                className="block w-full text-white py-3 px-6 rounded-md text-center transition-colors"
+                style={{
+                  backgroundColor: "var(--accent, #ff4908)",
+                  border: "2px solid #000",
+                  fontFamily: '"DM Mono", monospace',
+                }}
               >
-                Go to cart
+                Zum Warenkorb
               </a>
             </div>
           )}

@@ -128,9 +128,10 @@ export const ProductActions = ({
               <button
                 key={value.id}
                 className={clsx(
-                  "bg-gray-100 py-2 px-4 rounded-md cursor-pointer hover:shadow-md ease-in-out duration-200 w-20 h-10 box-border",
+                  "py-2 px-4 rounded-md cursor-pointer ease-in-out duration-200 w-20 h-10 box-border",
                   {
-                    border: selectedOptions[option.id] === value.id,
+                    "border-2 border-[var(--accent,#ff4908)] bg-[var(--bg-accent,#fdfcea)]": selectedOptions[option.id] === value.id,
+                    "bg-gray-100 hover:shadow-md": selectedOptions[option.id] !== value.id,
                   },
                 )}
                 onClick={() => handleOptionSelect(option.id, value.id)}
@@ -144,15 +145,21 @@ export const ProductActions = ({
 
       <button
         className={clsx(
-          "bg-black text-white py-4 px-8 rounded-md cursor-pointer hover:shadow-md ease-in-out duration-200",
+          "text-white py-4 px-8 rounded-md cursor-pointer hover:shadow-md ease-in-out duration-200",
           {
             "opacity-50 cursor-not-allowed": isAddToCardButtonDisabled,
           },
         )}
+        style={{
+          backgroundColor: "var(--accent, #ff4908)",
+          border: "2px solid #000",
+          fontFamily: '"DM Mono", monospace',
+          fontWeight: 500,
+        }}
         disabled={isAddToCardButtonDisabled}
         onClick={handleAddToCart}
       >
-        {isAdding ? "Adding..." : "Add to Cart"}
+        {isAdding ? "Wird hinzugefügt..." : "In den Warenkorb"}
       </button>
     </div>
   );

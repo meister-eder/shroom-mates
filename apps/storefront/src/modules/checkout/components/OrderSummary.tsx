@@ -6,16 +6,16 @@ interface OrderSummaryProps {
 }
 
 export const OrderSummary = ({ cart }: OrderSummaryProps) => {
-  const currencyCode = cart.currency_code || "USD";
+  const currencyCode = cart.currency_code || "EUR";
 
   return (
     <div className="sticky top-8">
-      <h2 className="text-2xl font-bold mb-6">In your Cart</h2>
+      <h2 className="text-2xl font-bold mb-6">Dein Warenkorb</h2>
 
       <div className="space-y-3 mb-6">
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">
-            Subtotal (excl. shipping and taxes)
+            Zwischensumme (exkl. Versand und MwSt.)
           </span>
           <span>
             {convertToLocale({ amount: cart.item_subtotal || 0, currencyCode })}
@@ -23,7 +23,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
         </div>
 
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Shipping</span>
+          <span className="text-gray-600">Versand</span>
           <span>
             {convertToLocale({
               amount: cart.shipping_total || 0,
@@ -33,14 +33,14 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
         </div>
 
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Taxes</span>
+          <span className="text-gray-600">MwSt.</span>
           <span>
             {convertToLocale({ amount: cart.tax_total || 0, currencyCode })}
           </span>
         </div>
 
         <div className="pt-4 border-t border-gray-200 flex justify-between font-bold text-base">
-          <span>Total</span>
+          <span>Gesamt</span>
           <span>
             {convertToLocale({ amount: cart.total || 0, currencyCode })}
           </span>
@@ -75,7 +75,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
                 <p className="font-medium text-sm truncate">{productTitle}</p>
                 {variantTitle && (
                   <p className="text-xs text-gray-500">
-                    Variant: {variantTitle}
+                    Variante: {variantTitle}
                   </p>
                 )}
                 <div className="flex justify-between mt-1 text-sm">

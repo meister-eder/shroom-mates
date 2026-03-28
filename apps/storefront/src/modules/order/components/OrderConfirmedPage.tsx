@@ -8,7 +8,7 @@ interface OrderConfirmedPageProps {
 }
 
 function formatProviderName(providerId: string): string {
-  if (providerId === "pp_system_default") return "Manual Payment";
+  if (providerId === "pp_system_default") return "Manuelle Zahlung";
   return providerId
     .replace(/^pp_/, "")
     .split("_")
@@ -48,7 +48,7 @@ export const OrderConfirmedPage = ({
   return (
     <main
       className="max-w-2xl mx-auto px-8 py-16"
-      aria-label="Order confirmation"
+      aria-label="Bestellbestätigung"
     >
       {/* Success header */}
       <div className="text-center mb-12">
@@ -67,7 +67,7 @@ export const OrderConfirmedPage = ({
           </svg>
         </div>
 
-        <h1 className="text-4xl font-bold mb-3">Order Confirmed!</h1>
+        <h1 className="text-4xl font-bold mb-3">Bestellung bestätigt! 🍄</h1>
 
         {order ? (
           <>
@@ -76,8 +76,9 @@ export const OrderConfirmedPage = ({
             </p>
             {order.email && (
               <p className="text-sm text-gray-500">
-                A confirmation email has been sent to{" "}
-                <span className="font-medium text-gray-700">{order.email}</span>
+                Eine Bestätigungs-E-Mail wurde an{" "}
+                <span className="font-medium text-gray-700">{order.email}</span>{" "}
+                gesendet.
               </p>
             )}
           </>
@@ -91,7 +92,7 @@ export const OrderConfirmedPage = ({
           {/* Order items */}
           <section aria-labelledby="items-heading" className="mb-8">
             <h2 id="items-heading" className="text-lg font-semibold mb-4">
-              Order Items
+              Bestellte Artikel
             </h2>
             <div className="divide-y divide-gray-100 border border-gray-200 rounded-md overflow-hidden">
               {order.items?.map((item) => {
@@ -142,11 +143,11 @@ export const OrderConfirmedPage = ({
           {/* Order summary */}
           <section aria-labelledby="summary-heading" className="mb-8">
             <h2 id="summary-heading" className="text-lg font-semibold mb-4">
-              Order Summary
+              Bestellzusammenfassung
             </h2>
             <div className="border border-gray-200 rounded-md p-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
+                <span className="text-gray-600">Zwischensumme</span>
                 <span>
                   {convertToLocale({
                     amount: order.subtotal ?? 0,
@@ -158,7 +159,7 @@ export const OrderConfirmedPage = ({
               {shippingMethod && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">
-                    Shipping ({shippingMethod.name})
+                    Versand ({shippingMethod.name})
                   </span>
                   <span>
                     {convertToLocale({
@@ -170,7 +171,7 @@ export const OrderConfirmedPage = ({
               )}
 
               <div className="flex justify-between">
-                <span className="text-gray-600">Taxes</span>
+                <span className="text-gray-600">MwSt.</span>
                 <span>
                   {convertToLocale({
                     amount: order.tax_total ?? 0,
@@ -181,7 +182,7 @@ export const OrderConfirmedPage = ({
 
               {(order.discount_total ?? 0) > 0 && (
                 <div className="flex justify-between text-green-700">
-                  <span>Discount</span>
+                  <span>Rabatt</span>
                   <span>
                     −
                     {convertToLocale({
@@ -193,7 +194,7 @@ export const OrderConfirmedPage = ({
               )}
 
               <div className="pt-3 border-t border-gray-200 flex justify-between font-bold text-base">
-                <span>Total</span>
+                <span>Gesamt</span>
                 <span>
                   {convertToLocale({
                     amount: order.total ?? 0,
@@ -207,12 +208,12 @@ export const OrderConfirmedPage = ({
           {/* Delivery & payment */}
           <section aria-labelledby="delivery-heading" className="mb-8">
             <h2 id="delivery-heading" className="text-lg font-semibold mb-4">
-              Delivery &amp; Payment
+              Lieferung &amp; Zahlung
             </h2>
             <div className="border border-gray-200 rounded-md divide-y divide-gray-100 text-sm">
               {order.shipping_address && (
                 <div className="p-4">
-                  <p className="font-medium mb-1">Shipping Address</p>
+                  <p className="font-medium mb-1">Lieferadresse</p>
                   <address className="text-gray-600 not-italic leading-relaxed">
                     {order.shipping_address.first_name}{" "}
                     {order.shipping_address.last_name}
@@ -240,9 +241,9 @@ export const OrderConfirmedPage = ({
 
               {order.billing_address && (
                 <div className="p-4">
-                  <p className="font-medium mb-1">Billing Address</p>
+                  <p className="font-medium mb-1">Rechnungsadresse</p>
                   {sameAddress ? (
-                    <p className="text-gray-600">Same as shipping address</p>
+                    <p className="text-gray-600">Wie Lieferadresse</p>
                   ) : (
                     <address className="text-gray-600 not-italic leading-relaxed">
                       {order.billing_address.first_name}{" "}
@@ -259,7 +260,7 @@ export const OrderConfirmedPage = ({
 
               {paymentProviderId && (
                 <div className="p-4">
-                  <p className="font-medium mb-1">Payment</p>
+                  <p className="font-medium mb-1">Zahlung</p>
                   <p className="text-gray-600">
                     {formatProviderName(paymentProviderId)}
                   </p>
@@ -271,7 +272,7 @@ export const OrderConfirmedPage = ({
           {/* What's next */}
           <section aria-labelledby="next-heading" className="mb-10">
             <h2 id="next-heading" className="text-lg font-semibold mb-4">
-              What happens next?
+              Wie geht es weiter?
             </h2>
             <ol className="space-y-3 text-sm text-gray-600">
               <li className="flex gap-3">
@@ -279,8 +280,8 @@ export const OrderConfirmedPage = ({
                   1
                 </span>
                 <span>
-                  <strong className="text-gray-900">Order Processing</strong> —
-                  We&apos;re preparing your items for shipment.
+                  <strong className="text-gray-900">Bearbeitung</strong> —
+                  Wir bereiten deine Artikel für den Versand vor.
                 </span>
               </li>
               <li className="flex gap-3">
@@ -289,10 +290,10 @@ export const OrderConfirmedPage = ({
                 </span>
                 <span>
                   <strong className="text-gray-900">
-                    Shipment Notification
+                    Versandbenachrichtigung
                   </strong>{" "}
-                  — You&apos;ll receive an email with tracking information when
-                  your order ships.
+                  — Du erhältst eine E-Mail mit Tracking-Informationen, sobald
+                  deine Bestellung versendet wird.
                 </span>
               </li>
               <li className="flex gap-3">
@@ -300,8 +301,8 @@ export const OrderConfirmedPage = ({
                   3
                 </span>
                 <span>
-                  <strong className="text-gray-900">Delivery</strong> — Your
-                  package will arrive at your shipping address.
+                  <strong className="text-gray-900">Lieferung</strong> — Dein
+                  Paket wird an deine Lieferadresse zugestellt.
                 </span>
               </li>
             </ol>
@@ -313,9 +314,9 @@ export const OrderConfirmedPage = ({
       <div className="text-center">
         <a
           href={`/${countryCode}/store`}
-          className="inline-block bg-black text-white py-3 px-10 rounded-md hover:bg-gray-800 transition-colors"
+          className="btn-accent inline-block"
         >
-          Continue Shopping
+          Weiter einkaufen
         </a>
       </div>
     </main>

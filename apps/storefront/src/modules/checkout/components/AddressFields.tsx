@@ -55,7 +55,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="First name*"
+            placeholder="Vorname*"
             {...register(f("firstName"))}
             className={`${INPUT_BASE} ${errors.firstName ? "border-red-400" : "border-gray-300"}`}
           />
@@ -64,7 +64,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="Last name*"
+            placeholder="Nachname*"
             {...register(f("lastName"))}
             className={`${INPUT_BASE} ${errors.lastName ? "border-red-400" : "border-gray-300"}`}
           />
@@ -77,7 +77,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="Address*"
+            placeholder="Adresse*"
             {...register(f("address"))}
             className={`${INPUT_BASE} ${errors.address ? "border-red-400" : "border-gray-300"}`}
           />
@@ -86,7 +86,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="Company"
+            placeholder="Firma"
             {...register(f("company"))}
             className={`${INPUT_BASE} border-gray-300`}
           />
@@ -99,7 +99,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="Postal code*"
+            placeholder="PLZ*"
             {...register(f("postalCode"))}
             className={`${INPUT_BASE} ${errors.postalCode ? "border-red-400" : "border-gray-300"}`}
           />
@@ -108,7 +108,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="City*"
+            placeholder="Stadt*"
             {...register(f("city"))}
             className={`${INPUT_BASE} ${errors.city ? "border-red-400" : "border-gray-300"}`}
           />
@@ -124,7 +124,7 @@ export const AddressFields = ({
             className={`${INPUT_BASE} ${errors.country ? "border-red-400" : "border-gray-300"} bg-white`}
           >
             <option disabled value="">
-              Country
+              Land
             </option>
             {countries.map((c) => (
               <option key={c.iso_2} value={c.iso_2}>
@@ -137,7 +137,7 @@ export const AddressFields = ({
         <div>
           <input
             type="text"
-            placeholder="State / Province"
+            placeholder="Bundesland"
             {...register(f("province"))}
             className={`${INPUT_BASE} border-gray-300`}
           />

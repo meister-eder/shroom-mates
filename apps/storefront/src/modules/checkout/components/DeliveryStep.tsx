@@ -62,7 +62,7 @@ export const DeliveryStep = ({
         }
       } catch (err) {
         console.error("Failed to load shipping options:", err);
-        setError("Failed to load shipping options. Please try again.");
+        setError("Versandoptionen konnten nicht geladen werden. Bitte versuche es erneut.");
       } finally {
         setIsLoading(false);
       }
@@ -80,7 +80,7 @@ export const DeliveryStep = ({
       await addShippingMethod(optionId);
     } catch (err) {
       console.error("Failed to update shipping method:", err);
-      setError("Failed to update shipping method. Please try again.");
+      setError("Versandart konnte nicht aktualisiert werden. Bitte versuche es erneut.");
       // Revert to the previously saved method
       const savedMethodId = cart.shipping_methods?.[0]?.shipping_option_id;
       setSelectedOptionId(savedMethodId ?? "");
@@ -92,39 +92,40 @@ export const DeliveryStep = ({
   if (mode === "inactive") {
     return (
       <div className="border-t border-gray-200 pt-6 mt-6">
-        <h2 className="text-2xl font-bold text-gray-400">Delivery</h2>
+        <h2 className="text-2xl font-bold text-gray-400">Lieferung</h2>
       </div>
     );
   }
 
   if (mode === "read") {
     const method = cart.shipping_methods?.[0];
-    const currencyCode = cart.currency_code || "USD";
+    const currencyCode = cart.currency_code || "EUR";
 
     return (
       <div className="border-t border-gray-200 pt-6 mt-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            Delivery
+            Lieferung
             <CheckCircle />
           </h2>
           <button
             type="button"
             onClick={onEdit}
-            className="text-blue-600 hover:underline text-sm"
+            className="text-sm hover:underline"
+            style={{ color: "var(--accent, #ff4908)" }}
           >
-            Edit
+            Bearbeiten
           </button>
         </div>
 
         {method && (
           <div className="text-sm">
-            <p className="font-medium mb-1">Shipping method</p>
+            <p className="font-medium mb-1">Versandart</p>
             <p className="text-gray-700">
               {method.name}
-              {" — "}
+              {" \u2014 "}
               {method.amount === 0
-                ? "Free"
+                ? "Kostenlos"
                 : convertToLocale({ amount: method.amount, currencyCode })}
             </p>
           </div>
@@ -133,27 +134,27 @@ export const DeliveryStep = ({
     );
   }
 
-  const currencyCode = cart.currency_code || "USD";
+  const currencyCode = cart.currency_code || "EUR";
 
   return (
     <div className="border-t border-gray-200 pt-6 mt-6">
-      <h2 className="text-2xl font-bold mb-6">Delivery</h2>
+      <h2 className="text-2xl font-bold mb-6">Lieferung</h2>
 
       <div>
-        <p className="font-medium mb-1">Shipping method</p>
+        <p className="font-medium mb-1">Versandart</p>
         <p className="text-sm text-gray-500 mb-4">
-          How would you like your order delivered
+          Wähle deine gewünschte Versandart
         </p>
 
         {isLoading && (
           <p className="text-sm text-gray-500 mb-4">
-            Loading shipping options...
+            Versandoptionen werden geladen...
           </p>
         )}
 
         {!isLoading && shippingOptions.length === 0 && !error && (
           <p className="text-sm text-gray-500 mb-4">
-            No shipping options available for your address.
+            Keine Versandoptionen für deine Adresse verfügbar.
           </p>
         )}
 
@@ -181,7 +182,7 @@ export const DeliveryStep = ({
                 </div>
                 <span className="text-sm text-gray-700">
                   {option.amount === 0
-                    ? "Free"
+                    ? "Kostenlos"
                     : convertToLocale({
                         amount: option.amount,
                         currencyCode,
@@ -198,9 +199,14 @@ export const DeliveryStep = ({
           type="button"
           disabled={!selectedOptionId || isSaving}
           onClick={onContinue}
-          className="bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: "var(--accent, #ff4908)",
+            border: "2px solid #000",
+            fontFamily: '"DM Mono", monospace',
+          }}
         >
-          {isSaving ? "Saving..." : "Continue to payment"}
+          {isSaving ? "Wird gespeichert..." : "Weiter zur Zahlung"}
         </button>
       </div>
     </div>

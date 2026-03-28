@@ -1,0 +1,28 @@
+/* ===================================================================
+   Shroom-Mates Design Tokens — Tailwind CSS v4 Theme
+   Shared across apps/website and apps/storefront
+   =================================================================== */
+
+@theme {
+  /* Brand Colors */
+  --color-accent: #ff4908;
+  --color-accent-light: #ff9c7e;
+  --color-accent-dark: #bf2300;
+  --color-text: #1d1d1d;
+  --color-bg: #ffffff;
+  --color-bg-accent: #fdfcea;
+  --color-focus: #5f5f5f;
+
+  /* Typography */
+  --font-body: "Geist Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  /* Navbar Heights */
+  --spacing-navbar: 7.5rem;
+  --spacing-navbar-scrolled: 5.5rem;
+  --spacing-navbar-mobile: 4.5rem;
+  --spacing-navbar-mobile-scrolled: 3.5rem;
+
+  /* Animation */
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}

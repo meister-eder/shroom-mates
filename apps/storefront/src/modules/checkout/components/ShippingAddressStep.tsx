@@ -12,13 +12,13 @@ import {
 } from "./AddressFields";
 
 const addressSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  address: z.string().min(1, "Address is required"),
+  firstName: z.string().min(1, "Vorname ist erforderlich"),
+  lastName: z.string().min(1, "Nachname ist erforderlich"),
+  address: z.string().min(1, "Adresse ist erforderlich"),
   company: z.string(),
-  postalCode: z.string().min(1, "Postal code is required"),
-  city: z.string().min(1, "City is required"),
-  country: z.string().min(1, "Country is required"),
+  postalCode: z.string().min(1, "PLZ ist erforderlich"),
+  city: z.string().min(1, "Stadt ist erforderlich"),
+  country: z.string().min(1, "Land ist erforderlich"),
   province: z.string(),
 });
 
@@ -38,10 +38,10 @@ const formSchema = z
   .object({
     email: z
       .string()
-      .min(1, "Email is required")
+      .min(1, "E-Mail ist erforderlich")
       .refine(
         (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
-        "Enter a valid email address",
+        "Bitte gib eine gültige E-Mail-Adresse ein",
       ),
     phone: z.string(),
     billingSameAsShipping: z.boolean(),
@@ -52,12 +52,12 @@ const formSchema = z
     if (billingSameAsShipping) return;
 
     const required: [keyof typeof billing, string][] = [
-      ["firstName", "First name is required"],
-      ["lastName", "Last name is required"],
-      ["address", "Address is required"],
-      ["postalCode", "Postal code is required"],
-      ["city", "City is required"],
-      ["country", "Country is required"],
+      ["firstName", "Vorname ist erforderlich"],
+      ["lastName", "Nachname ist erforderlich"],
+      ["address", "Adresse ist erforderlich"],
+      ["postalCode", "PLZ ist erforderlich"],
+      ["city", "Stadt ist erforderlich"],
+      ["country", "Land ist erforderlich"],
     ];
 
     for (const [field, message] of required) {
@@ -174,21 +174,22 @@ const ReadOnlyView = ({
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold flex items-center gap-2">
-          Shipping Address
+          Lieferadresse
           <CheckCircle />
         </h2>
         <button
           type="button"
           onClick={onEdit}
-          className="text-blue-600 hover:underline text-sm"
+          className="text-sm hover:underline"
+          style={{ color: "var(--accent, #ff4908)" }}
         >
-          Edit
+          Bearbeiten
         </button>
       </div>
 
       <div className="grid grid-cols-3 gap-8 text-sm">
         <div>
-          <p className="font-medium mb-2">Shipping Address</p>
+          <p className="font-medium mb-2">Lieferadresse</p>
           {shippingLines.map((line, i) => (
             <p key={i} className="text-gray-700">
               {line}
@@ -197,15 +198,15 @@ const ReadOnlyView = ({
         </div>
 
         <div>
-          <p className="font-medium mb-2">Contact</p>
+          <p className="font-medium mb-2">Kontakt</p>
           {cart.email && <p className="text-gray-700">{cart.email}</p>}
         </div>
 
         <div>
-          <p className="font-medium mb-2">Billing Address</p>
+          <p className="font-medium mb-2">Rechnungsadresse</p>
           {isBillingSame ? (
             <p className="text-gray-700">
-              Billing and delivery address are the same.
+              Rechnungs- und Lieferadresse sind identisch.
             </p>
           ) : (
             billingLines?.map((line, i) => (
@@ -306,7 +307,7 @@ export const ShippingAddressStep = ({
       onContinue?.();
     } catch (error) {
       console.error("Failed to update shipping address:", error);
-      setSubmitError("Failed to save address. Please try again.");
+      setSubmitError("Adresse konnte nicht gespeichert werden. Bitte versuche es erneut.");
     }
   };
 
@@ -316,7 +317,7 @@ export const ShippingAddressStep = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <h2 className="text-2xl font-bold mb-6">Shipping Address</h2>
+      <h2 className="text-2xl font-bold mb-6">Lieferadresse</h2>
 
       <div className="space-y-4">
         <AddressFields
@@ -333,7 +334,7 @@ export const ShippingAddressStep = ({
             {...register("billingSameAsShipping")}
             className="w-4 h-4 accent-black"
           />
-          <span className="text-sm">Billing address same as shipping address</span>
+          <span className="text-sm">Rechnungsadresse entspricht der Lieferadresse</span>
         </label>
 
         {/* Email / Phone */}
@@ -341,7 +342,7 @@ export const ShippingAddressStep = ({
           <div>
             <input
               type="email"
-              placeholder="Email*"
+              placeholder="E-Mail*"
               {...register("email")}
               className={`w-full border rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors ${
                 errors.email ? "border-red-400" : "border-gray-300"
@@ -354,7 +355,7 @@ export const ShippingAddressStep = ({
           <div>
             <input
               type="tel"
-              placeholder="Phone"
+              placeholder="Telefon"
               {...register("phone")}
               className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors"
             />
@@ -365,7 +366,7 @@ export const ShippingAddressStep = ({
         {/* Billing address section */}
         {!billingSameAsShipping && (
           <div className="pt-4 border-t border-gray-200">
-            <h3 className="text-lg font-semibold mb-4">Billing Address</h3>
+            <h3 className="text-lg font-semibold mb-4">Rechnungsadresse</h3>
             <AddressFields
               prefix="billing"
               register={register}
@@ -382,9 +383,14 @@ export const ShippingAddressStep = ({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: "var(--accent, #ff4908)",
+            border: "2px solid #000",
+            fontFamily: '"DM Mono", monospace',
+          }}
         >
-          {isSubmitting ? "Saving..." : "Continue to delivery"}
+          {isSubmitting ? "Wird gespeichert..." : "Weiter zur Lieferung"}
         </button>
       </div>
     </form>

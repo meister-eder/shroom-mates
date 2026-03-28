@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@medusajs/js-sdk": "^2.13.1",
     "@nanostores/react": "^1.0.0",
+    "@shroom-mates/ui": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "6.0.4",
     "clsx": "^2.1.1",

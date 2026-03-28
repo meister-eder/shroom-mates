@@ -185,8 +185,8 @@ cubic-bezier(0.22, 1, 0.36, 1)
 
 #### Shared UI-Paket erstellen
 
-- [ ] `packages/ui/` anlegen als internes Workspace-Paket (`@shroom-mates/ui`)
-- [ ] Tailwind v4 Theme-Konfiguration mit den Website-Design-Tokens:
+- [x] `packages/ui/` anlegen als internes Workspace-Paket (`@shroom-mates/ui`)
+- [x] Tailwind v4 Theme-Konfiguration mit den Website-Design-Tokens:
   ```css
   @theme {
     --color-accent: #ff4908;
@@ -199,21 +199,21 @@ cubic-bezier(0.22, 1, 0.36, 1)
     --font-mono: "DM Mono", monospace;
   }
   ```
-- [ ] Root `package.json` Workspaces erweitern: `["apps/*", "packages/*"]`
+- [x] Root `package.json` Workspaces erweitern: `["apps/*", "packages/*"]`
 
 #### Komponenten teilen
 
-- [ ] Header/Navbar als geteilte Astro-Komponente:
+- [x] Header/Navbar als geteilte Astro-Komponente:
   - Logo (SVG, zentriert)
   - Navigation: Unsere Pilze, Growkits, Tinkturen, Gastronomie, FAQ, Kontakt
   - Shop-Link hinzufügen (→ `shop.shroom-mates.de`)
   - Mobile Hamburger-Menü
   - Scroll-Shrink-Verhalten
-- [ ] Footer als geteilte Astro-Komponente:
+- [x] Footer als geteilte Astro-Komponente:
   - Copyright mit Accent-Farbe
   - Navigations-Links (DM Mono, Underline-Animation)
   - Checkered-Background-Pattern
-- [ ] Gemeinsame CSS-Utilities:
+- [x] Gemeinsame CSS-Utilities:
   - `.sr-only` (Screen Reader)
   - `.btn`, `.btn--primary`, `.btn--secondary`
   - `.section`, `.section--checkered`
@@ -222,17 +222,17 @@ cubic-bezier(0.22, 1, 0.36, 1)
 
 #### Storefront anpassen
 
-- [ ] Storefront-Navigation durch geteilte Navbar ersetzen (mit Shop- und Warenkorb-Erweiterung)
-- [ ] Storefront-Footer durch geteilten Footer ersetzen
-- [ ] Geist Sans + DM Mono laden (via `@fontsource/geist-sans`)
-- [ ] Hintergrund: Checkered Pattern + Grain-Overlay übernehmen
-- [ ] Produktkarten visuell an `ProductCard.astro` angleichen:
+- [x] Storefront-Navigation durch geteilte Navbar ersetzen (mit Shop- und Warenkorb-Erweiterung)
+- [x] Storefront-Footer durch geteilten Footer ersetzen
+- [x] Geist Sans + DM Mono laden (via `@fontsource/geist-sans`)
+- [x] Hintergrund: Checkered Pattern + Grain-Overlay übernehmen
+- [x] Produktkarten visuell an `ProductCard.astro` angleichen:
   - Farbige Hintergründe mit dynamischem Text-Kontrast (`readableTextColor()`)
   - Alternierende Layouts (Text links/rechts)
   - Hover: Image-Zoom + Letter-Spacing
-- [ ] Buttons: Schwarzen Standardstil durch Accent-Orange ersetzen
-- [ ] Border-Stil: 2–3px solid black (Website-Stil)
-- [ ] Fokus-Indikatoren: `outline: 2px solid var(--focus-color)`
+- [x] Buttons: Schwarzen Standardstil durch Accent-Orange ersetzen
+- [x] Border-Stil: 2–3px solid black (Website-Stil)
+- [x] Fokus-Indikatoren: `outline: 2px solid var(--focus-color)`
 
 ### Risiken / Offene Fragen
 
