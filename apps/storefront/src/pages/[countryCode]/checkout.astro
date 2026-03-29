@@ -19,8 +19,8 @@ try {
   const regions = await listRegions();
   const region = regions.find((r) =>
     r.countries?.some(
-      (c) => c.iso_2?.toLowerCase() === countryCode.toLowerCase()
-    )
+      (c) => c.iso_2?.toLowerCase() === countryCode.toLowerCase(),
+    ),
   );
 
   if (region?.countries) {
@@ -28,8 +28,8 @@ try {
       .filter((c): c is typeof c & { iso_2: string } => !!c.iso_2)
       .sort((a, b) =>
         (a.display_name ?? a.name ?? "").localeCompare(
-          b.display_name ?? b.name ?? ""
-        )
+          b.display_name ?? b.name ?? "",
+        ),
       )
       .map((c) => ({
         iso_2: c.iso_2,

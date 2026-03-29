@@ -1,7 +1,25 @@
 import { sdk } from "@lib/sdk";
 import { completeCart, initPaymentSession } from "@lib/stores/cart";
 import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+declare global {
+  interface Window {
+    SumUpCard?: {
+      mount(config: {
+        id: string;
+        checkoutId: string;
+        locale?: string;
+        showSubmitButton?: boolean;
+        onLoad?: () => void;
+        onResponse?: (type: "success" | "error" | "unsupported", body: Record<string, unknown>) => void;
+      }): void;
+    };
+  }
+}
+
+const SUMUP_SDK_URL = "https://gateway.sumup.com/gateway/ecom/card/v2/sdk.js";
+const SUMUP_WIDGET_ID = "sumup-card-widget";
 
 interface PaymentStepProps {
   cart: StoreCart;
@@ -29,6 +47,7 @@ const CardIcon = () => (
 
 function formatProviderName(providerId: string): string {
   if (providerId === "pp_system_default") return "Manual Payment";
+  if (providerId.includes("sumup")) return "Kreditkarte (SumUp)";
   return providerId
     .replace(/^pp_/, "")
     .split("_")
@@ -38,6 +57,10 @@ function formatProviderName(providerId: string): string {
 
 function isTestProvider(providerId: string): boolean {
   return providerId === "pp_system_default";
+}
+
+function isSumUpProvider(providerId: string): boolean {
+  return providerId.includes("sumup");
 }
 
 export const PaymentStep = ({
@@ -51,6 +74,14 @@ export const PaymentStep = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isPlacing, setIsPlacing] = useState(false);
   const [error, setError] = useState("");
+  const sumupMountedRef = useRef<string | null>(null); // tracks which checkoutId is currently mounted
+
+  // Derive SumUp checkout ID from the cart's payment session
+  const sumupCheckoutId = isSumUpProvider(selectedProviderId) && !isSaving
+    ? (cart.payment_collection?.payment_sessions?.find(
+        (s) => isSumUpProvider(s.provider_id ?? ""),
+      )?.data?.id as string | undefined)
+    : undefined;
 
   useEffect(() => {
     if (mode !== "edit") return;
@@ -82,6 +113,7 @@ export const PaymentStep = ({
 
   const handleProviderChange = async (providerId: string) => {
     if (isSaving) return;
+    sumupMountedRef.current = null;
     setSelectedProviderId(providerId);
     setIsSaving(true);
     setError("");
@@ -98,7 +130,7 @@ export const PaymentStep = ({
     }
   };
 
-  const handlePlaceOrder = async () => {
+  const handleOrderComplete = useCallback(async () => {
     setIsPlacing(true);
     setError("");
     try {
@@ -106,7 +138,7 @@ export const PaymentStep = ({
       if (result.type === "order") {
         try {
           sessionStorage.setItem("medusa_order", JSON.stringify(result.order));
-        } catch {}
+        } catch { }
         window.location.href = `/${countryCode}/order/${result.order.id}`;
       } else if (result.type === "already_completed") {
         window.location.href = `/${countryCode}/order/confirmed`;
@@ -119,7 +151,65 @@ export const PaymentStep = ({
     } finally {
       setIsPlacing(false);
     }
-  };
+  }, [countryCode]);
+
+  // Load SumUp SDK and mount widget when checkout ID is available
+  useEffect(() => {
+    if (!sumupCheckoutId) return;
+    // Don't remount if already mounted for the same checkout ID
+    if (sumupMountedRef.current === sumupCheckoutId) return;
+
+    const mount = () => {
+      const container = document.getElementById(SUMUP_WIDGET_ID);
+      if (!container || !window.SumUpCard) return;
+      // Clear previous widget content
+      container.innerHTML = "";
+      sumupMountedRef.current = sumupCheckoutId;
+      window.SumUpCard.mount({
+        id: SUMUP_WIDGET_ID,
+        checkoutId: sumupCheckoutId,
+        locale: "de-DE",
+        onLoad: () => {
+          console.log("SumUp card widget loaded");
+        },
+        onResponse: (type, body) => {
+          if (type === "success") {
+            handleOrderComplete();
+          } else {
+            console.error("SumUp payment response:", type, body);
+            setError("Payment failed. Please try again.");
+            sumupMountedRef.current = null;
+          }
+        },
+      });
+    };
+
+    if (window.SumUpCard) {
+      mount();
+      return;
+    }
+
+    // Load SDK script if not already present
+    if (!document.getElementById("sumup-sdk-script")) {
+      const script = document.createElement("script");
+      script.id = "sumup-sdk-script";
+      script.src = SUMUP_SDK_URL;
+      script.onload = mount;
+      script.onerror = () => {
+        setError("Failed to load payment widget. Please refresh and try again.");
+      };
+      document.head.appendChild(script);
+    } else {
+      // Script tag exists but SDK not ready yet — wait for it
+      const interval = setInterval(() => {
+        if (window.SumUpCard) {
+          clearInterval(interval);
+          mount();
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [sumupCheckoutId, handleOrderComplete]);
 
   if (mode === "inactive") {
     return (
@@ -128,6 +218,8 @@ export const PaymentStep = ({
       </div>
     );
   }
+
+  const isSumUp = isSumUpProvider(selectedProviderId);
 
   return (
     <div className="border-t border-gray-200 pt-6 mt-6">
@@ -149,11 +241,10 @@ export const PaymentStep = ({
             {paymentProviders.map((provider) => (
               <label
                 key={provider.id}
-                className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${
-                  selectedProviderId === provider.id
+                className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${selectedProviderId === provider.id
                     ? "border-black"
                     : "border-gray-200 hover:border-gray-400"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <input
@@ -179,16 +270,36 @@ export const PaymentStep = ({
           </div>
         )}
 
+        {/* SumUp embedded card widget */}
+        {isSumUp && (
+          <div className="mb-6">
+            {isSaving && (
+              <p className="text-sm text-gray-500">Initializing payment...</p>
+            )}
+            {!isSaving && !sumupCheckoutId && (
+              <p className="text-sm text-gray-500">Loading card form...</p>
+            )}
+            {/* The SumUp SDK renders into this div */}
+            <div id={SUMUP_WIDGET_ID} className="min-h-[200px]" />
+            {isPlacing && (
+              <p className="text-sm text-gray-500 mt-2">Placing order…</p>
+            )}
+          </div>
+        )}
+
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-        <button
-          type="button"
-          disabled={!selectedProviderId || isSaving || isPlacing}
-          onClick={handlePlaceOrder}
-          className="bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isPlacing ? "Placing order..." : "Place order"}
-        </button>
+        {/* Show Place Order button only for non-SumUp providers */}
+        {!isSumUp && (
+          <button
+            type="button"
+            disabled={!selectedProviderId || isSaving || isPlacing}
+            onClick={handleOrderComplete}
+            className="bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isPlacing ? "Placing order..." : "Place order"}
+          </button>
+        )}
       </div>
     </div>
   );
