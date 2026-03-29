@@ -1,39 +1,121 @@
-name: Deploy to GitHub Pages
+name: Deploy to Hetzner
 
 on:
-  # Trigger the workflow every time you push to the `main` branch
-  # Using a different branch name? Replace `main` with your branch’s name
   push:
     branches: [main]
-  # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
 
-# Allow this job to clone the repo and create a page deployment
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_HOST: ${{ secrets.HETZNER_HOST }}
+  DEPLOY_USER: ${{ secrets.HETZNER_USER || 'deploy' }}
+  DEPLOY_PATH: /opt/shroom-mates
 
 jobs:
+  # ── Build & Verify ──────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site output
-        uses: withastro/action@v2
-        with:
-            path: apps/website # The root location of your Astro project inside the repository.
-            # node-version: 20 # The specific version of Node that should be used to build your site. Defaults to 18. (optional)
-            package-manager: bun@latest # The Node package manager that should be used to install dependencies and build your site. Automatically detected based on your lockfile. (optional)
 
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build website
+        run: bun run --filter @shroom-mates/website build
+
+      - name: Build storefront
+        run: bun run --filter @shroom-mates/storefront build
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci --cache /tmp/npm-cache-sm
+
+      - name: Build backend
+        working-directory: backend
+        run: npx medusa build
+
+      - name: Upload website dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-dist
+          path: apps/website/dist/
+          retention-days: 1
+
+  # ── Deploy ─────────────────────────────────────────────────
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: production
+      url: https://shroom-mates.de
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download website dist
+        uses: actions/download-artifact@v4
+        with:
+          name: website-dist
+          path: apps/website/dist/
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync project to server
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.turbo' \
+            --exclude='.env' \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+            cd /opt/shroom-mates
+            docker compose pull postgres redis caddy
+            docker compose build medusa storefront
+            docker compose up -d --remove-orphans
+            echo "Waiting for health checks..."
+            sleep 10
+            docker compose ps
+          EOF
+
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+            cd /opt/shroom-mates
+            # Check all services are healthy
+            unhealthy=$(docker compose ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Name')
+            if [ -n "$unhealthy" ]; then
+              echo "⚠ Unhealthy services: $unhealthy"
+              docker compose logs --tail=30 $unhealthy
+              exit 1
+            fi
+            echo "✓ All services healthy"
+          EOF
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

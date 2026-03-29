@@ -1,0 +1,113 @@
+services:
+  # ── Reverse Proxy ──────────────────────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"        # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./apps/website/dist:/srv/website:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      medusa:
+        condition: service_healthy
+      storefront:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Database ───────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-medusa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-shroom-mates}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-medusa} -d ${POSTGRES_DB:-shroom-mates}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Not exposed to host — only accessible via internal network
+
+  # ── Cache / Sessions ───────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── Medusa Backend ─────────────────────────────────────────────
+  medusa:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}
+      REDIS_URL: redis://redis:6379
+      MEDUSA_BACKEND_URL: https://api.shroom-mates.de
+      STORE_CORS: https://shop.shroom-mates.de,https://shroom-mates.de
+      ADMIN_CORS: https://api.shroom-mates.de
+      AUTH_CORS: https://api.shroom-mates.de,https://shop.shroom-mates.de
+      COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      MOLLIE_API_KEY: ${MOLLIE_API_KEY:-}
+    volumes:
+      - medusa_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Storefront (Astro SSR) ────────────────────────────────────
+  storefront:
+    build:
+      context: .
+      dockerfile: apps/storefront/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4321
+      PUBLIC_MEDUSA_BACKEND_URL: https://api.shroom-mates.de
+    depends_on:
+      medusa:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4321"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  postgres_data:
+  redis_data:
+  caddy_data:
+  caddy_config:
+  medusa_uploads:

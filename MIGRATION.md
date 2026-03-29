@@ -265,7 +265,7 @@ cubic-bezier(0.22, 1, 0.36, 1)
 
 #### Docker Compose
 
-- [ ] `docker-compose.yml` im Repo-Root erstellen:
+- [x] `docker-compose.yml` im Repo-Root erstellen:
   ```yaml
   services:
     caddy:        # Reverse Proxy + HTTPS
@@ -274,24 +274,24 @@ cubic-bezier(0.22, 1, 0.36, 1)
     medusa:       # Backend
     storefront:   # Shop (Astro SSR)
   ```
-- [ ] Caddy-Konfiguration (Caddyfile):
+- [x] Caddy-Konfiguration (Caddyfile):
   - `shroom-mates.de` → statische Dateien aus `apps/website/dist/`
   - `shop.shroom-mates.de` → `storefront:4321`
   - `api.shroom-mates.de` → `medusa:9000`
   - Automatisches HTTPS via Let's Encrypt
   - Security-Header (HSTS, CSP, X-Frame-Options)
-- [ ] Dockerfiles erstellen:
+- [x] Dockerfiles erstellen:
   - `apps/storefront/Dockerfile` (Multi-Stage: bun install → node runtime)
   - `backend/Dockerfile` (Multi-Stage: install → node runtime)
-- [ ] Volume-Mounts:
+- [x] Volume-Mounts:
   - Postgres-Daten: Named Volume
   - Medusa-Uploads: Bind-Mount für Produktbilder
   - Caddy-Daten: Named Volume (Zertifikate)
 
 #### GitHub Actions CI/CD
 
-- [ ] GitHub Pages Workflow entfernen (`.github/workflows/deploy.yml`)
-- [ ] Neuen CI/CD-Workflow erstellen:
+- [x] GitHub Pages Workflow entfernen (`.github/workflows/deploy.yml`)
+- [x] Neuen CI/CD-Workflow erstellen:
   - Turborepo-Build für alle Apps
   - Docker-Images bauen
   - Per SSH auf Hetzner deployen
@@ -308,15 +308,15 @@ cubic-bezier(0.22, 1, 0.36, 1)
 
 #### Backups
 
-- [ ] Postgres-Backup-Strategie:
-  - Täglicher `pg_dump` via Cron
+- [x] Postgres-Backup-Strategie:
+  - Täglicher `pg_dump` via Cron (`scripts/backup-postgres.sh`)
   - Rotation: 7 Tage lokale Backups
   - Optional: Backup auf Hetzner Storage Box (~3 €/Monat)
 - [ ] Medusa-Uploads sichern (Produktbilder)
 
 #### Monitoring
 
-- [ ] Health-Checks in Docker Compose für alle Services
+- [x] Health-Checks in Docker Compose für alle Services
 - [ ] Uptime-Monitoring: Uptime Kuma (Self-Hosted) oder externer EU-Dienst
 - [ ] Log-Aggregation: Docker Logs → Lokale Logrotation
 
