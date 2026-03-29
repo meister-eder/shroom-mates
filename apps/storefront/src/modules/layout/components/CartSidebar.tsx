@@ -70,9 +70,8 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
       <div
         ref={backdropRef}
         onClick={handleBackdropClick}
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-50" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${isOpen ? "opacity-50" : "opacity-0 pointer-events-none"
+          }`}
         aria-hidden="true"
       />
 
@@ -82,9 +81,8 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
         role="dialog"
         aria-modal="true"
         aria-label="Warenkorb"
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-xl transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}

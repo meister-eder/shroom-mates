@@ -1,7 +1,8 @@
 ---
+import "@fontsource/geist-sans";
 import { getRegion } from "@lib/data/regions";
 import { CartSidebar } from "@modules/layout/components/CartSidebar";
-import { Nav } from "@modules/layout/components/Nav";
+import Header from "@modules/layout/components/Header.astro";
 import Footer from "@modules/layout/components/Footer.astro";
 import "@styles/global.css";
 import { ClientRouter } from "astro:transitions";
@@ -27,7 +28,10 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const canonicalUrl = new URL(
+  Astro.url.pathname,
+  Astro.site ?? Astro.url.origin,
+);
 
 const { countryCode } = Astro.params;
 
@@ -72,34 +76,168 @@ const regionId = region?.id || null;
     {image && <meta property="og:image" content={image} />}
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+    <meta
+      name="twitter:card"
+      content={image ? "summary_large_image" : "summary"}
+    />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     {image && <meta name="twitter:image" content={image} />}
   </head>
   <body>
-    <Nav client:load countryCode={countryCode} regionId={regionId} />
-    <main>
-      <slot />
-    </main>
-    <Footer countryCode={countryCode} />
-    <CartSidebar client:load countryCode={countryCode} />
+    <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
+
+    <div class="site-wrapper">
+      <Header countryCode={countryCode} regionId={regionId} />
+      <main
+        id="main-content"
+        class="site-main with-nav-spacing"
+        aria-label="Seiteninhalt"
+      >
+        <slot />
+      </main>
+      <Footer countryCode={countryCode} />
+      <CartSidebar client:load countryCode={countryCode} />
+    </div>
+
+    <script>
+      function setScrollbarWidth() {
+        const width = window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty(
+          "--scrollbar-width",
+          `${width}px`,
+        );
+      }
+      setScrollbarWidth();
+      window.addEventListener("resize", setScrollbarWidth);
+    </script>
+
+    <script>
+      function syncNavbarHeight() {
+        const header = document.querySelector("header");
+        if (!header) return;
+        const h = `${header.offsetHeight}px`;
+        document.documentElement.style.setProperty("--navbar-height", h);
+        document.documentElement.style.setProperty("--navbar-height-mobile", h);
+      }
+
+      function observeHeader() {
+        const header = document.querySelector("header");
+        if (!header) return;
+        syncNavbarHeight();
+        const ro = new ResizeObserver(syncNavbarHeight);
+        ro.observe(header);
+      }
+
+      observeHeader();
+      document.addEventListener("astro:after-swap", observeHeader);
+    </script>
   </body>
 </html>
 
-<style>
-  body {
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    max-width: 1440px;
+<style is:global>
+  :root {
+    --duration: 0.2s;
+    --scrollbar-width: 0px;
   }
 
-  main {
-    flex: 1;
-    padding-top: 5rem;
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--text-color);
+    color: var(--bg-color);
+    padding: 8px;
+    text-decoration: none;
+    z-index: 1001;
+    border-radius: 4px;
+  }
+
+  .skip-link:focus {
+    top: 6px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
+  }
+
+  html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .site-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Grain texture overlay matching website */
+  .site-wrapper::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+
+  .site-main {
+    flex: 1 0 auto;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .site-main.with-nav-spacing {
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-top: var(--navbar-height, 7.5rem);
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .site-main.with-nav-spacing {
+      margin-top: var(--navbar-height-mobile, 4.5rem);
+      padding-top: 1rem;
+    }
+  }
+
+  img {
+    height: auto;
+    max-width: 100%;
   }
 </style>

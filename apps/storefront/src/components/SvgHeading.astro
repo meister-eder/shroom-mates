@@ -1,0 +1,83 @@
+---
+import { promises as fs } from "fs";
+import * as path from "path";
+
+export interface Props {
+  tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div";
+  src: string;
+  color?: string;
+  class?: string;
+  alt: string;
+}
+
+const { tag: Tag, src, color, class: className, alt } = Astro.props;
+
+const svgPath = path.join(process.cwd(), "public", src);
+let svgContent = "";
+let error = "";
+
+try {
+  const rawSvg = await fs.readFile(svgPath, "utf-8");
+  svgContent = rawSvg
+    .replace(/fill="[^"]*"/g, 'fill="currentColor"')
+    .replace(/style="([^"]*)"/g, (_match: string, styles: string) => {
+      if (styles.includes("fill:")) {
+        return `style="${styles.replace(/fill:[^;"]*/g, "fill:currentColor")}"`;
+      }
+      return `style="${styles};fill:currentColor"`;
+    })
+    .replace(/<path(?![^>]*fill)/g, '<path fill="currentColor"')
+    .replace(/aria-label="[^"]*"/g, "");
+} catch (e) {
+  error = `SVG file not found at: ${src}`;
+  console.error(error);
+}
+
+const styles = {
+  color: color || "var(--accent)",
+};
+---
+
+<Tag
+  class:list={["svg-heading", className]}
+  style={styles}
+  role="heading"
+  aria-label={alt}
+>
+  {
+    error ? (
+      <span class="error-message">{error}</span>
+    ) : (
+      <Fragment set:html={svgContent} />
+    )
+  }
+</Tag>
+
+<style>
+  .svg-heading {
+    font-size: 3rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    padding: 0.2em 0;
+  }
+
+  .svg-heading svg {
+    height: auto;
+    width: auto;
+    max-height: 1.5em;
+    display: block;
+    overflow: visible;
+  }
+
+  .error-message {
+    color: red;
+    font-size: 1rem;
+    background-color: #ffdddd;
+    border: 1px solid red;
+    padding: 0.5em;
+    display: inline-block;
+  }
+</style>
