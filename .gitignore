@@ -32,3 +32,6 @@ bun.lockb
 .agents
 .vscode
 skills-lock.json
+# yalc local package links
+.yalc/
+yalc.lock
