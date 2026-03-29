@@ -162,6 +162,7 @@
 
 /* Prefers reduced motion */
 @media (prefers-reduced-motion: reduce) {
+
   .reveal,
   .reveal-left,
   .reveal-right,
