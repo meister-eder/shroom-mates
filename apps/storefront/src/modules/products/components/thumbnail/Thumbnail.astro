@@ -1,6 +1,5 @@
 ---
 import { Image } from "astro:assets";
-import PlaceholderImage from "./PlaceholderImage.astro";
 
 interface Props {
   imageUrl?: string;
@@ -11,27 +10,69 @@ interface Props {
 const { imageUrl, title, priority = false } = Astro.props;
 ---
 
-<div
-  class="hover:shadow-sm ease-in-out duration-200 h-full flex items-center justify-center"
->
-  <div class="overflow-hidden rounded-xl">
-    {
-      imageUrl ? (
-        <Image
-          src={imageUrl}
-          width={512}
-          height={640}
-          alt={title}
-          widths={[256, 384, 512]}
-          sizes="(max-width: 768px) 50vw, (max-width: 1536px) 33vw, 25vw"
-          format="webp"
-          quality={45}
-          loading={priority ? "eager" : "lazy"}
-          fetchpriority={priority ? "high" : "auto"}
-        />
-      ) : (
-        <PlaceholderImage size={24} />
-      )
-    }
-  </div>
+<div class="product-card-image">
+  {
+    imageUrl ? (
+      <Image
+        src={imageUrl}
+        width={600}
+        height={450}
+        alt={title}
+        widths={[300, 450, 600]}
+        sizes="(max-width: 640px) 95vw, (max-width: 1024px) 48vw, 33vw"
+        format="webp"
+        quality={80}
+        loading={priority ? "eager" : "lazy"}
+        fetchpriority={priority ? "high" : "auto"}
+      />
+    ) : (
+      <div class="placeholder-image" aria-hidden="true">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 48 48"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <circle cx="24" cy="22" r="14" stroke="#c8b88a" stroke-width="2.5" />
+          <path
+            d="M10 22 Q24 8 38 22"
+            stroke="#c8b88a"
+            stroke-width="2.5"
+            fill="none"
+            stroke-linecap="round"
+          />
+          <line
+            x1="24"
+            y1="22"
+            x2="24"
+            y2="40"
+            stroke="#c8b88a"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          />
+          <ellipse
+            cx="24"
+            cy="40"
+            rx="8"
+            ry="3"
+            stroke="#c8b88a"
+            stroke-width="2"
+          />
+        </svg>
+      </div>
+    )
+  }
 </div>
+
+<style>
+  .placeholder-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-warm, #faf8f2);
+  }
+</style>

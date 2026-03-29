@@ -6,11 +6,55 @@ interface Props {
 }
 
 const { priceType, originalPrice, calculatedPrice } = Astro.props;
+const isOnSale = priceType === "sale";
 ---
 
-<>
-  {priceType === "sale" && <p data-testid="original-price">{originalPrice}</p>}
-  <p data-testid="price">
+<div class="price-display">
+  {
+    isOnSale && (
+      <span class="price-original" data-testid="original-price">
+        {originalPrice}
+      </span>
+    )
+  }
+  <span
+    class={`price-current${isOnSale ? " on-sale" : ""}`}
+    data-testid="price"
+  >
     {calculatedPrice}
-  </p>
-</>
+  </span>
+  {
+    isOnSale && (
+      <span class="badge badge-sale" aria-label="Angebot">
+        Sale
+      </span>
+    )
+  }
+</div>
+
+<style>
+  .price-display {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .price-original {
+    font-family: "DM Mono", monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted, #6b6b6b);
+    text-decoration: line-through;
+  }
+
+  .price-current {
+    font-family: "DM Mono", monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color, #1d1d1d);
+  }
+
+  .price-current.on-sale {
+    color: var(--accent-dark, #bf2300);
+  }
+</style>

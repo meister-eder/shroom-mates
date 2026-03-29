@@ -248,8 +248,13 @@ export const PaymentStep = ({
 
   if (mode === "inactive") {
     return (
-      <div className="border-t border-gray-200 pt-6 mt-6">
-        <h2 className="text-2xl font-bold text-gray-400">Payment</h2>
+      <div className="checkout-step" style={{ opacity: 0.5 }}>
+        <div className="checkout-step-header">
+          <div className="checkout-step-number">3</div>
+          <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem", color: "var(--text-muted)" }}>
+            Zahlung
+          </h2>
+        </div>
       </div>
     );
   }
@@ -257,17 +262,22 @@ export const PaymentStep = ({
   const isSumUp = isSumUpProvider(selectedProviderId);
 
   return (
-    <div className="border-t border-gray-200 pt-6 mt-6">
-      <h2 className="text-2xl font-bold mb-6">Payment</h2>
+    <div className="checkout-step">
+      <div className="checkout-step-header">
+        <div className="checkout-step-number active">3</div>
+        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
+          Zahlung
+        </h2>
+      </div>
 
-      <div>
+      <div className="checkout-step-body">
         {isLoading && (
-          <p className="text-sm text-gray-500 mb-4">Loading payment options...</p>
+          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>Zahlungsoptionen werden geladen...</p>
         )}
 
         {!isLoading && paymentProviders.length === 0 && !error && (
-          <p className="text-sm text-gray-500 mb-4">
-            No payment options available.
+          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
+            Keine Zahlungsoptionen verfügbar.
           </p>
         )}
 
@@ -276,10 +286,12 @@ export const PaymentStep = ({
             {paymentProviders.map((provider) => (
               <label
                 key={provider.id}
-                className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${selectedProviderId === provider.id
-                  ? "border-black"
-                  : "border-gray-200 hover:border-gray-400"
-                  }`}
+                className="flex items-center justify-between px-4 py-3 cursor-pointer transition-colors"
+                style={{
+                  border: `2px solid ${selectedProviderId === provider.id ? "var(--accent, #ff4908)" : "#000"}`,
+                  borderRadius: 8,
+                  background: selectedProviderId === provider.id ? "var(--bg-accent, #fdfcea)" : "#fff",
+                }}
               >
                 <div className="flex items-center gap-3">
                   <input
@@ -294,8 +306,8 @@ export const PaymentStep = ({
                     {formatProviderName(provider.id)}
                   </span>
                   {isTestProvider(provider.id) && (
-                    <span className="text-xs text-orange-600 bg-orange-50 border border-orange-200 rounded px-2 py-0.5">
-                      Attention: For testing purposes only.
+                    <span className="badge" style={{ fontSize: "0.7rem", background: "var(--color-earth-light)", borderColor: "var(--color-earth)", color: "var(--color-earth)" }}>
+                      Nur zum Testen
                     </span>
                   )}
                 </div>
@@ -309,34 +321,45 @@ export const PaymentStep = ({
         {isSumUp && (
           <div className="mb-6">
             {isSaving && (
-              <p className="text-sm text-gray-500">Initializing payment...</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Zahlung wird initialisiert...</p>
             )}
             {!isSaving && !sumupCheckoutId && (
-              <p className="text-sm text-gray-500">Loading card form...</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>Kartenformular wird geladen...</p>
             )}
-            {/* The SumUp SDK renders into this div */}
             <div id={SUMUP_WIDGET_ID} className="min-h-[200px]" />
             {isProcessing && (
-              <p className="text-sm text-gray-500 mt-2">Zahlung wird verarbeitet…</p>
+              <p className="text-sm mt-2" style={{ color: "var(--text-muted)" }}>Zahlung wird verarbeitet…</p>
             )}
             {isPlacing && (
-              <p className="text-sm text-gray-500 mt-2">Bestellung wird aufgegeben…</p>
+              <p className="text-sm mt-2" style={{ color: "var(--text-muted)" }}>Bestellung wird aufgegeben…</p>
             )}
           </div>
         )}
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {error && <p className="input-error mb-4">{error}</p>}
 
         {/* Show Place Order button only for non-SumUp providers */}
         {!isSumUp && (
-          <button
-            type="button"
-            disabled={!selectedProviderId || isSaving || isPlacing}
-            onClick={handleOrderComplete}
-            className="bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isPlacing ? "Placing order..." : "Place order"}
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              type="button"
+              disabled={!selectedProviderId || isSaving || isPlacing}
+              onClick={handleOrderComplete}
+              className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: "var(--accent, #ff4908)",
+                border: "2px solid #000",
+                fontFamily: '"DM Mono", monospace',
+                fontWeight: 700,
+              }}
+            >
+              {isPlacing ? "Wird verarbeitet..." : "Bestellung aufgeben"}
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="trust-badge">🔒 Sichere Zahlung</span>
+              <span className="trust-badge">✓ SSL-verschlüsselt</span>
+            </div>
+          </div>
         )}
       </div>
     </div>

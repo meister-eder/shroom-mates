@@ -61,11 +61,15 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
   if (!cart || !cart.items?.length) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-3xl font-bold mb-4">Dein Warenkorb ist leer</h1>
-        <p className="text-gray-600 mb-6">Füge Produkte hinzu, bevor du zur Kasse gehst.</p>
+        <h1 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "2rem", marginBottom: "1rem" }}>
+          Dein Warenkorb ist leer
+        </h1>
+        <p style={{ color: "var(--text-muted)" }} className="mb-6">
+          Füge Produkte hinzu, bevor du zur Kasse gehst.
+        </p>
         <a
           href={`/${countryCode}/store`}
-          className="inline-block bg-black text-white py-3 px-8 rounded-md hover:bg-gray-800 transition-colors"
+          className="btn-accent inline-block"
         >
           Weiter einkaufen
         </a>
@@ -73,10 +77,47 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
     );
   }
 
+  const stepLabels: Record<CheckoutStep, string> = {
+    address: "Adresse",
+    delivery: "Lieferung",
+    payment: "Zahlung",
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-8 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-2 space-y-0">
+    <div className="section-inner py-8">
+      {/* Step progress indicator */}
+      <nav aria-label="Checkout-Schritte" className="mb-8">
+        <ol className="flex items-center gap-2 text-sm">
+          {(["address", "delivery", "payment"] as CheckoutStep[]).map((s, i) => {
+            const steps: CheckoutStep[] = ["address", "delivery", "payment"];
+            const currentIdx = steps.indexOf(step);
+            const stepIdx = i;
+            const isDone = stepIdx < currentIdx;
+            const isActive = stepIdx === currentIdx;
+            return (
+              <li key={s} className="flex items-center gap-2">
+                {i > 0 && <span aria-hidden="true" style={{ color: "var(--text-muted)" }}>›</span>}
+                <span
+                  style={{
+                    fontFamily: '"DM Mono", monospace',
+                    fontWeight: isActive ? 700 : 400,
+                    color: isDone
+                      ? "var(--color-forest)"
+                      : isActive
+                        ? "var(--text-color)"
+                        : "var(--text-muted)",
+                  }}
+                >
+                  {isDone ? "✓ " : ""}{stepLabels[s]}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 flex flex-col gap-4">
           <ShippingAddressStep
             cart={cart}
             countries={countries}

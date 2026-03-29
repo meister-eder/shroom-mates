@@ -4,6 +4,7 @@ import { listProducts } from "@lib/data/products";
 import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import { getRegionParams } from "../../lib/params/region-params";
+import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
 
 export const getStaticPaths = getRegionParams;
 
@@ -15,59 +16,359 @@ const products = region ? await listProducts(region.id).catch(() => []) : [];
 
 const firstProduct = products?.[0];
 const heroImage = firstProduct?.thumbnail ?? firstProduct?.images?.[0]?.url;
+
+// Pick up to 3 featured products for the section below the hero
+const featured = products.slice(0, 3);
 ---
 
 <Layout
   description="Frische Pilze, Growkits und Tinkturen aus Leipzig — direkt vom Erzeuger bestellen."
   image={heroImage}
 >
-  <section
-    class="flex items-center min-h-[calc(100vh-10rem)] gap-12 px-8 py-16 rounded-2xl overflow-hidden"
-    style="background: var(--bg-accent, #fdfcea);"
-  >
-    <div class="flex flex-col gap-6 w-full md:flex-1 md:max-w-2xl">
-      <h1 class="text-5xl font-bold leading-tight tracking-tight">
-        Frische Pilze &amp; Pilzprodukte aus Leipzig
-      </h1>
-      <p class="text-gray-600 text-lg leading-relaxed">
-        Growkits, Tinkturen und frische Edelpilze — nachhaltig angebaut und
-        direkt zu dir nach Hause.
-      </p>
-      <div class="flex items-center gap-4 mt-2">
-        <a href={`/${countryCode}/store`} class="btn-accent"> Zum Shop </a>
-        <a
-          href="https://shroom-mates.de"
-          class="px-6 py-3 text-sm font-medium rounded-md transition-colors"
-          style="border: 2px solid #000; font-family: 'DM Mono', monospace;"
-        >
-          Über uns
-        </a>
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <section class="hero" aria-label="Shroom-Mates Sortiment">
+    <div class="section-inner hero-inner">
+      <!-- Left: text + CTAs -->
+      <div class="hero-text">
+        <div class="hero-tag" aria-hidden="true">
+          <span>🍄</span>
+          <span>Frisch aus Leipzig</span>
+        </div>
+        <h1 class="hero-heading">
+          Pilze &amp; Pilzprodukte<br />
+          <em>direkt vom Erzeuger</em>
+        </h1>
+        <p class="hero-body">
+          Frische Edelpilze, Growkits und Tinkturen — nachhaltig angebaut und
+          schnell zu dir geliefert.
+        </p>
+        <div class="hero-actions">
+          <a href={`/${countryCode}/store`} class="btn-accent">
+            Zum Sortiment
+          </a>
+          <a href="https://shroom-mates.de" class="btn-outline">
+            Mehr über uns
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: hero image -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-blob"></div>
+        {
+          heroImage ? (
+            <Image
+              src={heroImage}
+              width={640}
+              height={640}
+              alt=""
+              widths={[400, 520, 640]}
+              sizes="(max-width: 900px) 0px, 40vw"
+              format="webp"
+              quality={85}
+              class="hero-img"
+              loading="eager"
+              fetchpriority="high"
+            />
+          ) : (
+            <div class="hero-img-placeholder" aria-hidden="true" />
+          )
+        }
       </div>
     </div>
+  </section>
 
-    <div
-      class="hidden md:flex flex-1 relative items-center justify-center h-full"
-    >
-      {
-        heroImage ? (
-          <Image
-            src={heroImage}
-            width={800}
-            height={900}
-            alt={firstProduct?.title ?? "Produktbild"}
-            widths={[400, 600, 800]}
-            sizes="(max-width: 1024px) 50vw, 40vw"
-            format="webp"
-            quality={85}
-            class="relative z-10 w-full h-full object-contain"
-          />
-        ) : (
-          <div
-            class="relative z-10 w-full max-w-lg h-[500px] rounded-xl"
-            style="background: var(--accent, #ff4908); border: 3px solid #000;"
-          />
-        )
-      }
+  <!-- ── Why-us strip ─────────────────────────────────────────────────── -->
+  <section class="why-strip" aria-label="Unsere Vorteile">
+    <div class="section-inner">
+      <ul class="why-grid" role="list">
+        <li class="why-card">
+          <span class="why-icon" aria-hidden="true">🌱</span>
+          <h2 class="why-title">Nachhaltig angebaut</h2>
+          <p class="why-desc">
+            Myzel und Substrat werden regional bezogen und wiederverwertet.
+          </p>
+        </li>
+        <li class="why-card">
+          <span class="why-icon" aria-hidden="true">📦</span>
+          <h2 class="why-title">Versand nach Deutschland</h2>
+          <p class="why-desc">
+            Standard (3–5 Tage) oder Express (1–2 Tage) — sicher verpackt.
+          </p>
+        </li>
+        <li class="why-card">
+          <span class="why-icon" aria-hidden="true">🤝</span>
+          <h2 class="why-title">Direkt vom Erzeuger</h2>
+          <p class="why-desc">
+            Kein Zwischenhändler — wir züchten und verkaufen alles selbst.
+          </p>
+        </li>
+      </ul>
     </div>
   </section>
+
+  <!-- ── Featured products ─────────────────────────────────────────────── -->
+  {
+    featured.length > 0 && (
+      <section class="featured-section" aria-labelledby="featured-heading">
+        <div class="section-inner">
+          <div class="featured-header">
+            <h2 id="featured-heading" class="featured-heading">
+              Ausgewählte Produkte
+            </h2>
+            <a href={`/${countryCode}/store`} class="btn-ghost">
+              Alle ansehen →
+            </a>
+          </div>
+
+          <ul class="featured-grid" role="list">
+            {featured.map((product, index) => (
+              <li>
+                <ProductPreview
+                  id={product.id}
+                  variants={product.variants ?? []}
+                  thumbnailUrl={product.thumbnail ?? undefined}
+                  imageUrl={product.images?.[0]?.url}
+                  title={product.title}
+                  priority={index === 0}
+                  categoryName={product.categories?.[0]?.name}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 </Layout>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .hero {
+    background: var(--bg-accent, #fdfcea);
+    border-bottom: 2px solid #000;
+    overflow: hidden;
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    min-height: calc(100vh - var(--navbar-height, 70px) - 4px);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .hero-inner {
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - var(--navbar-height, 70px) - 4px);
+    }
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border: 2px solid var(--color-forest, #2d5a27);
+    border-radius: 999px;
+    font-family: "DM Mono", monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-forest, #2d5a27);
+    background: var(--color-forest-light, #e8f0e7);
+    margin-bottom: 1.25rem;
+    width: fit-content;
+  }
+
+  .hero-heading {
+    font-family: "DM Mono", monospace;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 1.25rem;
+  }
+
+  .hero-heading em {
+    font-style: normal;
+    color: var(--accent, #ff4908);
+    position: relative;
+  }
+
+  .hero-heading em::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent, #ff4908);
+    border-radius: 2px;
+    opacity: 0.4;
+  }
+
+  .hero-body {
+    color: var(--text-muted, #6b6b6b);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0 0 2rem;
+    max-width: 44ch;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    align-items: center;
+  }
+
+  /* ── Hero visual ──────────────────────────────────────────── */
+  .hero-visual {
+    display: none;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 900px) {
+    .hero-visual {
+      display: flex;
+    }
+  }
+
+  .hero-blob {
+    position: absolute;
+    width: 85%;
+    height: 85%;
+    border-radius: 60% 40% 55% 45% / 45% 55% 40% 60%;
+    background: var(--color-earth-light, #f5edd6);
+    border: 2.5px solid var(--color-earth, #8b6914);
+    z-index: 0;
+  }
+
+  .hero-img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    object-fit: contain;
+    drop-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .hero-img-placeholder {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    background: var(--bg-warm, #faf8f2);
+    border: 2.5px solid #000;
+    border-radius: 16px;
+  }
+
+  /* ── Why-us strip ─────────────────────────────────────────── */
+  .why-strip {
+    border-bottom: 2px solid #000;
+    background: var(--bg-color, #fff);
+  }
+
+  .why-grid {
+    list-style: none;
+    margin: 0;
+    padding: 3rem 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .why-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .why-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1.5rem;
+    background: var(--bg-accent, #fdfcea);
+    border: 2px solid #000;
+    border-radius: 12px;
+  }
+
+  .why-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .why-title {
+    font-family: "DM Mono", monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .why-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted, #6b6b6b);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Featured products ────────────────────────────────────── */
+  .featured-section {
+    padding-bottom: 4rem;
+  }
+
+  .featured-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 3rem;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .featured-heading {
+    font-family: "DM Mono", monospace;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .featured-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .featured-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .featured-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .featured-grid li {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-grid li :global(.product-card) {
+    height: 100%;
+  }
+</style>

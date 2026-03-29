@@ -91,8 +91,13 @@ export const DeliveryStep = ({
 
   if (mode === "inactive") {
     return (
-      <div className="border-t border-gray-200 pt-6 mt-6">
-        <h2 className="text-2xl font-bold text-gray-400">Lieferung</h2>
+      <div className="checkout-step" style={{ opacity: 0.5 }}>
+        <div className="checkout-step-header">
+          <div className="checkout-step-number">2</div>
+          <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem", color: "var(--text-muted)" }}>
+            Lieferung
+          </h2>
+        </div>
       </div>
     );
   }
@@ -102,34 +107,41 @@ export const DeliveryStep = ({
     const currencyCode = cart.currency_code || "EUR";
 
     return (
-      <div className="border-t border-gray-200 pt-6 mt-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+      <div className="checkout-step">
+        <div className="checkout-step-header">
+          <div className="checkout-step-number done">2</div>
+          <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
             Lieferung
-            <CheckCircle />
           </h2>
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0" style={{ background: "#000", marginLeft: "0.25rem" }}>
+            <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{ color: "#fff" }}>
+              <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
           <button
             type="button"
             onClick={onEdit}
-            className="text-sm hover:underline"
+            className="ml-auto text-sm hover:underline"
             style={{ color: "var(--accent, #ff4908)" }}
           >
             Bearbeiten
           </button>
         </div>
 
-        {method && (
-          <div className="text-sm">
-            <p className="font-medium mb-1">Versandart</p>
-            <p className="text-gray-700">
-              {method.name}
-              {" \u2014 "}
-              {method.amount === 0
-                ? "Kostenlos"
-                : convertToLocale({ amount: method.amount, currencyCode })}
-            </p>
-          </div>
-        )}
+        <div className="checkout-step-body">
+          {method && (
+            <div className="text-sm">
+              <p className="input-label mb-1">Versandart</p>
+              <p style={{ color: "var(--text-muted)" }}>
+                {method.name}
+                {" — "}
+                {method.amount === 0
+                  ? "Kostenlos"
+                  : convertToLocale({ amount: method.amount, currencyCode })}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -137,23 +149,23 @@ export const DeliveryStep = ({
   const currencyCode = cart.currency_code || "EUR";
 
   return (
-    <div className="border-t border-gray-200 pt-6 mt-6">
-      <h2 className="text-2xl font-bold mb-6">Lieferung</h2>
+    <div className="checkout-step">
+      <div className="checkout-step-header">
+        <div className="checkout-step-number active">2</div>
+        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
+          Lieferung
+        </h2>
+      </div>
 
-      <div>
-        <p className="font-medium mb-1">Versandart</p>
-        <p className="text-sm text-gray-500 mb-4">
-          Wähle deine gewünschte Versandart
-        </p>
-
+      <div className="checkout-step-body">
         {isLoading && (
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
             Versandoptionen werden geladen...
           </p>
         )}
 
         {!isLoading && shippingOptions.length === 0 && !error && (
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
             Keine Versandoptionen für deine Adresse verfügbar.
           </p>
         )}
@@ -163,10 +175,12 @@ export const DeliveryStep = ({
             {shippingOptions.map((option) => (
               <label
                 key={option.id}
-                className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${selectedOptionId === option.id
-                    ? "border-black"
-                    : "border-gray-200 hover:border-gray-400"
-                  }`}
+                className="flex items-center justify-between px-4 py-3 cursor-pointer transition-colors"
+                style={{
+                  border: `2px solid ${selectedOptionId === option.id ? "var(--accent, #ff4908)" : "#000"}`,
+                  borderRadius: 8,
+                  background: selectedOptionId === option.id ? "var(--bg-accent, #fdfcea)" : "#fff",
+                }}
               >
                 <div className="flex items-center gap-3">
                   <input
@@ -179,7 +193,7 @@ export const DeliveryStep = ({
                   />
                   <span className="text-sm font-medium">{option.name}</span>
                 </div>
-                <span className="text-sm text-gray-700">
+                <span className="text-sm" style={{ fontFamily: '"DM Mono", monospace' }}>
                   {option.amount === 0
                     ? "Kostenlos"
                     : convertToLocale({
@@ -192,7 +206,7 @@ export const DeliveryStep = ({
           </div>
         )}
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {error && <p className="input-error mb-4">{error}</p>}
 
         <button
           type="button"

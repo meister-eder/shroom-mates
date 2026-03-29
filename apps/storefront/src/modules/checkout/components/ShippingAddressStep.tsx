@@ -171,50 +171,57 @@ const ReadOnlyView = ({
     ].filter(Boolean) as string[];
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
+    <div className="checkout-step">
+      <div className="checkout-step-header">
+        <div className="checkout-step-number done">1</div>
+        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
           Lieferadresse
-          <CheckCircle />
         </h2>
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0" style={{ background: "#000", marginLeft: "0.25rem" }}>
+          <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{ color: "#fff" }}>
+            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
         <button
           type="button"
           onClick={onEdit}
-          className="text-sm hover:underline"
+          className="ml-auto text-sm hover:underline"
           style={{ color: "var(--accent, #ff4908)" }}
         >
           Bearbeiten
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-8 text-sm">
-        <div>
-          <p className="font-medium mb-2">Lieferadresse</p>
-          {shippingLines.map((line, i) => (
-            <p key={i} className="text-gray-700">
-              {line}
-            </p>
-          ))}
-        </div>
-
-        <div>
-          <p className="font-medium mb-2">Kontakt</p>
-          {cart.email && <p className="text-gray-700">{cart.email}</p>}
-        </div>
-
-        <div>
-          <p className="font-medium mb-2">Rechnungsadresse</p>
-          {isBillingSame ? (
-            <p className="text-gray-700">
-              Rechnungs- und Lieferadresse sind identisch.
-            </p>
-          ) : (
-            billingLines?.map((line, i) => (
-              <p key={i} className="text-gray-700">
+      <div className="checkout-step-body">
+        <div className="grid grid-cols-3 gap-8 text-sm">
+          <div>
+            <p className="input-label mb-1">Lieferadresse</p>
+            {shippingLines.map((line, i) => (
+              <p key={i} style={{ color: "var(--text-muted)" }}>
                 {line}
               </p>
-            ))
-          )}
+            ))}
+          </div>
+
+          <div>
+            <p className="input-label mb-1">Kontakt</p>
+            {cart.email && <p style={{ color: "var(--text-muted)" }}>{cart.email}</p>}
+          </div>
+
+          <div>
+            <p className="input-label mb-1">Rechnungsadresse</p>
+            {isBillingSame ? (
+              <p style={{ color: "var(--text-muted)" }}>
+                Rechnungs- und Lieferadresse sind identisch.
+              </p>
+            ) : (
+              billingLines?.map((line, i) => (
+                <p key={i} style={{ color: "var(--text-muted)" }}>
+                  {line}
+                </p>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -316,82 +323,87 @@ export const ShippingAddressStep = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <h2 className="text-2xl font-bold mb-6">Lieferadresse</h2>
-
-      <div className="space-y-4">
-        <AddressFields
-          prefix="shipping"
-          register={register}
-          errors={errors.shipping ?? {}}
-          countries={countries}
-        />
-
-        {/* Billing same as shipping */}
-        <label className="flex items-center gap-2 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            {...register("billingSameAsShipping")}
-            className="w-4 h-4 accent-black"
-          />
-          <span className="text-sm">Rechnungsadresse entspricht der Lieferadresse</span>
-        </label>
-
-        {/* Email / Phone */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <input
-              type="email"
-              placeholder="E-Mail*"
-              {...register("email")}
-              className={`w-full border rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors ${errors.email ? "border-red-400" : "border-gray-300"
-                }`}
-            />
-            <p className="text-red-500 text-xs mt-1 min-h-4">
-              {errors.email?.message ?? ""}
-            </p>
-          </div>
-          <div>
-            <input
-              type="tel"
-              placeholder="Telefon"
-              {...register("phone")}
-              className="w-full border border-gray-300 rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors"
-            />
-            <p className="min-h-4 mt-1" />
-          </div>
-        </div>
-
-        {/* Billing address section */}
-        {!billingSameAsShipping && (
-          <div className="pt-4 border-t border-gray-200">
-            <h3 className="text-lg font-semibold mb-4">Rechnungsadresse</h3>
-            <AddressFields
-              prefix="billing"
-              register={register}
-              errors={errors.billing ?? {}}
-              countries={countries}
-            />
-          </div>
-        )}
-
-        {submitError && (
-          <p className="text-red-500 text-sm">{submitError}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            backgroundColor: "var(--accent, #ff4908)",
-            border: "2px solid #000",
-            fontFamily: '"DM Mono", monospace',
-          }}
-        >
-          {isSubmitting ? "Wird gespeichert..." : "Weiter zur Lieferung"}
-        </button>
+    <div className="checkout-step">
+      <div className="checkout-step-header">
+        <div className="checkout-step-number active">1</div>
+        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
+          Lieferadresse
+        </h2>
       </div>
-    </form>
+
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="checkout-step-body">
+        <div className="space-y-4">
+          <AddressFields
+            prefix="shipping"
+            register={register}
+            errors={errors.shipping ?? {}}
+            countries={countries}
+          />
+
+          {/* Billing same as shipping */}
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              {...register("billingSameAsShipping")}
+              className="w-4 h-4 accent-black"
+            />
+            <span className="text-sm">Rechnungsadresse entspricht der Lieferadresse</span>
+          </label>
+
+          {/* Email / Phone */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <input
+                type="email"
+                placeholder="E-Mail*"
+                {...register("email")}
+                className={`input-field${errors.email ? " error" : ""}`}
+              />
+              <p className="input-error">
+                {errors.email?.message ?? ""}
+              </p>
+            </div>
+            <div>
+              <input
+                type="tel"
+                placeholder="Telefon"
+                {...register("phone")}
+                className="input-field"
+              />
+            </div>
+          </div>
+
+          {/* Billing address section */}
+          {!billingSameAsShipping && (
+            <div className="pt-4" style={{ borderTop: "2px solid var(--border-subtle)" }}>
+              <h3 className="input-label mb-4" style={{ fontSize: "1rem" }}>Rechnungsadresse</h3>
+              <AddressFields
+                prefix="billing"
+                register={register}
+                errors={errors.billing ?? {}}
+                countries={countries}
+              />
+            </div>
+          )}
+
+          {submitError && (
+            <p className="input-error">{submitError}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: "var(--accent, #ff4908)",
+              border: "2px solid #000",
+              fontFamily: '"DM Mono", monospace',
+            }}
+          >
+            {isSubmitting ? "Wird gespeichert..." : "Weiter zur Lieferung"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };

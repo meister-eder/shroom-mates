@@ -27,10 +27,9 @@ export interface CheckoutFormValues {
   billing: AddressValues;
 }
 
-const INPUT_BASE =
-  "w-full border rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors";
-const ERROR = "text-red-500 text-xs mt-1 min-h-4";
-const SPACER = "min-h-4 mt-1";
+const INPUT_BASE = "input-field";
+const ERROR = "input-error";
+const SPACER = "";
 
 interface AddressFieldsProps {
   prefix: "shipping" | "billing";
@@ -57,7 +56,7 @@ export const AddressFields = ({
             type="text"
             placeholder="Vorname*"
             {...register(f("firstName"))}
-            className={`${INPUT_BASE} ${errors.firstName ? "border-red-400" : "border-gray-300"}`}
+            className={`${INPUT_BASE}${errors.firstName ? " error" : ""}`}
           />
           <p className={ERROR}>{errors.firstName?.message ?? ""}</p>
         </div>
@@ -66,7 +65,7 @@ export const AddressFields = ({
             type="text"
             placeholder="Nachname*"
             {...register(f("lastName"))}
-            className={`${INPUT_BASE} ${errors.lastName ? "border-red-400" : "border-gray-300"}`}
+            className={`${INPUT_BASE}${errors.lastName ? " error" : ""}`}
           />
           <p className={ERROR}>{errors.lastName?.message ?? ""}</p>
         </div>
@@ -79,7 +78,7 @@ export const AddressFields = ({
             type="text"
             placeholder="Adresse*"
             {...register(f("address"))}
-            className={`${INPUT_BASE} ${errors.address ? "border-red-400" : "border-gray-300"}`}
+            className={`${INPUT_BASE}${errors.address ? " error" : ""}`}
           />
           <p className={ERROR}>{errors.address?.message ?? ""}</p>
         </div>
@@ -88,7 +87,7 @@ export const AddressFields = ({
             type="text"
             placeholder="Firma"
             {...register(f("company"))}
-            className={`${INPUT_BASE} border-gray-300`}
+            className={INPUT_BASE}
           />
           <p className={SPACER} />
         </div>
@@ -101,7 +100,7 @@ export const AddressFields = ({
             type="text"
             placeholder="PLZ*"
             {...register(f("postalCode"))}
-            className={`${INPUT_BASE} ${errors.postalCode ? "border-red-400" : "border-gray-300"}`}
+            className={`${INPUT_BASE}${errors.postalCode ? " error" : ""}`}
           />
           <p className={ERROR}>{errors.postalCode?.message ?? ""}</p>
         </div>
@@ -110,7 +109,7 @@ export const AddressFields = ({
             type="text"
             placeholder="Stadt*"
             {...register(f("city"))}
-            className={`${INPUT_BASE} ${errors.city ? "border-red-400" : "border-gray-300"}`}
+            className={`${INPUT_BASE}${errors.city ? " error" : ""}`}
           />
           <p className={ERROR}>{errors.city?.message ?? ""}</p>
         </div>
@@ -121,7 +120,7 @@ export const AddressFields = ({
         <div>
           <select
             {...register(f("country"))}
-            className={`${INPUT_BASE} ${errors.country ? "border-red-400" : "border-gray-300"} bg-white`}
+            className={`${INPUT_BASE}${errors.country ? " error" : ""}`}
           >
             <option disabled value="">
               Land
@@ -139,7 +138,7 @@ export const AddressFields = ({
             type="text"
             placeholder="Bundesland"
             {...register(f("province"))}
-            className={`${INPUT_BASE} border-gray-300`}
+            className={INPUT_BASE}
           />
           <p className={SPACER} />
         </div>

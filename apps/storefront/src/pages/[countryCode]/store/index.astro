@@ -24,37 +24,246 @@ try {
   error = e instanceof Error ? e : new Error("Unknown error");
   console.error(error);
 }
+
+// Build category list from products for the filter strip
+const categoryMap = new Map<string, string>(); // handle → name
+for (const product of products) {
+  for (const cat of product.categories ?? []) {
+    if (cat.handle && cat.name) {
+      categoryMap.set(cat.handle, cat.name);
+    }
+  }
+}
+const categories = Array.from(categoryMap.entries()); // [handle, name]
+
+// Active category filter from URL
+const activeCategory = Astro.url.searchParams.get("kategorie") ?? "";
+
+// Filter products if a category is selected
+const filteredProducts = activeCategory
+  ? products.filter((p) =>
+      p.categories?.some((c) => c.handle === activeCategory),
+    )
+  : products;
+
+// Helper: get first category name for a product
+const getCategory = (product: (typeof products)[number]) =>
+  product.categories?.[0]?.name;
 ---
 
 <Layout
-  title="Alle Produkte"
+  title="Unser Sortiment"
   description="Entdecke unser Sortiment an frischen Pilzen, Growkits und Tinkturen aus Leipzig."
 >
-  <div class="px-8 py-8 max-w-[1200px] mx-auto">
-    <h1
-      class="mb-8 text-4xl font-bold"
-      style="font-family: 'DM Mono', monospace;"
-    >
-      Alle Produkte
-    </h1>
-    {error && <p class="text-red-700">{error.message}</p>}
-    <ul
-      class="grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full gap-x-6 gap-y-8"
-    >
-      {
-        products?.map((product, index) => (
-          <li>
-            <ProductPreview
-              id={product.id}
-              variants={product.variants ?? []}
-              thumbnailUrl={product.thumbnail ?? undefined}
-              imageUrl={product.images?.[0]?.url}
-              title={product.title}
-              priority={index < 4}
-            />
-          </li>
-        ))
-      }
-    </ul>
+  <!-- Store Banner -->
+  <section class="store-banner" aria-label="Sortiment-Übersicht">
+    <div class="section-inner store-banner-inner">
+      <div class="store-banner-text">
+        <h1 class="store-banner-heading">Frisch aus Leipzig</h1>
+        <p class="store-banner-sub">
+          Pilze, Growkits &amp; Tinkturen — direkt vom Erzeuger
+        </p>
+      </div>
+      <div class="store-banner-facts" aria-label="Unsere Versprechen">
+        <div class="fact-chip">
+          <span aria-hidden="true">🌱</span>
+          <span>Nachhaltig</span>
+        </div>
+        <div class="fact-chip">
+          <span aria-hidden="true">📦</span>
+          <span>Versand DE</span>
+        </div>
+        <div class="fact-chip">
+          <span aria-hidden="true">🍄</span>
+          <span>Frisch geerntet</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-inner" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <!-- Category filter -->
+    {
+      categories.length > 0 && (
+        <nav
+          class="category-filter"
+          aria-label="Produktkategorien filtern"
+          style="margin-bottom: 2rem;"
+        >
+          <a
+            href={`/${countryCode}/store`}
+            class={`category-pill${!activeCategory ? " active" : ""}`}
+            aria-current={!activeCategory ? "page" : undefined}
+          >
+            Alle
+          </a>
+          {categories.map(([handle, name]) => (
+            <a
+              href={`/${countryCode}/store?kategorie=${handle}`}
+              class={`category-pill${activeCategory === handle ? " active" : ""}`}
+              aria-current={activeCategory === handle ? "page" : undefined}
+            >
+              {name}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    <!-- Error state -->
+    {
+      error && (
+        <p class="error-banner" role="alert">
+          Produkte konnten nicht geladen werden. Bitte versuche es später
+          erneut.
+        </p>
+      )
+    }
+
+    <!-- Empty state -->
+    {
+      !error && filteredProducts.length === 0 && (
+        <div class="empty-state" role="status">
+          <p>Keine Produkte in dieser Kategorie.</p>
+          <a
+            href={`/${countryCode}/store`}
+            class="btn-outline"
+            style="margin-top: 1rem; display: inline-flex;"
+          >
+            Alle anzeigen
+          </a>
+        </div>
+      )
+    }
+
+    <!-- Product grid -->
+    {
+      filteredProducts.length > 0 && (
+        <ul
+          class="product-grid"
+          aria-label={`${filteredProducts.length} Produkt${filteredProducts.length === 1 ? "" : "e"}`}
+        >
+          {filteredProducts.map((product, index) => (
+            <li>
+              <ProductPreview
+                id={product.id}
+                variants={product.variants ?? []}
+                thumbnailUrl={product.thumbnail ?? undefined}
+                imageUrl={product.images?.[0]?.url}
+                title={product.title}
+                priority={index < 4}
+                categoryName={getCategory(product)}
+              />
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </div>
 </Layout>
+
+<style>
+  /* ── Store Banner ────────────────────────────────────────── */
+  .store-banner {
+    background: var(--bg-accent, #fdfcea);
+    border-bottom: 2px solid #000;
+  }
+
+  .store-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .store-banner-heading {
+    font-family: "DM Mono", monospace;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.4rem;
+  }
+
+  .store-banner-sub {
+    color: var(--text-muted, #6b6b6b);
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .store-banner-facts {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .fact-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.875rem;
+    border: 2px solid #000;
+    border-radius: 999px;
+    font-family: "DM Mono", monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: var(--bg-color, #fff);
+    white-space: nowrap;
+  }
+
+  /* ── Product grid ────────────────────────────────────────── */
+  .product-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .product-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .product-grid li {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-grid li :global(.product-card) {
+    height: 100%;
+  }
+
+  /* ── Error / empty states ────────────────────────────────── */
+  .error-banner {
+    padding: 1rem 1.25rem;
+    border: 2px solid #c0392b;
+    border-radius: 8px;
+    background: #fdf0ee;
+    color: #c0392b;
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--text-muted, #6b6b6b);
+  }
+</style>
