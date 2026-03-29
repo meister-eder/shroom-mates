@@ -12,6 +12,10 @@ if (!countryCode) {
 }
 ---
 
-<Layout title="Warenkorb" description="Überprüfe die Artikel in deinem Warenkorb." noindex>
+<Layout
+  title="Warenkorb"
+  description="Überprüfe die Artikel in deinem Warenkorb."
+  noindex
+>
   <CartPage client:load countryCode={countryCode} />
 </Layout>

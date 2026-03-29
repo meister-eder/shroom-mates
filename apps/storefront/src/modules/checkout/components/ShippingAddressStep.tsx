@@ -160,15 +160,15 @@ const ReadOnlyView = ({
   const billingLines = isBillingSame
     ? null
     : [
-        billing?.first_name && billing?.last_name
-          ? `${billing.first_name} ${billing.last_name}`
-          : null,
-        billing?.address_1 ?? null,
-        billing?.postal_code && billing?.city
-          ? `${billing.postal_code}, ${billing.city}`
-          : null,
-        billing?.country_code?.toUpperCase() ?? null,
-      ].filter(Boolean) as string[];
+      billing?.first_name && billing?.last_name
+        ? `${billing.first_name} ${billing.last_name}`
+        : null,
+      billing?.address_1 ?? null,
+      billing?.postal_code && billing?.city
+        ? `${billing.postal_code}, ${billing.city}`
+        : null,
+      billing?.country_code?.toUpperCase() ?? null,
+    ].filter(Boolean) as string[];
 
   return (
     <div>
@@ -293,15 +293,15 @@ export const ShippingAddressStep = ({
         billing_address: data.billingSameAsShipping
           ? shippingAddress
           : {
-              first_name: data.billing.firstName,
-              last_name: data.billing.lastName,
-              address_1: data.billing.address,
-              company: data.billing.company || undefined,
-              postal_code: data.billing.postalCode,
-              city: data.billing.city,
-              country_code: data.billing.country,
-              province: data.billing.province || undefined,
-            },
+            first_name: data.billing.firstName,
+            last_name: data.billing.lastName,
+            address_1: data.billing.address,
+            company: data.billing.company || undefined,
+            postal_code: data.billing.postalCode,
+            city: data.billing.city,
+            country_code: data.billing.country,
+            province: data.billing.province || undefined,
+          },
       });
 
       onContinue?.();
@@ -344,9 +344,8 @@ export const ShippingAddressStep = ({
               type="email"
               placeholder="E-Mail*"
               {...register("email")}
-              className={`w-full border rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors ${
-                errors.email ? "border-red-400" : "border-gray-300"
-              }`}
+              className={`w-full border rounded px-4 py-3 text-sm outline-none focus:border-gray-500 transition-colors ${errors.email ? "border-red-400" : "border-gray-300"
+                }`}
             />
             <p className="text-red-500 text-xs mt-1 min-h-4">
               {errors.email?.message ?? ""}

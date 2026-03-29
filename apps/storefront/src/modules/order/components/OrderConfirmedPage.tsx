@@ -32,7 +32,7 @@ export const OrderConfirmedPage = ({
           sessionStorage.removeItem("medusa_order");
         }
       }
-    } catch {}
+    } catch { }
   }, [orderId]);
 
   const currency = order?.currency_code ?? "usd";

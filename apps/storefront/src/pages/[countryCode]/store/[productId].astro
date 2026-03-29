@@ -54,7 +54,8 @@ const { cheapestPrice } = getProductPrice({
 
 <Layout
   title={title}
-  description={description ?? `${title} — jetzt im Shroom-Mates Shop bestellen.`}
+  description={description ??
+    `${title} — jetzt im Shroom-Mates Shop bestellen.`}
   image={images?.[0]?.url}
   type="product"
 >
@@ -71,7 +72,12 @@ const { cheapestPrice } = getProductPrice({
           <div class="flex flex-col gap-4">
             <h1 class="text-4xl font-bold">{title}</h1>
             <p class="text-gray-600">{description}</p>
-            <p class="text-3xl font-bold" style="color: var(--accent, #ff4908);">{cheapestPrice?.calculated_price}</p>
+            <p
+              class="text-3xl font-bold"
+              style="color: var(--accent, #ff4908);"
+            >
+              {cheapestPrice?.calculated_price}
+            </p>
           </div>
 
           <ProductActions

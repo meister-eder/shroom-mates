@@ -7,11 +7,11 @@ import { useEffect, useMemo, useState } from "react";
 type Variant = {
   id: string;
   options:
-    | {
-        id: string;
-        option_id?: string | null;
-      }[]
-    | null;
+  | {
+    id: string;
+    option_id?: string | null;
+  }[]
+  | null;
   manage_inventory: boolean | null;
   allow_backorder: boolean | null;
   inventory_quantity?: number | null;
@@ -39,7 +39,15 @@ export const ProductActions = ({
 }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
-  >({});
+  >(() => {
+    const initial: Record<string, string> = {};
+    for (const option of options) {
+      if (option.values?.length) {
+        initial[option.id] = option.values[0].id;
+      }
+    }
+    return initial;
+  });
   const [isAdding, setIsAdding] = useState(false);
   const [variants, setVariants] = useState<Variant[]>(initialVariants);
   const [isLoadingVariants, setIsLoadingVariants] = useState(true);

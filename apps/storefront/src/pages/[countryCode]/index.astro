@@ -30,15 +30,11 @@ const heroImage = firstProduct?.thumbnail ?? firstProduct?.images?.[0]?.url;
         Frische Pilze &amp; Pilzprodukte aus Leipzig
       </h1>
       <p class="text-gray-600 text-lg leading-relaxed">
-        Growkits, Tinkturen und frische Edelpilze — nachhaltig angebaut und direkt zu dir nach Hause.
+        Growkits, Tinkturen und frische Edelpilze — nachhaltig angebaut und
+        direkt zu dir nach Hause.
       </p>
       <div class="flex items-center gap-4 mt-2">
-        <a
-          href={`/${countryCode}/store`}
-          class="btn-accent"
-        >
-          Zum Shop
-        </a>
+        <a href={`/${countryCode}/store`} class="btn-accent"> Zum Shop </a>
         <a
           href="https://shroom-mates.de"
           class="px-6 py-3 text-sm font-medium rounded-md transition-colors"
@@ -66,7 +62,8 @@ const heroImage = firstProduct?.thumbnail ?? firstProduct?.images?.[0]?.url;
             class="relative z-10 w-full h-full object-contain"
           />
         ) : (
-          <div class="relative z-10 w-full max-w-lg h-[500px] rounded-xl"
+          <div
+            class="relative z-10 w-full max-w-lg h-[500px] rounded-xl"
             style="background: var(--accent, #ff4908); border: 3px solid #000;"
           />
         )

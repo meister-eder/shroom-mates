@@ -163,11 +163,10 @@ export const DeliveryStep = ({
             {shippingOptions.map((option) => (
               <label
                 key={option.id}
-                className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${
-                  selectedOptionId === option.id
+                className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${selectedOptionId === option.id
                     ? "border-black"
                     : "border-gray-200 hover:border-gray-400"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <input
@@ -184,9 +183,9 @@ export const DeliveryStep = ({
                   {option.amount === 0
                     ? "Kostenlos"
                     : convertToLocale({
-                        amount: option.amount,
-                        currencyCode,
-                      })}
+                      amount: option.amount,
+                      currencyCode,
+                    })}
                 </span>
               </label>
             ))}
