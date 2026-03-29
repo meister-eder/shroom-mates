@@ -51,8 +51,8 @@ module.exports = defineConfig({
             resolve: "@medusajs/medusa/file-local",
             id: "local",
             options: {
-              upload_dir: "uploads",
-              backend_url: process.env.MEDUSA_BACKEND_URL || "http://localhost:9000",
+              upload_dir: "static",
+              backend_url: `${process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"}/static`,
             },
           },
         ],
@@ -69,6 +69,23 @@ module.exports = defineConfig({
                   id: "mollie",
                   options: {
                     apiKey: process.env.MOLLIE_API_KEY,
+                  },
+                },
+              ]
+            : []),
+          ...(process.env.SUMUP_API_KEY
+            ? [
+                {
+                  resolve: "medusa-payment-sumup/providers/sumup",
+                  id: "sumup",
+                  options: {
+                    apiKey: process.env.SUMUP_API_KEY,
+                    merchantCode: process.env.SUMUP_MERCHANT_CODE,
+                    // SUMUP_MEDUSA_URL must be the publicly reachable backend URL
+                    // (e.g. your ngrok tunnel) so SumUp can POST webhook callbacks to it.
+                    medusaUrl: process.env.SUMUP_MEDUSA_URL || process.env.MEDUSA_BACKEND_URL,
+                    // Browser redirect after SumUp hosted payment / 3DS
+                    redirectUrl: process.env.SUMUP_REDIRECT_URL,
                   },
                 },
               ]

@@ -17,7 +17,8 @@
     "@medusajs/cli": "2.13.1",
     "@medusajs/framework": "2.13.1",
     "@medusajs/medusa": "2.13.1",
-    "@variablevic/mollie-payments-medusa": "^0.0.13"
+    "@variablevic/mollie-payments-medusa": "^0.0.13",
+    "medusa-payment-sumup": "file:.yalc/medusa-payment-sumup"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.13.1",
