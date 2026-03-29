@@ -30,6 +30,12 @@ export default defineConfig({
     resolve: {
       dedupe: ["react", "react-dom"],
     },
+    ssr: {
+      // Bundle @medusajs/js-sdk during SSR — its ESM build has bare
+      // directory imports (./admin) that Node's ESM loader rejects.
+      // Vite's own resolver handles these correctly when bundling.
+      noExternal: ["@medusajs/js-sdk"],
+    },
     plugins: [tailwindcss()],
   },
   image: {

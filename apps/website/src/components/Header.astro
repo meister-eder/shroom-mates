@@ -70,6 +70,7 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
       <!-- <li><a href="/ueber-uns/">Über uns</a></li> -->
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/kontakt/">Kontakt</a></li>
+      <li><a href="http://localhost:8000/" class="shop-link">🛒 Shop</a></li>
     </ul>
   </nav>
 </header>
@@ -452,5 +453,26 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
       font-size: 1rem;
       padding: 0.4rem 0.6rem;
     }
+  }
+
+  .nav-links .shop-link {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    font-weight: 700;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .nav-links .shop-link:hover {
+    background: var(--accent-dark, #bf2300);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .nav-links .shop-link::after {
+    display: none;
   }
 </style>

@@ -1,7 +1,6 @@
 import { sdk } from "@lib/sdk";
 import { completeCart, initPaymentSession } from "@lib/stores/cart";
 import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
-import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useEffect, useState } from "react";
 
 interface PaymentStepProps {
@@ -28,13 +27,8 @@ const CardIcon = () => (
   </svg>
 );
 
-function isStripeProvider(providerId: string): boolean {
-  return providerId.startsWith("pp_stripe_");
-}
-
 function formatProviderName(providerId: string): string {
   if (providerId === "pp_system_default") return "Manual Payment";
-  if (isStripeProvider(providerId)) return "Credit Card (Stripe)";
   return providerId
     .replace(/^pp_/, "")
     .split("_")
@@ -57,8 +51,6 @@ export const PaymentStep = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isPlacing, setIsPlacing] = useState(false);
   const [error, setError] = useState("");
-  const stripe = useStripe();
-  const elements = useElements();
 
   useEffect(() => {
     if (mode !== "edit") return;
@@ -110,17 +102,6 @@ export const PaymentStep = ({
     setIsPlacing(true);
     setError("");
     try {
-      if (isStripeProvider(selectedProviderId) && stripe && elements) {
-        const { error: stripeError } = await stripe.confirmPayment({
-          elements,
-          redirect: "if_required",
-        });
-        if (stripeError) {
-          setError(stripeError.message ?? "Payment failed. Please try again.");
-          return;
-        }
-      }
-
       const result = await completeCart();
       if (result.type === "order") {
         try {
@@ -197,15 +178,6 @@ export const PaymentStep = ({
             ))}
           </div>
         )}
-
-        {isStripeProvider(selectedProviderId) &&
-          cart.payment_collection?.payment_sessions?.some(
-            (s) => s.provider_id === selectedProviderId,
-          ) && (
-            <div className="mb-6 p-4 border border-gray-200 rounded-md">
-              <PaymentElement />
-            </div>
-          )}
 
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
