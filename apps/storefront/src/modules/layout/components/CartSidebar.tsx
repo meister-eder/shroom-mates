@@ -195,7 +195,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
           {!isEmpty && (
             <div className="border-t border-gray-200 p-6 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Zwischensumme (exkl. MwSt.)</span>
+                <span className="text-gray-600">Zwischensumme (inkl. MwSt.)</span>
                 <span className="font-medium">
                   {convertToLocale({
                     amount: cart?.item_subtotal || 0,

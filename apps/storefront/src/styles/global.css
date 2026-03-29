@@ -262,64 +262,106 @@ html {
 /* ── Form inputs (checkout) ───────────────────────────────────────────────── */
 .input-field {
   width: 100%;
-  padding: 0.625rem 0.75rem;
-  border: 2px solid #000;
-  border-radius: 6px;
-  background: var(--bg-color);
+  padding: 0.7rem 0.875rem;
+  border: 1.5px solid #d1cdc5;
+  border-radius: 8px;
+  background: #fff;
   font-family: "Geist Sans", system-ui, sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.9375rem;
   color: var(--text-color);
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
   appearance: none;
+  line-height: 1.4;
+}
+
+.input-field:hover {
+  border-color: #999;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 73, 8, 0.15);
+  box-shadow: 0 0 0 3px rgba(255, 73, 8, 0.12);
 }
 
 .input-field.error {
   border-color: #c0392b;
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
 }
 
 .input-field::placeholder {
-  color: #aaa;
+  color: #b0aca5;
+}
+
+/* Select arrow */
+select.input-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  padding-right: 2.25rem;
+  cursor: pointer;
 }
 
 .input-label {
   display: block;
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
   font-family: "DM Mono", monospace;
-  margin-bottom: 0.35rem;
-  color: var(--text-color);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  color: #555;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .input-error {
   font-size: 0.78rem;
   color: #c0392b;
-  margin-top: 0.3rem;
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.input-error::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #c0392b;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 /* ── Checkout step card ───────────────────────────────────────────────────── */
 .checkout-step {
-  background: var(--bg-color);
-  border: 2px solid #000;
-  border-radius: 12px;
+  background: #fff;
+  border: 1.5px solid #e2ddd6;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease;
 }
 
 .checkout-step-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 2px solid #000;
-  background: var(--bg-accent);
+  gap: 0.875rem;
+  padding: 1.125rem 1.5rem;
+  border-bottom: 1.5px solid #e2ddd6;
+  background: var(--bg-warm);
 }
 
 .checkout-step-number {
@@ -329,11 +371,12 @@ html {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  border: 2px solid #000;
+  border: 2px solid #ccc;
   font-family: "DM Mono", monospace;
-  font-weight: 600;
-  font-size: 0.875rem;
-  background: var(--bg-color);
+  font-weight: 700;
+  font-size: 0.8rem;
+  background: #fff;
+  color: #999;
   flex-shrink: 0;
 }
 
@@ -341,6 +384,7 @@ html {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 73, 8, 0.15);
 }
 
 .checkout-step-number.done {
@@ -350,32 +394,33 @@ html {
 }
 
 .checkout-step-body {
-  padding: 1.5rem;
+  padding: 1.75rem 1.5rem;
 }
 
 /* ── Order summary card ───────────────────────────────────────────────────── */
 .order-summary-card {
   background: var(--bg-warm);
-  border: 2px solid #000;
-  border-radius: 12px;
+  border: 1.5px solid #e2ddd6;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
 }
 
 .order-summary-header {
-  padding: 1rem 1.25rem;
-  border-bottom: 2px solid #000;
+  padding: 1rem 1.375rem;
+  border-bottom: 1.5px solid #e2ddd6;
   background: var(--bg-accent);
 }
 
 .order-summary-body {
-  padding: 1.25rem;
+  padding: 1.25rem 1.375rem;
 }
 
 .order-summary-line {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 0.35rem 0;
+  padding: 0.4rem 0;
   font-size: 0.9rem;
 }
 
@@ -383,11 +428,11 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 0.75rem 0 0;
-  margin-top: 0.5rem;
-  border-top: 2px solid #000;
+  padding: 0.875rem 0 0;
+  margin-top: 0.625rem;
+  border-top: 1.5px solid #ccc;
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.075rem;
 }
 
 /* ── Category filter strip ────────────────────────────────────────────────── */

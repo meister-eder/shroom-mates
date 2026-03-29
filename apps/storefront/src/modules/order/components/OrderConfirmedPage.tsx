@@ -171,7 +171,7 @@ export const OrderConfirmedPage = ({
               )}
 
               <div className="flex justify-between">
-                <span className="text-gray-600">MwSt.</span>
+                <span className="text-gray-600">Enthaltene MwSt.</span>
                 <span>
                   {convertToLocale({
                     amount: order.tax_total ?? 0,

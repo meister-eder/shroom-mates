@@ -344,6 +344,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
             {
               currency_code: "eur",
               amount: 4.95,
+              is_tax_inclusive: true,
             },
           ],
           rules: [
@@ -374,6 +375,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
             {
               currency_code: "eur",
               amount: 9.95,
+              is_tax_inclusive: true,
             },
           ],
           rules: [
@@ -500,7 +502,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "LIONS-MANE-250G",
           options: { Gewicht: "250g" },
           prices: [
-            { amount: 8.95, currency_code: "eur" },
+            { amount: 8.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -509,7 +511,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "LIONS-MANE-500G",
           options: { Gewicht: "500g" },
           prices: [
-            { amount: 15.95, currency_code: "eur" },
+            { amount: 15.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -518,7 +520,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "LIONS-MANE-1KG",
           options: { Gewicht: "1kg" },
           prices: [
-            { amount: 28.95, currency_code: "eur" },
+            { amount: 28.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -543,7 +545,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "PIOPPINO-250G",
           options: { Gewicht: "250g" },
           prices: [
-            { amount: 6.95, currency_code: "eur" },
+            { amount: 6.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -552,7 +554,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "PIOPPINO-500G",
           options: { Gewicht: "500g" },
           prices: [
-            { amount: 11.95, currency_code: "eur" },
+            { amount: 11.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -577,7 +579,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "BLACK-PEARL-250G",
           options: { Gewicht: "250g" },
           prices: [
-            { amount: 5.95, currency_code: "eur" },
+            { amount: 5.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -586,7 +588,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "BLACK-PEARL-500G",
           options: { Gewicht: "500g" },
           prices: [
-            { amount: 9.95, currency_code: "eur" },
+            { amount: 9.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -611,7 +613,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "WHITE-PEARL-250G",
           options: { Gewicht: "250g" },
           prices: [
-            { amount: 5.95, currency_code: "eur" },
+            { amount: 5.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -620,7 +622,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "WHITE-PEARL-500G",
           options: { Gewicht: "500g" },
           prices: [
-            { amount: 9.95, currency_code: "eur" },
+            { amount: 9.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -646,7 +648,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "GROWKIT-LIONS-MANE",
           options: { Größe: "Standard" },
           prices: [
-            { amount: 19.95, currency_code: "eur" },
+            { amount: 19.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -671,7 +673,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "GROWKIT-AUSTERN",
           options: { Größe: "Standard" },
           prices: [
-            { amount: 14.95, currency_code: "eur" },
+            { amount: 14.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },
@@ -697,7 +699,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sku: "TINKTUR-LIONS-MANE-50ML",
           options: { Größe: "50ml" },
           prices: [
-            { amount: 24.95, currency_code: "eur" },
+            { amount: 24.95, currency_code: "eur", is_tax_inclusive: true },
             
           ],
         },

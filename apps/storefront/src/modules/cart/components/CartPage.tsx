@@ -196,7 +196,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">
-                      Zwischensumme (exkl. Versand und MwSt.)
+                      Zwischensumme (inkl. MwSt., exkl. Versand)
                     </span>
                     <span>
                       {convertToLocale({
@@ -217,7 +217,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                   </div>
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">MwSt.</span>
+                    <span className="text-gray-600">Enthaltene MwSt.</span>
                     <span>
                       {convertToLocale({
                         amount: cart?.tax_total || 0,

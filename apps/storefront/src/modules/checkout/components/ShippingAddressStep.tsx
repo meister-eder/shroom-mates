@@ -353,20 +353,22 @@ export const ShippingAddressStep = ({
           {/* Email / Phone */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
+              <label className="input-label" htmlFor="checkout-email">E-Mail *</label>
               <input
+                id="checkout-email"
                 type="email"
-                placeholder="E-Mail*"
+                autoComplete="email"
                 {...register("email")}
                 className={`input-field${errors.email ? " error" : ""}`}
               />
-              <p className="input-error">
-                {errors.email?.message ?? ""}
-              </p>
+              {errors.email && <p className="input-error">{errors.email.message}</p>}
             </div>
             <div>
+              <label className="input-label" htmlFor="checkout-phone">Telefon <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
               <input
+                id="checkout-phone"
                 type="tel"
-                placeholder="Telefon"
+                autoComplete="tel"
                 {...register("phone")}
                 className="input-field"
               />
@@ -393,12 +395,7 @@ export const ShippingAddressStep = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: "var(--accent, #ff4908)",
-              border: "2px solid #000",
-              fontFamily: '"DM Mono", monospace',
-            }}
+            className="btn-accent w-full"
           >
             {isSubmitting ? "Wird gespeichert..." : "Weiter zur Lieferung"}
           </button>

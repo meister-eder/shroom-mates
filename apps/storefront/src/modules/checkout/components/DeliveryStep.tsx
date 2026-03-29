@@ -177,9 +177,10 @@ export const DeliveryStep = ({
                 key={option.id}
                 className="flex items-center justify-between px-4 py-3 cursor-pointer transition-colors"
                 style={{
-                  border: `2px solid ${selectedOptionId === option.id ? "var(--accent, #ff4908)" : "#000"}`,
+                  border: `1.5px solid ${selectedOptionId === option.id ? "var(--accent, #ff4908)" : "#e2ddd6"}`,
                   borderRadius: 8,
-                  background: selectedOptionId === option.id ? "var(--bg-accent, #fdfcea)" : "#fff",
+                  background: selectedOptionId === option.id ? "#fff9f5" : "#fff",
+                  boxShadow: selectedOptionId === option.id ? "0 0 0 1px var(--accent, #ff4908)" : "none",
                 }}
               >
                 <div className="flex items-center gap-3">
@@ -212,12 +213,7 @@ export const DeliveryStep = ({
           type="button"
           disabled={!selectedOptionId || isSaving}
           onClick={onContinue}
-          className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            backgroundColor: "var(--accent, #ff4908)",
-            border: "2px solid #000",
-            fontFamily: '"DM Mono", monospace',
-          }}
+          className="btn-accent w-full"
         >
           {isSaving ? "Wird gespeichert..." : "Weiter zur Zahlung"}
         </button>

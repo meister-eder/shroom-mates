@@ -36,26 +36,9 @@ interface PaymentStepProps {
   onEdit?: () => void;
 }
 
-const CardIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5 text-gray-400"
-    aria-hidden="true"
-  >
-    <rect x="2" y="5" width="20" height="14" rx="2" />
-    <line x1="2" y1="10" x2="22" y2="10" />
-  </svg>
-);
-
 function formatProviderName(providerId: string): string {
-  if (providerId === "pp_system_default") return "Manual Payment";
-  if (providerId.includes("sumup")) return "Kreditkarte (SumUp)";
+  if (providerId === "pp_system_default") return "Manuelle Zahlung (Test)";
+  if (providerId.includes("sumup")) return "Online bezahlen (SumUp)";
   return providerId
     .replace(/^pp_/, "")
     .split("_")
@@ -83,7 +66,7 @@ export const PaymentStep = ({
   const [isPlacing, setIsPlacing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
-  const sumupMountedRef = useRef<string | null>(null); // tracks which checkoutId is currently mounted
+  const sumupMountedRef = useRef<string | null>(null);
 
   // Derive SumUp checkout ID from the cart's payment session
   const sumupCheckoutId = isSumUpProvider(selectedProviderId) && !isSaving
@@ -111,7 +94,7 @@ export const PaymentStep = ({
         }
       } catch (err) {
         console.error("Failed to load payment providers:", err);
-        setError("Failed to load payment options. Please try again.");
+        setError("Zahlungsoptionen konnten nicht geladen werden. Bitte versuche es erneut.");
       } finally {
         setIsLoading(false);
       }
@@ -130,7 +113,7 @@ export const PaymentStep = ({
       await initPaymentSession(providerId);
     } catch (err) {
       console.error("Failed to initialize payment session:", err);
-      setError("Failed to set payment method. Please try again.");
+      setError("Zahlungsmethode konnte nicht gesetzt werden. Bitte versuche es erneut.");
       const savedProviderId =
         cart.payment_collection?.payment_sessions?.[0]?.provider_id ?? "";
       setSelectedProviderId(savedProviderId);
@@ -152,26 +135,27 @@ export const PaymentStep = ({
       } else if (result.type === "already_completed") {
         window.location.href = `/${countryCode}/order/confirmed`;
       } else {
-        setError(result.error.message || "Failed to place order. Please try again.");
+        setError(result.error.message || "Bestellung konnte nicht aufgegeben werden. Bitte versuche es erneut.");
       }
     } catch (err) {
       console.error("Failed to place order:", err);
-      setError("Failed to place order. Please try again.");
+      setError("Bestellung konnte nicht aufgegeben werden. Bitte versuche es erneut.");
     } finally {
       setIsPlacing(false);
     }
   }, [countryCode]);
 
-  // Load SumUp SDK and mount widget when checkout ID is available
+  // Load SumUp Card Widget and mount when checkout ID is available.
+  // The widget shows all payment methods enabled on your SumUp merchant account
+  // (credit/debit cards, Apple Pay, Google Pay, PayPal, iDEAL, etc.).
+  // To enable more methods, go to SumUp Dashboard → Settings → Payment Methods.
   useEffect(() => {
     if (!sumupCheckoutId) return;
-    // Don't remount if already mounted for the same checkout ID
     if (sumupMountedRef.current === sumupCheckoutId) return;
 
     const mount = () => {
       const container = document.getElementById(SUMUP_WIDGET_ID);
       if (!container || !window.SumUpCard) return;
-      // Clear previous widget content
       container.innerHTML = "";
       sumupMountedRef.current = sumupCheckoutId;
       window.SumUpCard.mount({
@@ -184,17 +168,14 @@ export const PaymentStep = ({
         onResponse: (type, body) => {
           switch (type) {
             case "sent":
-              // Form submitted to SumUp server for processing
               setIsProcessing(true);
               setError("");
               break;
             case "auth-screen":
-              // 3DS challenge is being displayed within the widget
               setIsProcessing(true);
               setError("");
               break;
             case "success":
-              // Payment completed — verify on backend via completeCart
               setIsProcessing(false);
               handleOrderComplete();
               break;
@@ -205,14 +186,12 @@ export const PaymentStep = ({
               sumupMountedRef.current = null;
               break;
             case "fail":
-              // User cancelled or session timed out
               console.warn("SumUp payment failed/cancelled:", body);
               setIsProcessing(false);
               setError("Zahlung abgebrochen oder abgelaufen. Bitte versuche es erneut.");
               sumupMountedRef.current = null;
               break;
             case "invalid":
-              // Form validation errors — widget handles display, no action needed
               break;
           }
         },
@@ -224,18 +203,16 @@ export const PaymentStep = ({
       return;
     }
 
-    // Load SDK script if not already present
     if (!document.getElementById("sumup-sdk-script")) {
       const script = document.createElement("script");
       script.id = "sumup-sdk-script";
       script.src = SUMUP_SDK_URL;
       script.onload = mount;
       script.onerror = () => {
-        setError("Failed to load payment widget. Please refresh and try again.");
+        setError("Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.");
       };
       document.head.appendChild(script);
     } else {
-      // Script tag exists but SDK not ready yet — wait for it
       const interval = setInterval(() => {
         if (window.SumUpCard) {
           clearInterval(interval);
@@ -258,8 +235,6 @@ export const PaymentStep = ({
       </div>
     );
   }
-
-  const isSumUp = isSumUpProvider(selectedProviderId);
 
   return (
     <div className="checkout-step">
@@ -288,9 +263,10 @@ export const PaymentStep = ({
                 key={provider.id}
                 className="flex items-center justify-between px-4 py-3 cursor-pointer transition-colors"
                 style={{
-                  border: `2px solid ${selectedProviderId === provider.id ? "var(--accent, #ff4908)" : "#000"}`,
+                  border: `1.5px solid ${selectedProviderId === provider.id ? "var(--accent, #ff4908)" : "#e2ddd6"}`,
                   borderRadius: 8,
-                  background: selectedProviderId === provider.id ? "var(--bg-accent, #fdfcea)" : "#fff",
+                  background: selectedProviderId === provider.id ? "#fff9f5" : "#fff",
+                  boxShadow: selectedProviderId === provider.id ? "0 0 0 1px var(--accent, #ff4908)" : "none",
                 }}
               >
                 <div className="flex items-center gap-3">
@@ -311,14 +287,15 @@ export const PaymentStep = ({
                     </span>
                   )}
                 </div>
-                <CardIcon />
               </label>
             ))}
           </div>
         )}
 
-        {/* SumUp embedded card widget */}
-        {isSumUp && (
+        {/* SumUp Card Widget — shows all payment methods enabled on the SumUp account.
+            To enable PayPal, Apple Pay, Google Pay etc., go to:
+            SumUp Dashboard → Settings → Payment Methods */}
+        {isSumUpProvider(selectedProviderId) && (
           <div className="mb-6">
             {isSaving && (
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>Zahlung wird initialisiert...</p>
@@ -338,24 +315,18 @@ export const PaymentStep = ({
 
         {error && <p className="input-error mb-4">{error}</p>}
 
-        {/* Show Place Order button only for non-SumUp providers */}
-        {!isSumUp && (
+        {/* Place Order button for non-SumUp providers; SumUp uses its own submit button */}
+        {!isSumUpProvider(selectedProviderId) && (
           <div className="flex flex-col gap-3">
             <button
               type="button"
               disabled={!selectedProviderId || isSaving || isPlacing}
               onClick={handleOrderComplete}
-              className="text-white py-3 px-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                backgroundColor: "var(--accent, #ff4908)",
-                border: "2px solid #000",
-                fontFamily: '"DM Mono", monospace',
-                fontWeight: 700,
-              }}
+              className="btn-accent w-full"
             >
               {isPlacing ? "Wird verarbeitet..." : "Bestellung aufgeben"}
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="trust-badge">🔒 Sichere Zahlung</span>
               <span className="trust-badge">✓ SSL-verschlüsselt</span>
             </div>

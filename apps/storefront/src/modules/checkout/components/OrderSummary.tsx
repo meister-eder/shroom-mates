@@ -20,7 +20,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
         <div className="mb-4">
           <div className="order-summary-line">
             <span style={{ color: "var(--text-muted)" }}>
-              Zwischensumme (exkl. Versand &amp; MwSt.)
+              Zwischensumme (inkl. MwSt., exkl. Versand)
             </span>
             <span>
               {convertToLocale({ amount: cart.item_subtotal || 0, currencyCode })}
@@ -38,7 +38,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
           </div>
 
           <div className="order-summary-line">
-            <span style={{ color: "var(--text-muted)" }}>MwSt.</span>
+            <span style={{ color: "var(--text-muted)" }}>Enthaltene MwSt.</span>
             <span>
               {convertToLocale({ amount: cart.tax_total || 0, currencyCode })}
             </span>
