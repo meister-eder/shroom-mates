@@ -28,11 +28,15 @@ export default defineConfig({
   },
   // Performance optimizations
   vite: {
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            vendor: ["astro"],
+    environments: {
+      client: {
+        build: {
+          rollupOptions: {
+            output: {
+              manualChunks: {
+                vendor: ["astro"],
+              },
+            },
           },
         },
       },
