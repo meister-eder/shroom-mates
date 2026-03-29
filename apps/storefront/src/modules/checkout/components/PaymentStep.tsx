@@ -3,6 +3,14 @@ import { completeCart, initPaymentSession } from "@lib/stores/cart";
 import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+type SumUpResponseType =
+  | "sent"
+  | "invalid"
+  | "auth-screen"
+  | "error"
+  | "success"
+  | "fail";
+
 declare global {
   interface Window {
     SumUpCard?: {
@@ -12,7 +20,7 @@ declare global {
         locale?: string;
         showSubmitButton?: boolean;
         onLoad?: () => void;
-        onResponse?: (type: "success" | "error" | "unsupported", body: Record<string, unknown>) => void;
+        onResponse?: (type: SumUpResponseType, body: Record<string, unknown>) => void;
       }): void;
     };
   }
@@ -73,14 +81,15 @@ export const PaymentStep = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPlacing, setIsPlacing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const sumupMountedRef = useRef<string | null>(null); // tracks which checkoutId is currently mounted
 
   // Derive SumUp checkout ID from the cart's payment session
   const sumupCheckoutId = isSumUpProvider(selectedProviderId) && !isSaving
     ? (cart.payment_collection?.payment_sessions?.find(
-        (s) => isSumUpProvider(s.provider_id ?? ""),
-      )?.data?.id as string | undefined)
+      (s) => isSumUpProvider(s.provider_id ?? ""),
+    )?.data?.id as string | undefined)
     : undefined;
 
   useEffect(() => {
@@ -173,12 +182,38 @@ export const PaymentStep = ({
           console.log("SumUp card widget loaded");
         },
         onResponse: (type, body) => {
-          if (type === "success") {
-            handleOrderComplete();
-          } else {
-            console.error("SumUp payment response:", type, body);
-            setError("Payment failed. Please try again.");
-            sumupMountedRef.current = null;
+          switch (type) {
+            case "sent":
+              // Form submitted to SumUp server for processing
+              setIsProcessing(true);
+              setError("");
+              break;
+            case "auth-screen":
+              // 3DS challenge is being displayed within the widget
+              setIsProcessing(true);
+              setError("");
+              break;
+            case "success":
+              // Payment completed — verify on backend via completeCart
+              setIsProcessing(false);
+              handleOrderComplete();
+              break;
+            case "error":
+              console.error("SumUp payment error:", body);
+              setIsProcessing(false);
+              setError("Zahlung fehlgeschlagen. Bitte versuche es erneut.");
+              sumupMountedRef.current = null;
+              break;
+            case "fail":
+              // User cancelled or session timed out
+              console.warn("SumUp payment failed/cancelled:", body);
+              setIsProcessing(false);
+              setError("Zahlung abgebrochen oder abgelaufen. Bitte versuche es erneut.");
+              sumupMountedRef.current = null;
+              break;
+            case "invalid":
+              // Form validation errors — widget handles display, no action needed
+              break;
           }
         },
       });
@@ -242,8 +277,8 @@ export const PaymentStep = ({
               <label
                 key={provider.id}
                 className={`flex items-center justify-between border rounded-md px-4 py-3 cursor-pointer transition-colors ${selectedProviderId === provider.id
-                    ? "border-black"
-                    : "border-gray-200 hover:border-gray-400"
+                  ? "border-black"
+                  : "border-gray-200 hover:border-gray-400"
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -281,8 +316,11 @@ export const PaymentStep = ({
             )}
             {/* The SumUp SDK renders into this div */}
             <div id={SUMUP_WIDGET_ID} className="min-h-[200px]" />
+            {isProcessing && (
+              <p className="text-sm text-gray-500 mt-2">Zahlung wird verarbeitet…</p>
+            )}
             {isPlacing && (
-              <p className="text-sm text-gray-500 mt-2">Placing order…</p>
+              <p className="text-sm text-gray-500 mt-2">Bestellung wird aufgegeben…</p>
             )}
           </div>
         )}

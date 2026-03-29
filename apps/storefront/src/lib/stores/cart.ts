@@ -258,8 +258,22 @@ export async function initPaymentSession(providerId: string): Promise<void> {
     throw new Error("Cart not initialized");
   }
 
+  const description = cart.items
+    ?.map((item) => `${item.quantity}× ${item.title}`)
+    .join(", ");
+
+  const addr = cart.shipping_address;
+  const customerData: Record<string, string> = {};
+  if (cart.email) customerData.email = cart.email;
+  if (addr?.first_name) customerData.first_name = addr.first_name;
+  if (addr?.last_name) customerData.last_name = addr.last_name;
+
   await sdk.store.payment.initiatePaymentSession(cart, {
     provider_id: providerId,
+    data: {
+      ...(description && { description }),
+      ...customerData,
+    },
   });
 
   const { cart: updatedCart } = await sdk.store.cart.retrieve(cart.id, {
@@ -287,13 +301,20 @@ export async function completeCart() {
     }
 
     return result;
-  } catch {
-    // If we get a conflict (idempotency error), the cart was likely already
-    // completed by a payment provider webhook. Clear the cart and signal
-    // the caller so it can show a success message.
-    clearCartId();
-    $cart.set(null);
-    return { type: "already_completed" as const };
+  } catch (error: unknown) {
+    // If we get a conflict (409) or idempotency error, the cart was likely
+    // already completed by a payment provider webhook. Clear the cart and
+    // signal the caller so it can show a success message.
+    const status = (error as { status?: number }).status;
+    if (status === 409 || status === 422) {
+      clearCartId();
+      $cart.set(null);
+      return { type: "already_completed" as const };
+    }
+
+    // For all other errors (network, 500, etc.), re-throw so the UI
+    // can display the actual error.
+    throw error;
   }
 }
 

@@ -1,0 +1,25 @@
+---
+export const prerender = false;
+
+import Layout from "@layouts/Layout.astro";
+import { CheckoutCompletePage } from "@modules/checkout/components/CheckoutCompletePage";
+
+const { countryCode } = Astro.params;
+const checkoutId = Astro.url.searchParams.get("checkout_id");
+
+if (!countryCode) {
+    return Astro.redirect("/not-found");
+}
+---
+
+<Layout
+    title="Zahlung wird verarbeitet"
+    description="Deine Zahlung wird verarbeitet."
+    noindex
+>
+    <CheckoutCompletePage
+        client:load
+        countryCode={countryCode}
+        checkoutId={checkoutId}
+    />
+</Layout>

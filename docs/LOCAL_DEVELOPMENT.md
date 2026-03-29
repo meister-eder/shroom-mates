@@ -199,20 +199,42 @@ If you just want to test the checkout flow without SumUp:
 
 ### 6.3 Test Cards (SumUp Sandbox)
 
-When paying on the SumUp checkout page, use these test cards:
+When paying on the SumUp checkout page, use these test cards. All test cards use **any 3-digit CVV** (e.g., `123`) and **any future expiry date** (e.g., `12/30`).
 
-| Brand | Card Number | CVV | Expiry |
-|-------|-------------|-----|--------|
-| Visa | `4000 0000 0000 0002` | Any 3 digits | Any future date |
-| Mastercard | `5200 0000 0000 1005` | Any 3 digits | Any future date |
-| Maestro | `6799 9999 9999 9999` | Any 3/4 digits | Any future date |
-| AMEX | `3400 0000 0000 009` | Any 4 digits | Any future date |
+#### Successful Payments (Frictionless — no 3DS challenge)
+
+| Brand | Card Number | Behavior |
+|-------|-------------|----------|
+| Visa | `4200 0000 0000 0091` | Frictionless authentication |
+| Visa | `4200 0000 0000 0026` | Frictionless authentication |
+| Mastercard | `5200 0000 0000 0007` | Frictionless authentication |
+| Mastercard | `5200 0000 0000 0056` | Frictionless authentication |
+
+#### 3D Secure Challenge (requires user interaction)
+
+| Brand | Card Number | Behavior |
+|-------|-------------|----------|
+| Visa | `4200 0000 0000 0042` | 3DS challenge required |
+| Visa | `4200 0000 0000 0067` | 3DS challenge required |
+| Mastercard | `5200 0000 0000 0015` | 3DS challenge required |
+| Mastercard | `5200 0000 0000 0049` | 3DS challenge required |
+
+#### 3D Secure Failures
+
+| Brand | Card Number | Behavior |
+|-------|-------------|----------|
+| Visa | `4012 0010 3746 1114` | Authentication fails (technical error) |
+| Visa | `4012 0010 3714 1112` | Cardholder not enrolled for 3DS |
+| Mastercard | `5434 5800 0000 0006` | Authentication fails (technical error) |
+
+Full list of test cards: https://developer.sumup.com/online-payments/testing
 
 ### 6.4 Testing Payment Failures
 
+To simulate a failed payment, create a checkout with one of these amounts:
+
 | Amount | Result |
 |--------|--------|
-| Exactly **11.00** (any currency) | Payment always fails |
 | **42.01** | Generic card decline |
 | **42.76** | Card expired error |
 | **42.91** | Do not honor error |
