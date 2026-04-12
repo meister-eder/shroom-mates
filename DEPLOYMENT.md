@@ -30,7 +30,7 @@ as plain static files — no container restart is needed when only website conte
 
 ## Prerequisites
 
-- Hetzner VPS: Ubuntu 22.04+, min 2 vCPU / 4 GB RAM recommended
+- Hetzner VPS: Ubuntu 22.04+, min 2 vCPU / 8 GB RAM recommended
 - Docker + Docker Compose v2 installed on the server
 - `jq` installed on the server (`apt install jq`)
 - DNS A records pointing to the VPS IP:
@@ -94,7 +94,6 @@ JWT_SECRET=<random-32-byte-secret>
 
 # Payment providers
 SUMUP_API_KEY=<your-sumup-api-key>
-# MOLLIE_API_KEY=<mollie-key-if-used>
 ```
 
 > **Generate secrets**: `openssl rand -base64 32`
@@ -136,19 +135,25 @@ This creates:
 
 ## Ongoing Deployments
 
+All production deploys go through `deploy.yml`, which only fires after CI passes on `main`.
+
 ### Full stack deploy
 
-Push to `main` — the `deploy.yml` workflow handles everything:
+Push to `main` when backend, storefront, or infra files change — `deploy.yml` detects this and runs the full path:
 - Rebuilds all Docker images
 - Rsyncs changed files
 - Restarts services with zero-downtime via `docker compose up -d`
 
 ### Website-only deploy
 
-If you only change files under `apps/website/`, the `deploy-website.yml` workflow runs instead:
+If **all** changed files are under `apps/website/`, `deploy.yml` automatically takes the fast path:
 - Builds only the static website
 - Rsyncs only the `dist/` folder to `/opt/shroom-mates/apps/website/dist/`
 - **No Docker restart needed** — Caddy picks up the new files immediately from the bind mount
+
+### Emergency / manual deploy
+
+Trigger `deploy.yml` manually from the GitHub Actions UI (`workflow_dispatch`). This bypasses the CI gate — useful if CI itself is broken but a hotfix must ship.
 
 ---
 
@@ -251,3 +256,104 @@ The Medusa build creates a `.next` folder that can be large. Clean up old images
 docker image prune -f
 docker builder prune -f
 ```
+
+---
+
+## Staging Environment
+
+Staging runs on the **same Hetzner server** as production, fully isolated via
+separate Docker containers, volumes, and ports. No TLS — access via IP + port.
+
+### Architecture
+
+```
+Production (docker-compose.yml)       Staging (docker-compose.staging.yml)
+─────────────────────────────────     ─────────────────────────────────────
+Caddy → :80/:443                      (no Caddy — direct port access)
+  shroom-mates.de (static)            Storefront → :4322
+  shop.shroom-mates.de → :4321        Medusa API → :9001
+  api.shroom-mates.de  → :9000
+Postgres (internal)                   Postgres (internal, separate volume)
+Redis (internal)                      Redis (internal, separate volume)
+```
+
+### Staging Setup (one-time)
+
+```bash
+ssh deploy@<your-vps-ip>
+
+# Create staging directory
+mkdir -p /opt/shroom-mates-staging
+
+# Create staging env file
+nano /opt/shroom-mates-staging/.env.staging
+```
+
+Paste (fill in values — see `.env.staging.example` in the repo):
+
+```dotenv
+POSTGRES_USER=medusa
+POSTGRES_PASSWORD=<different-password-from-production>
+POSTGRES_DB=shroom-mates-staging
+
+COOKIE_SECRET=<openssl-rand-base64-32>
+JWT_SECRET=<openssl-rand-base64-32>
+
+MEDUSA_BACKEND_URL=http://<HETZNER_IP>:9001
+STORE_CORS=http://<HETZNER_IP>:4322
+ADMIN_CORS=http://<HETZNER_IP>:9001
+AUTH_CORS=http://<HETZNER_IP>:9001,http://<HETZNER_IP>:4322
+```
+
+### Staging Deployment
+
+Staging is **on-demand** — it is not tied to any branch. To start a staging environment:
+
+1. Go to **Actions → Deploy Staging → Run workflow**
+2. Enter the branch you want to test (default: `main`)
+3. The workflow builds all apps from that branch, rsyncs to `/opt/shroom-mates-staging/`, and starts the stack
+4. Verifies all services are healthy
+
+To stop staging when you're done, run **Actions → Stop Staging → Run workflow**. This runs `docker compose down` on the server without deleting volumes.
+
+### Staging Access
+
+- **Storefront**: `http://<HETZNER_IP>:4322`
+- **Medusa API**: `http://<HETZNER_IP>:9001/health`
+- **Medusa Admin**: `http://<HETZNER_IP>:9001/app`
+
+### Seed the staging database (first-time only)
+
+```bash
+ssh deploy@<your-vps-ip>
+cd /opt/shroom-mates-staging
+docker compose -f docker-compose.staging.yml exec medusa npx medusa exec ./src/scripts/seed.js
+```
+
+### Staging Manual Commands
+
+```bash
+cd /opt/shroom-mates-staging
+
+# Logs
+docker compose -f docker-compose.staging.yml logs -f medusa
+
+# Restart
+docker compose -f docker-compose.staging.yml restart medusa
+
+# Tear down (preserves volumes)
+docker compose -f docker-compose.staging.yml down
+
+# Tear down + delete all staging data
+docker compose -f docker-compose.staging.yml down -v
+```
+
+### Branch Strategy
+
+| Trigger | Deploys to | Workflow |
+|---------|-----------|----------|
+| `main` push (after CI passes) | **Production** — full stack | `deploy.yml` |
+| `main` push, website files only | **Production** — static files only, no Docker restart | `deploy.yml` |
+| Manual dispatch (any branch) | **Staging** (`:4322` / `:9001`) | `deploy-staging.yml` |
+| Manual dispatch | Stops staging | `stop-staging.yml` |
+| Any push to `main` / PR to `main` | — | `ci.yml` (lint, build, test) |

@@ -38,8 +38,8 @@ module.exports = defineConfig({
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
       authCors: process.env.AUTH_CORS!,
-      jwtSecret: process.env.JWT_SECRET || "supersecret",
-      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
+      jwtSecret: process.env.JWT_SECRET!,
+      cookieSecret: process.env.COOKIE_SECRET!,
     },
   },
   modules: [
@@ -62,17 +62,6 @@ module.exports = defineConfig({
       resolve: "@medusajs/medusa/payment",
       options: {
         providers: [
-          ...(process.env.MOLLIE_API_KEY
-            ? [
-                {
-                  resolve: "@variablevic/mollie-payments-medusa",
-                  id: "mollie",
-                  options: {
-                    apiKey: process.env.MOLLIE_API_KEY,
-                  },
-                },
-              ]
-            : []),
           ...(process.env.SUMUP_API_KEY
             ? [
                 {

@@ -300,6 +300,11 @@ export const PaymentStep = ({
             {isSaving && (
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>Zahlung wird initialisiert...</p>
             )}
+            {!isSaving && (
+              <p className="text-sm font-medium mb-3" style={{ fontFamily: '"DM Mono", monospace' }}>
+                Zahlungsmethode auswählen
+              </p>
+            )}
             {!isSaving && !sumupCheckoutId && (
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>Kartenformular wird geladen...</p>
             )}

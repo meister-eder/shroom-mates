@@ -1,8 +1,12 @@
 name: Deploy to Hetzner
 
 on:
-  push:
-    branches: [main, shop]
+  # Only fires after CI passes on main — broken code cannot reach production.
+  # workflow_dispatch bypasses the gate intentionally (emergency hotfix path).
+  workflow_run:
+    workflows: [CI]
+    branches: [main]
+    types: [completed]
   workflow_dispatch:
 
 concurrency:
@@ -15,12 +19,101 @@ env:
   DEPLOY_PATH: /opt/shroom-mates
 
 jobs:
-  # ── Build & Verify ──────────────────────────────────────────
+  # ── Detect what changed ─────────────────────────────────────
+  # Skipped entirely when CI failed (workflow_run.conclusion != 'success').
+  detect-changes:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    outputs:
+      website_only: ${{ steps.check.outputs.website_only }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # For workflow_run, checkout the exact SHA that CI tested.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
+
+      - name: Check if only website changed
+        id: check
+        run: |
+          # Manual dispatch → always do a full deploy
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "website_only=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+          printf "Changed files:\n%s\n" "$CHANGED"
+
+          NON_WEBSITE=$(echo "$CHANGED" | grep -v '^apps/website/' | grep -v '^$' || true)
+          if [ -z "$NON_WEBSITE" ] && [ -n "$CHANGED" ]; then
+            echo "website_only=true" >> $GITHUB_OUTPUT
+          else
+            echo "website_only=false" >> $GITHUB_OUTPUT
+          fi
+
+  # ── Fast path: website-only deploy (no Docker restart) ─────
+  deploy-website-only:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.website_only == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://shroom-mates.de
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build website
+        run: bun run --filter @shroom-mates/website build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync website dist to server
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            apps/website/dist/ \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/apps/website/dist/"
+
+      - name: Smoke test
+        run: |
+          sleep 3
+          curl --fail --silent --show-error --max-time 15 https://shroom-mates.de > /dev/null
+          echo "✓ Site is live"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
+  # ── Full-stack deploy ───────────────────────────────────────
   build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.website_only == 'false'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -56,8 +149,7 @@ jobs:
           path: apps/website/dist/
           retention-days: 1
 
-  # ── Deploy ─────────────────────────────────────────────────
-  deploy:
+  deploy-full:
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -66,6 +158,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Download website dist
         uses: actions/download-artifact@v4
@@ -106,7 +200,6 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
             cd /opt/shroom-mates
-            # Check all services are healthy
             unhealthy=$(docker compose ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Name')
             if [ -n "$unhealthy" ]; then
               echo "⚠ Unhealthy services: $unhealthy"

@@ -198,7 +198,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                 <span className="text-gray-600">Zwischensumme (inkl. MwSt.)</span>
                 <span className="font-medium">
                   {convertToLocale({
-                    amount: cart?.item_subtotal || 0,
+                    amount: cart?.item_total || 0,
                     currencyCode: cart?.currency_code || "EUR",
                   })}
                 </span>

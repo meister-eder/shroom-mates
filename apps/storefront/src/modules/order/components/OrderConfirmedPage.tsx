@@ -150,7 +150,7 @@ export const OrderConfirmedPage = ({
                 <span className="text-gray-600">Zwischensumme</span>
                 <span>
                   {convertToLocale({
-                    amount: order.subtotal ?? 0,
+                    amount: order.item_total ?? order.subtotal ?? 0,
                     currencyCode: currency,
                   })}
                 </span>
@@ -170,8 +170,8 @@ export const OrderConfirmedPage = ({
                 </div>
               )}
 
-              <div className="flex justify-between">
-                <span className="text-gray-600">Enthaltene MwSt.</span>
+              <div className="flex justify-between text-xs pt-1" style={{ color: "var(--text-muted, #888)" }}>
+                <span>(davon MwSt. 19 %)</span>
                 <span>
                   {convertToLocale({
                     amount: order.tax_total ?? 0,

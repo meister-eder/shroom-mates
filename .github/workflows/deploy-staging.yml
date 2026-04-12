@@ -1,0 +1,115 @@
+name: Deploy Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to deploy to staging
+        required: true
+        default: main
+        type: string
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+env:
+  DEPLOY_HOST: ${{ secrets.HETZNER_HOST }}
+  DEPLOY_USER: ${{ secrets.HETZNER_USER || 'deploy' }}
+  DEPLOY_PATH: /opt/shroom-mates-staging
+
+jobs:
+  # ── Build ───────────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (${{ github.event.inputs.branch }})
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build website
+        run: bun run --filter @shroom-mates/website build
+
+      - name: Build storefront
+        run: bun run --filter @shroom-mates/storefront build
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci --cache /tmp/npm-cache-sm
+
+      - name: Build backend
+        working-directory: backend
+        run: npx medusa build
+
+  # ── Deploy to Staging ──────────────────────────────────────
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Checkout (${{ github.event.inputs.branch }})
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync project to server
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.turbo' \
+            --exclude='.env' \
+            --exclude='.env.staging' \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+            cd /opt/shroom-mates-staging
+            docker compose -f docker-compose.staging.yml --env-file .env.staging pull postgres redis
+            docker compose -f docker-compose.staging.yml --env-file .env.staging build medusa storefront
+            docker compose -f docker-compose.staging.yml --env-file .env.staging up -d --remove-orphans
+            echo "Waiting for health checks..."
+            sleep 15
+            docker compose -f docker-compose.staging.yml ps
+          EOF
+
+      - name: Verify staging deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+            cd /opt/shroom-mates-staging
+            unhealthy=$(docker compose -f docker-compose.staging.yml ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Name')
+            if [ -n "$unhealthy" ]; then
+              echo "Unhealthy services: $unhealthy"
+              docker compose -f docker-compose.staging.yml logs --tail=30 $unhealthy
+              exit 1
+            fi
+            echo "All staging services healthy"
+          EOF
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

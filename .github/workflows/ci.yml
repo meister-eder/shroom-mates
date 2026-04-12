@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Lint & Typecheck ────────────────────────────────────────
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint website (Biome)
+        working-directory: apps/website
+        run: bunx @biomejs/biome check .
+
+  # ── Build all apps ─────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build website
+        run: bun run --filter @shroom-mates/website build
+
+      - name: Build storefront
+        run: bun run --filter @shroom-mates/storefront build
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci --cache /tmp/npm-cache-sm
+
+      - name: Build backend
+        working-directory: backend
+        run: npx medusa build
+
+  # ── Backend tests ──────────────────────────────────────────
+  test-backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: medusa-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d medusa-test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci --cache /tmp/npm-cache-sm
+
+      - name: Run integration tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgres://test:test@localhost:5432/medusa-test
+          JWT_SECRET: test-jwt-secret-ci-only
+          COOKIE_SECRET: test-cookie-secret-ci-only
+          NODE_ENV: test
+        run: npx jest --passWithNoTests

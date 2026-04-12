@@ -200,7 +200,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                     </span>
                     <span>
                       {convertToLocale({
-                        amount: cart?.item_subtotal || 0,
+                        amount: cart?.item_total || 0,
                         currencyCode,
                       })}
                     </span>
@@ -216,8 +216,8 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                     </span>
                   </div>
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Enthaltene MwSt.</span>
+                  <div className="flex justify-between text-xs pt-1" style={{ color: "var(--text-muted, #888)" }}>
+                    <span>(davon MwSt. 19 %)</span>
                     <span>
                       {convertToLocale({
                         amount: cart?.tax_total || 0,

@@ -9,9 +9,9 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-BASE = "http://localhost:9000"
+BASE = os.environ.get("MEDUSA_BACKEND_URL", "http://localhost:9000")
 IMAGES_DIR = os.path.join(os.path.dirname(__file__), "../../website/src/assets/images")
-SALES_CHANNEL_ID = "sc_01KMWW188BE8ENEYZ7V3WJG89D"
+SALES_CHANNEL_ID = os.environ.get("SALES_CHANNEL_ID", "sc_01KMWW188BE8ENEYZ7V3WJG89D")
 
 # Retry-capable session
 session = requests.Session()
@@ -20,9 +20,14 @@ session.mount("http://", HTTPAdapter(max_retries=retries))
 
 # ── Auth ────────────────────────────────────────────────────────────────
 def get_token():
+    email = os.environ.get("MEDUSA_ADMIN_EMAIL")
+    password = os.environ.get("MEDUSA_ADMIN_PASSWORD")
+    if not email or not password:
+        print("ERROR: Set MEDUSA_ADMIN_EMAIL and MEDUSA_ADMIN_PASSWORD env vars")
+        sys.exit(1)
     r = session.post(f"{BASE}/auth/user/emailpass", json={
-        "email": "admin@shroom-mates.de",
-        "password": "admin123",
+        "email": email,
+        "password": password,
     })
     r.raise_for_status()
     return r.json()["token"]

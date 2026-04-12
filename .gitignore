@@ -12,6 +12,7 @@ dist/
 .env
 .env.*
 !.env.example
+!.env.staging.example
 
 # lockfile (binary)
 bun.lockb
@@ -35,3 +36,5 @@ skills-lock.json
 # yalc local package links
 .yalc/
 yalc.lock
+
+dogfood-output

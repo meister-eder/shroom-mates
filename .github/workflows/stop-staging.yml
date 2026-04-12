@@ -1,0 +1,33 @@
+name: Stop Staging
+
+on:
+  workflow_dispatch:
+
+env:
+  DEPLOY_HOST: ${{ secrets.HETZNER_HOST }}
+  DEPLOY_USER: ${{ secrets.HETZNER_USER || 'deploy' }}
+
+jobs:
+  stop:
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Stop staging stack
+        run: |
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+            cd /opt/shroom-mates-staging
+            docker compose -f docker-compose.staging.yml down
+            echo "✓ Staging stack stopped"
+          EOF
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

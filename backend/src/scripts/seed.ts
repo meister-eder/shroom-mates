@@ -7,14 +7,14 @@
  *   NOTE: Assigning the reduced VAT rate to specific products is done in Medusa Admin
  *   per-product after seeding (requires adding a tax class to each fresh mushroom product).
  * - Stock location: Leipzig, DE
- * - Shipping: Standard (€4.95) + Express (€9.95), Germany only
+ * - Shipping: Standard (€4.95), Germany only
  * - Products: Frische Pilze, Growkits, Tinkturen with real mushroom images
  *
  * PRICE CONVENTION: Medusa V2 stores prices in MAJOR currency units.
  * €19.95 is stored as 19.95 — NOT as 1995 (cents).
  *
  * PAYMENT PROVIDERS: The seed uses pp_system_default for development.
- * After first run, check which Mollie/SumUp provider IDs are registered via
+ * After first run, check which SumUp provider IDs are registered via
  * GET /admin/payment-providers and add them to the region in Medusa Admin.
  *
  * IDEMPOTENCY: This script is safe to re-run — it checks for existing data
@@ -83,6 +83,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const link = container.resolve(ContainerRegistrationKeys.LINK);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
   const fulfillmentModuleService = container.resolve(Modules.FULFILLMENT);
+  const pricingModuleService = container.resolve(Modules.PRICING);
   const salesChannelModuleService = container.resolve(Modules.SALES_CHANNEL);
   const storeModuleService = container.resolve(Modules.STORE);
   const taxModuleService = container.resolve(Modules.TAX);
@@ -161,7 +162,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
             name: "Deutschland",
             currency_code: "eur",
             countries: ["de"],
-            // Add Mollie/SumUp provider IDs here once registered.
+            // Add SumUp provider IDs here once registered.
             // Check active IDs via: GET /admin/payment-providers
             payment_providers: ["pp_system_default"],
           },
@@ -216,6 +217,30 @@ export default async function seedDemoData({ container }: ExecArgs) {
     logger.info("DE tax region already exists — skipping creation.");
   }
   logger.info("Finished seeding tax regions.");
+
+  // ─── Price Preferences — Tax Inclusive EUR ────────────────────────────────────
+  logger.info("Seeding price preferences...");
+  const existingPricePrefs = await pricingModuleService.listPricePreferences({
+    attribute: "currency_code",
+    value: "eur",
+  });
+  if (!existingPricePrefs.length) {
+    await pricingModuleService.createPricePreferences({
+      attribute: "currency_code",
+      value: "eur",
+      is_tax_inclusive: true,
+    });
+    logger.info("Created EUR price preference (is_tax_inclusive: true).");
+  } else if (!existingPricePrefs[0].is_tax_inclusive) {
+    await pricingModuleService.updatePricePreferences(
+      { attribute: "currency_code", value: "eur" },
+      { is_tax_inclusive: true },
+    );
+    logger.info("Updated EUR price preference to is_tax_inclusive: true.");
+  } else {
+    logger.info("EUR price preference already correct — skipping.");
+  }
+  logger.info("Finished seeding price preferences.");
 
   // ─── Stock Location: Leipzig ──────────────────────────────────────────────────
   logger.info("Seeding stock location data...");
@@ -298,7 +323,12 @@ export default async function seedDemoData({ container }: ExecArgs) {
   let fulfillmentSet: { id: string; service_zones: { id: string }[] };
 
   if (existingFulfillmentSets.length) {
-    fulfillmentSet = existingFulfillmentSets[0];
+    // Reload with service_zones included
+    const [setWithZones] = await fulfillmentModuleService.listFulfillmentSets(
+      { name: "Deutschland Versand" },
+      { relations: ["service_zones"] },
+    );
+    fulfillmentSet = setWithZones;
     logger.info("Fulfillment set 'Deutschland Versand' already exists — skipping creation.");
   } else {
     fulfillmentSet =
@@ -326,73 +356,53 @@ export default async function seedDemoData({ container }: ExecArgs) {
         fulfillment_set_id: fulfillmentSet.id,
       },
     });
+  }
 
-    await createShippingOptionsWorkflow(container).run({
-      input: [
-        {
-          name: "Standard Versand",
-          price_type: "flat",
-          provider_id: "manual_manual",
-          service_zone_id: fulfillmentSet.service_zones[0].id,
-          shipping_profile_id: shippingProfile.id,
-          type: {
-            label: "Standard",
-            description: "Lieferung in 3–5 Werktagen.",
-            code: "standard",
+  // Create shipping options idempotently — each checked by name.
+  const shippingOptionDefs = [
+    {
+      name: "Standard Versand",
+      label: "Standard",
+      description: "Lieferung in 3–5 Werktagen.",
+      code: "standard",
+      amount: 4.95,
+    },
+    {
+      name: "Express Versand",
+      label: "Express",
+      description: "Lieferung in 1–2 Werktagen.",
+      code: "express",
+      amount: 9.95,
+    },
+  ];
+  for (const def of shippingOptionDefs) {
+    const existing = await fulfillmentModuleService.listShippingOptions({ name: def.name });
+    if (!existing.length) {
+      await createShippingOptionsWorkflow(container).run({
+        input: [
+          {
+            name: def.name,
+            price_type: "flat",
+            provider_id: "manual_manual",
+            service_zone_id: fulfillmentSet.service_zones[0].id,
+            shipping_profile_id: shippingProfile.id,
+            type: {
+              label: def.label,
+              description: def.description,
+              code: def.code,
+            },
+            prices: [{ currency_code: "eur", amount: def.amount, is_tax_inclusive: true }],
+            rules: [
+              { attribute: "enabled_in_store", value: "true", operator: "eq" },
+              { attribute: "is_return", value: "false", operator: "eq" },
+            ],
           },
-          prices: [
-            {
-              currency_code: "eur",
-              amount: 4.95,
-              is_tax_inclusive: true,
-            },
-          ],
-          rules: [
-            {
-              attribute: "enabled_in_store",
-              value: "true",
-              operator: "eq",
-            },
-            {
-              attribute: "is_return",
-              value: "false",
-              operator: "eq",
-            },
-          ],
-        },
-        {
-          name: "Express Versand",
-          price_type: "flat",
-          provider_id: "manual_manual",
-          service_zone_id: fulfillmentSet.service_zones[0].id,
-          shipping_profile_id: shippingProfile.id,
-          type: {
-            label: "Express",
-            description: "Lieferung in 1–2 Werktagen.",
-            code: "express",
-          },
-          prices: [
-            {
-              currency_code: "eur",
-              amount: 9.95,
-              is_tax_inclusive: true,
-            },
-          ],
-          rules: [
-            {
-              attribute: "enabled_in_store",
-              value: "true",
-              operator: "eq",
-            },
-            {
-              attribute: "is_return",
-              value: "false",
-              operator: "eq",
-            },
-          ],
-        },
-      ],
-    });
+        ],
+      });
+      logger.info(`Created shipping option: ${def.name}`);
+    } else {
+      logger.info(`Shipping option '${def.name}' already exists — skipping.`);
+    }
   }
   logger.info("Finished seeding fulfillment data.");
 
@@ -706,6 +716,31 @@ export default async function seedDemoData({ container }: ExecArgs) {
       ],
       sales_channels: [{ id: defaultSalesChannel[0].id }],
     },
+    {
+      title: "Reishi-Cordyceps Tinktur 50ml",
+      handle: "reishi-cordyceps-tinktur",
+      description:
+        "Kraftvolle Kombination aus Reishi und Cordyceps in einem 50ml Doppelextrakt. Frische Pilze, heißwasser- und alkohol-extrahiert für optimale Wirkung. Ca. 50 Portionen pro Flasche.",
+      category_ids: [getCategoryId("tinkturen")!],
+      status: ProductStatus.PUBLISHED,
+      shipping_profile_id: shippingProfile.id,
+      images: [
+        { url: seedImageUrl("tinkturen.jpeg") },
+      ],
+      options: [{ title: "Größe", values: ["50ml"] }],
+      variants: [
+        {
+          title: "50ml",
+          sku: "TINKTUR-REISHI-CORDYCEPS-50ML",
+          options: { Größe: "50ml" },
+          prices: [
+            { amount: 29.95, currency_code: "eur", is_tax_inclusive: true },
+            
+          ],
+        },
+      ],
+      sales_channels: [{ id: defaultSalesChannel[0].id }],
+    }
   ].filter((p) => !existingProductHandles.has(p.handle));
 
   if (productsToSeed.length) {
