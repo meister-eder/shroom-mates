@@ -17,7 +17,7 @@
     "@nanostores/react": "^1.0.0",
     "@shroom-mates/ui": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "6.0.4",
+    "astro": "^6.1.1",
     "clsx": "^2.1.1",
     "nanostores": "^1.1.0",
     "react": "^19.2.4",

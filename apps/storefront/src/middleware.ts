@@ -1,4 +1,4 @@
-import { HttpTypes } from "@medusajs/types";
+import type { HttpTypes } from "@medusajs/types";
 import { defineMiddleware } from "astro:middleware";
 import { sdk } from "./lib/sdk";
 
