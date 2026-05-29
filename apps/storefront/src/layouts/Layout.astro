@@ -2,6 +2,7 @@
 import "@fontsource/geist-sans";
 import { getRegion } from "@lib/data/regions";
 import { CartSidebar } from "@modules/layout/components/CartSidebar";
+import CookieBanner from "@components/CookieBanner.astro";
 import Header from "@modules/layout/components/Header.astro";
 import Footer from "@modules/layout/components/Footer.astro";
 import "@styles/global.css";
@@ -98,7 +99,8 @@ const regionId = region?.id || null;
       </main>
       <Footer countryCode={countryCode} />
       <CartSidebar client:load countryCode={countryCode} />
-    </div>
+            <CookieBanner />
+          </div>
 
     <script>
       function setScrollbarWidth() {

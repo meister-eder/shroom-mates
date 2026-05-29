@@ -1,0 +1,189 @@
+---
+import Layout from "@layouts/Layout.astro";
+
+const { countryCode } = Astro.params;
+if (!countryCode) return Astro.redirect("/not-found");
+---
+
+<Layout
+  title="Datenschutzerklärung"
+  description="Datenschutzerklärung für den Shroom-Mates Online-Shop"
+  noindex
+>
+  <article class="legal-page" aria-labelledby="legal-title">
+    <h1 id="legal-title">Datenschutzerklärung</h1>
+
+    <div class="legal-notice">
+      ⚠️ <strong>Rechtlicher Hinweis:</strong> Dies ist ein Platzhalter. Die finale
+      Datenschutzerklärung muss von einem Rechtsanwalt oder einem
+      Rechtstexte-Dienst (z. B.
+      <a href="https://www.it-recht-kanzlei.de/" rel="noopener noreferrer">IT-Recht Kanzlei</a>
+      oder
+      <a href="https://www.e-recht24.de/" rel="noopener noreferrer">eRecht24</a>)
+      erstellt und regelmäßig aktualisiert werden.
+    </div>
+
+    <section>
+      <h2>1. Verantwortlicher</h2>
+      <p>
+        [Name / Firma]<br />
+        [Straße, Hausnummer]<br />
+        [PLZ, Ort]<br />
+        Deutschland<br /><br />
+        E-Mail: hey@shroom-mates.de
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Hosting</h2>
+      <p>
+        Diese Website wird auf einem Server der Hetzner Online GmbH in
+        Deutschland gehostet. Die Server-Logs enthalten IP-Adressen,
+        Zugriffszeitpunkte und aufgerufene URLs. Diese Daten werden
+        ausschließlich zur Sicherstellung des Betriebs und zur Fehleranalyse
+        verarbeitet und nach 7 Tagen gelöscht.
+      </p>
+    </section>
+
+    <section>
+      <h2>3. Datenerhebung im Shop</h2>
+      <p>
+        Für die Abwicklung von Bestellungen erheben wir folgende Daten:
+      </p>
+      <ul>
+        <li>Name, Liefer- und Rechnungsadresse</li>
+        <li>E-Mail-Adresse</li>
+        <li>Bestellte Artikel und Bestellhistorie</li>
+      </ul>
+      <p>
+        Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).
+        Diese Daten werden für die Dauer der gesetzlichen
+        Aufbewahrungsfristen (10 Jahre gemäß § 147 AO, § 257 HGB)
+        gespeichert.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Zahlungsabwicklung (SumUp)</h2>
+      <p>
+        Die Zahlungsabwicklung erfolgt über SumUp Limited, Block 8, Harcourt
+        Centre, Charlotte Way, Dublin 2, Irland. Bei Auswahl der
+        SumUp-Zahlung werden die für die Zahlungsabwicklung erforderlichen
+        Daten (Name, Bestellsumme, Rechnungsadresse) an SumUp übermittelt.
+        Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b
+        DSGVO. Weitere Informationen:
+        <a href="https://www.sumup.com/de-de/datenschutz/" rel="noopener noreferrer">
+          SumUp Datenschutzerklärung
+        </a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Cookies & Lokale Speicherung</h2>
+      <p>
+        Dieser Shop verwendet ausschließlich technisch notwendige
+        Datenspeicherung:
+      </p>
+      <ul>
+        <li><strong>Warenkorb (LocalStorage):</strong> Speichert die ID
+          deines Warenkorbs lokal im Browser, damit du beim nächsten Besuch
+          weitershoppen kannst. Keine personenbezogenen Daten.</li>
+        <li><strong>Session-Cookie:</strong> Technisch notwendig für den
+          Checkout-Prozess. Wird nach Schließen des Browsers gelöscht.</li>
+        <li><strong>SumUp Widget:</strong> Das eingebettete SumUp-Kartenformular
+          lädt Skripte von gateway.sumup.com. Diese sind für die
+          Zahlungsabwicklung technisch notwendig (Art. 6 Abs. 1 lit. b DSGVO,
+          § 25 Abs. 2 TTDSG).</li>
+      </ul>
+      <p>
+        Es werden keine Tracking-, Analyse- oder Marketing-Cookies verwendet.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. Betroffenenrechte</h2>
+      <p>
+        Du hast jederzeit das Recht auf Auskunft, Berichtigung, Löschung,
+        Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch
+        (Art. 15–21 DSGVO). Dazu genügt eine E-Mail an hey@shroom-mates.de.
+        Zudem hast du das Recht auf Beschwerde bei einer
+        Aufsichtsbehörde (Art. 77 DSGVO).
+      </p>
+    </section>
+
+    <section>
+      <h2>7. SSL-Verschlüsselung</h2>
+      <p>
+        Diese Seite nutzt aus Sicherheitsgründen eine SSL-Verschlüsselung.
+        Eine verschlüsselte Verbindung erkennst du an der Adresszeile
+        „https://" und dem Schloss-Symbol.
+      </p>
+    </section>
+
+    <p class="last-updated">
+      Stand: [Datum einfügen]
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .legal-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .legal-page h1 {
+    font-family: "DM Mono", monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+  }
+
+  .legal-page h2 {
+    font-family: "DM Mono", monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem 0;
+    color: var(--accent, #ff4908);
+  }
+
+  .legal-page p,
+  .legal-page li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-color, #1d1d1d);
+    margin: 0 0 0.75rem 0;
+  }
+
+  .legal-page ul {
+    padding-left: 1.25rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .legal-page a {
+    color: var(--accent, #ff4908);
+    text-decoration: underline;
+  }
+
+  .legal-notice {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .legal-notice a {
+    font-weight: 500;
+  }
+
+  .last-updated {
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: var(--text-muted, #6b6b6b);
+    font-style: italic;
+  }
+</style>

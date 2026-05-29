@@ -1,0 +1,132 @@
+---
+// Simple cookie info banner — no consent checkboxes needed
+// because the store only uses technically necessary storage.
+---
+
+<div id="cookie-banner" class="cookie-banner" role="dialog" aria-labelledby="cookie-banner-title" aria-describedby="cookie-banner-desc" hidden>
+  <div class="cookie-banner-inner">
+    <div class="cookie-banner-text">
+      <p id="cookie-banner-title" class="cookie-banner-title">🍄 Cookies & Datenschutz</p>
+      <p id="cookie-banner-desc" class="cookie-banner-desc">
+        Dieser Shop verwendet ausschließlich technisch notwendige Cookies und
+        lokale Datenspeicherung für Warenkorb, Checkout und Zahlungsabwicklung
+        (SumUp). Mehr dazu in unserer
+        <a href="/de/datenschutz">Datenschutzerklärung</a>.
+      </p>
+    </div>
+    <button
+      id="cookie-banner-close"
+      class="btn-accent cookie-banner-btn"
+      aria-label="Cookie-Hinweis schließen"
+    >
+      Verstanden
+    </button>
+  </div>
+</div>
+
+<script>
+  const BANNER_KEY = "shroom-mates-cookie-banner-dismissed";
+
+  function initBanner() {
+    const banner = document.getElementById("cookie-banner");
+    const closeBtn = document.getElementById("cookie-banner-close");
+    if (!banner || !closeBtn) return;
+
+    if (localStorage.getItem(BANNER_KEY)) {
+      banner.remove();
+      return;
+    }
+
+    banner.hidden = false;
+
+    closeBtn.addEventListener("click", () => {
+      localStorage.setItem(BANNER_KEY, "1");
+      banner.style.opacity = "0";
+      banner.style.transform = "translateY(20px)";
+      setTimeout(() => banner.remove(), 300);
+    });
+  }
+
+  initBanner();
+  document.addEventListener("astro:after-swap", initBanner);
+</script>
+
+<style>
+  .cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: var(--bg-accent, #fdfcea);
+    border-top: 3px solid var(--accent, #ff4908);
+    padding: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .cookie-banner-inner {
+    max-width: var(--content-max-width, 1200px);
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .cookie-banner-text {
+    flex: 1 1 300px;
+    min-width: 0;
+  }
+
+  .cookie-banner-title {
+    font-family: "DM Mono", monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-color, #1d1d1d);
+  }
+
+  .cookie-banner-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6b6b6b);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .cookie-banner-desc a {
+    color: var(--accent, #ff4908);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+
+  .cookie-banner-desc a:hover {
+    color: var(--accent-dark, #bf2300);
+  }
+
+  .cookie-banner-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .cookie-banner-inner {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1rem;
+      gap: 0.75rem;
+    }
+
+    .cookie-banner-btn {
+      width: 100%;
+    }
+
+    .cookie-banner-title {
+      font-size: 0.85rem;
+    }
+
+    .cookie-banner-desc {
+      font-size: 0.8rem;
+    }
+  }
+</style>

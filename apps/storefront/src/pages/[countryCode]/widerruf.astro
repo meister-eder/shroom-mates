@@ -1,0 +1,139 @@
+---
+import Layout from "@layouts/Layout.astro";
+
+const { countryCode } = Astro.params;
+if (!countryCode) return Astro.redirect("/not-found");
+---
+
+<Layout
+  title="Widerrufsbelehrung"
+  description="Widerrufsrecht für Bestellungen im Shroom-Mates Online-Shop"
+  noindex
+>
+  <article class="legal-page" aria-labelledby="legal-title">
+    <h1 id="legal-title">Widerrufsbelehrung</h1>
+
+    <div class="legal-notice">
+      ⚠️ <strong>Rechtlicher Hinweis:</strong> Dies ist ein Platzhalter. Die finale
+      Widerrufsbelehrung muss von einem Rechtsanwalt oder einem
+      Rechtstexte-Dienst (z. B.
+      <a href="https://www.it-recht-kanzlei.de/" rel="noopener noreferrer">IT-Recht Kanzlei</a>
+      oder
+      <a href="https://www.e-recht24.de/" rel="noopener noreferrer">eRecht24</a>)
+      erstellt und regelmäßig aktualisiert werden.
+    </div>
+
+    <section>
+      <h2>Widerrufsrecht</h2>
+      <p>
+        Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen
+        diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn
+        Tage ab dem Tag, an dem du oder ein von dir benannter Dritter, der
+        nicht der Beförderer ist, die letzte Ware in Besitz genommen hat bzw.
+        hat.
+      </p>
+      <p>
+        Um dein Widerrufsrecht auszuüben, musst du uns ([Name, Anschrift,
+        E-Mail-Adresse]) mittels einer eindeutigen Erklärung (z. B. ein mit
+        der Post versandter Brief oder eine E-Mail) über deinen Entschluss,
+        diesen Vertrag zu widerrufen, informieren.
+      </p>
+    </section>
+
+    <section>
+      <h2>Folgen des Widerrufs</h2>
+      <p>
+        Wenn du diesen Vertrag widerrufst, haben wir dir alle Zahlungen, die
+        wir von dir erhalten haben, einschließlich der Lieferkosten (mit
+        Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass du
+        eine andere Art der Lieferung als die von uns angebotene, günstigste
+        Standardlieferung gewählt hast), unverzüglich und spätestens binnen
+        vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über
+        deinen Widerruf dieses Vertrags bei uns eingegangen ist.
+      </p>
+      <p>
+        Für die Rückzahlung verwenden wir dasselbe Zahlungsmittel, das du bei
+        der ursprünglichen Transaktion eingesetzt hast, es sei denn, mit dir
+        wurde ausdrücklich etwas anderes vereinbart.
+      </p>
+      <p>
+        Du hast die Waren unverzüglich und in jedem Fall spätestens binnen
+        vierzehn Tagen ab dem Tag, an dem du uns über den Widerruf dieses
+        Vertrags unterrichtest, an uns zurückzusenden oder zu übergeben.
+      </p>
+      <p>
+        Du trägst die unmittelbaren Kosten der Rücksendung der Waren.
+      </p>
+    </section>
+
+    <section>
+      <h2>Ausschluss des Widerrufsrechts</h2>
+      <p>
+        Das Widerrufsrecht besteht nicht bei Verträgen zur Lieferung
+        versiegelter Waren, die aus Gründen des Gesundheitsschutzes oder der
+        Hygiene nicht zur Rückgabe geeignet sind, wenn ihre Versiegelung nach
+        der Lieferung entfernt wurde (z. B. frische Pilze).
+      </p>
+    </section>
+
+    <p class="last-updated">
+      Stand: [Datum einfügen]
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .legal-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .legal-page h1 {
+    font-family: "DM Mono", monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+  }
+
+  .legal-page h2 {
+    font-family: "DM Mono", monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem 0;
+    color: var(--accent, #ff4908);
+  }
+
+  .legal-page p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-color, #1d1d1d);
+    margin: 0 0 0.75rem 0;
+  }
+
+  .legal-page a {
+    color: var(--accent, #ff4908);
+    text-decoration: underline;
+  }
+
+  .legal-notice {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .legal-notice a {
+    font-weight: 500;
+  }
+
+  .last-updated {
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: var(--text-muted, #6b6b6b);
+    font-style: italic;
+  }
+</style>

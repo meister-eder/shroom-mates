@@ -1,0 +1,211 @@
+---
+import Layout from "@layouts/Layout.astro";
+
+const { countryCode } = Astro.params;
+if (!countryCode) return Astro.redirect("/not-found");
+---
+
+<Layout
+  title="Allgemeine Geschäftsbedingungen"
+  description="AGB für den Shroom-Mates Online-Shop"
+  noindex
+>
+  <article class="legal-page" aria-labelledby="legal-title">
+    <h1 id="legal-title">Allgemeine Geschäftsbedingungen (AGB)</h1>
+
+    <div class="legal-notice">
+      ⚠️ <strong>Rechtlicher Hinweis:</strong> Dies ist ein Platzhalter. Die finalen
+      AGB müssen von einem Rechtsanwalt oder einem
+      Rechtstexte-Dienst (z. B.
+      <a href="https://www.it-recht-kanzlei.de/" rel="noopener noreferrer">IT-Recht Kanzlei</a>
+      oder
+      <a href="https://www.e-recht24.de/" rel="noopener noreferrer">eRecht24</a>)
+      erstellt und regelmäßig aktualisiert werden.
+    </div>
+
+    <section>
+      <h2>1. Geltungsbereich</h2>
+      <p>
+        Diese Allgemeinen Geschäftsbedingungen gelten für alle Bestellungen
+        im Online-Shop unter shop.shroom-mates.de.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Vertragspartner</h2>
+      <p>
+        Der Kaufvertrag kommt zustande mit:<br /><br />
+        [Name / Firma]<br />
+        [Straße, Hausnummer]<br />
+        [PLZ, Ort]<br />
+        Deutschland<br />
+        E-Mail: hey@shroom-mates.de
+      </p>
+    </section>
+
+    <section>
+      <h2>3. Vertragsschluss</h2>
+      <p>
+        Die Darstellung der Produkte im Online-Shop stellt kein rechtlich
+        bindendes Angebot, sondern eine Aufforderung zur Bestellung dar.
+        Durch Anklicken des Buttons „Bestellung aufgeben" gibst du eine
+        verbindliche Bestellung ab. Die Bestätigung des Eingangs der
+        Bestellung folgt unmittelbar per E-Mail und stellt noch keine
+        Vertragsannahme dar. Der Vertrag kommt zustande, wenn wir die
+        Bestellung durch eine gesonderte E-Mail (Auftragsbestätigung)
+        annehmen oder die Ware versenden.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Preise und Versandkosten</h2>
+      <p>
+        Alle Preise verstehen sich in Euro (EUR) inklusive der gesetzlichen
+        Mehrwertsteuer (19 % bzw. 7 % für frische Pilze). Zuzüglich
+        Versandkosten:
+      </p>
+      <ul>
+        <li>Standardversand (DHL): 4,95 €</li>
+        <li>Expressversand (DHL): 9,95 €</li>
+      </ul>
+      <p>
+        Wir liefern ausschließlich innerhalb Deutschlands.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Lieferung</h2>
+      <p>
+        Die Lieferung erfolgt innerhalb von 1–3 Werktagen nach
+        Zahlungseingang. Frische Pilze werden montags und dienstags
+        geerntet und am selben Tag versendet.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. Zahlung</h2>
+      <p>
+        Die Zahlung erfolgt wahlweise per:
+      </p>
+      <ul>
+        <li>Kreditkarte / Debitkarte (über SumUp)</li>
+        <li>PayPal (über SumUp, falls aktiviert)</li>
+        <li>Apple Pay / Google Pay (über SumUp, falls aktiviert)</li>
+      </ul>
+      <p>
+        Die Zahlungsabwicklung erfolgt über SumUp Limited, Dublin, Irland.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. Eigentumsvorbehalt</h2>
+      <p>
+        Die Ware bleibt bis zur vollständigen Bezahlung unser Eigentum.
+      </p>
+    </section>
+
+    <section>
+      <h2>8. Widerrufsrecht</h2>
+      <p>
+        Es gilt die gesetzliche Widerrufsbelehrung. Siehe
+        <a href={`/${countryCode}/widerruf`}>Widerrufsbelehrung</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>9. Gewährleistung</h2>
+      <p>
+        Es gelten die gesetzlichen Gewährleistungsrechte.
+      </p>
+    </section>
+
+    <section>
+      <h2>10. Streitbeilegung</h2>
+      <p>
+        Die EU-Kommission stellt eine Plattform zur Online-Streitbeilegung
+        bereit:
+        <a href="https://ec.europa.eu/consumers/odr/" rel="noopener noreferrer">
+          https://ec.europa.eu/consumers/odr/
+        </a>.
+        Wir sind nicht verpflichtet und nicht bereit, an einem
+        Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle
+        teilzunehmen.
+      </p>
+    </section>
+
+    <section>
+      <h2>11. Schlussbestimmungen</h2>
+      <p>
+        Sollte eine Bestimmung dieser AGB unwirksam sein, bleibt der Vertrag
+        im Übrigen wirksam. Es gilt deutsches Recht unter Ausschluss des
+        UN-Kaufrechts.
+      </p>
+    </section>
+
+    <p class="last-updated">
+      Stand: [Datum einfügen]
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .legal-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .legal-page h1 {
+    font-family: "DM Mono", monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+  }
+
+  .legal-page h2 {
+    font-family: "DM Mono", monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem 0;
+    color: var(--accent, #ff4908);
+  }
+
+  .legal-page p,
+  .legal-page li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-color, #1d1d1d);
+    margin: 0 0 0.75rem 0;
+  }
+
+  .legal-page ul {
+    padding-left: 1.25rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .legal-page a {
+    color: var(--accent, #ff4908);
+    text-decoration: underline;
+  }
+
+  .legal-notice {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .legal-notice a {
+    font-weight: 500;
+  }
+
+  .last-updated {
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: var(--text-muted, #6b6b6b);
+    font-style: italic;
+  }
+</style>
