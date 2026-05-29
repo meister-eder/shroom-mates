@@ -17,7 +17,7 @@
     "@medusajs/cli": "2.13.1",
     "@medusajs/framework": "2.13.1",
     "@medusajs/medusa": "2.13.1",
-    "medusa-payment-sumup": "latest"
+    "medusa-payment-sumup": "^0.1.1"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.13.1",

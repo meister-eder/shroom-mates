@@ -69,6 +69,10 @@ services:
       AUTH_CORS: https://api.shroom-mates.de,https://shop.shroom-mates.de
       COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      SUMUP_API_KEY: ${SUMUP_API_KEY:-}
+      SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
+      SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-}
+      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
     volumes:
       - medusa_uploads:/app/uploads
     depends_on:
