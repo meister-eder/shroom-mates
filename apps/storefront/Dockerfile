@@ -45,7 +45,7 @@ RUN addgroup --system storefront && adduser --system --ingroup storefront storef
 COPY --from=builder /app/apps/storefront/dist ./dist
 COPY --from=builder /app/apps/storefront/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/storefront/node_modules ./apps/storefront/node_modules
+COPY --from=builder /app/apps/storefront/node_modules ./node_modules
 
 RUN chown -R storefront:storefront /app
 
