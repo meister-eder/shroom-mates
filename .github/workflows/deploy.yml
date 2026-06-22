@@ -1,12 +1,6 @@
 name: Deploy
 
 on:
-  # Only fires after CI passes on main — broken code cannot reach production.
-  # workflow_dispatch bypasses the gate intentionally (emergency hotfix path).
-  workflow_run:
-    workflows: [CI]
-    branches: [main]
-    types: [completed]
   workflow_dispatch:
     inputs:
       branch:
@@ -26,20 +20,15 @@ env:
 
 jobs:
   # ── Detect what changed ─────────────────────────────────────
-  # Skipped entirely when CI failed (workflow_run.conclusion != 'success').
   detect-changes:
     runs-on: ubuntu-latest
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'success'
     outputs:
       website_only: ${{ steps.check.outputs.website_only }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # For workflow_run, checkout the exact SHA that CI tested.
-          ref: ${{ github.event.inputs.branch || github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.event.inputs.branch || github.sha }}
           fetch-depth: 2
 
       - name: Check if only website changed
@@ -73,7 +62,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.event.inputs.branch || github.sha }}
 
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -119,7 +108,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.event.inputs.branch || github.sha }}
 
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -165,7 +154,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.event.inputs.branch || github.sha }}
 
       - name: Download website dist
         uses: actions/download-artifact@v4
