@@ -4,7 +4,7 @@ FROM oven/bun:1-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json* bun.lock* ./
-RUN bun install --ignore-scripts
+RUN bun install
 
 # ── Stage 2: Build with Node.js (Medusa tools require Node) ──
 FROM node:22-alpine AS builder
