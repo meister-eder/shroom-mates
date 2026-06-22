@@ -18,7 +18,11 @@ services:
     volumes:
       - staging_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-medusa} -d ${POSTGRES_DB:-shroom-mates-staging}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-medusa} -d ${POSTGRES_DB:-shroom-mates-staging}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -46,7 +50,7 @@ services:
       - "9001:9000"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates-staging}
+      DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates-staging}?sslmode=disable
       REDIS_URL: redis://redis:6379
       MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL:?MEDUSA_BACKEND_URL is required}
       STORE_CORS: ${STORE_CORS:?STORE_CORS is required}
@@ -66,7 +70,15 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9000/health"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9000/health",
+        ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -89,7 +101,15 @@ services:
       medusa:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4321"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:4321",
+        ]
       interval: 15s
       timeout: 5s
       retries: 3

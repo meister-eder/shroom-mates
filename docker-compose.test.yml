@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}
+      DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
       # Use bare IP for test; no TLS
       MEDUSA_BACKEND_URL: http://159.195.31.11:9000
