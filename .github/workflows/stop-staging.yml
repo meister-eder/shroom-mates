@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  DEPLOY_HOST: ${{ secrets.HETZNER_HOST }}
-  DEPLOY_USER: ${{ secrets.HETZNER_USER || 'deploy' }}
+  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+  DEPLOY_USER: ${{ secrets.DEPLOY_USER || 'deploy' }}
 
 jobs:
   stop:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
 

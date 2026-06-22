@@ -36,5 +36,7 @@ skills-lock.json
 # yalc local package links
 .yalc/
 yalc.lock
+.pi
 
 dogfood-output
+.npm-cache/
