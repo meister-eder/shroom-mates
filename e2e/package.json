@@ -1,0 +1,17 @@
+{
+  "name": "shroom-mates-e2e",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:checkout": "playwright test --grep 'checkout|payment'",
+    "test:browse": "playwright test --grep browse",
+    "test:edge": "playwright test --grep 'edge|validation'",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}
