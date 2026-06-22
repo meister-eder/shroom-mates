@@ -66,7 +66,7 @@ const updateStoreCurrencies = createWorkflow(
                 currency_code: currency.currency_code,
                 is_default: currency.is_default ?? false,
               };
-            }
+            },
           ),
         },
       };
@@ -75,7 +75,7 @@ const updateStoreCurrencies = createWorkflow(
     const stores = updateStoresStep(normalizedInput);
 
     return new WorkflowResponse(stores);
-  }
+  },
 );
 
 export default async function seedDemoData({ container }: ExecArgs) {
@@ -89,11 +89,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const taxModuleService = container.resolve(Modules.TAX);
 
   // Images are served by Medusa's local file module from backend/static/seed/
-  const backendUrl =
-    process.env.MEDUSA_BACKEND_URL || "http://localhost:9000";
+  const backendUrl = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000";
   const seedImageUrl = (filename: string) =>
     `${backendUrl}/static/seed/${filename}`;
-
 
   // ─── Sales Channel ───────────────────────────────────────────────────────────
   logger.info("Seeding store data...");
@@ -153,22 +151,22 @@ export default async function seedDemoData({ container }: ExecArgs) {
     region = existingRegions[0];
     logger.info("Region 'Deutschland' already exists — skipping creation.");
   } else {
-    const { result: regionResult } = await createRegionsWorkflow(
-      container,
-    ).run({
-      input: {
-        regions: [
-          {
-            name: "Deutschland",
-            currency_code: "eur",
-            countries: ["de"],
-            // Add SumUp provider IDs here once registered.
-            // Check active IDs via: GET /admin/payment-providers
-            payment_providers: ["pp_system_default"],
-          },
-        ],
+    const { result: regionResult } = await createRegionsWorkflow(container).run(
+      {
+        input: {
+          regions: [
+            {
+              name: "Deutschland",
+              currency_code: "eur",
+              countries: ["de"],
+              // Add SumUp provider IDs here once registered.
+              // Check active IDs via: GET /admin/payment-providers
+              payment_providers: ["pp_system_default"],
+            },
+          ],
+        },
       },
-    });
+    );
     region = regionResult[0];
   }
   logger.info("Finished seeding regions.");
@@ -329,24 +327,25 @@ export default async function seedDemoData({ container }: ExecArgs) {
       { relations: ["service_zones"] },
     );
     fulfillmentSet = setWithZones;
-    logger.info("Fulfillment set 'Deutschland Versand' already exists — skipping creation.");
+    logger.info(
+      "Fulfillment set 'Deutschland Versand' already exists — skipping creation.",
+    );
   } else {
-    fulfillmentSet =
-      await fulfillmentModuleService.createFulfillmentSets({
-        name: "Deutschland Versand",
-        type: "shipping",
-        service_zones: [
-          {
-            name: "Deutschland",
-            geo_zones: [
-              {
-                country_code: "de",
-                type: "country",
-              },
-            ],
-          },
-        ],
-      });
+    fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
+      name: "Deutschland Versand",
+      type: "shipping",
+      service_zones: [
+        {
+          name: "Deutschland",
+          geo_zones: [
+            {
+              country_code: "de",
+              type: "country",
+            },
+          ],
+        },
+      ],
+    });
 
     await link.create({
       [Modules.STOCK_LOCATION]: {
@@ -376,7 +375,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   ];
   for (const def of shippingOptionDefs) {
-    const existing = await fulfillmentModuleService.listShippingOptions({ name: def.name });
+    const existing = await fulfillmentModuleService.listShippingOptions({
+      name: def.name,
+    });
     if (!existing.length) {
       await createShippingOptionsWorkflow(container).run({
         input: [
@@ -391,7 +392,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
               description: def.description,
               code: def.code,
             },
-            prices: [{ currency_code: "eur", amount: def.amount, is_tax_inclusive: true }],
+            prices: [{ currency_code: "eur", amount: def.amount }],
             rules: [
               { attribute: "enabled_in_store", value: "true", operator: "eq" },
               { attribute: "is_return", value: "false", operator: "eq" },
@@ -468,15 +469,23 @@ export default async function seedDemoData({ container }: ExecArgs) {
   ].filter((cat) => !existingHandles.has(cat.handle));
 
   let allCategories: { id: string; name: string; handle: string }[] = [
-    ...((existingCategories ?? []) as { id: string; name: string; handle: string }[]),
+    ...((existingCategories ?? []) as {
+      id: string;
+      name: string;
+      handle: string;
+    }[]),
   ];
 
   if (categoriesToCreate.length) {
-    const { result: newCategoryResult } =
-      await createProductCategoriesWorkflow(container).run({
-        input: { product_categories: categoriesToCreate },
-      });
-    allCategories = [...allCategories, ...(newCategoryResult as typeof allCategories)];
+    const { result: newCategoryResult } = await createProductCategoriesWorkflow(
+      container,
+    ).run({
+      input: { product_categories: categoriesToCreate },
+    });
+    allCategories = [
+      ...allCategories,
+      ...(newCategoryResult as typeof allCategories),
+    ];
   }
 
   const getCategoryId = (handle: string) =>
@@ -502,9 +511,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("frische-pilze")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("lions_mane.jpg") },
-      ],
+      images: [{ url: seedImageUrl("lions_mane.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g", "1kg"] }],
       variants: [
         {
@@ -513,7 +520,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "250g" },
           prices: [
             { amount: 8.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
         {
@@ -522,7 +528,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "500g" },
           prices: [
             { amount: 15.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
         {
@@ -531,7 +536,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "1kg" },
           prices: [
             { amount: 28.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -545,9 +549,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("frische-pilze")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("pioppino.jpg") },
-      ],
+      images: [{ url: seedImageUrl("pioppino.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g"] }],
       variants: [
         {
@@ -556,7 +558,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "250g" },
           prices: [
             { amount: 6.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
         {
@@ -565,7 +566,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "500g" },
           prices: [
             { amount: 11.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -579,9 +579,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("frische-pilze")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("black_pearl.jpg") },
-      ],
+      images: [{ url: seedImageUrl("black_pearl.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g"] }],
       variants: [
         {
@@ -590,7 +588,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "250g" },
           prices: [
             { amount: 5.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
         {
@@ -599,7 +596,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "500g" },
           prices: [
             { amount: 9.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -613,9 +609,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("frische-pilze")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("white_pearl.jpg") },
-      ],
+      images: [{ url: seedImageUrl("white_pearl.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g"] }],
       variants: [
         {
@@ -624,7 +618,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "250g" },
           prices: [
             { amount: 5.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
         {
@@ -633,7 +626,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Gewicht: "500g" },
           prices: [
             { amount: 9.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -648,9 +640,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("growkits")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("growkits.jpg") },
-      ],
+      images: [{ url: seedImageUrl("growkits.jpg") }],
       options: [{ title: "Größe", values: ["Standard"] }],
       variants: [
         {
@@ -659,7 +649,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Größe: "Standard" },
           prices: [
             { amount: 19.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -673,9 +662,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("growkits")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("growkits.jpg") },
-      ],
+      images: [{ url: seedImageUrl("growkits.jpg") }],
       options: [{ title: "Größe", values: ["Standard"] }],
       variants: [
         {
@@ -684,7 +671,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Größe: "Standard" },
           prices: [
             { amount: 14.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -699,9 +685,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("tinkturen")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("tinkturen.jpeg") },
-      ],
+      images: [{ url: seedImageUrl("tinkturen.jpeg") }],
       options: [{ title: "Größe", values: ["50ml"] }],
       variants: [
         {
@@ -710,7 +694,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Größe: "50ml" },
           prices: [
             { amount: 24.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
@@ -724,9 +707,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       category_ids: [getCategoryId("tinkturen")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
-      images: [
-        { url: seedImageUrl("tinkturen.jpeg") },
-      ],
+      images: [{ url: seedImageUrl("tinkturen.jpeg") }],
       options: [{ title: "Größe", values: ["50ml"] }],
       variants: [
         {
@@ -735,12 +716,11 @@ export default async function seedDemoData({ container }: ExecArgs) {
           options: { Größe: "50ml" },
           prices: [
             { amount: 29.95, currency_code: "eur", is_tax_inclusive: true },
-            
           ],
         },
       ],
       sales_channels: [{ id: defaultSalesChannel[0].id }],
-    }
+    },
   ].filter((p) => !existingProductHandles.has(p.handle));
 
   if (productsToSeed.length) {
@@ -784,7 +764,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
     await createInventoryLevelsWorkflow(container).run({
       input: { inventory_levels: inventoryLevels },
     });
-    logger.info(`Created inventory levels for ${inventoryLevels.length} items.`);
+    logger.info(
+      `Created inventory levels for ${inventoryLevels.length} items.`,
+    );
   } else {
     logger.info("Inventory levels already set — skipping.");
   }
