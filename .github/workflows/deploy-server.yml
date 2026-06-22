@@ -17,6 +17,7 @@ env:
   DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
   DEPLOY_USER: ${{ secrets.DEPLOY_USER || 'deploy' }}
   DEPLOY_PATH: /opt/shroom-mates
+  COMPOSE_FILE: docker-compose.test.yml
 
 jobs:
   # ── Detect what changed ─────────────────────────────────────
@@ -189,22 +190,22 @@ jobs:
             if ! grep -q '^SUMUP_API_KEY=.' .env 2>/dev/null; then
               echo 'SUMUP_API_KEY=${{ secrets.SUMUP_API_KEY }}' >> .env
             fi
-            docker compose pull postgres redis caddy
-            docker compose build medusa storefront
-            docker compose up -d --remove-orphans
+            docker compose -f $COMPOSE_FILE pull postgres redis caddy
+            docker compose -f $COMPOSE_FILE build medusa storefront
+            docker compose -f $COMPOSE_FILE up -d --remove-orphans
             echo "Waiting for health checks..."
             sleep 10
-            docker compose ps
+            docker compose -f $COMPOSE_FILE ps
           EOF
 
       - name: Verify deployment
         run: |
-          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
             cd /opt/shroom-mates
-            unhealthy=$(docker compose ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Name')
+            unhealthy=$(docker compose -f $COMPOSE_FILE ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Name')
             if [ -n "$unhealthy" ]; then
               echo "⚠ Unhealthy services: $unhealthy"
-              docker compose logs --tail=30 $unhealthy
+              docker compose -f $COMPOSE_FILE logs --tail=30 $unhealthy
               exit 1
             fi
             echo "✓ All services healthy"
