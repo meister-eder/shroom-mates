@@ -131,7 +131,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: npm ci
+        run: bun install
 
       - name: Build backend
         working-directory: backend
