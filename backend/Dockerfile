@@ -1,31 +1,31 @@
-# ── Stage 1: Install & Build ─────────────────────────────────
-FROM oven/bun:1-alpine AS builder
+# ── Stage 1: Install with Bun (avoids npm oclif hang) ───────
+FROM oven/bun:1-alpine AS deps
 
 WORKDIR /app
 
-# Copy package files first for better layer caching
 COPY package.json package-lock.json* bun.lock* ./
+RUN bun install --ignore-scripts
 
-# Install dependencies with Bun (npm hangs on oclif deps)
-RUN bun install
+# ── Stage 2: Build with Node.js (Medusa tools require Node) ──
+FROM node:22-alpine AS builder
 
-# Copy source
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
 COPY . .
 
-# Build Medusa backend
-RUN bun run build
+RUN npm run build
 
-# ── Stage 2: Production Runtime ──────────────────────────────
+# ── Stage 3: Production Runtime ──────────────────────────────
 FROM node:22-alpine AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Create non-root user
 RUN addgroup --system medusa && adduser --system --ingroup medusa medusa
 
-# Copy built output and production dependencies
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.medusa ./.medusa
@@ -33,7 +33,6 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/medusa-config.ts ./
 COPY --from=builder /app/tsconfig.json ./
 
-# Create uploads directory
 RUN mkdir -p /app/uploads && chown -R medusa:medusa /app
 
 USER medusa
