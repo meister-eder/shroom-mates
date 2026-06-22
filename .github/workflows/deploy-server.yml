@@ -183,8 +183,12 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
-          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
             cd /opt/shroom-mates
+            # Update SumUp keys from CI (only first deploy, won't overwrite manual changes)
+            if ! grep -q '^SUMUP_API_KEY=.' .env 2>/dev/null; then
+              echo 'SUMUP_API_KEY=${{ secrets.SUMUP_API_KEY }}' >> .env
+            fi
             docker compose pull postgres redis caddy
             docker compose build medusa storefront
             docker compose up -d --remove-orphans
