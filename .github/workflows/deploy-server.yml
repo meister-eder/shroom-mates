@@ -131,7 +131,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: npm ci --cache /tmp/npm-cache-sm
+        run: npm ci
 
       - name: Build backend
         working-directory: backend
