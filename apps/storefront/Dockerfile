@@ -9,7 +9,7 @@ COPY apps/storefront/package.json ./apps/storefront/
 COPY packages/ui/package.json ./packages/ui/
 
 # Install dependencies
-RUN bun install --frozen-lockfile --production=false
+RUN bun install --frozen-lockfile
 
 # ── Stage 2: Build ───────────────────────────────────────────
 FROM oven/bun:1-alpine AS builder

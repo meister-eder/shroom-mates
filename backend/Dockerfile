@@ -1,19 +1,19 @@
 # ── Stage 1: Install & Build ─────────────────────────────────
-FROM node:22-alpine AS builder
+FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files first for better layer caching
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json* bun.lock* ./
 
-# Install dependencies
-RUN npm install --cache /tmp/npm-cache --prefer-offline
+# Install dependencies with Bun (npm hangs on oclif deps)
+RUN bun install
 
 # Copy source
 COPY . .
 
 # Build Medusa backend
-RUN npm run build
+RUN bun run build
 
 # ── Stage 2: Production Runtime ──────────────────────────────
 FROM node:22-alpine AS runner
