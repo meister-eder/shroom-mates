@@ -35,6 +35,9 @@ COPY --from=builder /app/tsconfig.json ./
 
 RUN mkdir -p /app/uploads && chown -R medusa:medusa /app
 
+# Medusa server expects admin HTML at ./public/admin but build puts it in .medusa/server/public/admin
+RUN mkdir -p /app/public && ln -s /app/.medusa/server/public/admin /app/public/admin
+
 USER medusa
 
 EXPOSE 9000
