@@ -1,6 +1,36 @@
 # Deployment Guide — Shroom-Mates
 
-This project runs on a single Hetzner VPS using Docker Compose.
+## Quick Reference
+
+| Environment | Domain | Compose File | Trigger |
+|------------|--------|-------------|---------|
+| Staging | `*.159.195.31.11.sslip.io` | `docker-compose.test.yml` | Manual (`workflow_dispatch`) |
+| Production | `shroom-mates.de` / `shop.` / `api.` | `docker-compose.yml` | Auto on `main` push |
+| Local | `localhost` | `docker-compose.local.yml` | Manual |
+
+### Switch from staging to production
+
+Change these in the repo:
+
+1. `.github/workflows/deploy-server.yml` → `COMPOSE_FILE: docker-compose.yml`
+2. `.github/workflows/deploy-server.yml` → `DOMAIN: ${{ secrets.DEPLOY_HOST }}` (remove `.sslip.io`)
+3. Deploy step → `export DOMAIN="$DEPLOY_HOST"` (remove `.sslip.io`)
+4. All CI build URLs → remove subdomain prefix (e.g. `https://api.` → `https://`)
+
+### Services (test/deploy-server)
+
+| Service | Staging URL |
+|---------|------------|
+| Website | `https://shroom-mates.159.195.31.11.sslip.io` |
+| Storefront | `https://shop.159.195.31.11.sslip.io` |
+| Medusa API | `https://api.159.195.31.11.sslip.io/health` |
+| Medusa Admin | `https://api.159.195.31.11.sslip.io/app` |
+
+---
+
+## Legacy (Hetzner)
+
+This project originally ran on a single Hetzner VPS using Docker Compose.
 Caddy handles TLS termination and reverse proxying automatically via Let's Encrypt.
 
 ---
