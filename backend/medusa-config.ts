@@ -43,11 +43,6 @@ module.exports = defineConfig({
       authCors: process.env.AUTH_CORS!,
       jwtSecret: process.env.JWT_SECRET!,
       cookieSecret: process.env.COOKIE_SECRET!,
-      cookie: {
-        secure:
-          process.env.NODE_ENV === "production" &&
-          !process.env.DISABLE_SECURE_COOKIE,
-      },
     },
   },
   modules: [
