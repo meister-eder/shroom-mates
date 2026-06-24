@@ -195,7 +195,7 @@ jobs:
               echo 'SUMUP_API_KEY=${{ secrets.SUMUP_API_KEY }}' >> .env
             fi
             docker compose -f $COMPOSE_FILE pull postgres redis caddy
-            docker compose -f $COMPOSE_FILE build --no-cache medusa storefront
+            docker compose -f $COMPOSE_FILE build medusa storefront
             docker compose -f $COMPOSE_FILE up -d --remove-orphans --force-recreate
             echo "Waiting for health checks..."
             sleep 10
