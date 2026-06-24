@@ -1,0 +1,91 @@
+# ── docker-compose.local.yml ──────────────────────────────────
+# Full stack for local testing. Same as test but using localhost.
+#
+# Usage:
+#   cp .env.staging.example .env
+#   docker compose -f docker-compose.local.yml up -d --build
+#
+# Access:
+#   Website:    http://localhost:80
+#   Storefront: http://localhost:4321
+#   Medusa API: http://localhost:9000/health
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "4321:4321"
+      - "9000:9000"
+    volumes:
+      - ./Caddyfile.local:/etc/caddy/Caddyfile:ro
+      - ./apps/website/dist:/srv/website:ro
+    depends_on:
+      medusa:
+        condition: service_started
+      storefront:
+        condition: service_started
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-medusa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-shroom-mates}
+    ports:
+      - "5432:5432"
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - local_redis_data:/data
+
+  medusa:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      MEDUSA_BACKEND_URL: http://localhost:9000
+      STORE_CORS: http://localhost:4321
+      ADMIN_CORS: http://localhost:9000
+      AUTH_CORS: http://localhost:9000,http://localhost:4321
+      COOKIE_SECRET: ${COOKIE_SECRET:-localsecretlocalsecretlocalsecret}
+      JWT_SECRET: ${JWT_SECRET:-localsecretlocalsecretlocalsecret}
+      SUMUP_API_KEY: ${SUMUP_API_KEY:-}
+    volumes:
+      - local_medusa_uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+
+  storefront:
+    build:
+      context: .
+      dockerfile: apps/storefront/Dockerfile
+      args:
+        PUBLIC_MEDUSA_BACKEND_URL: http://medusa:9000
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4321
+      PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+    depends_on:
+      - medusa
+
+volumes:
+  local_postgres_data:
+  local_redis_data:
+  local_medusa_uploads:

@@ -1,15 +1,14 @@
 # ── docker-compose.test.yml ──────────────────────────────────
-# No TLS, no health checks, IP-based routing.
-# Copy Caddyfile.test → Caddyfile on the server before running.
+# No TLS, IP-based routing.
+# Set DOMAIN in .env or export DOMAIN=159.195.31.11
 #
 # Usage:
-#   cp Caddyfile.test Caddyfile
-#   docker compose -f docker-compose.test.yml up -d
+#   DOMAIN=159.195.31.11 docker compose -f docker-compose.test.yml up -d
 #
 # Access:
-#   Website:    http://159.195.31.11:80
-#   Storefront: http://159.195.31.11:4321
-#   Medusa API: http://159.195.31.11:9000/health
+#   Website:    http://${DOMAIN}:80
+#   Storefront: http://${DOMAIN}:4321
+#   Medusa API: http://${DOMAIN}:9000/health
 
 services:
   caddy:
@@ -36,29 +35,28 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: ${POSTGRES_DB:-shroom-mates}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - test_postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
-      - redis_data:/data
+      - test_redis_data:/data
 
   medusa:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     restart: unless-stopped
     environment:
       NODE_ENV: production
       DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
-      # Use bare IP for test; no TLS
-      MEDUSA_BACKEND_URL: http://159.195.31.11:9000
-      STORE_CORS: http://159.195.31.11:4321
-      ADMIN_CORS: http://159.195.31.11:9000
-      AUTH_CORS: http://159.195.31.11:9000,http://159.195.31.11:4321
+      MEDUSA_BACKEND_URL: http://${DOMAIN}:9000
+      STORE_CORS: http://${DOMAIN}:4321
+      ADMIN_CORS: http://${DOMAIN}:9000
+      AUTH_CORS: http://${DOMAIN}:9000,http://${DOMAIN}:4321
       COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
@@ -66,7 +64,7 @@ services:
       SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-}
       SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
     volumes:
-      - medusa_uploads:/app/uploads
+      - test_medusa_uploads:/app/uploads
     depends_on:
       - postgres
       - redis
@@ -76,17 +74,17 @@ services:
       context: .
       dockerfile: apps/storefront/Dockerfile
       args:
-        PUBLIC_MEDUSA_BACKEND_URL: http://159.195.31.11:9000
+        PUBLIC_MEDUSA_BACKEND_URL: http://${DOMAIN}:9000
     restart: unless-stopped
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
-      PUBLIC_MEDUSA_BACKEND_URL: http://159.195.31.11:9000
+      PUBLIC_MEDUSA_BACKEND_URL: http://${DOMAIN}:9000
     depends_on:
       - medusa
 
 volumes:
-  postgres_data:
-  redis_data:
-  medusa_uploads:
+  test_postgres_data:
+  test_redis_data:
+  test_medusa_uploads:
