@@ -12,7 +12,7 @@ COPY apps/storefront ./apps/storefront
 COPY turbo.json ./
 
 # Install and build
-RUN bun install
+RUN bun install --backend=copyfile
 WORKDIR /app/apps/storefront
 RUN bun run build
 
@@ -30,12 +30,17 @@ RUN addgroup --system storefront && adduser --system --ingroup storefront storef
 # Copy built output
 COPY --from=builder /app/apps/storefront/dist ./dist
 
-# Install ONLY production deps (no symlinks from builder)
+# Install deps in workspace mode so @shroom-mates/ui resolves
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/apps/storefront/package.json ./apps/storefront/
 COPY --from=builder /app/packages/ui/package.json ./packages/ui/
 COPY --from=builder /app/bun.lock ./
-RUN bun install --production
+RUN bun install --backend=copyfile
+
+# Merge storefront deps into root so runtime finds them
+RUN for dir in /app/apps/storefront/node_modules/*; do \
+      [ -e "$dir" ] && ln -sf "$dir" "/app/node_modules/$(basename "$dir")"; \
+    done
 
 RUN chown -R storefront:storefront /app
 USER storefront
