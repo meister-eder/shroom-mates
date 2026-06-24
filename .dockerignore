@@ -4,5 +4,7 @@
 **/.env.*
 **/dist
 **/*.log
-backend/
+backend/node_modules
+backend/dist
+backend/.medusa
 .github/

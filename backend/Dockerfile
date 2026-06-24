@@ -3,7 +3,7 @@ FROM oven/bun:1-alpine AS deps
 
 WORKDIR /app
 
-COPY package.json package-lock.json* bun.lock* ./
+COPY backend/package.json backend/package-lock.json* backend/bun.lock* ./
 RUN bun install
 
 # ── Stage 2: Build with Node.js (Medusa tools require Node) ──
@@ -12,8 +12,10 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json ./
-COPY . .
+COPY backend/package.json ./
+COPY backend/src ./src
+COPY backend/medusa-config.ts ./
+COPY backend/tsconfig.json ./
 
 RUN npm run build
 
