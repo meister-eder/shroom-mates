@@ -1,14 +1,15 @@
-# ── Test Caddyfile (auto TLS via sslip.io) ───────────────────
-# sslip.io resolves *.IP.sslip.io → IP. Caddy gets real LE certs.
-# Replace 159.195.31.11 with your server IP.
+# ── Test Caddyfile (self-signed TLS) ─────────────────────────
+# Accept the cert warning in your browser once
 
 shroom-mates.159.195.31.11.sslip.io {
+	tls internal
 	root * /srv/website
 	file_server
 	try_files {path} {path}.html {path}/index.html
 }
 
 shop.159.195.31.11.sslip.io {
+	tls internal
 	reverse_proxy storefront:4321 {
 		header_up Host {http.request.host}
 		header_up X-Forwarded-Proto https
@@ -16,5 +17,6 @@ shop.159.195.31.11.sslip.io {
 }
 
 api.159.195.31.11.sslip.io {
+	tls internal
 	reverse_proxy medusa:9000
 }
