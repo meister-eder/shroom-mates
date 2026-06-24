@@ -70,7 +70,7 @@ import logoWithShrooms from "../assets/images/logo_with_shrooms.png";
       <!-- <li><a href="/ueber-uns/">Über uns</a></li> -->
       <li><a href="/faq/">FAQ</a></li>
       <li><a href="/kontakt/">Kontakt</a></li>
-      <li><a href="http://localhost:8000/" class="shop-link">🛒 Shop</a></li>
+      <li><a href={new URL(import.meta.env.PUBLIC_SHOP_URL || "https://shop.shroom-mates.de").toString()} class="shop-link">🛒 Shop</a></li>
     </ul>
   </nav>
 </header>

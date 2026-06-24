@@ -143,34 +143,31 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return next();
 	}
 
-	let redirectUrl = context.url.href;
-	const origin = context.url.origin;
 	const pathname = context.url.pathname;
+	const origin = context.url.origin;
 	const search = context.url.search;
 
-	const countryCode = await getCountryCode(pathname);
-
-	const urlHasCountryCode =
-		(countryCode && pathname.split("/")[1] === countryCode) ||
-		pathname.split("/")[1].includes(`${countryCode}/`);
-
-	if (urlHasCountryCode) {
-		return next();
+	let countryCode: string | undefined;
+	try {
+		countryCode = await getCountryCode(pathname);
+	} catch (err) {
+		// Region lookup failed (Medusa down, no regions, etc.) — continue without redirect
+		console.warn("Region lookup failed, continuing without country redirect:", err);
 	}
 
-	const redirectPath = pathname === "/" ? "" : pathname;
+	if (countryCode) {
+		const urlHasCountryCode =
+			pathname.split("/")[1] === countryCode ||
+			pathname.split("/")[1].includes(`${countryCode}/`);
 
-	const queryString = search || "";
-
-	if (!urlHasCountryCode && countryCode) {
-		redirectUrl = `${origin}/${countryCode}${redirectPath}${queryString}`;
-		return context.redirect(redirectUrl, 307);
+		if (!urlHasCountryCode) {
+			const redirectPath = pathname === "/" ? "" : pathname;
+			const queryString = search || "";
+			return context.redirect(`${origin}/${countryCode}${redirectPath}${queryString}`, 307);
+		}
 	}
 
 	const response = await next();
-	// Apply security headers to all page responses (skip static assets for perf)
-	if (!isStaticOrInternalPath(context.url.pathname)) {
-		return addSecurityHeaders(response);
-	}
+	// Security headers are handled by Caddy in production
 	return response;
 });

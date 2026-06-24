@@ -75,6 +75,8 @@ jobs:
 
       - name: Build website
         run: bun run --filter @shroom-mates/website build
+        env:
+          PUBLIC_SHOP_URL: http://${{ secrets.DEPLOY_HOST }}:4321
 
       - name: Setup SSH
         run: |
@@ -127,6 +129,8 @@ jobs:
 
       - name: Build website
         run: bun run --filter @shroom-mates/website build
+        env:
+          PUBLIC_SHOP_URL: http://${{ secrets.DEPLOY_HOST }}:4321
 
       - name: Build storefront
         run: bun run --filter @shroom-mates/storefront build
