@@ -134,6 +134,8 @@ jobs:
 
       - name: Build storefront
         run: bun run --filter @shroom-mates/storefront build
+        env:
+          PUBLIC_MEDUSA_BACKEND_URL: http://${{ secrets.DEPLOY_HOST }}:9000
 
       - name: Install backend dependencies
         working-directory: backend
