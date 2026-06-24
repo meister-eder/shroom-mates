@@ -1,0 +1,13 @@
+:80 {
+	root * /srv/website
+	file_server
+	try_files {path} {path}.html {path}/index.html
+}
+
+:4321 {
+	reverse_proxy storefront:4321
+}
+
+:9000 {
+	reverse_proxy medusa:9000
+}

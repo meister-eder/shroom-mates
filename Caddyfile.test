@@ -1,23 +1,22 @@
-# ── Test Caddyfile (no TLS, IP-based) ────────────────────────
-# Replace 159.195.31.11 with your actual server IP
+# ── Test Caddyfile (self-signed TLS on any domain) ───────────
+# Caddy generates self-signed certs automatically with "tls internal"
 
-:80 {
-	# Root: static website
-	root * /srv/website
-	file_server
+https://:443 {
+	tls internal
 
-	@assets path /assets/* /_astro/*
-	header @assets Cache-Control "public, max-age=31536000, immutable"
-
-	try_files {path} {path}.html {path}/index.html
+	handle {
+		root * /srv/website
+		file_server
+		try_files {path} {path}.html {path}/index.html
+	}
 }
 
-:4321 {
-	# Storefront (Astro SSR)
+https://:4443 {
+	tls internal
 	reverse_proxy storefront:4321
 }
 
-:9000 {
-	# Medusa backend + admin
+https://:9443 {
+	tls internal
 	reverse_proxy medusa:9000
 }
