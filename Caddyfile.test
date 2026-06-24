@@ -1,22 +1,17 @@
-# ── Test Caddyfile (self-signed TLS on any domain) ───────────
-# Caddy generates self-signed certs automatically with "tls internal"
+# ── Test Caddyfile (auto TLS via sslip.io) ───────────────────
+# sslip.io resolves *.IP.sslip.io → IP. Caddy gets real LE certs.
+# Replace 159.195.31.11 with your server IP.
 
-https://:443 {
-	tls internal
-
-	handle {
-		root * /srv/website
-		file_server
-		try_files {path} {path}.html {path}/index.html
-	}
+shroom-mates.159.195.31.11.sslip.io {
+	root * /srv/website
+	file_server
+	try_files {path} {path}.html {path}/index.html
 }
 
-https://:4443 {
-	tls internal
+shop.159.195.31.11.sslip.io {
 	reverse_proxy storefront:4321
 }
 
-https://:9443 {
-	tls internal
+api.159.195.31.11.sslip.io {
 	reverse_proxy medusa:9000
 }

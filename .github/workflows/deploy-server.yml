@@ -18,7 +18,7 @@ env:
   DEPLOY_USER: ${{ secrets.DEPLOY_USER || 'deploy' }}
   DEPLOY_PATH: /opt/shroom-mates
   COMPOSE_FILE: docker-compose.test.yml
-  DOMAIN: ${{ secrets.DEPLOY_HOST }}
+  DOMAIN: ${{ secrets.DEPLOY_HOST }}.sslip.io
 
 jobs:
   # ── Detect what changed ─────────────────────────────────────
@@ -77,7 +77,7 @@ jobs:
       - name: Build website
         run: bun run --filter @shroom-mates/website build
         env:
-          PUBLIC_SHOP_URL: https://${{ env.DOMAIN }}:4443
+          PUBLIC_SHOP_URL: https://shop.${{ env.DOMAIN }}
 
       - name: Setup SSH
         run: |
@@ -131,12 +131,12 @@ jobs:
       - name: Build website
         run: bun run --filter @shroom-mates/website build
         env:
-          PUBLIC_SHOP_URL: https://${{ env.DOMAIN }}:4443
+          PUBLIC_SHOP_URL: https://shop.${{ env.DOMAIN }}
 
       - name: Build storefront
         run: bun run --filter @shroom-mates/storefront build
         env:
-          PUBLIC_MEDUSA_BACKEND_URL: https://${{ env.DOMAIN }}:9443
+          PUBLIC_MEDUSA_BACKEND_URL: https://api.${{ env.DOMAIN }}
           PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
 
       - name: Install backend dependencies
@@ -194,7 +194,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
             cd /opt/shroom-mates
-            export DOMAIN="$DEPLOY_HOST"
+            export DOMAIN="$DEPLOY_HOST.sslip.io"
             export MEDUSA_PUBLISHABLE_KEY="${{ secrets.MEDUSA_PUBLISHABLE_KEY }}"
             # Update SumUp keys from CI (only first deploy, won't overwrite manual changes)
             if ! grep -q '^SUMUP_API_KEY=.' .env 2>/dev/null; then

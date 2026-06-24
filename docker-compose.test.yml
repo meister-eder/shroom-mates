@@ -1,25 +1,22 @@
 # ── docker-compose.test.yml ──────────────────────────────────
-# Self-signed TLS, no DNS needed. Accept cert warning in browser.
-# Set DOMAIN in .env or export DOMAIN=159.195.31.11
+# Auto TLS via sslip.io. No DNS setup needed.
 #
 # Usage:
-#   DOMAIN=159.195.31.11 docker compose -f docker-compose.test.yml up -d
+#   DOMAIN=159.195.31.11.sslip.io docker compose -f docker-compose.test.yml up -d
 #
-# Access (accept self-signed cert warning):
-#   Website:    https://${DOMAIN}
-#   Storefront: https://${DOMAIN}:4443
-#   Medusa API: https://${DOMAIN}:9443/health
-#   Medusa Admin: https://${DOMAIN}:9443/app
+# Access:
+#   Website:    https://shroom-mates.159.195.31.11.sslip.io
+#   Storefront: https://shop.159.195.31.11.sslip.io
+#   Medusa:     https://api.159.195.31.11.sslip.io
 
 services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
     ports:
-      - "443:443"
       - "80:80"
-      - "4443:4443"
-      - "9443:9443"
+      - "443:443"
+      - "443:443/udp"
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile:ro
       - ./apps/website/dist:/srv/website:ro
@@ -55,10 +52,10 @@ services:
       NODE_ENV: production
       DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
-      MEDUSA_BACKEND_URL: https://${DOMAIN}:9443
-      STORE_CORS: https://${DOMAIN}:4443,https://${DOMAIN}
-      ADMIN_CORS: https://${DOMAIN}:9443
-      AUTH_CORS: https://${DOMAIN}:9443,https://${DOMAIN}:4443
+      MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+      STORE_CORS: https://shop.${DOMAIN},https://shroom-mates.${DOMAIN}
+      ADMIN_CORS: https://api.${DOMAIN}
+      AUTH_CORS: https://api.${DOMAIN},https://shop.${DOMAIN}
       COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
@@ -76,14 +73,14 @@ services:
       context: .
       dockerfile: apps/storefront/Dockerfile
       args:
-        PUBLIC_MEDUSA_BACKEND_URL: https://${DOMAIN}:9443
+        PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
-      PUBLIC_MEDUSA_BACKEND_URL: https://${DOMAIN}:9443
+      PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
     depends_on:
       - medusa
 
