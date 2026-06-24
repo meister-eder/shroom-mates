@@ -1,6 +1,9 @@
 # ── Stage 1: Build ───────────────────────────────────────────
 FROM oven/bun:1-alpine AS builder
 
+ARG PUBLIC_MEDUSA_BACKEND_URL
+ENV PUBLIC_MEDUSA_BACKEND_URL=${PUBLIC_MEDUSA_BACKEND_URL}
+
 WORKDIR /app
 
 # Copy workspace files
@@ -24,6 +27,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
+ARG PUBLIC_MEDUSA_BACKEND_URL
+ENV PUBLIC_MEDUSA_BACKEND_URL=${PUBLIC_MEDUSA_BACKEND_URL}
 
 RUN addgroup --system storefront && adduser --system --ingroup storefront storefront
 
