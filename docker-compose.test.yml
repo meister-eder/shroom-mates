@@ -39,7 +39,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: redis-server --maxmemory 256mb --maxmemory-policy noeviction
     volumes:
       - test_redis_data:/data
 
@@ -75,12 +75,14 @@ services:
       args:
         PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
+        PUBLIC_SITE_URL: https://shop.${DOMAIN}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
       PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+      APP_TRUST_PROXY: "true"
     depends_on:
       - medusa
 

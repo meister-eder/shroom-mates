@@ -138,6 +138,7 @@ jobs:
         env:
           PUBLIC_MEDUSA_BACKEND_URL: https://api.${{ env.DOMAIN }}
           PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
+          PUBLIC_SITE_URL: https://shop.${{ env.DOMAIN }}
 
       - name: Install backend dependencies
         working-directory: backend

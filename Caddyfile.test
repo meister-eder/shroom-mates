@@ -11,6 +11,7 @@ shroom-mates.159.195.31.11.sslip.io {
 shop.159.195.31.11.sslip.io {
 	reverse_proxy storefront:4321 {
 		header_up Host {http.request.host}
+		header_up X-Forwarded-Proto https
 	}
 }
 
