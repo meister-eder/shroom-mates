@@ -137,6 +137,7 @@ jobs:
         run: bun run --filter @shroom-mates/storefront build
         env:
           PUBLIC_MEDUSA_BACKEND_URL: http://${{ env.DOMAIN }}:9000
+          PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
 
       - name: Install backend dependencies
         working-directory: backend
@@ -194,6 +195,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
             cd /opt/shroom-mates
             export DOMAIN="$DEPLOY_HOST"
+            export MEDUSA_PUBLISHABLE_KEY="${{ secrets.MEDUSA_PUBLISHABLE_KEY }}"
             # Update SumUp keys from CI (only first deploy, won't overwrite manual changes)
             if ! grep -q '^SUMUP_API_KEY=.' .env 2>/dev/null; then
               echo 'SUMUP_API_KEY=${{ secrets.SUMUP_API_KEY }}' >> .env
