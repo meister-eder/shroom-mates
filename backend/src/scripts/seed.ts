@@ -509,7 +509,8 @@ export default async function seedDemoData({ container }: ExecArgs) {
       description:
         "Hericium erinaceus — der Löwenmähnen-Pilz aus Leipzig. Frisch geerntet, mit feinem Meeresfrüchte-Aroma. Ideal zum Braten oder als Fleischersatz.",
       category_ids: [getCategoryId("frische-pilze")!],
-      status: ProductStatus.PUBLISHED,
+      // Fresh mushrooms are sold on request only, not through the web shop
+      status: ProductStatus.DRAFT,
       shipping_profile_id: shippingProfile.id,
       images: [{ url: seedImageUrl("lions_mane.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g", "1kg"] }],
@@ -547,7 +548,8 @@ export default async function seedDemoData({ container }: ExecArgs) {
       description:
         "Cyclocybe aegerita — der Pappel-Schüppling aus Leipzig. Kräftiger Geschmack mit fester Textur. Toll in Suppen, Saucen und Risotto.",
       category_ids: [getCategoryId("frische-pilze")!],
-      status: ProductStatus.PUBLISHED,
+      // Fresh mushrooms are sold on request only, not through the web shop
+      status: ProductStatus.DRAFT,
       shipping_profile_id: shippingProfile.id,
       images: [{ url: seedImageUrl("pioppino.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g"] }],
@@ -577,7 +579,8 @@ export default async function seedDemoData({ container }: ExecArgs) {
       description:
         "Pleurotus ostreatus var. — dunkelbraune Austernpilze mit mildem, nussigem Aroma. Frisch aus unserem Leipziger Anbau.",
       category_ids: [getCategoryId("frische-pilze")!],
-      status: ProductStatus.PUBLISHED,
+      // Fresh mushrooms are sold on request only, not through the web shop
+      status: ProductStatus.DRAFT,
       shipping_profile_id: shippingProfile.id,
       images: [{ url: seedImageUrl("black_pearl.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g"] }],
@@ -607,7 +610,8 @@ export default async function seedDemoData({ container }: ExecArgs) {
       description:
         "Pleurotus ostreatus — hell-cremefarbene Austernpilze mit zartem Geschmack. Vielseitig einsetzbar und ideal für Einsteiger.",
       category_ids: [getCategoryId("frische-pilze")!],
-      status: ProductStatus.PUBLISHED,
+      // Fresh mushrooms are sold on request only, not through the web shop
+      status: ProductStatus.DRAFT,
       shipping_profile_id: shippingProfile.id,
       images: [{ url: seedImageUrl("white_pearl.jpg") }],
       options: [{ title: "Gewicht", values: ["250g", "500g"] }],

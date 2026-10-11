@@ -96,6 +96,33 @@ module.exports = defineConfig({
         ],
       },
     },
+    {
+      // Transactional email. Without RESEND_API_KEY (local dev) mails are only
+      // logged by the built-in local provider.
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          process.env.RESEND_API_KEY
+            ? {
+                resolve: "./src/modules/resend",
+                id: "resend",
+                options: {
+                  channels: ["email"],
+                  apiKey: process.env.RESEND_API_KEY,
+                  from:
+                    process.env.EMAIL_FROM ||
+                    "shroom-mates <bestellung@shroom-mates.de>",
+                  replyTo: process.env.EMAIL_REPLY_TO || "hey@shroom-mates.de",
+                },
+              }
+            : {
+                resolve: "@medusajs/medusa/notification-local",
+                id: "local",
+                options: { channels: ["email"] },
+              },
+        ],
+      },
+    },
     ...redisModules,
   ],
 });

@@ -29,8 +29,14 @@ IDs verweisen auf den Bericht.
 - [x] L4 Ländernamen auf Deutsch („Deutschland“ statt „Germany“/„DE“)
 - [x] Impressum: leerer `mailto:`-Link
 - [x] Produktions-Compose baute das Backend mit falschem Build-Kontext
+- [x] E-Mails: Bestellbestätigung, „Neue Bestellung“ an den Shop, Versandmail mit DHL-Tracking (Resend)
+- [x] Seed legt frische Pilze als Entwurf an (online nur auf Anfrage)
 
 ## Recht & Inhalt (braucht euch, nicht Code)
+
+- [ ] Resend: Domain `shroom-mates.de` verifizieren (DNS bei Namecheap) und `RESEND_API_KEY` als Secret in `netcup-test` anlegen
+- [ ] Frische Pilze auf dem Testserver im Admin auf „Entwurf“ setzen (Lion's Mane, Pioppino, Black Pearl, White Pearl)
+- [ ] Website: frische Pilze „auf Anfrage“ → Kontaktformular verlinken
 
 - [ ] H4 AGB, Datenschutz, Widerruf im Shop sind Platzhalter (`[Name / Firma]`, `[Datum einfügen]`)
 - [ ] H3 Datenschutzerklärung für die Website fehlt; Google Maps auf `/kontakt/` erst nach Klick laden; web3forms erwähnen

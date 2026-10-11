@@ -211,6 +211,25 @@ jobs:
                 mv .env.tmp .env'
           echo "✓ SumUp credentials updated"
 
+      - name: Sync email credentials
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          if [ -z "$RESEND_API_KEY" ]; then
+            echo "::notice::RESEND_API_KEY not set — the backend will only log emails."
+            exit 0
+          fi
+          printf 'RESEND_API_KEY=%s\n' "$RESEND_API_KEY" \
+            | ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" '
+                set -e
+                cd /opt/shroom-mates
+                touch .env
+                grep -v -E "^RESEND_API_KEY=" .env > .env.tmp || true
+                cat >> .env.tmp
+                chmod 600 .env.tmp
+                mv .env.tmp .env'
+          echo "✓ Resend API key updated"
+
       - name: Deploy with Docker Compose
         run: |
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF

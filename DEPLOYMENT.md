@@ -58,6 +58,7 @@ Pushes that only touch `apps/website/` take a fast path that just syncs the stat
 | `MEDUSA_PUBLISHABLE_KEY` | repository | Publishable key baked into the storefront build; must exist in the server database |
 | `SUMUP_API_KEY` | environment `netcup-test` | SumUp **sandbox** API key for the test server |
 | `SUMUP_MERCHANT_CODE` | environment `netcup-test` | SumUp **sandbox** merchant code |
+| `RESEND_API_KEY` | environment `netcup-test` | Resend key with "Sending access" for `shroom-mates.de` (optional; without it emails are only logged) |
 
 Set environment secrets with e.g. `gh secret set SUMUP_API_KEY --env netcup-test`.
 
@@ -100,6 +101,24 @@ points at `https://shop.<domain>/de/checkout/complete`.
   because the storefront completes the cart after payment.
 - Enable extra payment methods (Apple Pay, PayPal, …) in the SumUp dashboard under
   Settings → Payment Methods; the card widget shows them automatically.
+
+## Email (Resend)
+
+The backend sends three emails through [Resend](https://resend.com) (`backend/src/modules/resend`,
+templates in `backend/src/lib/emails.ts`):
+
+| Event | To | Template |
+|-------|----|----------|
+| `order.placed` | customer | order confirmation |
+| `order.placed` | `SHOP_NOTIFICATION_EMAIL` (default `hey@shroom-mates.de`) | "new order" with admin link |
+| `shipment.created` (admin: mark as shipped + tracking number) | customer | shipping confirmation with DHL tracking link |
+
+Sender `EMAIL_FROM` (default `shroom-mates <bestellung@shroom-mates.de>`), replies to
+`EMAIL_REPLY_TO` (default `hey@shroom-mates.de`). The domain `shroom-mates.de` must be
+verified in Resend (DNS records at Namecheap: MX/SPF on `send`, DKIM on
+`resend._domainkey`). Without `RESEND_API_KEY` the built-in local provider only logs
+the emails. Preview the rendered emails for the latest order with
+`OUT_DIR=/tmp npx medusa exec ./src/scripts/render-emails-preview.ts`.
 
 ## Product images
 

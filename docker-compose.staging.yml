@@ -63,6 +63,12 @@ services:
       SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-}
       SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
+      # Transactional email via Resend (mails are only logged without a key)
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-shroom-mates <bestellung@shroom-mates.de>}
+      EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:-hey@shroom-mates.de}
+      SHOP_NOTIFICATION_EMAIL: ${SHOP_NOTIFICATION_EMAIL:-hey@shroom-mates.de}
+      SHOP_PUBLIC_URL: ${SHOP_PUBLIC_URL:-}
     volumes:
       - staging_medusa_uploads:/app/static
     depends_on:
