@@ -1,4 +1,4 @@
-import { test as base, type Page } from "@playwright/test";
+import { test as base, expect, type Page } from "@playwright/test";
 
 /**
  * Shared checkout helpers for shroom-mates E2E tests.
