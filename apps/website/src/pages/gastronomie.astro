@@ -1,55 +1,55 @@
 ---
-import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
+import Layout from "../layouts/Layout.astro";
 
 const gastroPageEntry = await getEntry("gastronomie-page", "content");
 if (!gastroPageEntry) {
-    throw new Error("Gastronomie page content not found");
+	throw new Error("Gastronomie page content not found");
 }
 
 const {
-    title,
-    description,
-    heroTitle,
-    heroSubtitle,
-    heroImage,
-    heroImageAlt,
-    introTitle,
-    introText,
-    introText2,
-    sorten,
-    vorteile,
-    ctaTitle,
-    ctaText,
-    ctaButtonText,
-    ctaButtonLink,
-    ctaEmail,
+	title,
+	description,
+	heroTitle,
+	heroSubtitle,
+	heroImage,
+	heroImageAlt,
+	introTitle,
+	introText,
+	introText2,
+	sorten,
+	vorteile,
+	ctaTitle,
+	ctaText,
+	ctaButtonText,
+	ctaButtonLink,
+	ctaEmail,
 } = gastroPageEntry.data;
 
 const gastroSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Pilzlieferung für Gastronomie in Leipzig",
-    description:
-        "Regelmäßige Lieferung frischer Edelpilze an Restaurants, Cafés und Gastronomiebetriebe in Leipzig und Umgebung.",
-    provider: {
-        "@type": "LocalBusiness",
-        name: "shroom-mates",
-        address: {
-            "@type": "PostalAddress",
-            streetAddress: "Markranstädter Straße 8",
-            addressLocality: "Leipzig",
-            addressRegion: "Sachsen",
-            postalCode: "04229",
-            addressCountry: "DE",
-        },
-    },
-    areaServed: {
-        "@type": "City",
-        name: "Leipzig",
-    },
-    serviceType: "Edelpilz-Lieferung",
+	"@context": "https://schema.org",
+	"@type": "Service",
+	name: "Pilzlieferung für Gastronomie in Leipzig",
+	description:
+		"Regelmäßige Lieferung frischer Edelpilze an Restaurants, Cafés und Gastronomiebetriebe in Leipzig und Umgebung.",
+	provider: {
+		"@type": "LocalBusiness",
+		name: "shroom-mates",
+		address: {
+			"@type": "PostalAddress",
+			streetAddress: "Markranstädter Straße 8",
+			addressLocality: "Leipzig",
+			addressRegion: "Sachsen",
+			postalCode: "04229",
+			addressCountry: "DE",
+		},
+	},
+	areaServed: {
+		"@type": "City",
+		name: "Leipzig",
+	},
+	serviceType: "Edelpilz-Lieferung",
 };
 ---
 

@@ -1,208 +1,208 @@
 ---
 import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
-import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
 import { ClientRouter } from "astro:transitions";
-import Header from "../components/Header.astro";
+import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
 import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
 
 interface Props {
-  title: string;
-  description?: string;
-  ogImage?: string;
-  isLandingPage?: boolean;
-  noindex?: boolean;
-  noBackground?: boolean;
+	title: string;
+	description?: string;
+	ogImage?: string;
+	isLandingPage?: boolean;
+	noindex?: boolean;
+	noBackground?: boolean;
 }
 
 const {
-  title,
-  description = "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Plagwitz. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.",
-  ogImage,
-  isLandingPage = false,
-  noindex = false,
-  noBackground = false,
+	title,
+	description = "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Plagwitz. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.",
+	ogImage,
+	isLandingPage = false,
+	noindex = false,
+	noBackground = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 // Use a better default image - the logo with mushrooms
 const defaultOgImage =
-  ogImage ||
-  new URL("/assets/logo_with_shrooms_and_text.png", Astro.site).toString();
+	ogImage ||
+	new URL("/assets/logo_with_shrooms_and_text.png", Astro.site).toString();
 
 // Structured data for local business SEO
 const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": "https://shroom-mates.de/#business",
-  name: "shroom-mates",
-  alternateName: "shroom-mates GbR",
-  legalName: "shroom-mates GbR – Emmelie Kunz & Tim Eder",
-  image: new URL(
-    "/assets/logo_with_shrooms_and_text.png",
-    Astro.site,
-  ).toString(),
-  description:
-    "Edelpilzzucht in Leipzig-Plagwitz. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Markranstädter Straße 8",
-    addressLocality: "Leipzig",
-    addressRegion: "Sachsen",
-    postalCode: "04229",
-    addressCountry: "DE",
-  },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 51.325545,
-    longitude: 12.330446,
-  },
-  url: "https://shroom-mates.de",
-  email: "hey@shroom-mates.de",
-  priceRange: "$$",
-  knowsLanguage: "de",
-  knowsAbout: [
-    "Edelpilze",
-    "Pilzzucht",
-    "Austernpilze",
-    "Lion's Mane",
-    "Growkits",
-    "Pilztinkturen",
-    "Vitalpilze",
-    "Pilze für Gastronomie",
-  ],
-  areaServed: [
-    {
-      "@type": "City",
-      name: "Leipzig",
-      "@id": "https://www.wikidata.org/wiki/Q2079",
-    },
-    {
-      "@type": "State",
-      name: "Sachsen",
-    },
-  ],
-  sameAs: ["https://www.instagram.com/shroom_mates_le/"],
-  founder: [
-    { "@type": "Person", name: "Emmelie Kunz" },
-    { "@type": "Person", name: "Tim Eder" },
-  ],
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Edelpilze, Growkits & Tinkturen aus Leipzig",
-    itemListElement: [
-      {
-        "@type": "OfferCatalog",
-        name: "Frische Edelpilze",
-        itemListElement: [
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Rosenseitling",
-              description:
-                "Rosa Austernpilze, zart und nussig, saisonal im Sommer",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Pioppino",
-              description: "Südlicher Schüppling, knackig und aromatisch",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Lion's Mane",
-              description:
-                "Igelstachelbart, Vitalpilz mit besonderem Geschmack",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "White Pearl",
-              description: "Weißer Austernpilz, vielseitig und ertragreich",
-            },
-          },
-        ],
-      },
-      {
-        "@type": "OfferCatalog",
-        name: "Growkits: Pilze selber züchten",
-        itemListElement: [
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Growkit",
-              description: "Pilzzuchtset für Zuhause, in 2-3 Wochen ernten",
-            },
-          },
-        ],
-      },
-      {
-        "@type": "OfferCatalog",
-        name: "Pilztinkturen & Extrakte",
-        itemListElement: [
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Lion's Mane Tinktur",
-              description: "Handgemachter Doppelextrakt aus eigenem Anbau",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Reishi + Cordyceps Tinktur",
-              description: "Adaptogener Doppelextrakt, immunsystemstärkend",
-            },
-          },
-        ],
-      },
-    ],
-  },
+	"@context": "https://schema.org",
+	"@type": "LocalBusiness",
+	"@id": "https://shroom-mates.de/#business",
+	name: "shroom-mates",
+	alternateName: "shroom-mates GbR",
+	legalName: "shroom-mates GbR – Emmelie Kunz & Tim Eder",
+	image: new URL(
+		"/assets/logo_with_shrooms_and_text.png",
+		Astro.site,
+	).toString(),
+	description:
+		"Edelpilzzucht in Leipzig-Plagwitz. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: "Markranstädter Straße 8",
+		addressLocality: "Leipzig",
+		addressRegion: "Sachsen",
+		postalCode: "04229",
+		addressCountry: "DE",
+	},
+	geo: {
+		"@type": "GeoCoordinates",
+		latitude: 51.325545,
+		longitude: 12.330446,
+	},
+	url: "https://shroom-mates.de",
+	email: "hey@shroom-mates.de",
+	priceRange: "$$",
+	knowsLanguage: "de",
+	knowsAbout: [
+		"Edelpilze",
+		"Pilzzucht",
+		"Austernpilze",
+		"Lion's Mane",
+		"Growkits",
+		"Pilztinkturen",
+		"Vitalpilze",
+		"Pilze für Gastronomie",
+	],
+	areaServed: [
+		{
+			"@type": "City",
+			name: "Leipzig",
+			"@id": "https://www.wikidata.org/wiki/Q2079",
+		},
+		{
+			"@type": "State",
+			name: "Sachsen",
+		},
+	],
+	sameAs: ["https://www.instagram.com/shroom_mates_le/"],
+	founder: [
+		{ "@type": "Person", name: "Emmelie Kunz" },
+		{ "@type": "Person", name: "Tim Eder" },
+	],
+	hasOfferCatalog: {
+		"@type": "OfferCatalog",
+		name: "Edelpilze, Growkits & Tinkturen aus Leipzig",
+		itemListElement: [
+			{
+				"@type": "OfferCatalog",
+				name: "Frische Edelpilze",
+				itemListElement: [
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "Rosenseitling",
+							description:
+								"Rosa Austernpilze, zart und nussig, saisonal im Sommer",
+						},
+					},
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "Pioppino",
+							description: "Südlicher Schüppling, knackig und aromatisch",
+						},
+					},
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "Lion's Mane",
+							description:
+								"Igelstachelbart, Vitalpilz mit besonderem Geschmack",
+						},
+					},
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "White Pearl",
+							description: "Weißer Austernpilz, vielseitig und ertragreich",
+						},
+					},
+				],
+			},
+			{
+				"@type": "OfferCatalog",
+				name: "Growkits: Pilze selber züchten",
+				itemListElement: [
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "Growkit",
+							description: "Pilzzuchtset für Zuhause, in 2-3 Wochen ernten",
+						},
+					},
+				],
+			},
+			{
+				"@type": "OfferCatalog",
+				name: "Pilztinkturen & Extrakte",
+				itemListElement: [
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "Lion's Mane Tinktur",
+							description: "Handgemachter Doppelextrakt aus eigenem Anbau",
+						},
+					},
+					{
+						"@type": "Offer",
+						itemOffered: {
+							"@type": "Product",
+							name: "Reishi + Cordyceps Tinktur",
+							description: "Adaptogener Doppelextrakt, immunsystemstärkend",
+						},
+					},
+				],
+			},
+		],
+	},
 };
 
 // Breadcrumb structured data
 const pathSegments = Astro.url.pathname.split("/").filter(Boolean);
 const breadcrumbItems = [
-  {
-    "@type": "ListItem",
-    position: 1,
-    name: "Startseite",
-    item: "https://shroom-mates.de/",
-  },
+	{
+		"@type": "ListItem",
+		position: 1,
+		name: "Startseite",
+		item: "https://shroom-mates.de/",
+	},
 ];
 const breadcrumbNames: Record<string, string> = {
-  "unsere-pilze": "Unsere Pilze",
-  growkits: "Growkits",
-  tinkturen: "Tinkturen",
-  kontakt: "Kontakt",
-  "ueber-uns": "Über uns",
-  impressum: "Impressum",
-  faq: "Häufige Fragen",
-  gastronomie: "Gastronomie",
+	"unsere-pilze": "Unsere Pilze",
+	growkits: "Growkits",
+	tinkturen: "Tinkturen",
+	kontakt: "Kontakt",
+	"ueber-uns": "Über uns",
+	impressum: "Impressum",
+	faq: "Häufige Fragen",
+	gastronomie: "Gastronomie",
 };
 pathSegments.forEach((segment, index) => {
-  breadcrumbItems.push({
-    "@type": "ListItem",
-    position: index + 2,
-    name: breadcrumbNames[segment] || segment,
-    item: `https://shroom-mates.de/${pathSegments.slice(0, index + 1).join("/")}/`,
-  });
+	breadcrumbItems.push({
+		"@type": "ListItem",
+		position: index + 2,
+		name: breadcrumbNames[segment] || segment,
+		item: `https://shroom-mates.de/${pathSegments.slice(0, index + 1).join("/")}/`,
+	});
 });
 const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: breadcrumbItems,
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	itemListElement: breadcrumbItems,
 };
 ---
 

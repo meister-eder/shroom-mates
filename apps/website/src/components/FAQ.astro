@@ -8,31 +8,31 @@
 import { getEntry } from "astro:content";
 
 interface FAQItem {
-  question: string;
-  answer: string;
-  link?: string;
+	question: string;
+	answer: string;
+	link?: string;
 }
 
 // Load FAQ items from the content collection
 const faqPageEntry = await getEntry("faq-page", "content");
 if (!faqPageEntry) {
-  throw new Error("FAQ page content not found");
+	throw new Error("FAQ page content not found");
 }
 
 const faqs: FAQItem[] = faqPageEntry.data.faqs;
 
 // Generate FAQPage Schema for SEO
 const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
-    },
-  })),
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: faqs.map((faq) => ({
+		"@type": "Question",
+		name: faq.question,
+		acceptedAnswer: {
+			"@type": "Answer",
+			text: faq.answer,
+		},
+	})),
 };
 ---
 

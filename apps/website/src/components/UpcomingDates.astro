@@ -2,51 +2,51 @@
 // This component will show upcoming market dates
 // Currently using static placeholder data that can be made dynamic later
 const upcomingDates = [
-  {
-    id: 1,
-    date: "2025-10-25",
-    day: "Samstag",
-    time: "08:00 - 14:00",
-    location: "Egenberger Samstagsmarkt",
-    available: true,
-    specialNote: "Frische Ernte der Woche",
-  },
-  {
-    id: 2,
-    date: "2025-11-01",
-    day: "Samstag",
-    time: "08:00 - 14:00",
-    location: "Egenberger Samstagsmarkt",
-    available: true,
-    specialNote: null,
-  },
-  {
-    id: 3,
-    date: "2025-11-08",
-    day: "Samstag",
-    time: "08:00 - 14:00",
-    location: "Egenberger Samstagsmarkt",
-    available: true,
-    specialNote: "Kostproben verfügbar",
-  },
-  {
-    id: 4,
-    date: "2025-11-15",
-    day: "Samstag",
-    time: "08:00 - 14:00",
-    location: "Egenberger Samstagsmarkt",
-    available: false,
-    specialNote: "Markt fällt aus",
-  },
+	{
+		id: 1,
+		date: "2025-10-25",
+		day: "Samstag",
+		time: "08:00 - 14:00",
+		location: "Egenberger Samstagsmarkt",
+		available: true,
+		specialNote: "Frische Ernte der Woche",
+	},
+	{
+		id: 2,
+		date: "2025-11-01",
+		day: "Samstag",
+		time: "08:00 - 14:00",
+		location: "Egenberger Samstagsmarkt",
+		available: true,
+		specialNote: null,
+	},
+	{
+		id: 3,
+		date: "2025-11-08",
+		day: "Samstag",
+		time: "08:00 - 14:00",
+		location: "Egenberger Samstagsmarkt",
+		available: true,
+		specialNote: "Kostproben verfügbar",
+	},
+	{
+		id: 4,
+		date: "2025-11-15",
+		day: "Samstag",
+		time: "08:00 - 14:00",
+		location: "Egenberger Samstagsmarkt",
+		available: false,
+		specialNote: "Markt fällt aus",
+	},
 ];
 
 // Format date helper
 function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("de-DE", {
-    day: "2-digit",
-    month: "2-digit",
-  });
+	const date = new Date(dateString);
+	return date.toLocaleDateString("de-DE", {
+		day: "2-digit",
+		month: "2-digit",
+	});
 }
 ---
 

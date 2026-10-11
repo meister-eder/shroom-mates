@@ -1,26 +1,26 @@
 ---
-import Layout from "../layouts/Layout.astro";
 import { getEntry } from "astro:content";
+import Layout from "../layouts/Layout.astro";
 
 const faqPageEntry = await getEntry("faq-page", "content");
 if (!faqPageEntry) {
-    throw new Error("FAQ page content not found");
+	throw new Error("FAQ page content not found");
 }
 
 const { title, description, faqs } = faqPageEntry.data;
 
 // FAQPage structured data for Google rich snippets
 const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-        },
-    })),
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: faqs.map((faq) => ({
+		"@type": "Question",
+		name: faq.question,
+		acceptedAnswer: {
+			"@type": "Answer",
+			text: faq.answer,
+		},
+	})),
 };
 ---
 

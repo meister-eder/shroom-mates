@@ -26,9 +26,10 @@ jobs:
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
 
+      # Use the Biome version pinned in apps/website (bunx would fetch the
+      # latest major, which rejects the config)
       - name: Lint website (Biome)
-        working-directory: apps/website
-        run: bunx @biomejs/biome check .
+        run: bun run --filter @shroom-mates/website lint
 
   # ── Build all apps ─────────────────────────────────────────
   build:

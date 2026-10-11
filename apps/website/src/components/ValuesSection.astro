@@ -1,12 +1,12 @@
 ---
-import { getEntry, type CollectionEntry } from "astro:content";
+import { type CollectionEntry, getEntry } from "astro:content";
 import ValueCard from "./ValueCard.astro";
 
 // Fetch landing page content
 const landingPageEntry = await getEntry("landing-page", "content");
 
 if (!landingPageEntry) {
-  throw new Error("Could not find landing-page content");
+	throw new Error("Could not find landing-page content");
 }
 
 // Get the values from landing page data

@@ -1,5 +1,4 @@
 ---
-import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import MushroomShowcaseSection from "../components/MushroomShowcaseSection.astro";
@@ -7,25 +6,26 @@ import MushroomShowcaseSection from "../components/MushroomShowcaseSection.astro
 // import UpcomingDates from "../components/UpcomingDates.astro";
 // import CustomerDeliverySection from "../components/CustomerDeliverySection.astro";
 import ValuesSection from "../components/ValuesSection.astro";
+import Layout from "../layouts/Layout.astro";
 
 // Get the landing page content
 const landingPageEntries = await getCollection("landing-page");
 const landingPageContent = landingPageEntries[0];
 
 if (!landingPageContent) {
-  throw new Error("Landing page content not found");
+	throw new Error("Landing page content not found");
 }
 
 // With the image() helper in the schema, Astro automatically resolves paths to ImageMetadata
 // No need for manual image resolution - it's all type-safe!
 const {
-  title,
-  heroImage,
-  heroImageAlt,
-  logoImage,
-  logoImageAlt,
-  heroTitle,
-  teaserText,
+	title,
+	heroImage,
+	heroImageAlt,
+	logoImage,
+	logoImageAlt,
+	heroTitle,
+	teaserText,
 } = landingPageContent.data;
 
 // Keep "shroom-mates" from wrapping; built inline to avoid stray whitespace

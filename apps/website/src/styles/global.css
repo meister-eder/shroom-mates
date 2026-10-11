@@ -1,9 +1,11 @@
 :root {
 	/* Shared tokens live in @shroom-mates/ui/base.css */
-	--accent-gradient: linear-gradient(45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			rgb(10, 10, 10) 60%);
+	--accent-gradient: linear-gradient(
+		45deg,
+		rgb(var(--accent)),
+		rgb(var(--accent-light)) 30%,
+		rgb(10, 10, 10) 60%
+	);
 	--navbar-height-scrolled: 5.5rem;
 	--navbar-height-mobile-scrolled: 3.5rem;
 }
@@ -18,7 +20,6 @@ body {
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
-
 	*,
 	*::before,
 	*::after {
@@ -101,18 +102,14 @@ body {
 	navigation: auto;
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-	animation-duration: 0.6s;
-	animation-timing-function: ease-in-out;
-}
-
+/* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
 ::view-transition-old(root) {
-	animation-name: fade-out;
+	animation: fade-out 0.6s ease-in-out;
 }
 
+/* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
 ::view-transition-new(root) {
-	animation-name: fade-in;
+	animation: fade-in 0.6s ease-in-out;
 }
 
 @keyframes fade-out {
@@ -155,7 +152,8 @@ body {
 /* Checkered background pattern */
 .section--checkered {
 	background-size: 20px 20px;
-	background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
+	background-image:
+		linear-gradient(to right, #ebc477c5 1px, transparent 1px),
 		linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
 }
 

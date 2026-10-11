@@ -1,18 +1,18 @@
 ---
-import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getEntry, render } from "astro:content";
+import Layout from "../layouts/Layout.astro";
 
 // Get the about-us-page content
 const aboutUsEntry = await getEntry("about-us-page", "content");
 
 if (!aboutUsEntry) {
-  throw new Error("About us page content not found");
+	throw new Error("About us page content not found");
 }
 
 const { Content } = await render(aboutUsEntry);
 const { title, description, heroTitle, heroSubtitle, images } =
-  aboutUsEntry.data;
+	aboutUsEntry.data;
 ---
 
 <Layout title={title} description={description} noindex>
