@@ -101,6 +101,19 @@ points at `https://shop.<domain>/de/checkout/complete`.
 - Enable extra payment methods (Apple Pay, PayPal, …) in the SumUp dashboard under
   Settings → Payment Methods; the card widget shows them automatically.
 
+## Product images
+
+Medusa's local file provider stores uploads in `/app/static` (served at
+`https://api.<domain>/static/…`); the `*_medusa_uploads` volume is mounted there so
+admin uploads survive rebuilds. The seed product photos live in
+`backend/static/seed/` and are baked into the image, so a fresh volume starts with
+them. Image URLs are stored absolute in the database — if the API domain changes,
+rewrite the `http(s)://old-host` prefix in `image.url` and the `thumbnail` columns.
+
+The storefront optimises product images server-side via Astro's `/_image`
+endpoint, which fetches the originals through `MEDUSA_INTERNAL_URL`
+(`http://medusa:9000`), so it also works with the self-signed test certificate.
+
 ## First-time database seed
 
 ```bash

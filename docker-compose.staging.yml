@@ -43,8 +43,8 @@ services:
   # ── Medusa Backend ─────────────────────────────────────────────
   medusa:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     restart: unless-stopped
     ports:
       - "9001:9000"
@@ -64,7 +64,7 @@ services:
       SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
     volumes:
-      - staging_medusa_uploads:/app/uploads
+      - staging_medusa_uploads:/app/static
     depends_on:
       postgres:
         condition: service_healthy

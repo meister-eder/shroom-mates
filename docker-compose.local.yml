@@ -65,7 +65,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-localsecretlocalsecretlocalsecret}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
     volumes:
-      - local_medusa_uploads:/app/uploads
+      - local_medusa_uploads:/app/static
     depends_on:
       - postgres
       - redis

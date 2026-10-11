@@ -35,7 +35,12 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/medusa-config.ts ./
 COPY --from=builder /app/tsconfig.json ./
 
-RUN mkdir -p /app/uploads && chown -R medusa:medusa /app
+# Local file provider stores uploads in ./static (served at /static); a volume
+# is mounted there so admin uploads survive rebuilds.
+RUN mkdir -p /app/static
+# Seed product images (copied into the uploads volume when it is first created)
+COPY backend/static/seed /app/static/seed
+RUN chown -R medusa:medusa /app
 
 # Medusa server expects admin HTML at ./public/admin but build puts it in .medusa/server/public/admin
 RUN mkdir -p /app/public && ln -s /app/.medusa/server/public/admin /app/public/admin

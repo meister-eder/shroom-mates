@@ -68,8 +68,8 @@ services:
   # ── Medusa Backend ─────────────────────────────────────────────
   medusa:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -87,7 +87,7 @@ services:
       SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-https://shop.shroom-mates.de/de/checkout/complete}
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
     volumes:
-      - medusa_uploads:/app/uploads
+      - medusa_uploads:/app/static
     depends_on:
       postgres:
         condition: service_healthy

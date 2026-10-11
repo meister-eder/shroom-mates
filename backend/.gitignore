@@ -16,5 +16,6 @@ build
 .cache
 .medusa
 
-# Uploaded static files (local dev only)
-/static
+# Uploaded static files (local dev only) — except the seed product images
+/static/*
+!/static/seed/

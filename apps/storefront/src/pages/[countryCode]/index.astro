@@ -1,4 +1,5 @@
 ---
+import { serverImageSrc } from "@lib/utils/image";
 import { getRegion } from "@lib/data/regions";
 import { listProducts } from "@lib/data/products";
 import { Image } from "astro:assets";
@@ -58,7 +59,7 @@ const featured = products.slice(0, 3);
         {
           heroImage ? (
             <Image
-              src={heroImage}
+              src={serverImageSrc(heroImage)}
               width={640}
               height={640}
               alt=""

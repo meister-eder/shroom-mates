@@ -44,6 +44,8 @@ export default defineConfig({
       ...(medusaBackendDomain ? [medusaBackendDomain] : []),
       "api.shroom-mates.de",
       "localhost",
+      // MEDUSA_INTERNAL_URL host (server-side image fetches in Docker)
+      "medusa",
     ],
   },
 });

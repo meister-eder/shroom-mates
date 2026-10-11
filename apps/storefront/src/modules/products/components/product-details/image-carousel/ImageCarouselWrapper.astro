@@ -1,5 +1,6 @@
 ---
 import { getImage } from "astro:assets";
+import { serverImageSrc } from "@lib/utils/image";
 import { ImageCarousel, type OptimizedCarouselImage } from "./ImageCarousel";
 
 interface Props {
@@ -15,7 +16,7 @@ const optimizedImages: OptimizedCarouselImage[] = await Promise.all(
   imageUrls.map(async (imageUrl) => {
     const [main, thumb] = await Promise.all([
       getImage({
-        src: imageUrl,
+        src: serverImageSrc(imageUrl),
         width: 1049,
         height: 1312,
         format: "webp",
@@ -24,7 +25,7 @@ const optimizedImages: OptimizedCarouselImage[] = await Promise.all(
         sizes: "(max-width: 1049px) 524px, 1049px",
       }),
       getImage({
-        src: imageUrl,
+        src: serverImageSrc(imageUrl),
         width: 144,
         height: 144,
         format: "webp",
