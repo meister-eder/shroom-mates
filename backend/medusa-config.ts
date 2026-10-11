@@ -80,6 +80,15 @@ module.exports = defineConfig({
                       process.env.MEDUSA_BACKEND_URL,
                     // Browser redirect after SumUp hosted payment / 3DS
                     redirectUrl: process.env.SUMUP_REDIRECT_URL,
+                    // The storefront sends a per-country redirect_url; its host must
+                    // be the SUMUP_REDIRECT_URL host or listed here (comma-separated,
+                    // host[:port]), e.g. for preview/test deploys on another domain.
+                    redirectUrlAllowedHosts: (
+                      process.env.SUMUP_REDIRECT_ALLOWED_HOSTS ?? ""
+                    )
+                      .split(",")
+                      .map((h) => h.trim())
+                      .filter(Boolean),
                   },
                 },
               ]
