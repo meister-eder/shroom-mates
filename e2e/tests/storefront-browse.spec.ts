@@ -147,7 +147,9 @@ test.describe("Storefront — Accessibility Basics", () => {
     await page.goto("/de/store");
 
     // Should have at least one h1
-    const h1Count = await page.locator("h1").count();
+    // querySelectorAll doesn't pierce shadow DOM, so the Astro dev
+    // toolbar's own headings (dev server only) aren't counted.
+    const h1Count = await page.evaluate(() => document.querySelectorAll("h1").length);
     expect(h1Count).toBe(1); // Exactly one h1 per page
 
     // Navigation should have aria-label

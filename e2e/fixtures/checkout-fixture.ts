@@ -73,7 +73,7 @@ export class CheckoutFlow {
     await this.page.waitForSelector("h1:has-text('Warenkorb')");
     // The empty state shows "Dein Warenkorb ist leer"
     await expect(
-      this.page.getByText("Dein Warenkorb ist leer"),
+      this.main.getByText("Dein Warenkorb ist leer"),
     ).not.toBeVisible();
   }
 
@@ -92,19 +92,16 @@ export class CheckoutFlow {
     await this.page.waitForSelector("#checkout-email");
     await this.page.fill("#checkout-email", data.email);
 
-    // React Hook Form registers inputs by name — we use the label text to find them
-    await this.page.getByLabel(/Vorname/).fill(data.firstName);
-    await this.page.getByLabel(/Nachname/).fill(data.lastName);
-    await this.page.getByLabel(/Adresse/).first().fill(data.address);
-    await this.page.getByLabel(/PLZ/).fill(data.postalCode);
-    await this.page.getByLabel(/Stadt/).fill(data.city);
-
-    // Country is a select
-    const countrySelect = this.page.locator("select").first();
-    await countrySelect.selectOption(data.country);
+    // Stable field IDs from AddressFields (`${prefix}-${field}`)
+    await this.page.fill("#shipping-firstName", data.firstName);
+    await this.page.fill("#shipping-lastName", data.lastName);
+    await this.page.fill("#shipping-address", data.address);
+    await this.page.fill("#shipping-postalCode", data.postalCode);
+    await this.page.fill("#shipping-city", data.city);
+    await this.page.selectOption("#shipping-country", data.country);
 
     if (data.phone) {
-      await this.page.getByLabel(/Telefon/).fill(data.phone);
+      await this.page.fill("#checkout-phone", data.phone);
     }
   }
 
@@ -213,9 +210,17 @@ export class CheckoutFlow {
     ).toBeVisible();
   }
 
+  /**
+   * The page content without header, cart drawer and cookie banner — those
+   * repeat texts like "Dein Warenkorb ist leer" or "Entfernen".
+   */
+  get main() {
+    return this.page.locator("#main-content");
+  }
+
   async assertEmptyCartMessage() {
     await expect(
-      this.page.getByText("Dein Warenkorb ist leer"),
+      this.main.getByRole("heading", { name: "Dein Warenkorb ist leer" }),
     ).toBeVisible();
   }
 

@@ -6,6 +6,7 @@ import {
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
 import { useStore } from "@nanostores/react";
+import { useHydrated } from "@lib/hooks/use-hydrated";
 import { useEffect, useRef } from "react";
 
 interface CartSidebarProps {
@@ -13,8 +14,11 @@ interface CartSidebarProps {
 }
 
 export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
-  const cart = useStore($cart);
+  const storedCart = useStore($cart);
   const isOpen = useStore($isCartSidebarOpen);
+  // Server markup has no cart; render the real one only after hydration.
+  const hydrated = useHydrated();
+  const cart = hydrated ? storedCart : null;
   const sidebarRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
 

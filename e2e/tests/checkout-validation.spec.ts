@@ -64,10 +64,10 @@ test.describe("Checkout — Form Validation", () => {
     await checkout.page.waitForSelector("#checkout-email");
     // Fill everything except first name
     await checkout.page.fill("#checkout-email", "test@test.de");
-    await checkout.page.getByLabel(/Nachname/).fill("Muster");
-    await checkout.page.getByLabel(/Adresse/).first().fill("Teststr 1");
-    await checkout.page.getByLabel(/PLZ/).fill("04109");
-    await checkout.page.getByLabel(/Stadt/).fill("Leipzig");
+    await checkout.page.fill("#shipping-lastName", "Muster");
+    await checkout.page.fill("#shipping-address", "Teststr 1");
+    await checkout.page.fill("#shipping-postalCode", "04109");
+    await checkout.page.fill("#shipping-city", "Leipzig");
 
     await checkout.page
       .getByRole("button", { name: /Weiter zur Lieferung/ })
@@ -98,7 +98,7 @@ test.describe("Checkout — Form Validation", () => {
     // Billing address fields should appear
     // The billing section has a heading "Rechnungsadresse"
     await expect(
-      checkout.page.getByText("Rechnungsadresse"),
+      checkout.main.getByRole("heading", { name: "Rechnungsadresse" }),
     ).toBeVisible();
   });
 });

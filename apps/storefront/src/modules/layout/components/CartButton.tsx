@@ -5,6 +5,7 @@ import {
   toggleCartSidebar,
 } from "@lib/stores/cart";
 import { useStore } from "@nanostores/react";
+import { useHydrated } from "@lib/hooks/use-hydrated";
 import { useEffect } from "react";
 
 interface CartButtonProps {
@@ -12,7 +13,10 @@ interface CartButtonProps {
 }
 
 export const CartButton = ({ regionId }: CartButtonProps) => {
-  const cartItemCount = useStore($cartItemCount);
+  const storedCount = useStore($cartItemCount);
+  const hydrated = useHydrated();
+  // Server markup shows 0 items; switch to the real count after hydration.
+  const cartItemCount = hydrated ? storedCount : 0;
 
   useEffect(() => {
     if (regionId) {

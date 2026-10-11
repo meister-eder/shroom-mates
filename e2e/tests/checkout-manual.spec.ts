@@ -134,7 +134,7 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
     await checkout.assertCartHasItems();
 
     // Increase quantity
-    const increaseBtn = checkout.page.locator(
+    const increaseBtn = checkout.main.locator(
       'button[aria-label="Menge erhöhen"]',
     );
     if (await increaseBtn.isVisible()) {
@@ -143,7 +143,7 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
     }
 
     // Remove item
-    const removeBtn = checkout.page.locator(
+    const removeBtn = checkout.main.locator(
       'button[aria-label$="aus dem Warenkorb entfernen"]',
     );
     if (await removeBtn.isVisible()) {

@@ -26,12 +26,12 @@ test.describe("Checkout — Edge Cases (B6)", () => {
 
     // Should show empty cart message, not the checkout form
     await expect(
-      checkout.page.getByText("Dein Warenkorb ist leer"),
+      checkout.main.getByRole("heading", { name: "Dein Warenkorb ist leer" }),
     ).toBeVisible({ timeout: 5000 });
 
     // "Weiter einkaufen" link should be present
     await expect(
-      checkout.page.getByRole("link", { name: /Weiter einkaufen/ }),
+      checkout.main.getByRole("link", { name: /Weiter einkaufen/ }),
     ).toBeVisible();
   });
 
@@ -56,7 +56,7 @@ test.describe("Checkout — Edge Cases (B6)", () => {
 
     // Payment step should NOT be active
     await expect(
-      checkout.page.getByText("Zahlung"),
+      checkout.main.getByRole("heading", { name: "Zahlung" }),
     ).toBeVisible();
   });
 
