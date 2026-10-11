@@ -3,6 +3,8 @@
 
 shroom-mates.159.195.31.11.sslip.io {
 	tls internal
+	# Test server: keep it out of search engines
+	header X-Robots-Tag "noindex, nofollow"
 	root * /srv/website
 	file_server
 	try_files {path} {path}.html {path}/index.html
@@ -17,6 +19,8 @@ shroom-mates.159.195.31.11.sslip.io {
 
 shop.159.195.31.11.sslip.io {
 	tls internal
+	# Test server: keep it out of search engines
+	header X-Robots-Tag "noindex, nofollow"
 	reverse_proxy storefront:4321 {
 		header_up Host {http.request.host}
 		header_up X-Forwarded-Proto https
@@ -25,5 +29,7 @@ shop.159.195.31.11.sslip.io {
 
 api.159.195.31.11.sslip.io {
 	tls internal
+	# Test server: keep it out of search engines
+	header X-Robots-Tag "noindex, nofollow"
 	reverse_proxy medusa:9000
 }

@@ -28,7 +28,11 @@ body {
 		transition-duration: 0.01ms !important;
 	}
 
-	.reveal {
+	/* The reveal script doesn't run with reduced motion; show everything */
+	.reveal,
+	.reveal-left,
+	.reveal-right,
+	.reveal-scale {
 		opacity: 1 !important;
 		transform: none !important;
 	}
