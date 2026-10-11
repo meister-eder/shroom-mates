@@ -124,7 +124,7 @@ test.describe("Checkout — Edge Cases (B6)", () => {
     // Should not be able to submit again — cart should be empty or page redirects
     // Verify we don't see the payment button
     const placeOrderBtn = page.getByRole("button", {
-      name: /Bestellung aufgeben/,
+      name: /Zahlungspflichtig bestellen/,
     });
     await expect(placeOrderBtn).not.toBeVisible({ timeout: 3000 });
   });

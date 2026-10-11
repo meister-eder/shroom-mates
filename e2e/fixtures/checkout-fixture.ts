@@ -160,10 +160,10 @@ export class CheckoutFlow {
     await this.page.waitForTimeout(1000);
   }
 
-  /** Click "Bestellung aufgeben" (for manual payment) */
+  /** Click "Zahlungspflichtig bestellen" (for manual payment) */
   async submitManualPayment() {
     await this.page
-      .getByRole("button", { name: /Bestellung aufgeben/ })
+      .getByRole("button", { name: /Zahlungspflichtig bestellen/ })
       .click();
     // Wait for redirect to order confirmation
     await this.page.waitForURL(/\/order\//, { timeout: 15_000 });
