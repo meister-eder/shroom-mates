@@ -12,7 +12,9 @@
     "./tokens": "./src/tokens.ts",
     "./LayoutScripts.astro": "./src/LayoutScripts.astro",
     "./SvgHeading.astro": "./src/SvgHeading.astro",
-    "./Footer.astro": "./src/Footer.astro"
+    "./Footer.astro": "./src/Footer.astro",
+    "./SiteHeader.astro": "./src/SiteHeader.astro",
+    "./PageHero.astro": "./src/PageHero.astro"
   },
   "dependencies": {
     "@fontsource/dm-mono": "^5.3.0",

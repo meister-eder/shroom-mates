@@ -1,26 +1,20 @@
 ---
-// Thin wrapper: storefront-specific Footer links
-import SharedFooter from "@shroom-mates/ui/Footer.astro";
+// Thin wrapper: website links absolute, shop links relative
 import type { FooterLink } from "@shroom-mates/ui/Footer.astro";
-import { CONTACT_EMAIL, websiteUrl } from "@shroom-mates/ui/site";
+import SharedFooter from "@shroom-mates/ui/Footer.astro";
+import { footerLinks, websiteUrl } from "@shroom-mates/ui/site";
 
 interface Props {
   countryCode: string;
 }
 
 const { countryCode } = Astro.props;
+
+const links: FooterLink[] = footerLinks(
+  websiteUrl,
+  (path) => path.replace(/^\/de\//, `/${countryCode}/`),
+  { website: true, shop: false },
+);
 ---
 
-<SharedFooter
-  links={[
-    { label: "Shop", href: `/${countryCode}/store` },
-    { label: "Unsere Pilze", href: websiteUrl("/unsere-pilze/"), external: true },
-    { label: "FAQ", href: websiteUrl("/faq/"), external: true },
-    { label: "Kontakt", href: websiteUrl("/kontakt/"), external: true },
-    { label: "Datenschutz", href: `/${countryCode}/datenschutz` },
-    { label: "Widerruf", href: `/${countryCode}/widerruf` },
-    { label: "AGB", href: `/${countryCode}/agb` },
-    { label: "Impressum", href: websiteUrl("/impressum/"), external: true },
-    { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, isEmail: true },
-  ] satisfies FooterLink[]}
-/>
+<SharedFooter links={links} />

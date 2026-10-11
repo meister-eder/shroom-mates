@@ -85,16 +85,16 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
         role="dialog"
         aria-modal="true"
         aria-label="Warenkorb"
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-[1101] shadow-xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-color)] border-l-2 border-black z-[1101] shadow-xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
           }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold">Warenkorb</h2>
+          <div className="flex items-center justify-between p-6 border-b-2 border-black bg-[var(--bg-accent)]">
+            <h2 className="checkout-step-title text-xl">Warenkorb</h2>
             <button
               onClick={closeCartSidebar}
-              className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+              className="w-11 h-11 -mr-3 flex items-center justify-center text-2xl leading-none hover:text-[var(--accent)]"
               aria-label="Warenkorb schließen"
             >
               ×
@@ -105,7 +105,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
           <div className="flex-1 overflow-y-auto p-6">
             {isEmpty ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <p className="text-gray-500 mb-4">Dein Warenkorb ist leer</p>
+                <p className="text-muted mb-4">Dein Warenkorb ist leer</p>
                 <a
                   href={`/${countryCode}/store`}
                   onClick={closeCartSidebar}
@@ -129,7 +129,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                   return (
                     <div
                       key={item.id}
-                      className="flex gap-4 pb-6 border-b border-gray-100 last:border-0"
+                      className="flex gap-4 pb-6 border-b border-black/10 last:border-0"
                     >
                       {/* Thumbnail - matches ImageCarousel thumb pattern (144x144) */}
                       {thumbnailUrl && (
@@ -138,7 +138,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                           alt={productTitle}
                           width={144}
                           height={144}
-                          className="w-16 h-16 aspect-square object-cover rounded"
+                          className="line-item-thumb"
                           loading="lazy"
                           decoding="async"
                           draggable={false}
@@ -150,12 +150,12 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                         <h3 className="font-medium text-sm mb-1 truncate">
                           {productTitle}
                         </h3>
-                        {variantTitle && (
-                          <p className="text-xs text-gray-500 mb-1">
+                        {variantTitle && variantTitle !== "Standard" && (
+                          <p className="text-xs text-muted mb-1">
                             Variante: {variantTitle}
                           </p>
                         )}
-                        <p className="text-xs text-gray-500 mb-2">
+                        <p className="text-xs text-muted mb-2">
                           Anzahl: {item.quantity}
                         </p>
                         <div className="flex items-center justify-between">
@@ -196,9 +196,9 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
 
           {/* Footer */}
           {!isEmpty && (
-            <div className="border-t border-gray-200 p-6 space-y-4">
+            <div className="border-t-2 border-black p-6 space-y-4 bg-[var(--bg-accent)]">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Zwischensumme (inkl. MwSt.)</span>
+                <span className="text-muted">Zwischensumme (inkl. MwSt.)</span>
                 <span className="font-medium">
                   {convertToLocale({
                     amount: cart?.item_total || 0,

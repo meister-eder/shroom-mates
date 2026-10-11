@@ -25,7 +25,7 @@ export const LineItemRow = ({
     )}
     <div className="flex-1 min-w-0">
       <p className="font-medium text-sm truncate">{title}</p>
-      {subtitle && <p className="text-xs text-muted">{subtitle}</p>}
+      {subtitle && subtitle !== "Standard" && <p className="text-xs text-muted">{subtitle}</p>}
       <div className="flex justify-between mt-1 text-sm">
         <span className="text-muted">
           {quantity}× {convertToLocale({ amount: unitPrice, currencyCode })}

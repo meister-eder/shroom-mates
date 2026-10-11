@@ -49,37 +49,30 @@ const filteredProducts = activeCategory
 // Helper: get first category name for a product
 const getCategory = (product: (typeof products)[number]) =>
   product.categories?.[0]?.name;
+import PageHero from "@shroom-mates/ui/PageHero.astro";
+import { Image } from "astro:assets";
+import heroImage from "../../../assets/hero-tinkturen.jpeg";
 ---
 
 <Layout
   title="Unser Sortiment"
-  description="Entdecke unser Sortiment an frischen Pilzen, Growkits und Tinkturen aus Leipzig."
+  description="Entdecke unser Sortiment an Growkits und Pilztinkturen aus Leipzig."
 >
-  <!-- Store Banner -->
-  <section class="store-banner" aria-label="Sortiment-Übersicht">
-    <div class="section-inner store-banner-inner">
-      <div class="store-banner-text">
-        <h1 class="store-banner-heading">Frisch aus Leipzig</h1>
-        <p class="store-banner-sub">
-          Pilze, Growkits &amp; Tinkturen — direkt vom Erzeuger
-        </p>
-      </div>
-      <div class="store-banner-facts" aria-label="Unsere Versprechen">
-        <div class="fact-chip">
-          <span aria-hidden="true">🌱</span>
-          <span>Nachhaltig</span>
-        </div>
-        <div class="fact-chip">
-          <span aria-hidden="true">📦</span>
-          <span>Versand DE</span>
-        </div>
-        <div class="fact-chip">
-          <span aria-hidden="true">🍄</span>
-          <span>Frisch geerntet</span>
-        </div>
-      </div>
-    </div>
-  </section>
+  <PageHero
+    compact
+    title="Unser Sortiment"
+    subtitle="Growkits & Tinkturen aus Leipzig — direkt vom Erzeuger"
+  >
+    <Image
+      src={heroImage}
+      alt="Pilztinkturen von shroom-mates"
+      class="hero-image"
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
+      format="webp"
+      loading="eager"
+    />
+  </PageHero>
 
   <div class="section-inner" style="padding-top: 2rem; padding-bottom: 4rem;">
     <!-- Category filter -->
@@ -164,55 +157,6 @@ const getCategory = (product: (typeof products)[number]) =>
 
 <style>
   /* ── Store Banner ────────────────────────────────────────── */
-  .store-banner {
-    background: var(--bg-accent, #fdfcea);
-    border-bottom: 2px solid #000;
-  }
-
-  .store-banner-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-top: 2.5rem;
-    padding-bottom: 2.5rem;
-    flex-wrap: wrap;
-  }
-
-  .store-banner-heading {
-    font-family: "DM Mono", monospace;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.4rem;
-  }
-
-  .store-banner-sub {
-    color: var(--text-muted, #6b6b6b);
-    font-size: 1rem;
-    margin: 0;
-  }
-
-  .store-banner-facts {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .fact-chip {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.875rem;
-    border: 2px solid #000;
-    border-radius: 999px;
-    font-family: "DM Mono", monospace;
-    font-size: 0.8rem;
-    font-weight: 500;
-    background: var(--bg-color, #fff);
-    white-space: nowrap;
-  }
 
   /* ── Product grid ────────────────────────────────────────── */
   .product-grid {

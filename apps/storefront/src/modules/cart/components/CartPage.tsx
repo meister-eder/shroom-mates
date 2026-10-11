@@ -47,8 +47,8 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
     <div className="max-w-7xl mx-auto px-8 py-8">
       {isEmpty ? (
         <div className="text-center py-16">
-          <h1 className="text-3xl font-bold mb-4">Dein Warenkorb ist leer</h1>
-          <p className="text-gray-600 mb-6">Füge Artikel zu deinem Warenkorb hinzu</p>
+          <h1 className="page-heading mb-4">Dein Warenkorb ist leer</h1>
+          <p className="text-muted mb-6">Füge Artikel zu deinem Warenkorb hinzu</p>
           <a
             href={`/${countryCode}/store`}
             className="btn-accent inline-block"
@@ -60,11 +60,11 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column: Cart items */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl font-bold mb-6">Warenkorb</h1>
+            <h1 className="page-heading mb-6">Warenkorb</h1>
 
             {/* Cart items table */}
-            <div className="border border-gray-200 rounded-md overflow-hidden">
-              <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-700">
+            <div className="shop-card overflow-hidden">
+              <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 bg-[var(--bg-accent)] border-b-2 border-black/10 text-sm font-medium font-mono">
                 <div className="col-span-5">Artikel</div>
                 <div className="col-span-2 text-center">Anzahl</div>
                 <div className="col-span-2 text-right">Preis</div>
@@ -85,7 +85,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                 return (
                   <div
                     key={item.id}
-                    className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 last:border-0 items-center"
+                    className="grid grid-cols-12 gap-4 p-4 border-b border-black/10 last:border-0 items-center"
                   >
                     {/* Item */}
                     <div className="col-span-12 md:col-span-5 flex gap-4">
@@ -93,14 +93,14 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                         <img
                           src={thumbnailUrl}
                           alt={productTitle}
-                          className="w-20 h-20 object-cover rounded"
+                          className="line-item-thumb w-20 h-20"
                           loading="lazy"
                         />
                       )}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium mb-1">{productTitle}</h3>
                         {variantTitle && (
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-muted">
                             Variante: {variantTitle}
                           </p>
                         )}
@@ -114,7 +114,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                           onClick={() =>
                             handleQuantityChange(item.id, quantity - 1)
                           }
-                          className="w-11 h-11 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 text-lg"
+                          className="w-11 h-11 flex items-center justify-center border-2 border-black rounded-md bg-white hover:bg-[var(--bg-accent)] text-lg"
                           aria-label={
                             quantity <= 1 ? `${productTitle} entfernen` : "Menge verringern"
                           }
@@ -132,7 +132,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                           onClick={() =>
                             handleQuantityChange(item.id, quantity + 1)
                           }
-                          className="w-11 h-11 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 text-lg"
+                          className="w-11 h-11 flex items-center justify-center border-2 border-black rounded-md bg-white hover:bg-[var(--bg-accent)] text-lg"
                           aria-label="Menge erhöhen"
                         >
                           +

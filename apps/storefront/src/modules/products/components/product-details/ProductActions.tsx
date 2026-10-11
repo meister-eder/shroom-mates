@@ -128,7 +128,8 @@ export const ProductActions = ({
 
   return (
     <div className="flex flex-col gap-8">
-      {options.map((option) => (
+      {/* A single value isn't a choice (e.g. "Größe: Standard") — hide it */}
+      {options.filter((option) => (option.values?.length ?? 0) > 1).map((option) => (
         <div key={option.id} className="flex flex-col gap-2">
           <h2 className="text-lg font-bold">{option.title}</h2>
           <div className="flex flex-wrap gap-2">

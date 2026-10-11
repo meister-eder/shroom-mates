@@ -147,3 +147,23 @@ img {
     padding-top: 1rem;
   }
 }
+
+/* ── Section heading (website style: centred, short orange bar) ───── */
+.section-heading {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 0.5rem;
+  color: var(--text-color);
+  font-family: "DM Mono", monospace;
+}
+
+.section-heading::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+  margin: 0.75rem auto 2rem;
+  border-radius: 2px;
+}

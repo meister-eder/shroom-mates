@@ -1,14 +1,12 @@
 ---
-import { serverImageSrc } from "@lib/utils/image";
-import { WEBSITE_URL } from "@shroom-mates/ui/site";
 import { getRegion } from "@lib/data/regions";
 import { listProducts } from "@lib/data/products";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
+import { websiteUrl } from "@shroom-mates/ui/site";
 import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
-import { getRegionParams } from "../../lib/params/region-params";
 import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
-
-export const getStaticPaths = getRegionParams;
+import heroImage from "../../assets/hero-growkits.jpg";
 
 const { countryCode } = Astro.params;
 
@@ -16,69 +14,39 @@ const region = await getRegion(countryCode);
 
 const products = region ? await listProducts(region.id).catch(() => []) : [];
 
-const firstProduct = products?.[0];
-const heroImage = firstProduct?.thumbnail ?? firstProduct?.images?.[0]?.url;
-
-// Pick up to 3 featured products for the section below the hero
-const featured = products.slice(0, 3);
+// Growkits and tinctures first (fresh mushrooms are on request only)
+const ORDER = ["growkits", "tinkturen"];
+const rank = (p: (typeof products)[number]) => {
+  const i = ORDER.indexOf(p.categories?.[0]?.handle ?? "");
+  return i === -1 ? ORDER.length : i;
+};
+const featured = [...products].sort((a, b) => rank(a) - rank(b)).slice(0, 3);
+const ogImage = featured[0]?.thumbnail ?? undefined;
 ---
 
 <Layout
-  description="Frische Pilze, Growkits und Tinkturen aus Leipzig — direkt vom Erzeuger bestellen."
-  image={heroImage}
+  description="Growkits und Pilztinkturen aus Leipzig — direkt vom Erzeuger online bestellen."
+  image={ogImage}
 >
-  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
-  <section class="hero" aria-label="Shroom-Mates Sortiment">
-    <div class="section-inner hero-inner">
-      <!-- Left: text + CTAs -->
-      <div class="hero-text">
-        <div class="hero-tag" aria-hidden="true">
-          <span>🍄</span>
-          <span>Frisch aus Leipzig</span>
-        </div>
-        <h1 class="hero-heading">
-          Pilze &amp; Pilzprodukte<br />
-          <em>direkt vom Erzeuger</em>
-        </h1>
-        <p class="hero-body">
-          Frische Edelpilze, Growkits und Tinkturen — nachhaltig angebaut und
-          schnell zu dir geliefert.
-        </p>
-        <div class="hero-actions">
-          <a href={`/${countryCode}/store`} class="btn-accent">
-            Zum Sortiment
-          </a>
-          <a href={WEBSITE_URL} class="btn-outline">
-            Mehr über uns
-          </a>
-        </div>
-      </div>
-
-      <!-- Right: hero image -->
-      <div class="hero-visual" aria-hidden="true">
-        <div class="hero-blob"></div>
-        {
-          heroImage ? (
-            <Image
-              src={serverImageSrc(heroImage)}
-              width={640}
-              height={640}
-              alt=""
-              widths={[400, 520, 640]}
-              sizes="(max-width: 900px) 0px, 40vw"
-              format="webp"
-              quality={85}
-              class="hero-img"
-              loading="eager"
-              fetchpriority="high"
-            />
-          ) : (
-            <div class="hero-img-placeholder" aria-hidden="true" />
-          )
-        }
-      </div>
-    </div>
-  </section>
+  <PageHero
+    title="Growkits & Tinkturen aus Leipzig"
+    subtitle="Pilze selbst züchten oder als Tinktur genießen — direkt vom Erzeuger, deutschlandweit verschickt."
+  >
+    <Image
+      src={heroImage}
+      alt="Growkits mit wachsenden Pilzen"
+      class="hero-image"
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
+      format="webp"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <Fragment slot="actions">
+      <a href={`/${countryCode}/store`} class="btn-accent">Zum Sortiment</a>
+      <a href={websiteUrl("/growkits/")} class="btn-outline">So funktionieren Growkits</a>
+    </Fragment>
+  </PageHero>
 
   <!-- ── Why-us strip ─────────────────────────────────────────────────── -->
   <section class="why-strip" aria-label="Unsere Vorteile">
@@ -95,7 +63,7 @@ const featured = products.slice(0, 3);
           <span class="why-icon" aria-hidden="true">📦</span>
           <h2 class="why-title">Versand nach Deutschland</h2>
           <p class="why-desc">
-            Standard (3–5 Tage) oder Express (1–2 Tage) — sicher verpackt.
+            Standard oder Express mit DHL — sicher verpackt.
           </p>
         </li>
         <li class="why-card">
@@ -114,14 +82,9 @@ const featured = products.slice(0, 3);
     featured.length > 0 && (
       <section class="featured-section" aria-labelledby="featured-heading">
         <div class="section-inner">
-          <div class="featured-header">
-            <h2 id="featured-heading" class="featured-heading">
-              Ausgewählte Produkte
-            </h2>
-            <a href={`/${countryCode}/store`} class="btn-ghost">
-              Alle ansehen →
-            </a>
-          </div>
+          <h2 id="featured-heading" class="section-heading">
+            Aus unserem Sortiment
+          </h2>
 
           <ul class="featured-grid" role="list">
             {featured.map((product, index) => (
@@ -138,6 +101,11 @@ const featured = products.slice(0, 3);
               </li>
             ))}
           </ul>
+          <p class="featured-more">
+            <a href={`/${countryCode}/store`} class="btn-outline">
+              Alle Produkte ansehen
+            </a>
+          </p>
         </div>
       </section>
     )
@@ -145,143 +113,10 @@ const featured = products.slice(0, 3);
 </Layout>
 
 <style>
-  /* ── Hero ─────────────────────────────────────────────────── */
-  .hero {
-    background: var(--bg-accent, #fdfcea);
-    border-bottom: 2px solid #000;
-    overflow: hidden;
-  }
-
-  .hero-inner {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-    min-height: calc(100vh - var(--navbar-height, 70px) - 4px);
-    align-items: center;
-  }
-
-  @media (min-width: 900px) {
-    .hero-inner {
-      grid-template-columns: 1fr 1fr;
-      min-height: calc(100vh - var(--navbar-height, 70px) - 4px);
-    }
-  }
-
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.3rem 0.75rem;
-    border: 2px solid var(--color-forest, #2d5a27);
-    border-radius: 999px;
-    font-family: "DM Mono", monospace;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--color-forest, #2d5a27);
-    background: var(--color-forest-light, #e8f0e7);
-    margin-bottom: 1.25rem;
-    width: fit-content;
-  }
-
-  .hero-heading {
-    font-family: "DM Mono", monospace;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin: 0 0 1.25rem;
-  }
-
-  .hero-heading em {
-    font-style: normal;
-    color: var(--accent, #ff4908);
-    position: relative;
-  }
-
-  .hero-heading em::after {
-    content: "";
-    position: absolute;
-    bottom: 4px;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--accent, #ff4908);
-    border-radius: 2px;
-    opacity: 0.4;
-  }
-
-  .hero-body {
-    color: var(--text-muted, #6b6b6b);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin: 0 0 2rem;
-    max-width: 44ch;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.875rem;
-    align-items: center;
-  }
-
-  /* ── Hero visual ──────────────────────────────────────────── */
-  .hero-visual {
-    display: none;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @media (min-width: 900px) {
-    .hero-visual {
-      display: flex;
-    }
-  }
-
-  .hero-blob {
-    position: absolute;
-    width: 85%;
-    height: 85%;
-    border-radius: 60% 40% 55% 45% / 45% 55% 40% 60%;
-    background: var(--color-earth-light, #f5edd6);
-    border: 2.5px solid var(--color-earth, #8b6914);
-    z-index: 0;
-  }
-
-  .hero-img {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 500px;
-    height: auto;
-    object-fit: contain;
-    drop-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  }
-
-  .hero-img-placeholder {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 400px;
-    aspect-ratio: 1;
-    background: var(--bg-warm, #faf8f2);
-    border: 2.5px solid #000;
-    border-radius: 16px;
-  }
-
-  /* ── Why-us strip ─────────────────────────────────────────── */
-  .why-strip {
-    border-bottom: 2px solid #000;
-    background: var(--bg-color, #fff);
-  }
-
   .why-grid {
     list-style: none;
     margin: 0;
-    padding: 3rem 0;
+    padding: 3rem 0 1rem;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -293,14 +128,16 @@ const featured = products.slice(0, 3);
     }
   }
 
+  /* Card style of the website ("So funktioniert's" box) */
   .why-card {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
     padding: 1.5rem;
-    background: var(--bg-accent, #fdfcea);
+    background: var(--bg-color, #fff);
     border: 2px solid #000;
-    border-radius: 12px;
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
   }
 
   .why-icon {
@@ -310,13 +147,13 @@ const featured = products.slice(0, 3);
 
   .why-title {
     font-family: "DM Mono", monospace;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     margin: 0;
   }
 
   .why-desc {
-    font-size: 0.875rem;
+    font-size: 0.95rem;
     color: var(--text-muted, #6b6b6b);
     margin: 0;
     line-height: 1.5;
@@ -324,24 +161,7 @@ const featured = products.slice(0, 3);
 
   /* ── Featured products ────────────────────────────────────── */
   .featured-section {
-    padding-bottom: 4rem;
-  }
-
-  .featured-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding-top: 3rem;
-    margin-bottom: 1.75rem;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .featured-heading {
-    font-family: "DM Mono", monospace;
-    font-size: clamp(1.4rem, 3vw, 2rem);
-    font-weight: 700;
-    margin: 0;
+    padding: 3rem 0 4rem;
   }
 
   .featured-grid {
@@ -372,5 +192,10 @@ const featured = products.slice(0, 3);
 
   .featured-grid li :global(.product-card) {
     height: 100%;
+  }
+
+  .featured-more {
+    margin: 2.5rem 0 0;
+    text-align: center;
   }
 </style>

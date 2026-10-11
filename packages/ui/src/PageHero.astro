@@ -1,0 +1,120 @@
+---
+/**
+ * Full-bleed photo hero with overlay title — the website's page hero
+ * (see apps/website/src/pages/growkits.astro). Pass the image as the default
+ * slot (give it class="hero-image") and optional buttons in slot="actions".
+ */
+interface Props {
+  title: string;
+  subtitle?: string;
+  as?: "h1" | "h2";
+  /** Lower hero for listing pages where content should be visible quickly */
+  compact?: boolean;
+}
+
+const { title, subtitle, as: Tag = "h1", compact = false } = Astro.props;
+---
+
+<section class:list={["hero", { compact }]}>
+  <slot />
+  <div class="hero-overlay">
+    <Tag class="hero-title">{title}</Tag>
+    {subtitle && <p class="hero-subtitle">{subtitle}</p>}
+    {Astro.slots.has("actions") && (
+      <div class="hero-actions">
+        <slot name="actions" />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    width: calc(100vw - var(--scrollbar-width, 0px));
+    height: min(70vh, 640px);
+    min-height: 360px;
+    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+    margin-top: -1.5rem;
+    overflow: hidden;
+    border-bottom: 2px solid #000;
+  }
+
+  .hero.compact {
+    height: min(40vh, 380px);
+    min-height: 260px;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.15) 40%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hero :global(.hero-image) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 auto 0.6rem;
+    color: #fff;
+    font-family: "DM Mono", monospace;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    max-width: 700px;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 auto;
+    max-width: 550px;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Secondary buttons need a solid background on top of the photo */
+  .hero-actions :global(.btn-outline) {
+    background: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      margin-top: -1rem;
+    }
+
+    .hero-overlay {
+      padding: 2rem 1rem;
+    }
+  }
+</style>

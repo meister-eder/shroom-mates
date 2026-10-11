@@ -1,18 +1,10 @@
 ---
+// Thin wrapper: website-relative links, shop links absolute
 import type { FooterLink } from "@shroom-mates/ui/Footer.astro";
-// Thin wrapper: website-specific Footer links
 import SharedFooter from "@shroom-mates/ui/Footer.astro";
+import { footerLinks, shopUrl } from "@shroom-mates/ui/site";
+
+const links: FooterLink[] = footerLinks((path) => path, shopUrl);
 ---
 
-<SharedFooter
-  links={[
-    { label: "Unsere Pilze", href: "/unsere-pilze/" },
-    { label: "Growkits", href: "/growkits/" },
-    { label: "Tinkturen", href: "/tinkturen/" },
-    { label: "Gastronomie", href: "/gastronomie/" },
-    { label: "FAQ", href: "/faq/" },
-    { label: "Kontakt", href: "/kontakt/" },
-    { label: "Impressum", href: "/impressum/" },
-    { label: "hey@shroom-mates.de", href: "mailto:hey@shroom-mates.de", isEmail: true },
-  ] satisfies FooterLink[]}
-/>
+<SharedFooter links={links} />
