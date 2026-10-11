@@ -5,7 +5,6 @@ import Layout from "@layouts/Layout.astro";
 import { CheckoutCompletePage } from "@modules/checkout/components/CheckoutCompletePage";
 
 const { countryCode } = Astro.params;
-const checkoutId = Astro.url.searchParams.get("checkout_id");
 
 if (!countryCode) {
     return Astro.redirect("/not-found");
@@ -20,6 +19,5 @@ if (!countryCode) {
     <CheckoutCompletePage
         client:load
         countryCode={countryCode}
-        checkoutId={checkoutId}
     />
 </Layout>

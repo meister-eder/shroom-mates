@@ -1,5 +1,7 @@
 ---
-import "@fontsource/geist-sans";
+import "@shroom-mates/ui/fonts";
+import "@shroom-mates/ui/base.css";
+import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
 import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -319,46 +321,7 @@ const breadcrumbSchema = {
         import "../scripts/hamburger.ts";
       </script>
 
-      <script>
-        // Set scrollbar width CSS variable for full-bleed layouts
-        function setScrollbarWidth() {
-          const width =
-            window.innerWidth - document.documentElement.clientWidth;
-          document.documentElement.style.setProperty(
-            "--scrollbar-width",
-            `${width}px`,
-          );
-        }
-        setScrollbarWidth();
-        window.addEventListener("resize", setScrollbarWidth);
-      </script>
-
-      <script>
-        // Sync --navbar-height / --navbar-height-mobile to the real header offsetHeight
-        // so that content never sits behind or gaps below the fixed header.
-        // Uses ResizeObserver so it fires after layout (including CSS transitions).
-        function syncNavbarHeight() {
-          const header = document.querySelector("header");
-          if (!header) return;
-          const h = `${header.offsetHeight}px`;
-          document.documentElement.style.setProperty("--navbar-height", h);
-          document.documentElement.style.setProperty(
-            "--navbar-height-mobile",
-            h,
-          );
-        }
-
-        function observeHeader() {
-          const header = document.querySelector("header");
-          if (!header) return;
-          syncNavbarHeight();
-          const ro = new ResizeObserver(syncNavbarHeight);
-          ro.observe(header);
-        }
-
-        observeHeader();
-        document.addEventListener("astro:after-swap", observeHeader);
-      </script>
+      <LayoutScripts />
 
       <script>
         // Fallback transitions for browsers without View Transitions API
@@ -420,58 +383,11 @@ const breadcrumbSchema = {
       <style is:global>
         @import url("../styles/global.css");
 
-        :root {
-          --duration: 0.2s;
-          --scrollbar-width: 0px;
-        }
-
-        /* Detect scrollbar width for full-bleed layouts */
-        @supports (scrollbar-gutter: stable) {
-          :root {
-            --scrollbar-width: 0px;
-          }
-        }
-
         /* Plain white background (no checkered pattern) */
         html.no-background,
         html.no-background body {
           background: #ffffff;
           background-image: none;
-        }
-
-        /* Accessibility utilities */
-        .skip-link {
-          position: absolute;
-          top: -40px;
-          left: 6px;
-          background: var(--text-color);
-          color: var(--bg-color);
-          padding: 8px;
-          text-decoration: none;
-          z-index: 1001;
-          border-radius: 4px;
-        }
-
-        .skip-link:focus {
-          top: 6px;
-        }
-
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border: 0;
-        }
-
-        /* Focus styles */
-        :focus-visible {
-          outline: 2px solid var(--focus-color);
-          outline-offset: 2px;
         }
 
         /* Fallback transitions for browsers without View Transitions API */
@@ -485,78 +401,11 @@ const breadcrumbSchema = {
           }
         }
 
-        html {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-          scroll-behavior: smooth;
-          overflow-x: hidden;
-        }
-
-        body {
-          min-height: 100%;
-          margin: 0;
-          padding: 0;
-          overflow-x: hidden;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-
-        .site-wrapper {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-          position: relative;
-        }
-
-        /* Subtle grain texture overlay for depth */
-        .site-wrapper::after {
-          content: "";
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 9999;
-          opacity: 0.03;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 200px 200px;
-        }
-
-        .site-main {
-          flex: 1 0 auto;
-          width: 100%;
-          padding: 1rem;
-        }
-
+        /* Landing page renders full-bleed without the header offset */
         .site-main:not(.with-nav-spacing) {
           max-width: none;
           padding: 0;
           margin: 0;
-        }
-
-        .site-main.with-nav-spacing {
-          max-width: 1200px;
-          margin: 0 auto;
-          margin-top: var(--navbar-height);
-          padding-top: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-          .site-main.with-nav-spacing {
-            margin-top: var(--navbar-height-mobile);
-            padding-top: 1rem;
-          }
-        }
-
-        /* Improve image loading */
-        img {
-          height: auto;
-          max-width: 100%;
         }
       </style>
     </div>

@@ -105,8 +105,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                 <a
                   href={`/${countryCode}/store`}
                   onClick={closeCartSidebar}
-                  className="text-sm hover:underline"
-                  style={{ color: "var(--accent, #ff4908)" }}
+                  className="text-sm hover:underline text-accent"
                 >
                   Weiter einkaufen
                 </a>
@@ -118,10 +117,10 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                     item.variant?.product?.thumbnail ||
                     item.variant?.product?.images?.[0]?.url;
                   const productTitle =
-                    item.variant?.product?.title || "Product";
+                    item.variant?.product?.title || "Produkt";
                   const variantTitle = item.variant?.title || "";
                   const unitPrice = item.unit_price || 0;
-                  const currencyCode = cart.currency_code || "USD";
+                  const currencyCode = cart.currency_code || "EUR";
 
                   return (
                     <div
@@ -206,12 +205,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
               <a
                 href={`/${countryCode}/cart`}
                 onClick={closeCartSidebar}
-                className="block w-full text-white py-3 px-6 rounded-md text-center transition-colors"
-                style={{
-                  backgroundColor: "var(--accent, #ff4908)",
-                  border: "2px solid #000",
-                  fontFamily: '"DM Mono", monospace',
-                }}
+                className="btn-accent w-full"
               >
                 Zum Warenkorb
               </a>

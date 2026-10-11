@@ -1,4 +1,5 @@
 ---
+import { WEBSITE_URL } from "@shroom-mates/ui/site";
 import SvgHeading from "@shroom-mates/ui/SvgHeading.astro";
 import { Image } from "astro:assets";
 import logoWithShrooms from "../../../assets/logo_with_shrooms.png";
@@ -15,7 +16,7 @@ const { countryCode, regionId } = Astro.props;
 <header role="banner">
   <nav role="navigation" aria-label="Shop Navigation">
     <div class="nav-left">
-      <a href="https://shroom-mates.de" class="nav-link back-link">
+      <a href={WEBSITE_URL} class="nav-link back-link">
         &larr; Website
       </a>
       <a href={`/${countryCode}/store`} class="nav-link"> Produkte </a>
@@ -51,39 +52,6 @@ const { countryCode, regionId } = Astro.props;
   </nav>
 </header>
 
-<script>
-  function setupShrinkingNavbar() {
-    const header = document.querySelector("header");
-    if (!header) return;
-    const scrollThreshold = 50;
-    let ticking = false;
-
-    function handleScroll() {
-      if (!header) return;
-      if (window.scrollY > scrollThreshold) {
-        header.classList.add("scrolled");
-      } else {
-        header.classList.remove("scrolled");
-      }
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    handleScroll();
-  }
-
-  setupShrinkingNavbar();
-  document.addEventListener("astro:after-swap", setupShrinkingNavbar);
-</script>
 
 <style>
   header {

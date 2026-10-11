@@ -5,72 +5,25 @@
 /* ===== Shroom-Mates Storefront Design System ===== */
 
 :root {
-  /* Brand colours */
-  --accent: #ff4908;
-  --accent-light: #ff9c7e;
-  --accent-dark: #bf2300;
-  --color-forest: #2d5a27;
-  --color-forest-light: #e8f0e7;
-  --color-earth: #8b6914;
-  --color-earth-light: #f5edd6;
-
-  /* Neutrals */
-  --text-color: #1d1d1d;
-  --text-muted: #6b6b6b;
-  --bg-color: #ffffff;
-  --bg-accent: #fdfcea;
-  --bg-warm: #faf8f2;
-  --border-color: #000000;
-  --border-subtle: #e0d8c8;
-
-  /* Focus */
-  --focus-color: #5f5f5f;
-
-  /* Layout */
-  --content-max-width: 1200px;
+  /* Storefront-only layout token; shared tokens live in @shroom-mates/ui/base.css */
   --section-gap: 3rem;
 }
 
-html {
-  font-family: "Geist Sans", system-ui, sans-serif;
-  background: var(--bg-color);
-  background-size: 20px 20px;
-  background-image:
-    linear-gradient(to right, #ebc477c5 1px, transparent 1px),
-    linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
-  color: var(--text-color);
-}
-
-/* ── Reduce motion ───────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ── Skip link ───────────────────────────────────────────────────────────── */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  z-index: 9999;
-  padding: 0.5rem 1rem;
-  background: var(--accent);
-  color: #fff;
+/* ── Header cart button ──────────────────────────────────────────────────── */
+.cart-button {
   font-family: "DM Mono", monospace;
   font-size: 0.9rem;
-  text-decoration: none;
+  background: none;
   border: 2px solid #000;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: border-color 0.2s ease;
 }
 
-.skip-link:focus {
-  left: 1rem;
-  top: 1rem;
+.cart-button.has-items {
+  border-color: var(--accent);
 }
 
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
@@ -397,6 +350,113 @@ select.input-field {
   padding: 1.75rem 1.5rem;
 }
 
+.checkout-step.inactive {
+  opacity: 0.5;
+}
+
+.checkout-step-title {
+  font-family: "DM Mono", monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.checkout-step.inactive .checkout-step-title {
+  color: var(--text-muted);
+}
+
+.checkout-edit-btn {
+  margin-left: auto;
+  font-size: 0.875rem;
+  color: var(--accent);
+}
+
+.checkout-edit-btn:hover {
+  text-decoration: underline;
+}
+
+/* ── Checkout progress ───────────────────────────────────────────────────── */
+.checkout-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "DM Mono", monospace;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.checkout-progress li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkout-progress li + li::before {
+  content: "›";
+}
+
+.checkout-progress .done {
+  color: var(--color-forest);
+}
+
+.checkout-progress .active {
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+/* ── Selectable option (shipping / payment) ──────────────────────────────── */
+.option-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e2ddd6;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.option-card.selected {
+  border-color: var(--accent);
+  background: #fff9f5;
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.option-card.disabled {
+  cursor: progress;
+}
+
+/* ── Small text helpers ──────────────────────────────────────────────────── */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.label-optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.line-item-thumb {
+  width: 4rem;
+  height: 4rem;
+  flex-shrink: 0;
+  object-fit: cover;
+  border: 2px solid #000;
+  border-radius: 8px;
+  background: var(--bg-warm);
+}
+
+.page-heading {
+  font-family: "DM Mono", monospace;
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
 /* ── Order summary card ───────────────────────────────────────────────────── */
 .order-summary-card {
   background: var(--bg-warm);
@@ -484,21 +544,6 @@ select.input-field {
   color: var(--color-forest);
 }
 
-/* ── Site layout helpers ──────────────────────────────────────────────────── */
-.site-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.site-main {
-  flex: 1;
-}
-
-.with-nav-spacing {
-  padding-top: var(--navbar-height, 70px);
-}
-
 /* ── Section inner ────────────────────────────────────────────────────────── */
 .section-inner {
   max-width: var(--content-max-width);
@@ -512,19 +557,7 @@ select.input-field {
   }
 }
 
-/* ── Accessibility ────────────────────────────────────────────────────────── */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
+/* ── Accessibility ──────────────────────────────────────────────────────── */
 *:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;

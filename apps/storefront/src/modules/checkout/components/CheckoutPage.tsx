@@ -1,4 +1,4 @@
-import { $cart } from "@lib/stores/cart";
+import { $cart, $isCartLoading } from "@lib/stores/cart";
 import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
 import { type RegionCountry } from "./AddressFields";
@@ -15,6 +15,12 @@ interface CheckoutPageProps {
 type CheckoutStep = "address" | "delivery" | "payment";
 
 const VALID_STEPS: CheckoutStep[] = ["address", "delivery", "payment"];
+
+const STEP_LABELS: Record<CheckoutStep, string> = {
+  address: "Adresse",
+  delivery: "Lieferung",
+  payment: "Zahlung",
+};
 
 function readStepFromUrl(): CheckoutStep {
   const params = new URLSearchParams(window.location.search);
@@ -39,6 +45,7 @@ function validateStep(
 
 export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
   const cart = useStore($cart);
+  const isCartLoading = useStore($isCartLoading);
   const [, setSearch] = useState(() =>
     typeof window !== "undefined" ? window.location.search : "",
   );
@@ -58,13 +65,19 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
 
   const step = cart ? validateStep(readStepFromUrl(), cart) : "address";
 
+  if (!cart && isCartLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center text-muted">
+        Warenkorb wird geladen…
+      </div>
+    );
+  }
+
   if (!cart || !cart.items?.length) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h1 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "2rem", marginBottom: "1rem" }}>
-          Dein Warenkorb ist leer
-        </h1>
-        <p style={{ color: "var(--text-muted)" }} className="mb-6">
+        <h1 className="page-heading mb-4">Dein Warenkorb ist leer</h1>
+        <p className="text-muted mb-6">
           Füge Produkte hinzu, bevor du zur Kasse gehst.
         </p>
         <a
@@ -77,42 +90,22 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
     );
   }
 
-  const stepLabels: Record<CheckoutStep, string> = {
-    address: "Adresse",
-    delivery: "Lieferung",
-    payment: "Zahlung",
-  };
+  const currentIdx = VALID_STEPS.indexOf(step);
 
   return (
     <div className="section-inner py-8">
-      {/* Step progress indicator */}
       <nav aria-label="Checkout-Schritte" className="mb-8">
-        <ol className="flex items-center gap-2 text-sm">
-          {(["address", "delivery", "payment"] as CheckoutStep[]).map((s, i) => {
-            const steps: CheckoutStep[] = ["address", "delivery", "payment"];
-            const currentIdx = steps.indexOf(step);
-            const stepIdx = i;
-            const isDone = stepIdx < currentIdx;
-            const isActive = stepIdx === currentIdx;
-            return (
-              <li key={s} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden="true" style={{ color: "var(--text-muted)" }}>›</span>}
-                <span
-                  style={{
-                    fontFamily: '"DM Mono", monospace',
-                    fontWeight: isActive ? 700 : 400,
-                    color: isDone
-                      ? "var(--color-forest)"
-                      : isActive
-                        ? "var(--text-color)"
-                        : "var(--text-muted)",
-                  }}
-                >
-                  {isDone ? "✓ " : ""}{stepLabels[s]}
-                </span>
-              </li>
-            );
-          })}
+        <ol className="checkout-progress">
+          {VALID_STEPS.map((s, i) => (
+            <li
+              key={s}
+              className={i < currentIdx ? "done" : i === currentIdx ? "active" : undefined}
+              aria-current={i === currentIdx ? "step" : undefined}
+            >
+              {i < currentIdx ? "✓ " : ""}
+              {STEP_LABELS[s]}
+            </li>
+          ))}
         </ol>
       </nav>
 

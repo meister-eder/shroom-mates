@@ -1,30 +1,11 @@
 :root {
-	--accent: #ff4908;
-	--accent-light: #ff9c7e;
-	--accent-dark: #bf2300;
+	/* Shared tokens live in @shroom-mates/ui/base.css */
 	--accent-gradient: linear-gradient(45deg,
 			rgb(var(--accent)),
 			rgb(var(--accent-light)) 30%,
 			rgb(10, 10, 10) 60%);
-	--focus-color: #5f5f5f;
-	--text-color: #1d1d1d;
-	--bg-color: #ffffff;
-	--bg-accent: #fdfcea;
-	--navbar-height: 7.5rem;
 	--navbar-height-scrolled: 5.5rem;
-	--navbar-height-mobile: 4.5rem;
 	--navbar-height-mobile-scrolled: 3.5rem;
-}
-
-html {
-	font-family: "Geist Sans", system-ui, sans-serif;
-	background: var(--bg-color);
-	background-size: 20px 20px;
-	background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
-		linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
-	color: var(--text-color);
-	font-display: swap;
-	/* Improve font loading performance */
 }
 
 body {

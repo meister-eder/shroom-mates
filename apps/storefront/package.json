@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@astrojs/ts-plugin": "^1.10.7",
-    "@fontsource/geist-sans": "^5.2.5",
     "@medusajs/types": "^2.13.1",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",

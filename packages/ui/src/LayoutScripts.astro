@@ -1,0 +1,75 @@
+---
+/**
+ * Page-chrome behaviour shared by both apps:
+ *  - --scrollbar-width for full-bleed layouts
+ *  - --navbar-height / --navbar-height-mobile synced to the fixed header
+ *  - `scrolled` class on the header (shrinking navbar). Set
+ *    data-shrink="desktop" on the <header> to disable it on mobile.
+ *
+ * Listeners are registered once per full page load and re-bound on
+ * `astro:page-load`, so view-transition navigations don't stack them up.
+ */
+---
+
+<script>
+  const SCROLL_THRESHOLD = 50;
+  const MOBILE_BREAKPOINT = 768;
+
+  const getHeader = () => document.querySelector<HTMLElement>("header");
+
+  function setScrollbarWidth() {
+    const width = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.setProperty("--scrollbar-width", `${width}px`);
+  }
+
+  function syncNavbarHeight() {
+    const header = getHeader();
+    if (!header) return;
+    const h = `${header.offsetHeight}px`;
+    document.documentElement.style.setProperty("--navbar-height", h);
+    document.documentElement.style.setProperty("--navbar-height-mobile", h);
+  }
+
+  function updateScrolled() {
+    const header = getHeader();
+    if (!header) return;
+    const shrinkAllowed =
+      header.dataset.shrink !== "desktop" || window.innerWidth > MOBILE_BREAKPOINT;
+    header.classList.toggle("scrolled", shrinkAllowed && window.scrollY > SCROLL_THRESHOLD);
+  }
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      updateScrolled();
+    });
+  }
+
+  // ResizeObserver fires after layout, including header CSS transitions.
+  const headerObserver = new ResizeObserver(syncNavbarHeight);
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener(
+    "resize",
+    () => {
+      setScrollbarWidth();
+      updateScrolled();
+    },
+    { passive: true },
+  );
+
+  function onPageLoad() {
+    headerObserver.disconnect();
+    const header = getHeader();
+    if (header) headerObserver.observe(header);
+    setScrollbarWidth();
+    updateScrolled();
+  }
+
+  // Without <ClientRouter /> astro:page-load never fires, so also run now.
+  onPageLoad();
+  document.addEventListener("astro:page-load", onPageLoad);
+</script>

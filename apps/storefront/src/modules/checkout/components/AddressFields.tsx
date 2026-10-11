@@ -88,7 +88,7 @@ export const AddressFields = ({
           {errors.address && <p className={ERROR}>{errors.address.message}</p>}
         </div>
         <div>
-          <label className="input-label" htmlFor={`${prefix}-company`}>Firma <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+          <label className="input-label" htmlFor={`${prefix}-company`}>Firma <span className="label-optional">(optional)</span></label>
           <input
             id={`${prefix}-company`}
             type="text"
@@ -145,7 +145,7 @@ export const AddressFields = ({
           {errors.country && <p className={ERROR}>{errors.country.message}</p>}
         </div>
         <div>
-          <label className="input-label" htmlFor={`${prefix}-province`}>Bundesland <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+          <label className="input-label" htmlFor={`${prefix}-province`}>Bundesland <span className="label-optional">(optional)</span></label>
           <input
             id={`${prefix}-province`}
             type="text"

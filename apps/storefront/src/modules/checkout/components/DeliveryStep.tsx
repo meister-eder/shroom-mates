@@ -3,6 +3,8 @@ import { sdk } from "@lib/sdk";
 import { convertToLocale } from "@lib/utils/money";
 import type { StoreCart, StoreCartShippingOptionWithServiceZone } from "@medusajs/types";
 import { useEffect, useState } from "react";
+import { CheckoutStep } from "./CheckoutStep";
+import { OptionCard } from "./OptionCard";
 
 interface DeliveryStepProps {
   cart: StoreCart;
@@ -10,25 +12,6 @@ interface DeliveryStepProps {
   onContinue: () => void;
   onEdit?: () => void;
 }
-
-const CheckCircle = () => (
-  <span className="inline-flex items-center justify-center w-5 h-5 bg-black rounded-full shrink-0">
-    <svg
-      className="w-3 h-3 text-white"
-      viewBox="0 0 12 12"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M2 6l3 3 5-5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
-);
 
 export const DeliveryStep = ({
   cart,
@@ -43,6 +26,10 @@ export const DeliveryStep = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const currencyCode = cart.currency_code || "EUR";
+  const formatPrice = (amount: number) =>
+    amount === 0 ? "Kostenlos" : convertToLocale({ amount, currencyCode });
 
   useEffect(() => {
     if (mode !== "edit") return;
@@ -90,134 +77,64 @@ export const DeliveryStep = ({
   };
 
   if (mode === "inactive") {
-    return (
-      <div className="checkout-step" style={{ opacity: 0.5 }}>
-        <div className="checkout-step-header">
-          <div className="checkout-step-number">2</div>
-          <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem", color: "var(--text-muted)" }}>
-            Lieferung
-          </h2>
-        </div>
-      </div>
-    );
+    return <CheckoutStep number={2} title="Lieferung" state="inactive" />;
   }
 
   if (mode === "read") {
     const method = cart.shipping_methods?.[0];
-    const currencyCode = cart.currency_code || "EUR";
-
     return (
-      <div className="checkout-step">
-        <div className="checkout-step-header">
-          <div className="checkout-step-number done">2</div>
-          <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
-            Lieferung
-          </h2>
-          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0" style={{ background: "#000", marginLeft: "0.25rem" }}>
-            <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{ color: "#fff" }}>
-              <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <button
-            type="button"
-            onClick={onEdit}
-            className="ml-auto text-sm hover:underline"
-            style={{ color: "var(--accent, #ff4908)" }}
-          >
-            Bearbeiten
-          </button>
-        </div>
-
-        <div className="checkout-step-body">
-          {method && (
-            <div className="text-sm">
-              <p className="input-label mb-1">Versandart</p>
-              <p style={{ color: "var(--text-muted)" }}>
-                {method.name}
-                {" — "}
-                {method.amount === 0
-                  ? "Kostenlos"
-                  : convertToLocale({ amount: method.amount, currencyCode })}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      <CheckoutStep number={2} title="Lieferung" state="done" onEdit={onEdit}>
+        {method && (
+          <div className="text-sm">
+            <p className="input-label mb-1">Versandart</p>
+            <p className="text-muted">
+              {method.name} — {formatPrice(method.amount)}
+            </p>
+          </div>
+        )}
+      </CheckoutStep>
     );
   }
 
-  const currencyCode = cart.currency_code || "EUR";
-
   return (
-    <div className="checkout-step">
-      <div className="checkout-step-header">
-        <div className="checkout-step-number active">2</div>
-        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
-          Lieferung
-        </h2>
-      </div>
+    <CheckoutStep number={2} title="Lieferung" state="active">
+      {isLoading && (
+        <p className="text-sm mb-4 text-muted">Versandoptionen werden geladen...</p>
+      )}
 
-      <div className="checkout-step-body">
-        {isLoading && (
-          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
-            Versandoptionen werden geladen...
-          </p>
-        )}
+      {!isLoading && shippingOptions.length === 0 && !error && (
+        <p className="text-sm mb-4 text-muted">
+          Keine Versandoptionen für deine Adresse verfügbar.
+        </p>
+      )}
 
-        {!isLoading && shippingOptions.length === 0 && !error && (
-          <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>
-            Keine Versandoptionen für deine Adresse verfügbar.
-          </p>
-        )}
+      {!isLoading && shippingOptions.length > 0 && (
+        <div className="space-y-3 mb-6">
+          {shippingOptions.map((option) => (
+            <OptionCard
+              key={option.id}
+              name="shipping_option"
+              value={option.id}
+              checked={selectedOptionId === option.id}
+              onSelect={handleOptionChange}
+              aside={<span className="text-sm font-mono">{formatPrice(option.amount)}</span>}
+            >
+              {option.name}
+            </OptionCard>
+          ))}
+        </div>
+      )}
 
-        {!isLoading && shippingOptions.length > 0 && (
-          <div className="space-y-3 mb-6">
-            {shippingOptions.map((option) => (
-              <label
-                key={option.id}
-                className="flex items-center justify-between px-4 py-3 cursor-pointer transition-colors"
-                style={{
-                  border: `1.5px solid ${selectedOptionId === option.id ? "var(--accent, #ff4908)" : "#e2ddd6"}`,
-                  borderRadius: 8,
-                  background: selectedOptionId === option.id ? "#fff9f5" : "#fff",
-                  boxShadow: selectedOptionId === option.id ? "0 0 0 1px var(--accent, #ff4908)" : "none",
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <input
-                    type="radio"
-                    name="shipping_option"
-                    value={option.id}
-                    checked={selectedOptionId === option.id}
-                    onChange={() => handleOptionChange(option.id)}
-                    className="w-4 h-4 accent-black"
-                  />
-                  <span className="text-sm font-medium">{option.name}</span>
-                </div>
-                <span className="text-sm" style={{ fontFamily: '"DM Mono", monospace' }}>
-                  {option.amount === 0
-                    ? "Kostenlos"
-                    : convertToLocale({
-                      amount: option.amount,
-                      currencyCode,
-                    })}
-                </span>
-              </label>
-            ))}
-          </div>
-        )}
+      {error && <p className="input-error mb-4">{error}</p>}
 
-        {error && <p className="input-error mb-4">{error}</p>}
-
-        <button
-          type="button"
-          disabled={!selectedOptionId || isSaving}
-          onClick={onContinue}
-          className="btn-accent w-full"
-        >
-          {isSaving ? "Wird gespeichert..." : "Weiter zur Zahlung"}
-        </button>
-      </div>
-    </div>
+      <button
+        type="button"
+        disabled={!selectedOptionId || isSaving}
+        onClick={onContinue}
+        className="btn-accent w-full"
+      >
+        {isSaving ? "Wird gespeichert..." : "Weiter zur Zahlung"}
+      </button>
+    </CheckoutStep>
   );
 };

@@ -1,5 +1,10 @@
-import { convertToLocale } from "@lib/utils/money";
+import { takeConfirmedOrder } from "@lib/checkout/order-handoff";
+import { formatProviderName } from "@lib/checkout/payment-providers";
+import { formatAddressLines, isSameAddress } from "@lib/utils/address";
 import type { StoreOrder } from "@medusajs/types";
+import { CartTotals } from "@modules/common/components/CartTotals";
+import { LineItemRow } from "@modules/common/components/LineItemRow";
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 interface OrderConfirmedPageProps {
@@ -7,56 +12,45 @@ interface OrderConfirmedPageProps {
   orderId: string;
 }
 
-function formatProviderName(providerId: string): string {
-  if (providerId === "pp_system_default") return "Manuelle Zahlung";
-  return providerId
-    .replace(/^pp_/, "")
-    .split("_")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-}
+const NEXT_STEPS = [
+  ["Bearbeitung", "Wir bereiten deine Artikel für den Versand vor."],
+  [
+    "Versandbenachrichtigung",
+    "Du erhältst eine E-Mail mit Tracking-Informationen, sobald deine Bestellung versendet wird.",
+  ],
+  ["Lieferung", "Dein Paket wird an deine Lieferadresse zugestellt."],
+] as const;
 
-export const OrderConfirmedPage = ({
-  countryCode,
-  orderId,
-}: OrderConfirmedPageProps) => {
+const Card = ({ title, children }: { title: string; children: ReactNode }) => (
+  <section className="order-summary-card mb-6">
+    <div className="order-summary-header">
+      <h2 className="checkout-step-title">{title}</h2>
+    </div>
+    <div className="order-summary-body">{children}</div>
+  </section>
+);
+
+export const OrderConfirmedPage = ({ countryCode, orderId }: OrderConfirmedPageProps) => {
   const [order, setOrder] = useState<StoreOrder | null>(null);
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("medusa_order");
-      if (raw) {
-        const parsed: StoreOrder = JSON.parse(raw);
-        if (parsed.id === orderId) {
-          setOrder(parsed);
-          sessionStorage.removeItem("medusa_order");
-        }
-      }
-    } catch { }
+    setOrder(takeConfirmedOrder(orderId));
   }, [orderId]);
 
-  const currency = order?.currency_code ?? "usd";
+  const currencyCode = order?.currency_code ?? "eur";
   const paymentProviderId =
     order?.payment_collections?.[0]?.payment_sessions?.[0]?.provider_id;
   const shippingMethod = order?.shipping_methods?.[0];
-  const sameAddress =
-    order?.shipping_address &&
-    order?.billing_address &&
-    order.shipping_address.address_1 === order.billing_address.address_1 &&
-    order.shipping_address.postal_code === order.billing_address.postal_code;
 
   return (
-    <main
-      className="max-w-2xl mx-auto px-8 py-16"
-      aria-label="Bestellbestätigung"
-    >
-      {/* Success header */}
+    <div className="max-w-2xl mx-auto px-4 sm:px-8 py-16" aria-label="Bestellbestätigung">
       <div className="text-center mb-12">
         <div
-          className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-6"
+          className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 text-white"
+          style={{ background: "var(--color-forest)" }}
           aria-hidden="true"
         >
-          <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none">
+          <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
             <path
               d="M5 13l4 4L19 7"
               stroke="currentColor"
@@ -67,258 +61,106 @@ export const OrderConfirmedPage = ({
           </svg>
         </div>
 
-        <h1 className="text-4xl font-bold mb-3">Bestellung bestätigt! 🍄</h1>
+        <h1 className="page-heading mb-3">Bestellung bestätigt! 🍄</h1>
 
         {order ? (
           <>
-            <p className="text-2xl font-mono font-semibold text-gray-800 mb-2">
-              #{order.display_id}
-            </p>
+            <p className="text-2xl font-mono font-semibold mb-2">#{order.display_id}</p>
             {order.email && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted">
                 Eine Bestätigungs-E-Mail wurde an{" "}
-                <span className="font-medium text-gray-700">{order.email}</span>{" "}
-                gesendet.
+                <span className="font-medium">{order.email}</span> gesendet.
               </p>
             )}
           </>
         ) : (
-          <p className="text-sm text-gray-500 font-mono">{orderId}</p>
+          <p className="text-sm text-muted font-mono">{orderId}</p>
         )}
       </div>
 
       {order && (
         <>
-          {/* Order items */}
-          <section aria-labelledby="items-heading" className="mb-8">
-            <h2 id="items-heading" className="text-lg font-semibold mb-4">
-              Bestellte Artikel
-            </h2>
-            <div className="divide-y divide-gray-100 border border-gray-200 rounded-md overflow-hidden">
-              {order.items?.map((item) => {
-                const lineTotal = (item.unit_price ?? 0) * (item.quantity ?? 1);
-                return (
-                  <div key={item.id} className="flex gap-4 p-4">
-                    {item.thumbnail ? (
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        className="w-16 h-16 object-cover rounded border border-gray-200 shrink-0"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-gray-100 rounded border border-gray-200 shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">
-                        {item.title}
-                      </p>
-                      {item.variant_title && (
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {item.variant_title}
-                        </p>
-                      )}
-                      <div className="flex justify-between mt-2 text-sm">
-                        <span className="text-gray-500">
-                          {item.quantity} ×{" "}
-                          {convertToLocale({
-                            amount: item.unit_price ?? 0,
-                            currencyCode: currency,
-                          })}
-                        </span>
-                        <span className="font-medium">
-                          {convertToLocale({
-                            amount: lineTotal,
-                            currencyCode: currency,
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
+          <Card title="Bestellte Artikel">
+            {order.items?.map((item) => (
+              <LineItemRow
+                key={item.id}
+                title={item.title}
+                subtitle={item.variant_title}
+                thumbnail={item.thumbnail}
+                quantity={item.quantity ?? 1}
+                unitPrice={item.unit_price ?? 0}
+                currencyCode={currencyCode}
+              />
+            ))}
+          </Card>
 
-          {/* Order summary */}
-          <section aria-labelledby="summary-heading" className="mb-8">
-            <h2 id="summary-heading" className="text-lg font-semibold mb-4">
-              Bestellzusammenfassung
-            </h2>
-            <div className="border border-gray-200 rounded-md p-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Zwischensumme</span>
-                <span>
-                  {convertToLocale({
-                    amount: order.item_total ?? order.subtotal ?? 0,
-                    currencyCode: currency,
-                  })}
-                </span>
+          <Card title="Bestellzusammenfassung">
+            <CartTotals
+              currencyCode={currencyCode}
+              itemTotal={order.item_total ?? order.subtotal}
+              shippingTotal={order.shipping_total}
+              shippingLabel={shippingMethod ? `Versand (${shippingMethod.name})` : "Versand"}
+              taxTotal={order.tax_total}
+              discountTotal={order.discount_total}
+              total={order.total}
+            />
+          </Card>
+
+          <Card title="Lieferung & Zahlung">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div>
+                <p className="input-label mb-1">Lieferadresse</p>
+                <address className="text-muted not-italic leading-relaxed">
+                  {formatAddressLines(order.shipping_address).map((line, i) => (
+                    <span key={i} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </address>
               </div>
-
-              {shippingMethod && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">
-                    Versand ({shippingMethod.name})
-                  </span>
-                  <span>
-                    {convertToLocale({
-                      amount: order.shipping_total ?? 0,
-                      currencyCode: currency,
-                    })}
-                  </span>
-                </div>
-              )}
-
-              <div className="flex justify-between text-xs pt-1" style={{ color: "var(--text-muted, #888)" }}>
-                <span>(davon MwSt. 19 %)</span>
-                <span>
-                  {convertToLocale({
-                    amount: order.tax_total ?? 0,
-                    currencyCode: currency,
-                  })}
-                </span>
-              </div>
-
-              {(order.discount_total ?? 0) > 0 && (
-                <div className="flex justify-between text-green-700">
-                  <span>Rabatt</span>
-                  <span>
-                    −
-                    {convertToLocale({
-                      amount: order.discount_total ?? 0,
-                      currencyCode: currency,
-                    })}
-                  </span>
-                </div>
-              )}
-
-              <div className="pt-3 border-t border-gray-200 flex justify-between font-bold text-base">
-                <span>Gesamt</span>
-                <span>
-                  {convertToLocale({
-                    amount: order.total ?? 0,
-                    currencyCode: currency,
-                  })}
-                </span>
-              </div>
-            </div>
-          </section>
-
-          {/* Delivery & payment */}
-          <section aria-labelledby="delivery-heading" className="mb-8">
-            <h2 id="delivery-heading" className="text-lg font-semibold mb-4">
-              Lieferung &amp; Zahlung
-            </h2>
-            <div className="border border-gray-200 rounded-md divide-y divide-gray-100 text-sm">
-              {order.shipping_address && (
-                <div className="p-4">
-                  <p className="font-medium mb-1">Lieferadresse</p>
-                  <address className="text-gray-600 not-italic leading-relaxed">
-                    {order.shipping_address.first_name}{" "}
-                    {order.shipping_address.last_name}
-                    <br />
-                    {order.shipping_address.address_1}
-                    {order.shipping_address.address_2 && (
-                      <>
-                        <br />
-                        {order.shipping_address.address_2}
-                      </>
-                    )}
-                    <br />
-                    {order.shipping_address.postal_code},{" "}
-                    {order.shipping_address.city}
-                    <br />
-                    {(
-                      order.shipping_address as {
-                        country?: { display_name?: string };
-                      }
-                    ).country?.display_name ??
-                      order.shipping_address.country_code?.toUpperCase()}
+              <div>
+                <p className="input-label mb-1">Rechnungsadresse</p>
+                {isSameAddress(order.shipping_address, order.billing_address) ? (
+                  <p className="text-muted">Wie Lieferadresse</p>
+                ) : (
+                  <address className="text-muted not-italic leading-relaxed">
+                    {formatAddressLines(order.billing_address).map((line, i) => (
+                      <span key={i} className="block">
+                        {line}
+                      </span>
+                    ))}
                   </address>
-                </div>
-              )}
-
-              {order.billing_address && (
-                <div className="p-4">
-                  <p className="font-medium mb-1">Rechnungsadresse</p>
-                  {sameAddress ? (
-                    <p className="text-gray-600">Wie Lieferadresse</p>
-                  ) : (
-                    <address className="text-gray-600 not-italic leading-relaxed">
-                      {order.billing_address.first_name}{" "}
-                      {order.billing_address.last_name}
-                      <br />
-                      {order.billing_address.address_1}
-                      <br />
-                      {order.billing_address.postal_code},{" "}
-                      {order.billing_address.city}
-                    </address>
-                  )}
-                </div>
-              )}
-
+                )}
+              </div>
               {paymentProviderId && (
-                <div className="p-4">
-                  <p className="font-medium mb-1">Zahlung</p>
-                  <p className="text-gray-600">
-                    {formatProviderName(paymentProviderId)}
-                  </p>
+                <div>
+                  <p className="input-label mb-1">Zahlung</p>
+                  <p className="text-muted">{formatProviderName(paymentProviderId)}</p>
                 </div>
               )}
             </div>
-          </section>
+          </Card>
 
-          {/* What's next */}
-          <section aria-labelledby="next-heading" className="mb-10">
-            <h2 id="next-heading" className="text-lg font-semibold mb-4">
-              Wie geht es weiter?
-            </h2>
-            <ol className="space-y-3 text-sm text-gray-600">
-              <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-700 font-semibold flex items-center justify-center text-xs">
-                  1
-                </span>
-                <span>
-                  <strong className="text-gray-900">Bearbeitung</strong> —
-                  Wir bereiten deine Artikel für den Versand vor.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-700 font-semibold flex items-center justify-center text-xs">
-                  2
-                </span>
-                <span>
-                  <strong className="text-gray-900">
-                    Versandbenachrichtigung
-                  </strong>{" "}
-                  — Du erhältst eine E-Mail mit Tracking-Informationen, sobald
-                  deine Bestellung versendet wird.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <span className="shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-700 font-semibold flex items-center justify-center text-xs">
-                  3
-                </span>
-                <span>
-                  <strong className="text-gray-900">Lieferung</strong> — Dein
-                  Paket wird an deine Lieferadresse zugestellt.
-                </span>
-              </li>
+          <Card title="Wie geht es weiter?">
+            <ol className="space-y-3 text-sm">
+              {NEXT_STEPS.map(([title, text], i) => (
+                <li key={title} className="flex gap-3">
+                  <span className="checkout-step-number">{i + 1}</span>
+                  <span className="text-muted">
+                    <strong style={{ color: "var(--text-color)" }}>{title}</strong> — {text}
+                  </span>
+                </li>
+              ))}
             </ol>
-          </section>
+          </Card>
         </>
       )}
 
-      {/* CTA */}
-      <div className="text-center">
-        <a
-          href={`/${countryCode}/store`}
-          className="btn-accent inline-block"
-        >
+      <div className="text-center mt-10">
+        <a href={`/${countryCode}/store`} className="btn-accent inline-block">
           Weiter einkaufen
         </a>
       </div>
-    </main>
+    </div>
   );
 };

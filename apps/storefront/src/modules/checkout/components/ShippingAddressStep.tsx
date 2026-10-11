@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateCartAddress } from "@lib/stores/cart";
 import type { StoreCart } from "@medusajs/types";
+import { formatAddressLines, isSameAddress } from "@lib/utils/address";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +11,7 @@ import {
   type CheckoutFormValues,
   type RegionCountry,
 } from "./AddressFields";
+import { CheckoutStep } from "./CheckoutStep";
 
 const addressSchema = z.object({
   firstName: z.string().min(1, "Vorname ist erforderlich"),
@@ -93,20 +95,6 @@ function mapAddress(
   };
 }
 
-function areSameAddress(
-  a?: StoreCart["shipping_address"] | null,
-  b?: StoreCart["billing_address"] | null,
-): boolean {
-  if (!a || !b) return false;
-  return (
-    a.first_name === b.first_name &&
-    a.last_name === b.last_name &&
-    a.address_1 === b.address_1 &&
-    a.postal_code === b.postal_code &&
-    a.city === b.city
-  );
-}
-
 interface ShippingAddressStepProps {
   cart: StoreCart | null;
   countries: RegionCountry[];
@@ -116,23 +104,15 @@ interface ShippingAddressStepProps {
   onEdit?: () => void;
 }
 
-const CheckCircle = () => (
-  <span className="inline-flex items-center justify-center w-5 h-5 bg-black rounded-full shrink-0">
-    <svg
-      className="w-3 h-3 text-white"
-      viewBox="0 0 12 12"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M2 6l3 3 5-5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  </span>
+const AddressBlock = ({ label, lines }: { label: string; lines: string[] }) => (
+  <div>
+    <p className="input-label mb-1">{label}</p>
+    {lines.map((line, i) => (
+      <p key={i} className="text-muted">
+        {line}
+      </p>
+    ))}
+  </div>
 );
 
 const ReadOnlyView = ({
@@ -142,89 +122,23 @@ const ReadOnlyView = ({
   cart: StoreCart;
   onEdit?: () => void;
 }) => {
-  const shipping = cart.shipping_address;
-  const billing = cart.billing_address;
-  const isBillingSame = areSameAddress(shipping, billing);
-
-  const shippingLines = [
-    shipping?.first_name && shipping?.last_name
-      ? `${shipping.first_name} ${shipping.last_name}`
-      : null,
-    shipping?.address_1 ?? null,
-    shipping?.postal_code && shipping?.city
-      ? `${shipping.postal_code}, ${shipping.city}`
-      : null,
-    shipping?.country_code?.toUpperCase() ?? null,
-  ].filter(Boolean) as string[];
-
-  const billingLines = isBillingSame
-    ? null
-    : [
-      billing?.first_name && billing?.last_name
-        ? `${billing.first_name} ${billing.last_name}`
-        : null,
-      billing?.address_1 ?? null,
-      billing?.postal_code && billing?.city
-        ? `${billing.postal_code}, ${billing.city}`
-        : null,
-      billing?.country_code?.toUpperCase() ?? null,
-    ].filter(Boolean) as string[];
+  const isBillingSame = isSameAddress(cart.shipping_address, cart.billing_address);
 
   return (
-    <div className="checkout-step">
-      <div className="checkout-step-header">
-        <div className="checkout-step-number done">1</div>
-        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
-          Lieferadresse
-        </h2>
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0" style={{ background: "#000", marginLeft: "0.25rem" }}>
-          <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" aria-hidden="true" style={{ color: "#fff" }}>
-            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
-        <button
-          type="button"
-          onClick={onEdit}
-          className="ml-auto text-sm hover:underline"
-          style={{ color: "var(--accent, #ff4908)" }}
-        >
-          Bearbeiten
-        </button>
+    <CheckoutStep number={1} title="Lieferadresse" state="done" onEdit={onEdit}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-sm">
+        <AddressBlock label="Lieferadresse" lines={formatAddressLines(cart.shipping_address)} />
+        <AddressBlock label="Kontakt" lines={cart.email ? [cart.email] : []} />
+        <AddressBlock
+          label="Rechnungsadresse"
+          lines={
+            isBillingSame
+              ? ["Rechnungs- und Lieferadresse sind identisch."]
+              : formatAddressLines(cart.billing_address)
+          }
+        />
       </div>
-
-      <div className="checkout-step-body">
-        <div className="grid grid-cols-3 gap-8 text-sm">
-          <div>
-            <p className="input-label mb-1">Lieferadresse</p>
-            {shippingLines.map((line, i) => (
-              <p key={i} style={{ color: "var(--text-muted)" }}>
-                {line}
-              </p>
-            ))}
-          </div>
-
-          <div>
-            <p className="input-label mb-1">Kontakt</p>
-            {cart.email && <p style={{ color: "var(--text-muted)" }}>{cart.email}</p>}
-          </div>
-
-          <div>
-            <p className="input-label mb-1">Rechnungsadresse</p>
-            {isBillingSame ? (
-              <p style={{ color: "var(--text-muted)" }}>
-                Rechnungs- und Lieferadresse sind identisch.
-              </p>
-            ) : (
-              billingLines?.map((line, i) => (
-                <p key={i} style={{ color: "var(--text-muted)" }}>
-                  {line}
-                </p>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    </CheckoutStep>
   );
 };
 
@@ -266,7 +180,7 @@ export const ShippingAddressStep = ({
 
     const billing = cart.billing_address;
     const billingSame =
-      !billing?.first_name || areSameAddress(shipping, billing);
+      !billing?.first_name || isSameAddress(shipping, billing);
 
     reset({
       email: cart.email ?? "",
@@ -323,15 +237,8 @@ export const ShippingAddressStep = ({
   }
 
   return (
-    <div className="checkout-step">
-      <div className="checkout-step-header">
-        <div className="checkout-step-number active">1</div>
-        <h2 style={{ fontFamily: '"DM Mono", monospace', fontWeight: 700, fontSize: "1.1rem" }}>
-          Lieferadresse
-        </h2>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="checkout-step-body">
+    <CheckoutStep number={1} title="Lieferadresse" state="active">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-4">
           <AddressFields
             prefix="shipping"
@@ -364,7 +271,7 @@ export const ShippingAddressStep = ({
               {errors.email && <p className="input-error">{errors.email.message}</p>}
             </div>
             <div>
-              <label className="input-label" htmlFor="checkout-phone">Telefon <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+              <label className="input-label" htmlFor="checkout-phone">Telefon <span className="label-optional">(optional)</span></label>
               <input
                 id="checkout-phone"
                 type="tel"
@@ -401,6 +308,6 @@ export const ShippingAddressStep = ({
           </button>
         </div>
       </form>
-    </div>
+    </CheckoutStep>
   );
 };

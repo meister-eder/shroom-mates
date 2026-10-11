@@ -24,21 +24,7 @@ export const CartButton = ({ regionId }: CartButtonProps) => {
   return (
     <button
       onClick={() => toggleCartSidebar()}
-      className="cart-button"
-      style={{
-        fontFamily: '"DM Mono", monospace',
-        fontSize: "0.9rem",
-        background: "none",
-        border:
-          cartItemCount > 0
-            ? "2px solid var(--accent, #ff4908)"
-            : "2px solid #000",
-        borderRadius: "6px",
-        padding: "0.4rem 1rem",
-        cursor: "pointer",
-        color: "var(--text-color, #1d1d1d)",
-        transition: "all 0.2s ease",
-      }}
+      className={`cart-button${cartItemCount > 0 ? " has-items" : ""}`}
       aria-label={`Warenkorb mit ${cartItemCount} ${cartItemCount === 1 ? "Artikel" : "Artikeln"}`}
     >
       <span aria-live="polite" aria-atomic="true">

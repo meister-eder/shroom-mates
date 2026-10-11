@@ -1,5 +1,5 @@
 import { sdk } from "@lib/sdk";
-import type { StoreCart } from "@medusajs/types";
+import type { StoreCart, StoreOrder } from "@medusajs/types";
 import { atom, computed } from "nanostores";
 
 const CART_FIELDS =
@@ -7,6 +7,9 @@ const CART_FIELDS =
 
 // Cart state atom
 export const $cart = atom<StoreCart | null>(null);
+
+// True until the first cart load on this page has finished
+export const $isCartLoading = atom<boolean>(true);
 
 // Sidebar visibility atom
 export const $isCartSidebarOpen = atom<boolean>(false);
@@ -26,7 +29,7 @@ const CART_ID_KEY = "cart_id";
 /**
  * Get cart ID from localStorage
  */
-function getCartId(): string | null {
+export function getCartId(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(CART_ID_KEY);
 }
@@ -47,10 +50,39 @@ function clearCartId(): void {
   localStorage.removeItem(CART_ID_KEY);
 }
 
+// The cart a payment was started for. Kept separately from CART_ID_KEY so the
+// payment-redirect landing page can still complete it after initCart() has
+// swapped in a fresh cart (e.g. because the webhook already completed it).
+const CHECKOUT_CART_ID_KEY = "checkout_cart_id";
+
+export function getCheckoutCartId(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(CHECKOUT_CART_ID_KEY) ?? getCartId();
+}
+
+// Shared in-flight init so several islands calling initCart() on the same
+// page trigger only one request.
+let initPromise: Promise<void> | null = null;
+
 /**
- * Initialize cart - check localStorage for existing cart or create new one
+ * Initialize cart - check localStorage for existing cart or create new one.
+ * Safe to call repeatedly: concurrent calls share one request and an already
+ * loaded cart for the current region is reused.
  */
-export async function initCart(): Promise<void> {
+export function initCart(): Promise<void> {
+  const loaded = $cart.get();
+  if (loaded && loaded.id === getCartId() && loaded.region_id === $regionId.get()) {
+    $isCartLoading.set(false);
+    return Promise.resolve();
+  }
+  initPromise ??= loadCart().finally(() => {
+    initPromise = null;
+    $isCartLoading.set(false);
+  });
+  return initPromise;
+}
+
+async function loadCart(): Promise<void> {
   try {
     const regionId = $regionId.get();
     if (!regionId) {
@@ -75,8 +107,12 @@ export async function initCart(): Promise<void> {
         const { cart } = await sdk.store.cart.retrieve(existingCartId, {
           fields: CART_FIELDS,
         });
-        $cart.set(cart);
-        return;
+        // A cart completed by the payment webhook can't be reused.
+        if (!cart.completed_at) {
+          $cart.set(cart);
+          return;
+        }
+        clearCartId();
       } catch (error) {
         // Cart doesn't exist or is invalid, create new one
         console.warn(
@@ -252,7 +288,10 @@ export async function addShippingMethod(
 /**
  * Initiate a payment session for the cart
  */
-export async function initPaymentSession(providerId: string): Promise<void> {
+export async function initPaymentSession(
+  providerId: string,
+  options: { redirectUrl?: string } = {},
+): Promise<void> {
   const cart = $cart.get();
   if (!cart) {
     throw new Error("Cart not initialized");
@@ -273,8 +312,13 @@ export async function initPaymentSession(providerId: string): Promise<void> {
     data: {
       ...(description && { description }),
       ...customerData,
+      // Where SumUp sends the buyer after 3DS / APM payments. The provider
+      // only honours hosts on its allow-list.
+      ...(options.redirectUrl && { redirect_url: options.redirectUrl }),
     },
   });
+
+  localStorage.setItem(CHECKOUT_CART_ID_KEY, cart.id);
 
   const { cart: updatedCart } = await sdk.store.cart.retrieve(cart.id, {
     fields: CART_FIELDS,
@@ -283,38 +327,66 @@ export async function initPaymentSession(providerId: string): Promise<void> {
   $cart.set(updatedCart);
 }
 
+export type PlaceOrderResult =
+  | { type: "order"; order: StoreOrder }
+  // Payment was not authorized (declined, cancelled, or not yet confirmed).
+  | { type: "payment_failed"; message: string }
+  // Another request (usually the payment webhook) is still completing the
+  // cart; the outcome is unknown.
+  | { type: "pending" };
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 /**
- * Complete cart and place the order
+ * Complete the cart and place the order.
+ *
+ * Only reports success when Medusa returns an order. Completing an already
+ * completed cart returns the existing order, so a 409 ("being completed by
+ * another request", e.g. the SumUp webhook) is retried rather than treated
+ * as success. `pendingPaymentRetries` additionally retries while the payment
+ * provider has not confirmed the payment yet (redirect flows).
  */
-export async function completeCart() {
-  const cart = $cart.get();
-  if (!cart) {
+export async function placeOrder(
+  cartId: string | null = $cart.get()?.id ?? getCartId(),
+  { conflictRetries = 5, pendingPaymentRetries = 0 } = {},
+): Promise<PlaceOrderResult> {
+  if (!cartId) {
     throw new Error("Cart not initialized");
   }
 
-  try {
-    const result = await sdk.store.cart.complete(cart.id);
+  let conflicts = 0;
+  let pending = 0;
 
-    if (result.type === "order") {
-      clearCartId();
-      $cart.set(null);
+  for (;;) {
+    try {
+      const result = await sdk.store.cart.complete(cartId);
+
+      if (result.type === "order") {
+        localStorage.removeItem(CHECKOUT_CART_ID_KEY);
+        if (getCartId() === cartId) clearCartId();
+        if ($cart.get()?.id === cartId) $cart.set(null);
+        return { type: "order", order: result.order };
+      }
+
+      if (pending < pendingPaymentRetries) {
+        pending++;
+        await sleep(1500 * pending);
+        continue;
+      }
+      return {
+        type: "payment_failed",
+        message: result.error?.message ?? "",
+      };
+    } catch (error: unknown) {
+      const status = (error as { status?: number }).status;
+      if (status === 409 && conflicts < conflictRetries) {
+        conflicts++;
+        await sleep(1000 * conflicts);
+        continue;
+      }
+      if (status === 409) return { type: "pending" };
+      throw error;
     }
-
-    return result;
-  } catch (error: unknown) {
-    // If we get a conflict (409) or idempotency error, the cart was likely
-    // already completed by a payment provider webhook. Clear the cart and
-    // signal the caller so it can show a success message.
-    const status = (error as { status?: number }).status;
-    if (status === 409 || status === 422) {
-      clearCartId();
-      $cart.set(null);
-      return { type: "already_completed" as const };
-    }
-
-    // For all other errors (network, 500, etc.), re-throw so the UI
-    // can display the actual error.
-    throw error;
   }
 }
 
