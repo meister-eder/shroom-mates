@@ -55,9 +55,14 @@ function clearCartId(): void {
 // swapped in a fresh cart (e.g. because the webhook already completed it).
 const CHECKOUT_CART_ID_KEY = "checkout_cart_id";
 
+/**
+ * The cart a payment was started for, or null. Deliberately no fallback to
+ * the browsing cart: the redirect landing page must never complete a cart the
+ * customer didn't pay for (e.g. when the URL is opened directly).
+ */
 export function getCheckoutCartId(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(CHECKOUT_CART_ID_KEY) ?? getCartId();
+  return localStorage.getItem(CHECKOUT_CART_ID_KEY);
 }
 
 // Shared in-flight init so several islands calling initCart() on the same
