@@ -57,9 +57,7 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.website_only == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: netcup-test
-      url: https://shop.${{ secrets.DEPLOY_HOST }}.sslip.io
+    environment: netcup-test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -159,9 +157,7 @@ jobs:
   deploy-full:
     needs: build
     runs-on: ubuntu-latest
-    environment:
-      name: netcup-test
-      url: https://shop.${{ secrets.DEPLOY_HOST }}.sslip.io
+    environment: netcup-test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
