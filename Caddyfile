@@ -26,6 +26,13 @@ shroom-mates.de {
 
 	# SPA fallback for clean URLs
 	try_files {path} {path}.html {path}/index.html
+
+	# Branded 404 page from the static build
+	handle_errors 404 {
+		root * /srv/website
+		rewrite * /404.html
+		file_server
+	}
 }
 
 # ── Storefront (Astro SSR) ───────────────────────────────────

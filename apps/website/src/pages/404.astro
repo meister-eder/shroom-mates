@@ -1,0 +1,58 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Seite nicht gefunden | shroom-mates"
+  description="Diese Seite gibt es nicht (mehr)."
+  noindex
+>
+  <section class="not-found">
+    <p class="code">404</p>
+    <h1>Diese Seite ist uns entwischt.</h1>
+    <p>Vielleicht wächst sie gerade noch. Hier geht's weiter:</p>
+    <ul>
+      <li><a href="/">Startseite</a></li>
+      <li><a href="/unsere-pilze/">Unsere Pilze</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    max-width: 36rem;
+    margin: 4rem auto;
+    text-align: center;
+  }
+
+  .code {
+    font-family: "DM Mono", monospace;
+    font-size: 4rem;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: "DM Mono", monospace;
+    font-size: 1.5rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  a {
+    color: var(--text-color);
+    font-family: "DM Mono", monospace;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+</style>

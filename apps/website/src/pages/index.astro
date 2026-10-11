@@ -28,6 +28,10 @@ const {
   teaserText,
 } = landingPageContent.data;
 
+// Keep "shroom-mates" from wrapping; built inline to avoid stray whitespace
+const [heroBefore, ...heroRest] = heroTitle.split("shroom-mates");
+const heroAfter = heroRest.join("shroom-mates");
+
 // Use the proper title from content.md for SEO, not heroTitle
 const pageTitle = title;
 const description = teaserText;
@@ -75,20 +79,7 @@ const description = teaserText;
         <h1 class="sr-only">
           Frische Edelpilze, Growkits &amp; Pilztinkturen aus Leipzig
         </h1>
-        <p class="hero-title">
-          {
-            heroTitle.split("shroom-mates").map((part, index) =>
-              index === 0 ? (
-                <>
-                  {part}
-                  <span class="no-wrap">shroom-mates</span>
-                </>
-              ) : (
-                part
-              ),
-            )
-          }
-        </p>
+        <p class="hero-title">{heroBefore}<span class="no-wrap">shroom-mates</span>{heroAfter}</p>
         <div class="teaser-content-row">
           <Image
             src={logoImage}
@@ -252,7 +243,7 @@ const description = teaserText;
     line-height: 1.2;
     text-align: center;
     width: 100%;
-    font-family: monospace;
+    font-family: "DM Mono", monospace;
     font-weight: bold;
     letter-spacing: -0.02em;
   }
