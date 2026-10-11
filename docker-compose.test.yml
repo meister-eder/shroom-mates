@@ -60,8 +60,11 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
-      SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-}
-      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
+      # Derived from DOMAIN so they can't drift from the real hosts (the
+      # storefront's per-country redirect_url must be on the shop host).
+      SUMUP_MEDUSA_URL: https://api.${DOMAIN}
+      SUMUP_REDIRECT_URL: https://shop.${DOMAIN}/de/checkout/complete
+      SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
     volumes:
       - test_medusa_uploads:/app/uploads
     depends_on:
@@ -76,6 +79,7 @@ services:
         PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
         PUBLIC_SITE_URL: https://shop.${DOMAIN}
+        PUBLIC_WEBSITE_URL: https://shroom-mates.${DOMAIN}
     restart: unless-stopped
     environment:
       NODE_ENV: production

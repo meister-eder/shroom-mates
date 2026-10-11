@@ -83,8 +83,9 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
-      SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-}
-      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
+      SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-https://api.shroom-mates.de}
+      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-https://shop.shroom-mates.de/de/checkout/complete}
+      SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
     volumes:
       - medusa_uploads:/app/uploads
     depends_on:

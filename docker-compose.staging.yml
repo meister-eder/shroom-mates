@@ -62,6 +62,7 @@ services:
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
       SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-}
       SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-}
+      SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
     volumes:
       - staging_medusa_uploads:/app/uploads
     depends_on:

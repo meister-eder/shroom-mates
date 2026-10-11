@@ -58,8 +58,8 @@ jobs:
     if: needs.detect-changes.outputs.website_only == 'true'
     runs-on: ubuntu-latest
     environment:
-      name: production
-      url: https://shroom-mates.de
+      name: netcup-test
+      url: https://shop.${{ secrets.DEPLOY_HOST }}.sslip.io
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -97,7 +97,8 @@ jobs:
       - name: Smoke test
         run: |
           sleep 3
-          curl --fail --silent --show-error --max-time 15 https://shroom-mates.de > /dev/null
+          # Test server uses a self-signed certificate (Caddy `tls internal`)
+          curl --insecure --fail --silent --show-error --max-time 15 "https://shroom-mates.$DOMAIN" > /dev/null
           echo "✓ Site is live"
 
       - name: Cleanup SSH key
@@ -159,8 +160,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: production
-      url: https://shroom-mates.de
+      name: netcup-test
+      url: https://shop.${{ secrets.DEPLOY_HOST }}.sslip.io
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -191,16 +192,35 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
+      # SumUp credentials come from the `netcup-test` environment secrets
+      # (use a SumUp *sandbox* merchant there). Both must be set, so a lone
+      # repository-level SUMUP_API_KEY is never copied onto the test server.
+      - name: Sync SumUp credentials
+        env:
+          SUMUP_API_KEY: ${{ secrets.SUMUP_API_KEY }}
+          SUMUP_MERCHANT_CODE: ${{ secrets.SUMUP_MERCHANT_CODE }}
+        run: |
+          if [ -z "$SUMUP_API_KEY" ] || [ -z "$SUMUP_MERCHANT_CODE" ]; then
+            echo "::notice::SUMUP_API_KEY/SUMUP_MERCHANT_CODE not both set in the netcup-test environment — keeping the server's current SumUp credentials."
+            exit 0
+          fi
+          printf 'SUMUP_API_KEY=%s\nSUMUP_MERCHANT_CODE=%s\n' "$SUMUP_API_KEY" "$SUMUP_MERCHANT_CODE" \
+            | ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" '
+                set -e
+                cd /opt/shroom-mates
+                touch .env
+                grep -v -E "^(SUMUP_API_KEY|SUMUP_MERCHANT_CODE)=" .env > .env.tmp || true
+                cat >> .env.tmp
+                chmod 600 .env.tmp
+                mv .env.tmp .env'
+          echo "✓ SumUp credentials updated"
+
       - name: Deploy with Docker Compose
         run: |
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
             cd /opt/shroom-mates
             export DOMAIN="$DEPLOY_HOST.sslip.io"
             export MEDUSA_PUBLISHABLE_KEY="${{ secrets.MEDUSA_PUBLISHABLE_KEY }}"
-            # Update SumUp keys from CI (only first deploy, won't overwrite manual changes)
-            if ! grep -q '^SUMUP_API_KEY=.' .env 2>/dev/null; then
-              echo 'SUMUP_API_KEY=${{ secrets.SUMUP_API_KEY }}' >> .env
-            fi
             docker compose -f $COMPOSE_FILE pull postgres redis caddy
             docker compose -f $COMPOSE_FILE build medusa storefront
             docker compose -f $COMPOSE_FILE up -d --remove-orphans --force-recreate
@@ -221,6 +241,22 @@ jobs:
             fi
             echo "✓ All services healthy"
           EOF
+
+      - name: Smoke test
+        run: |
+          # Self-signed certificate on the test server → --insecure
+          check() {
+            for i in $(seq 1 20); do
+              if curl --insecure --fail --silent --max-time 10 -o /dev/null "$1"; then
+                echo "✓ $1"; return 0
+              fi
+              sleep 6
+            done
+            echo "✗ $1 not reachable"; return 1
+          }
+          check "https://api.$DOMAIN/health"
+          check "https://shop.$DOMAIN/de/store"
+          check "https://shroom-mates.$DOMAIN"
 
       - name: Cleanup SSH key
         if: always()
