@@ -1,0 +1,103 @@
+---
+/**
+ * Layout for legal texts (rendered from src/legal/*.md). Open facts are
+ * marked <mark class="legal-open">, open legal questions
+ * <mark class="legal-check">; while any exist, a draft notice is shown.
+ */
+interface Props {
+  title: string;
+  /** Show the "draft – legal review pending" notice */
+  draft?: boolean;
+}
+
+const { title, draft = true } = Astro.props;
+---
+
+<article class="legal-page" aria-labelledby="legal-title">
+  <h1 id="legal-title" class="section-heading">{title}</h1>
+  {
+    draft && (
+      <p class="legal-draft" role="note">
+        <strong>Entwurf</strong> – dieser Text wird noch rechtlich geprüft. Gelb
+        markierte Stellen sind noch offen, orange markierte noch zu prüfen.
+      </p>
+    )
+  }
+  <div class="legal-body">
+    <slot />
+  </div>
+</article>
+
+<style>
+  .legal-page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 0 4rem;
+  }
+
+  .legal-draft {
+    background: #fff8d6;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    margin: 0 0 2rem;
+  }
+
+  .legal-body {
+    background: var(--bg-color);
+    border: 2px solid #000;
+    border-radius: 8px;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+    padding: 2rem 2.5rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  .legal-body :global(h2) {
+    font-family: "DM Mono", monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem;
+  }
+
+  .legal-body :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .legal-body :global(p),
+  .legal-body :global(li) {
+    margin: 0 0 0.75rem;
+  }
+
+  .legal-body :global(ul),
+  .legal-body :global(ol) {
+    padding-left: 1.5rem;
+    margin: 0 0 1rem;
+  }
+
+  .legal-body :global(a) {
+    color: var(--accent-dark, #bf2300);
+    text-decoration: underline;
+  }
+
+  .legal-body :global(mark) {
+    padding: 0 0.25em;
+    border-radius: 3px;
+  }
+
+  .legal-body :global(mark.legal-open) {
+    background: #ffe66d;
+  }
+
+  .legal-body :global(mark.legal-check) {
+    background: #ffc9a8;
+  }
+
+  @media (max-width: 640px) {
+    .legal-body {
+      padding: 1.25rem 1rem;
+    }
+  }
+</style>

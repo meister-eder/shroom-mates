@@ -14,7 +14,9 @@
     "./SvgHeading.astro": "./src/SvgHeading.astro",
     "./Footer.astro": "./src/Footer.astro",
     "./SiteHeader.astro": "./src/SiteHeader.astro",
-    "./PageHero.astro": "./src/PageHero.astro"
+    "./PageHero.astro": "./src/PageHero.astro",
+    "./LegalPage.astro": "./src/LegalPage.astro",
+    "./legal/*": "./src/legal/*"
   },
   "dependencies": {
     "@fontsource/dm-mono": "^5.3.0",

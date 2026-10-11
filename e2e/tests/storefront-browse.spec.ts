@@ -58,16 +58,6 @@ test.describe("Storefront — Pages & Navigation", () => {
     await expect(page.locator("a.product-card").first()).toBeVisible();
   });
 
-  test("cookie banner renders and is dismissible", async ({ page }) => {
-    await page.goto("/de");
-
-    // Look for cookie consent elements
-    const cookieBanner = page.locator('[class*="cookie"]').first();
-    // Some implementations may show it, some may not after first visit
-    // Just verify the page doesn't crash
-    await expect(page.locator("body")).toBeVisible();
-  });
-
   test("footer has legal links", async ({ page }) => {
     await page.goto("/de");
 

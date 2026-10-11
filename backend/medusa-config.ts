@@ -123,6 +123,10 @@ module.exports = defineConfig({
         ],
       },
     },
+    {
+      // Withdrawal declarations from the shop's "Vertrag widerrufen" function
+      resolve: "./src/modules/withdrawal",
+    },
     ...redisModules,
   ],
 });

@@ -38,21 +38,92 @@ const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
     </div>
 
     <div class="map-container">
-      <iframe
-        src={mapsEmbedUrl}
-        width="100%"
-        height="450"
-        style="border:0; display:block;"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        title="Karte zur shroom-mates Pilzzucht in Leipzig, Markranstädter Straße 8"
-      ></iframe>
+      <!-- Click-to-load: nothing is requested from Google before consent -->
+      <div class="map-consent" data-map-src={mapsEmbedUrl}>
+        <p class="map-consent-title">Karte von Google Maps anzeigen?</p>
+        <p class="map-consent-text">
+          Wenn du die Karte lädst, werden Daten (u. a. deine IP-Adresse) an
+          Google Ireland Limited übermittelt und ggf. in die USA weitergegeben;
+          Google kann dabei Cookies setzen. Mit Klick auf „Karte laden“
+          willigst du hierin ein (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1
+          TDDDG). Mehr in unserer
+          <a href="/datenschutz/#4-google-maps-nur-nach-klick">Datenschutzerklärung</a>.
+        </p>
+        <button type="button" class="map-consent-button" data-load-map>
+          Karte laden
+        </button>
+      </div>
     </div>
   </div>
 </section>
 
+<script>
+  // Delegated so it keeps working across view-transition navigations.
+  document.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement | null)?.closest("[data-load-map]");
+    if (!button) return;
+    const placeholder = button.closest<HTMLElement>(".map-consent");
+    const src = placeholder?.dataset.mapSrc;
+    if (!placeholder || !src) return;
+    const iframe = document.createElement("iframe");
+    iframe.src = src;
+    iframe.width = "100%";
+    iframe.height = "450";
+    iframe.style.border = "0";
+    iframe.style.display = "block";
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    iframe.title = "Karte zur shroom-mates Pilzzucht in Leipzig, Markranstädter Straße 8";
+    placeholder.replaceWith(iframe);
+  });
+</script>
+
 <style>
+  .map-consent {
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+    background: var(--bg-color);
+  }
+
+  .map-consent-title {
+    font-family: "DM Mono", monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .map-consent-text {
+    font-size: 0.9rem;
+    max-width: 30rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .map-consent-text a {
+    text-decoration: underline;
+  }
+
+  .map-consent-button {
+    padding: 0.7rem 1.5rem;
+    border: 2px solid #000;
+    border-radius: 6px;
+    background: #000;
+    color: #fff;
+    font-family: "DM Mono", monospace;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .map-consent-button:hover {
+    background: var(--accent);
+  }
+
   .location-info {
     margin-top: 0;
     padding: 3rem 2rem;

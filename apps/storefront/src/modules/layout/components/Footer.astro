@@ -14,7 +14,27 @@ const links: FooterLink[] = footerLinks(
   websiteUrl,
   (path) => path.replace(/^\/de\//, `/${countryCode}/`),
   { website: true, shop: false },
+  { href: `/${countryCode}/datenschutz` },
 );
 ---
 
-<SharedFooter links={links} />
+<SharedFooter links={links}>
+  <!-- § 356a BGB: withdrawal function, prominently placed on every page -->
+  <a slot="actions" href={`/${countryCode}/vertrag-widerrufen`} class="btn-outline withdraw-button">
+    Vertrag widerrufen
+  </a>
+</SharedFooter>
+
+<style>
+  .withdraw-button {
+    align-self: flex-start;
+    margin-top: 0.75rem;
+    background: var(--bg-color);
+  }
+
+  @media (max-width: 768px) {
+    .withdraw-button {
+      align-self: center;
+    }
+  }
+</style>

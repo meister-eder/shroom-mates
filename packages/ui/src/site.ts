@@ -31,7 +31,13 @@ export function navLinks(toWebsite: LinkTarget) {
  * Footer links, shared by both apps. `toShop` builds shop URLs (legal pages
  * live in the shop), `toWebsite` website URLs.
  */
-export function footerLinks(toWebsite: LinkTarget, toShop: LinkTarget, external = { website: false, shop: false }) {
+export function footerLinks(
+  toWebsite: LinkTarget,
+  toShop: LinkTarget,
+  external = { website: false, shop: false },
+  /** Each app links its own privacy policy */
+  privacy: { href: string; external?: boolean } = { href: toWebsite("/datenschutz/") },
+) {
   return [
     { label: "Shop", href: toShop("/de/store"), external: external.shop },
     { label: "Unsere Pilze", href: toWebsite("/unsere-pilze/"), external: external.website },
@@ -40,7 +46,7 @@ export function footerLinks(toWebsite: LinkTarget, toShop: LinkTarget, external 
     { label: "FAQ", href: toWebsite("/faq/"), external: external.website },
     { label: "Kontakt", href: toWebsite("/kontakt/"), external: external.website },
     { label: "Impressum", href: toWebsite("/impressum/"), external: external.website },
-    { label: "Datenschutz", href: toWebsite("/datenschutz/"), external: external.website },
+    { label: "Datenschutz", href: privacy.href, external: privacy.external ?? false },
     { label: "AGB", href: toShop("/de/agb"), external: external.shop },
     { label: "Widerruf", href: toShop("/de/widerruf"), external: external.shop },
     { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, isEmail: true },

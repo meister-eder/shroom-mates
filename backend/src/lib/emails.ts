@@ -232,3 +232,80 @@ Emmelie & Tim von shroom-mates`;
 /** DHL tracking page for a parcel number. */
 export const dhlTrackingUrl = (number: string) =>
   `https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html?piececode=${encodeURIComponent(number)}`;
+
+export type WithdrawalForEmail = {
+  id: string;
+  name: string;
+  email: string;
+  order_reference: string;
+  items?: string | null;
+  message?: string | null;
+  received_at: Date;
+};
+
+/** "11. Oktober 2026 um 17:30:12 MESZ" — receipt time incl. time zone. */
+export const formatReceivedAt = (date: Date) =>
+  new Intl.DateTimeFormat("de-DE", {
+    timeZone: "Europe/Berlin",
+    dateStyle: "long",
+    timeStyle: "long",
+  }).format(date);
+
+const withdrawalStatement = (w: WithdrawalForEmail) =>
+  `Hiermit widerrufe ich den Vertrag über ${
+    w.items?.trim() ? `folgende Artikel: ${w.items.trim()}` : "alle Artikel"
+  } der Bestellung ${w.order_reference}.`;
+
+/** Receipt confirmation on a durable medium (§ 356a Abs. 4 BGB). */
+export function withdrawalReceivedEmail(w: WithdrawalForEmail): EmailContent {
+  const receivedAt = formatReceivedAt(w.received_at);
+  const subject = `Eingangsbestätigung Ihres Widerrufs – Bestellung ${w.order_reference}`;
+  const statement = withdrawalStatement(w);
+
+  const html = layout(
+    subject,
+    `<p>Hallo ${esc(w.name)},</p>
+     <p>Ihre Widerrufserklärung ist am <strong>${esc(receivedAt)}</strong> bei uns eingegangen.</p>
+     <p style="margin:16px 0 4px;font-weight:700;">Inhalt Ihrer Erklärung</p>
+     <p style="margin:0;padding:12px;background:#fdfcea;border:1px solid #ddd;border-radius:6px;">
+       „${esc(statement)}“<br>
+       Name: ${esc(w.name)} · E-Mail: ${esc(w.email)}${w.message?.trim() ? `<br>Nachricht: ${esc(w.message.trim())}` : ""}
+     </p>
+     <p>Bitte senden Sie die Ware an: shroom-mates GbR, Markranstädter Straße 8, 04229 Leipzig. Wir melden uns zur Rückabwicklung.</p>
+     <p style="font-size:13px;color:#6b6b6b;">Diese E-Mail bestätigt nur den Eingang Ihrer Erklärung. Referenz: ${esc(w.id)}</p>`,
+  );
+
+  const text = `Hallo ${w.name},
+
+Ihre Widerrufserklärung ist am ${receivedAt} bei uns eingegangen.
+
+Inhalt Ihrer Erklärung:
+„${statement}“
+Name: ${w.name} · E-Mail: ${w.email}${w.message?.trim() ? `\nNachricht: ${w.message.trim()}` : ""}
+
+Bitte senden Sie die Ware an: shroom-mates GbR, Markranstädter Straße 8, 04229 Leipzig. Wir melden uns zur Rückabwicklung.
+
+Diese E-Mail bestätigt nur den Eingang Ihrer Erklärung. Referenz: ${w.id}`;
+
+  return { subject, html, text };
+}
+
+/** Notification to the shop owners about a new withdrawal. */
+export function shopWithdrawalEmail(w: WithdrawalForEmail, adminOrderUrl?: string): EmailContent {
+  const subject = `↩️ Widerruf zu Bestellung ${w.order_reference}`;
+  const receivedAt = formatReceivedAt(w.received_at);
+  const html = layout(
+    subject,
+    `<p><strong>Neuer Widerruf</strong> – eingegangen am ${esc(receivedAt)}</p>
+     <p>Bestellung: ${esc(w.order_reference)}${adminOrderUrl ? ` · <a href="${esc(adminOrderUrl)}">Im Admin öffnen</a>` : " (nicht automatisch zugeordnet)"}<br>
+     Name: ${esc(w.name)}<br>E-Mail: ${esc(w.email)}<br>
+     Artikel: ${esc(w.items?.trim() || "gesamte Bestellung")}${w.message?.trim() ? `<br>Nachricht: ${esc(w.message.trim())}` : ""}</p>
+     <p style="font-size:13px;color:#6b6b6b;">Die Eingangsbestätigung wurde automatisch an den Kunden gesendet. Rückzahlung spätestens 14 Tage nach Eingang (bzw. nach Erhalt der Ware).</p>`,
+  );
+  const text = `Neuer Widerruf – eingegangen am ${receivedAt}
+Bestellung: ${w.order_reference}${adminOrderUrl ? ` (${adminOrderUrl})` : " (nicht automatisch zugeordnet)"}
+Name: ${w.name}
+E-Mail: ${w.email}
+Artikel: ${w.items?.trim() || "gesamte Bestellung"}${w.message?.trim() ? `\nNachricht: ${w.message.trim()}` : ""}`;
+  return { subject, html, text };
+}
