@@ -21,6 +21,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
             currencyCode={currencyCode}
             itemTotal={cart.item_total}
             shippingTotal={cart.shipping_total}
+            shippingPending={!cart.shipping_methods?.length}
             taxTotal={cart.tax_total}
             discountTotal={cart.discount_total}
             total={cart.total}

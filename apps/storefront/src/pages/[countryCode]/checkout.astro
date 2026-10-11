@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { listRegions } from "@lib/data/regions";
+import { countryName } from "@lib/utils/address";
 import { getRegionParams } from "@lib/params/region-params";
 import type { RegionCountry } from "@modules/checkout/components/AddressFields";
 import { CheckoutPage } from "@modules/checkout/components/CheckoutPage";
@@ -26,16 +27,12 @@ try {
   if (region?.countries) {
     countries = region.countries
       .filter((c): c is typeof c & { iso_2: string } => !!c.iso_2)
-      .sort((a, b) =>
-        (a.display_name ?? a.name ?? "").localeCompare(
-          b.display_name ?? b.name ?? "",
-        ),
-      )
       .map((c) => ({
         iso_2: c.iso_2,
-        display_name: c.display_name,
+        display_name: countryName(c.iso_2) ?? c.display_name,
         name: c.name,
-      }));
+      }))
+      .sort((a, b) => (a.display_name ?? "").localeCompare(b.display_name ?? "", "de"));
   }
 } catch (err) {
   console.error("Failed to fetch region countries for checkout:", err);
@@ -43,5 +40,8 @@ try {
 ---
 
 <Layout title="Kasse" description="Schließe deine Bestellung ab." noindex>
-  <CheckoutPage client:load countryCode={countryCode} countries={countries} />
+  <!-- Client-only: the checkout depends entirely on the browser's cart -->
+  <CheckoutPage client:only="react" countryCode={countryCode} countries={countries}>
+    <p slot="fallback" class="text-muted text-center py-16">Kasse wird geladen…</p>
+  </CheckoutPage>
 </Layout>

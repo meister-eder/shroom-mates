@@ -1,15 +1,13 @@
-import { takeConfirmedOrder } from "@lib/checkout/order-handoff";
 import { formatProviderName } from "@lib/checkout/payment-providers";
 import { formatAddressLines, isSameAddress } from "@lib/utils/address";
 import type { StoreOrder } from "@medusajs/types";
 import { CartTotals } from "@modules/common/components/CartTotals";
 import { LineItemRow } from "@modules/common/components/LineItemRow";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
 
 interface OrderConfirmedPageProps {
   countryCode: string;
-  orderId: string;
+  order: StoreOrder;
 }
 
 const NEXT_STEPS = [
@@ -30,17 +28,12 @@ const Card = ({ title, children }: { title: string; children: ReactNode }) => (
   </section>
 );
 
-export const OrderConfirmedPage = ({ countryCode, orderId }: OrderConfirmedPageProps) => {
-  const [order, setOrder] = useState<StoreOrder | null>(null);
-
-  useEffect(() => {
-    setOrder(takeConfirmedOrder(orderId));
-  }, [orderId]);
-
-  const currencyCode = order?.currency_code ?? "eur";
+/** Server-rendered: the order is loaded by the page (404 if unknown). */
+export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPageProps) => {
+  const currencyCode = order.currency_code ?? "eur";
   const paymentProviderId =
-    order?.payment_collections?.[0]?.payment_sessions?.[0]?.provider_id;
-  const shippingMethod = order?.shipping_methods?.[0];
+    order.payment_collections?.[0]?.payment_sessions?.[0]?.provider_id;
+  const shippingMethod = order.shipping_methods?.[0];
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-8 py-16" aria-label="Bestellbestätigung">
@@ -63,23 +56,16 @@ export const OrderConfirmedPage = ({ countryCode, orderId }: OrderConfirmedPageP
 
         <h1 className="page-heading mb-3">Bestellung bestätigt! 🍄</h1>
 
-        {order ? (
-          <>
-            <p className="text-2xl font-mono font-semibold mb-2">#{order.display_id}</p>
-            {order.email && (
-              <p className="text-sm text-muted">
-                Eine Bestätigungs-E-Mail wurde an{" "}
-                <span className="font-medium">{order.email}</span> gesendet.
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="text-sm text-muted font-mono">{orderId}</p>
+        <p className="text-2xl font-mono font-semibold mb-2">#{order.display_id}</p>
+        {order.email && (
+          <p className="text-sm text-muted">
+            Eine Bestätigungs-E-Mail wurde an{" "}
+            <span className="font-medium">{order.email}</span> gesendet.
+          </p>
         )}
       </div>
 
-      {order && (
-        <>
+      <>
           <Card title="Bestellte Artikel">
             {order.items?.map((item) => (
               <LineItemRow
@@ -153,8 +139,7 @@ export const OrderConfirmedPage = ({ countryCode, orderId }: OrderConfirmedPageP
               ))}
             </ol>
           </Card>
-        </>
-      )}
+      </>
 
       <div className="text-center mt-10">
         <a href={`/${countryCode}/store`} className="btn-accent inline-block">

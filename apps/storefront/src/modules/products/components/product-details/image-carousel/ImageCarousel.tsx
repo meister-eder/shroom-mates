@@ -75,6 +75,7 @@ export const ImageCarousel = ({ images, alt }: Props) => {
           loading: "eager",
         })}
 
+        {images.length > 1 && (
         <div className="flex gap-2 justify-center">
           {images.map((image, index) => (
             <button
@@ -93,6 +94,7 @@ export const ImageCarousel = ({ images, alt }: Props) => {
             </button>
           ))}
         </div>
+        )}
       </div>
     </>
   );

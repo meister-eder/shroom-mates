@@ -1,5 +1,6 @@
 ---
 import { serverImageSrc } from "@lib/utils/image";
+import { WEBSITE_URL } from "@shroom-mates/ui/site";
 import { getRegion } from "@lib/data/regions";
 import { listProducts } from "@lib/data/products";
 import { Image } from "astro:assets";
@@ -47,7 +48,7 @@ const featured = products.slice(0, 3);
           <a href={`/${countryCode}/store`} class="btn-accent">
             Zum Sortiment
           </a>
-          <a href="https://shroom-mates.de" class="btn-outline">
+          <a href={WEBSITE_URL} class="btn-outline">
             Mehr über uns
           </a>
         </div>

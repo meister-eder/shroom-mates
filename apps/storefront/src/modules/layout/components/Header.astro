@@ -16,8 +16,8 @@ const { countryCode, regionId } = Astro.props;
 <header role="banner">
   <nav role="navigation" aria-label="Shop Navigation">
     <div class="nav-left">
-      <a href={WEBSITE_URL} class="nav-link back-link">
-        &larr; Website
+      <a href={WEBSITE_URL} class="nav-link back-link" aria-label="Zur Website">
+        &larr;<span class="hide-mobile"> Website</span>
       </a>
       <a href={`/${countryCode}/store`} class="nav-link"> Produkte </a>
     </div>
@@ -186,6 +186,10 @@ const { countryCode, regionId } = Astro.props;
     }
 
     .logo-link :global(.svg-heading) {
+      display: none;
+    }
+
+    .hide-mobile {
       display: none;
     }
   }

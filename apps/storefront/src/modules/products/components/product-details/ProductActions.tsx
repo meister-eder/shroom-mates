@@ -136,7 +136,7 @@ export const ProductActions = ({
               <button
                 key={value.id}
                 className={clsx(
-                  "py-2 px-4 rounded-md cursor-pointer ease-in-out duration-200 w-20 h-10 box-border",
+                  "py-2 px-4 rounded-md cursor-pointer ease-in-out duration-200 min-w-20 h-10 box-border whitespace-nowrap",
                   {
                     "border-2 border-[var(--accent,#ff4908)] bg-[var(--bg-accent,#fdfcea)]": selectedOptions[option.id] === value.id,
                     "bg-gray-100 hover:shadow-md": selectedOptions[option.id] !== value.id,

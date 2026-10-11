@@ -32,6 +32,10 @@ try {
   console.error(error);
 }
 
+if (product === null) {
+  return Astro.rewrite("/404");
+}
+
 const {
   title,
   description,

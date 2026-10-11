@@ -17,5 +17,8 @@ if (!countryCode) {
   description="Überprüfe die Artikel in deinem Warenkorb."
   noindex
 >
-  <CartPage client:load countryCode={countryCode} />
+  <!-- Client-only: rendered from the browser's cart -->
+  <CartPage client:only="react" countryCode={countryCode}>
+    <p slot="fallback" class="text-muted text-center py-16">Warenkorb wird geladen…</p>
+  </CartPage>
 </Layout>

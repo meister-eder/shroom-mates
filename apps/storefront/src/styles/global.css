@@ -26,6 +26,17 @@
   border-color: var(--accent);
 }
 
+@media (max-width: 640px) {
+  .cart-button {
+    white-space: nowrap;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .cart-button .cart-label {
+    display: none;
+  }
+}
+
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
 .btn-accent {
   display: inline-flex;

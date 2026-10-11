@@ -2,15 +2,17 @@
 export const prerender = false;
 
 import Layout from "@layouts/Layout.astro";
+import { retrieveOrder } from "@lib/data/orders";
 import { OrderConfirmedPage } from "@modules/order/components/OrderConfirmedPage";
 
 const { countryCode, orderId } = Astro.params;
+
+const order = orderId ? await retrieveOrder(orderId) : null;
+if (!order) {
+  return Astro.rewrite("/404");
+}
 ---
 
 <Layout title="Bestellung bestätigt" description="Deine Bestellung wurde bestätigt." noindex>
-  <OrderConfirmedPage
-    client:load
-    countryCode={countryCode!}
-    orderId={orderId!}
-  />
+  <OrderConfirmedPage countryCode={countryCode!} order={order} />
 </Layout>

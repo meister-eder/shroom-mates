@@ -28,7 +28,7 @@ export const CartButton = ({ regionId }: CartButtonProps) => {
       aria-label={`Warenkorb mit ${cartItemCount} ${cartItemCount === 1 ? "Artikel" : "Artikeln"}`}
     >
       <span aria-live="polite" aria-atomic="true">
-        🛒 Warenkorb ({cartItemCount})
+        🛒<span className="cart-label"> Warenkorb</span> ({cartItemCount})
       </span>
     </button>
   );

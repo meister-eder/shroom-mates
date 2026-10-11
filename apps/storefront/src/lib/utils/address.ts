@@ -1,3 +1,18 @@
+const regionNames =
+  typeof Intl !== "undefined" && "DisplayNames" in Intl
+    ? new Intl.DisplayNames(["de"], { type: "region" })
+    : null;
+
+/** German country name for an ISO-2 code, e.g. "de" → "Deutschland". */
+export function countryName(iso2?: string | null): string | undefined {
+  if (!iso2) return undefined;
+  try {
+    return regionNames?.of(iso2.toUpperCase()) ?? iso2.toUpperCase();
+  } catch {
+    return iso2.toUpperCase();
+  }
+}
+
 type AddressLike = {
   first_name?: string | null;
   last_name?: string | null;
@@ -20,7 +35,7 @@ export function formatAddressLines(addr?: AddressLike | null): string[] {
     addr.address_1,
     addr.address_2,
     place,
-    addr.country_code?.toUpperCase(),
+    countryName(addr.country_code),
   ].filter((line): line is string => !!line);
 }
 

@@ -1,10 +1,12 @@
 import {
   $cart,
+  $isCartLoading,
   removeFromCart,
   updateLineItemQuantity,
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
 import { useStore } from "@nanostores/react";
+import { CartTotals } from "@modules/common/components/CartTotals";
 
 interface CartPageProps {
   countryCode: string;
@@ -12,6 +14,7 @@ interface CartPageProps {
 
 export const CartPage = ({ countryCode }: CartPageProps) => {
   const cart = useStore($cart);
+  const isCartLoading = useStore($isCartLoading);
 
   const handleRemoveItem = async (lineItemId: string) => {
     try {
@@ -34,6 +37,10 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
 
   const itemCount = cart?.items?.length ?? 0;
   const isEmpty = itemCount === 0;
+
+  if (!cart && isCartLoading) {
+    return <p className="text-muted text-center py-16">Warenkorb wird geladen…</p>;
+  }
   const currencyCode = cart?.currency_code || "EUR";
 
   return (
@@ -189,65 +196,21 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
 
           {/* Right column: Order summary */}
           <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <h2 className="text-2xl font-bold mb-6">Zusammenfassung</h2>
-
-              <div className="border border-gray-200 rounded-md p-6 space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">
-                      Zwischensumme (inkl. MwSt., exkl. Versand)
-                    </span>
-                    <span>
-                      {convertToLocale({
-                        amount: cart?.item_total || 0,
-                        currencyCode,
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Versand</span>
-                    <span>
-                      {convertToLocale({
-                        amount: cart?.shipping_total || 0,
-                        currencyCode,
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between text-xs pt-1" style={{ color: "var(--text-muted, #888)" }}>
-                    <span>(davon MwSt. 19 %)</span>
-                    <span>
-                      {convertToLocale({
-                        amount: cart?.tax_total || 0,
-                        currencyCode,
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="pt-4 border-t border-gray-200">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Gesamt</span>
-                      <span>
-                        {convertToLocale({
-                          amount: cart?.total || 0,
-                          currencyCode,
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <a
-                  href={`/${countryCode}/checkout`}
-                  className="w-full block text-center text-white py-4 px-6 rounded-md transition-colors mt-6"
-                  style={{
-                    backgroundColor: "var(--accent, #ff4908)",
-                    border: "2px solid #000",
-                    fontFamily: '"DM Mono", monospace',
-                  }}
-                >
+            <div className="sticky top-8 order-summary-card">
+              <div className="order-summary-header">
+                <h2 className="checkout-step-title">Zusammenfassung</h2>
+              </div>
+              <div className="order-summary-body">
+                <CartTotals
+                  currencyCode={currencyCode}
+                  itemTotal={cart?.item_total}
+                  shippingTotal={cart?.shipping_total}
+                  shippingPending={!cart?.shipping_methods?.length}
+                  taxTotal={cart?.tax_total}
+                  discountTotal={cart?.discount_total}
+                  total={cart?.total}
+                />
+                <a href={`/${countryCode}/checkout`} className="btn-accent w-full mt-6">
                   Zur Kasse
                 </a>
               </div>

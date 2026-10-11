@@ -13,6 +13,19 @@ import {
 } from "./AddressFields";
 import { CheckoutStep } from "./CheckoutStep";
 
+// Format checks shared by shipping and (when separate) billing address.
+type AddressIssue = { field: keyof AddressValues; message: string };
+function addressFormatIssues(a: AddressValues): AddressIssue[] {
+  const issues: AddressIssue[] = [];
+  if (a.address.trim() && !/\d/.test(a.address)) {
+    issues.push({ field: "address", message: "Bitte gib auch die Hausnummer an" });
+  }
+  if (a.country === "de" && a.postalCode.trim() && !/^\d{5}$/.test(a.postalCode.trim())) {
+    issues.push({ field: "postalCode", message: "Bitte gib eine gültige fünfstellige PLZ ein" });
+  }
+  return issues;
+}
+
 const addressSchema = z.object({
   firstName: z.string().min(1, "Vorname ist erforderlich"),
   lastName: z.string().min(1, "Nachname ist erforderlich"),
@@ -45,13 +58,26 @@ const formSchema = z
         (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
         "Bitte gib eine gültige E-Mail-Adresse ein",
       ),
-    phone: z.string(),
+    phone: z
+      .string()
+      .refine(
+        (val) => !val.trim() || /^\+?[\d\s()/-]{6,}$/.test(val.trim()),
+        "Bitte gib eine gültige Telefonnummer ein",
+      ),
     billingSameAsShipping: z.boolean(),
     shipping: addressSchema,
     billing: billingSchema,
   })
-  .superRefine(({ billingSameAsShipping, billing }, ctx) => {
+  .superRefine(({ billingSameAsShipping, shipping, billing }, ctx) => {
+    for (const { field, message } of addressFormatIssues(shipping)) {
+      ctx.addIssue({ code: "custom", path: ["shipping", field], message });
+    }
+
     if (billingSameAsShipping) return;
+
+    for (const { field, message } of addressFormatIssues(billing)) {
+      ctx.addIssue({ code: "custom", path: ["billing", field], message });
+    }
 
     const required: [keyof typeof billing, string][] = [
       ["firstName", "Vorname ist erforderlich"],

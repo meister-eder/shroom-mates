@@ -5,6 +5,8 @@ interface CartTotalsProps {
   itemTotal?: number | null;
   shippingTotal?: number | null;
   shippingLabel?: string;
+  /** No shipping method chosen yet: don't show 0,00 € as shipping. */
+  shippingPending?: boolean;
   taxTotal?: number | null;
   discountTotal?: number | null;
   total?: number | null;
@@ -16,6 +18,7 @@ export const CartTotals = ({
   itemTotal,
   shippingTotal,
   shippingLabel = "Versand",
+  shippingPending = false,
   taxTotal,
   discountTotal,
   total,
@@ -31,7 +34,9 @@ export const CartTotals = ({
       </div>
       <div className="order-summary-line">
         <span className="text-muted">{shippingLabel}</span>
-        <span>{fmt(shippingTotal)}</span>
+        <span className={shippingPending ? "text-muted" : undefined}>
+          {shippingPending ? "wird im nächsten Schritt berechnet" : fmt(shippingTotal)}
+        </span>
       </div>
       {(discountTotal ?? 0) > 0 && (
         <div className="order-summary-line" style={{ color: "var(--color-forest)" }}>
@@ -44,7 +49,7 @@ export const CartTotals = ({
         <span>{fmt(taxTotal)}</span>
       </div>
       <div className="order-summary-total">
-        <span>Gesamt</span>
+        <span>{shippingPending ? "Gesamt (zzgl. Versand)" : "Gesamt"}</span>
         <span>{fmt(total)}</span>
       </div>
     </div>

@@ -57,6 +57,7 @@ export const AddressFields = ({
             type="text"
             autoComplete="given-name"
             {...register(f("firstName"))}
+            aria-invalid={errors.firstName ? true : undefined}
             className={`${INPUT_BASE}${errors.firstName ? " error" : ""}`}
           />
           {errors.firstName && <p className={ERROR}>{errors.firstName.message}</p>}
@@ -68,6 +69,7 @@ export const AddressFields = ({
             type="text"
             autoComplete="family-name"
             {...register(f("lastName"))}
+            aria-invalid={errors.lastName ? true : undefined}
             className={`${INPUT_BASE}${errors.lastName ? " error" : ""}`}
           />
           {errors.lastName && <p className={ERROR}>{errors.lastName.message}</p>}
@@ -83,6 +85,7 @@ export const AddressFields = ({
             type="text"
             autoComplete="street-address"
             {...register(f("address"))}
+            aria-invalid={errors.address ? true : undefined}
             className={`${INPUT_BASE}${errors.address ? " error" : ""}`}
           />
           {errors.address && <p className={ERROR}>{errors.address.message}</p>}
@@ -108,6 +111,7 @@ export const AddressFields = ({
             type="text"
             autoComplete="postal-code"
             {...register(f("postalCode"))}
+            aria-invalid={errors.postalCode ? true : undefined}
             className={`${INPUT_BASE}${errors.postalCode ? " error" : ""}`}
           />
           {errors.postalCode && <p className={ERROR}>{errors.postalCode.message}</p>}
@@ -119,6 +123,7 @@ export const AddressFields = ({
             type="text"
             autoComplete="address-level2"
             {...register(f("city"))}
+            aria-invalid={errors.city ? true : undefined}
             className={`${INPUT_BASE}${errors.city ? " error" : ""}`}
           />
           {errors.city && <p className={ERROR}>{errors.city.message}</p>}
@@ -133,6 +138,7 @@ export const AddressFields = ({
             id={`${prefix}-country`}
             autoComplete="country"
             {...register(f("country"))}
+            aria-invalid={errors.country ? true : undefined}
             className={`${INPUT_BASE}${errors.country ? " error" : ""}`}
           >
             <option disabled value="">Land auswählen</option>

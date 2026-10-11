@@ -4,6 +4,8 @@ export const listProducts = async (regionId: string) => {
   try {
     const { products } = await sdk.store.product.list({
       region_id: regionId,
+      // categories feed the filter strip on /store
+      fields: "*variants.calculated_price,*categories",
     });
     return products;
   } catch (error) {
@@ -24,6 +26,8 @@ export const retrieveProduct = async (
     });
     return product;
   } catch (error) {
+    // Unknown product IDs are a normal 404, not an error.
+    if ((error as { status?: number }).status === 404) return null;
     console.error(error);
     throw new Error("Failed to fetch product");
   }

@@ -11,40 +11,26 @@ interface Props {
 
 const { material, origin_country, type, weight, length, width, height } =
   Astro.props;
+
+// Only show attributes that are actually filled in
+const rows = [
+  ["Material", material],
+  ["Herkunftsland", origin_country],
+  ["Typ", type?.value],
+  ["Gewicht", weight ? `${weight} g` : null],
+  ["Maße", length && width && height ? `${length} × ${width} × ${height}` : null],
+].filter((row): row is [string, string] => !!row[1]);
 ---
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-  <div class="grid grid-cols-2 gap-x-8">
-    <div class="flex flex-col gap-y-4">
-      <div>
-        <span class="font-semibold">Material</span>
-        <p>{material || "-"}</p>
-      </div>
-      <div>
-        <span class="font-semibold">Herkunftsland</span>
-        <p>{origin_country || "-"}</p>
-      </div>
-      <div>
-        <span class="font-semibold">Typ</span>
-        <p>{type?.value || "-"}</p>
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-y-4">
-      <div>
-        <span class="font-semibold">Gewicht</span>
-        <p>{weight ? `${weight}g` : "-"}</p>
-      </div>
-      <div>
-        <span class="font-semibold">Maße</span>
-        <p>
-          {
-            length && width && height
-              ? `${length}L x ${width}B x ${height}H`
-              : "-"
-          }
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+{
+  rows.length > 0 && (
+    <dl class="grid grid-cols-2 gap-x-8 gap-y-4">
+      {rows.map(([label, value]) => (
+        <div>
+          <dt class="font-semibold">{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}

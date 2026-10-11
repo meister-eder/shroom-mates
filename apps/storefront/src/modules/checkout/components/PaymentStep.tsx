@@ -224,6 +224,22 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
 
       {error && <p className="input-error mb-4">{error}</p>}
 
+      {selectedProviderId && (
+        <p className="text-xs text-muted mb-4">
+          Mit deiner Bestellung akzeptierst du unsere{" "}
+          <a href={`/${countryCode}/agb`} target="_blank" className="underline">AGB</a>{" "}
+          und hast die{" "}
+          <a href={`/${countryCode}/widerruf`} target="_blank" className="underline">
+            Widerrufsbelehrung
+          </a>{" "}
+          sowie die{" "}
+          <a href={`/${countryCode}/datenschutz`} target="_blank" className="underline">
+            Datenschutzerklärung
+          </a>{" "}
+          zur Kenntnis genommen.
+        </p>
+      )}
+
       {isSumUp && paymentFailed && (
         <button
           type="button"
@@ -244,7 +260,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             onClick={() => completeOrder()}
             className="btn-accent w-full"
           >
-            {isPlacing ? "Wird verarbeitet..." : "Bestellung aufgeben"}
+            {isPlacing ? "Wird verarbeitet..." : "Zahlungspflichtig bestellen"}
           </button>
           <div className="flex items-center gap-2 flex-wrap">
             <span className="trust-badge">🔒 Sichere Zahlung</span>

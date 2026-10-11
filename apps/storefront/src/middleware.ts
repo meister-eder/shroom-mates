@@ -23,6 +23,11 @@ function isStaticOrInternalPath(pathname: string) {
 		return true;
 	}
 
+	// The 404 page (also the target of Astro.rewrite("/404")) has no country
+	if (pathname === "/404") {
+		return true;
+	}
+
 	// Common site root static files
 	if (
 		pathname === "/favicon.ico" ||
