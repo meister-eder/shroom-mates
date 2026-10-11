@@ -144,7 +144,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	const pathname = context.url.pathname;
-	const origin = context.url.origin;
 	const search = context.url.search;
 
 	let countryCode: string | undefined;
@@ -163,7 +162,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		if (!urlHasCountryCode) {
 			const redirectPath = pathname === "/" ? "" : pathname;
 			const queryString = search || "";
-			return context.redirect(`${origin}/${countryCode}${redirectPath}${queryString}`, 307);
+			// Relative on purpose: behind the reverse proxy context.url.origin is
+			// the internal address (http://localhost:4321), not the public host.
+			return context.redirect(`/${countryCode}${redirectPath}${queryString}`, 307);
 		}
 	}
 
