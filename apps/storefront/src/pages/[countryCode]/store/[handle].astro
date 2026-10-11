@@ -2,17 +2,14 @@
 import Layout from "@layouts/Layout.astro";
 import { retrieveProduct } from "@lib/data/products";
 import { getRegion } from "@lib/data/regions";
-import { getProductParams } from "@lib/params/product-params";
 import { getProductPrice } from "@lib/utils/get-product-price";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
 
-export const getStaticPaths = getProductParams;
+const { countryCode, handle } = Astro.params;
 
-const { countryCode, productId } = Astro.params;
-
-if (!countryCode || !productId) {
+if (!countryCode || !handle) {
   return Astro.redirect("/not-found");
 }
 
@@ -26,7 +23,7 @@ let product: Awaited<ReturnType<typeof retrieveProduct>> | undefined;
 let error: Error | undefined;
 
 try {
-  product = await retrieveProduct(productId, region.id);
+  product = await retrieveProduct(handle, region.id);
 } catch (e) {
   error = e instanceof Error ? e : new Error("Unknown error");
   console.error(error);
@@ -34,6 +31,11 @@ try {
 
 if (product === null) {
   return Astro.rewrite("/404");
+}
+
+// Old links used the product ID; send them to the readable URL.
+if (product && handle !== product.handle) {
+  return Astro.redirect(`/${countryCode}/store/${product.handle}`, 301);
 }
 
 const {
@@ -87,9 +89,9 @@ const { cheapestPrice } = getProductPrice({
           <ProductActions
             options={options ?? []}
             variants={variants ?? []}
-            productId={productId}
+            productId={product?.id ?? handle}
             regionId={region.id}
-            client:visible
+            client:load
           />
 
           <ProductAttributes

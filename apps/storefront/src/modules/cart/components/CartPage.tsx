@@ -109,40 +109,30 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
 
                     {/* Quantity */}
                     <div className="col-span-6 md:col-span-2">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1">
                         <button
                           onClick={() =>
                             handleQuantityChange(item.id, quantity - 1)
                           }
-                          className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
-                          aria-label="Menge verringern"
+                          className="w-11 h-11 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 text-lg"
+                          aria-label={
+                            quantity <= 1 ? `${productTitle} entfernen` : "Menge verringern"
+                          }
                         >
                           −
                         </button>
-                        <select
-                          value={quantity}
-                          onChange={(e) =>
-                            handleQuantityChange(
-                              item.id,
-                              parseInt(e.target.value, 10),
-                            )
-                          }
-                          className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
-                          aria-label="Menge"
+                        <span
+                          className="w-10 text-center font-medium tabular-nums"
+                          aria-live="polite"
+                          aria-label={`Menge: ${quantity}`}
                         >
-                          {Array.from({ length: 10 }, (_, i) => i + 1).map(
-                            (num) => (
-                              <option key={num} value={num}>
-                                {num}
-                              </option>
-                            ),
-                          )}
-                        </select>
+                          {quantity}
+                        </span>
                         <button
                           onClick={() =>
                             handleQuantityChange(item.id, quantity + 1)
                           }
-                          className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-50"
+                          className="w-11 h-11 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 text-lg"
                           aria-label="Menge erhöhen"
                         >
                           +
@@ -170,7 +160,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                     <div className="col-span-12 md:col-span-1 flex justify-end md:justify-center">
                       <button
                         onClick={() => handleRemoveItem(item.id)}
-                        className="text-red-600 hover:text-red-700"
+                        className="w-11 h-11 flex items-center justify-center rounded-md text-red-600 hover:text-red-700 hover:bg-red-50"
                         aria-label={`${productTitle} aus dem Warenkorb entfernen`}
                       >
                         <svg

@@ -5,7 +5,8 @@ import Thumbnail from "../thumbnail/Thumbnail.astro";
 import Price from "./Price.astro";
 
 interface Props {
-  id: string;
+  /** URL slug (product handle) */
+  handle: string;
   variants: ProductVariant[];
   thumbnailUrl?: string;
   imageUrl?: string;
@@ -14,7 +15,7 @@ interface Props {
   categoryName?: string;
 }
 
-const { id, variants, thumbnailUrl, imageUrl, title, priority, categoryName } =
+const { handle, variants, thumbnailUrl, imageUrl, title, priority, categoryName } =
   Astro.props;
 const countryCode = Astro.params.countryCode;
 
@@ -22,7 +23,7 @@ const { cheapestPrice } = getProductPrice({ productVariants: variants });
 ---
 
 <a
-  href={`/${countryCode}/store/${id}`}
+  href={`/${countryCode}/store/${handle}`}
   class="product-card"
   aria-label={`${title}${cheapestPrice ? " — ab " + cheapestPrice.calculated_price : ""}`}
 >

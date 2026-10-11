@@ -14,17 +14,29 @@ export const listProducts = async (regionId: string) => {
   }
 };
 
-export const retrieveProduct = async (
-  productId: string,
-  regionId: string,
-) => {
+const PRODUCT_FIELDS =
+  "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,";
+
+/**
+ * Product by URL slug. Accepts the handle, or a legacy product ID
+ * ("prod_…") from old links. Returns null if it doesn't exist.
+ */
+export const retrieveProduct = async (handleOrId: string, regionId: string) => {
   try {
-    const { product } = await sdk.store.product.retrieve(productId, {
+    if (handleOrId.startsWith("prod_")) {
+      const { product } = await sdk.store.product.retrieve(handleOrId, {
+        region_id: regionId,
+        fields: PRODUCT_FIELDS,
+      });
+      return product;
+    }
+    const { products } = await sdk.store.product.list({
+      handle: handleOrId,
       region_id: regionId,
-      fields:
-        "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,",
+      fields: PRODUCT_FIELDS,
+      limit: 1,
     });
-    return product;
+    return products[0] ?? null;
   } catch (error) {
     // Unknown product IDs are a normal 404, not an error.
     if ((error as { status?: number }).status === 404) return null;

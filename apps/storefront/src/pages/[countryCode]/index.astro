@@ -127,7 +127,7 @@ const featured = products.slice(0, 3);
             {featured.map((product, index) => (
               <li>
                 <ProductPreview
-                  id={product.id}
+                  handle={product.handle}
                   variants={product.variants ?? []}
                   thumbnailUrl={product.thumbnail ?? undefined}
                   imageUrl={product.images?.[0]?.url}
