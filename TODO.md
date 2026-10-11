@@ -23,7 +23,7 @@ IDs verweisen auf den Bericht.
 - [x] M9 „Versand 0,00 €“ bevor Versand gewählt ist
 - [x] M10 (Teil) Mobiler Shop-Header: kompakter Warenkorb-Button, „← Website“ bricht nicht mehr um
 - [x] M11 Produktseite: leere Attribute, einzelnes Vorschaubild, überlaufender Varianten-Chip
-- [x] M15 React-Hydration-Fehler im Checkout (Checkout/Warenkorb rendern nur im Client)
+- [x] M15 React-Hydration-Fehler im Checkout (Checkout/Warenkorb nur im Client, Header-Warenkorb hydration-sicher)
 - [x] L1 „Mehr über uns“ war fest auf die Live-Domain verdrahtet
 - [x] L3 Leerzeichen in „shroom-mates !“
 - [x] L4 Ländernamen auf Deutsch („Deutschland“ statt „Germany“/„DE“)
@@ -63,12 +63,12 @@ IDs verweisen auf den Bericht.
 
 ## Technik (später)
 
-- [ ] L5 Größere Touch-Ziele im Warenkorb; −/+ und 1–10-Auswahl vereinheitlichen
-- [ ] L8 Scroll-Reveal respektiert `prefers-reduced-motion` nicht
-- [ ] L9 „In den Warenkorb“ ist bis zur Hydration deaktiviert (`client:visible`)
-- [ ] L10 Produkt-URLs mit Handles statt IDs
-- [ ] L12 Testserver nicht indexieren (robots/sitemap/canonicals)
-- [ ] E2E-Tests an aktuelle Labels anpassen (`/Adresse/` → „Straße und Hausnummer“, mehrdeutige Selektoren)
-- [ ] Biome-Konfiguration der Website reparieren (Lint-Schritt in CI schlägt fehl)
+- [x] L5 Größere Touch-Ziele im Warenkorb; −/+ und 1–10-Auswahl vereinheitlicht
+- [x] L8 Scroll-Reveal respektiert `prefers-reduced-motion`
+- [x] L9 „In den Warenkorb“ hydriert sofort (`client:load`)
+- [x] L10 Produkt-URLs mit Handles statt IDs (alte ID-Links → 301)
+- [x] L12 Testserver nicht indexieren (X-Robots-Tag: noindex)
+- [x] E2E-Tests an aktuelle UI angepasst (27/27 grün)
+- [x] Biome-Konfiguration der Website repariert (CI-Lint nutzt die gepinnte Version)
 - [ ] SumUp-Webhooks auf dem Testserver (selbstsigniertes Zertifikat) — mit echter Domain + Let's Encrypt erledigt
-- [ ] `logo_with_shrooms.png` ist 4,7 MB groß
+- [x] `logo_with_shrooms.png` von 8192 px / 5,8 MB auf 1024 px / 370 KB verkleinert
