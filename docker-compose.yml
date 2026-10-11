@@ -119,6 +119,7 @@ services:
       HOST: 0.0.0.0
       PORT: 4321
       PUBLIC_MEDUSA_BACKEND_URL: https://api.shroom-mates.de
+      MEDUSA_INTERNAL_URL: http://medusa:9000
     depends_on:
       medusa:
         condition: service_healthy

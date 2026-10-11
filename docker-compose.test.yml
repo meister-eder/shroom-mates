@@ -86,6 +86,7 @@ services:
       HOST: 0.0.0.0
       PORT: 4321
       PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+      MEDUSA_INTERNAL_URL: http://medusa:9000
       APP_TRUST_PROXY: "true"
     depends_on:
       - medusa

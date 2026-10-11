@@ -42,6 +42,8 @@ RUN addgroup --system storefront && adduser --system --ingroup storefront storef
 
 # Copy built output
 COPY --from=builder /app/apps/storefront/dist ./dist
+# SvgHeading reads SVGs from ./public at render time
+COPY --from=builder /app/apps/storefront/public ./public
 
 # Install deps in workspace mode so @shroom-mates/ui resolves
 COPY --from=builder /app/package.json ./

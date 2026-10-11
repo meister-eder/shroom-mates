@@ -98,6 +98,7 @@ services:
       HOST: 0.0.0.0
       PORT: 4321
       PUBLIC_MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL:?MEDUSA_BACKEND_URL is required}
+      MEDUSA_INTERNAL_URL: http://medusa:9000
     depends_on:
       medusa:
         condition: service_healthy
