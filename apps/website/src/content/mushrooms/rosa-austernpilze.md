@@ -1,8 +1,9 @@
 ---
 title: Rosenseitling
-image: ../../assets/images/rosenseitling_seite.jpg
+image: "../../assets/images/fotos/rosenseitling-bueschel.jpg"
 imageAlt: Frische Rosenseitlinge aus der shroom-mates Pilzzucht Leipzig
-color: "#f5cbcd"
+latinName: "Pleurotus djamor"
+badge: "Nur im Sommer"
 order: 1
 ---
 Die Rosenseitlinge (Pleurotus djamor) sind eine besondere Variante der Austernpilze mit ihrer charakteristischen rosa bis pinken Färbung. Die Art stammt ursprünglich aus den Tropen und mag es warm. Deshalb züchten wir sie auch nur in den Sommermonaten.

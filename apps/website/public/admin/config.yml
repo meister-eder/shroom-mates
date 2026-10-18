@@ -46,40 +46,62 @@ collections:
         file: apps/website/src/content/landing-page/content.md
         fields:
           - { name: title, label: Seitentitel (SEO), widget: string, hint: "Titel im Browser-Tab und in Suchergebnissen" }
-          - { name: heroImage, label: Hero-Bild, widget: image, choose_url: false, accept: "image/*", hint: Hero-Bild für die Startseite }
-          - { name: heroImageAlt, label: Hero-Bild Alt-Text, widget: string }
-          - { name: logoImage, label: Logo-Bild, widget: image, choose_url: false, accept: "image/*", hint: Logo-Bild mit Pilzen }
-          - { name: logoImageAlt, label: Logo-Bild Alt-Text, widget: string }
-          - { name: heroTitle, label: Hero-Überschrift, widget: string }
-          - { name: teaserText, label: Teaser-Text, widget: text }
-          - name: values
-            label: Werte-Karten
-            widget: list
-            min: 1
-            summary: "{{fields.title}}"
+          - { name: heroImage, label: Vorschaubild (Social Media), widget: image, choose_url: false, accept: "image/*", hint: "Erscheint nur als Vorschau beim Teilen des Links (og:image), nicht auf der Seite" }
+          - { name: heroTitle, label: Hauptüberschrift, widget: string, hint: 'Der Name „shroom-mates“ wird hervorgehoben und bleibt in einer Zeile' }
+          - { name: teaserText, label: Teaser-Text, widget: text, hint: "Einleitung unter der Überschrift, zugleich Meta-Beschreibung (SEO)" }
+          - { name: heroEyebrow, label: Kleine Zeile über der Überschrift, widget: string }
+          - { name: heroPrimaryButton, label: Hero-Button 1 (Pilze), widget: string }
+          - { name: heroSecondaryButton, label: Hero-Button 2 (Growkits), widget: string }
+          - { name: heroMascotAlt, label: Maskottchen Alt-Text, widget: string, hint: Beschreibung des Maskottchen-Bildes (Barrierefreiheit) }
+          - { name: heroBubble, label: Sprechblase, widget: string }
+          - name: steps
+            label: Abschnitt „Von der Spore bis zur Ernte“
+            widget: object
+            collapsed: true
             fields:
-              - { name: title, label: Titel (für Barrierefreiheit), widget: string, hint: "Text-Titel für Screen-Reader, wird nicht in der Überschrift angezeigt" }
-              - name: headingSvg
-                label: Überschrift SVG
-                widget: image
-                choose_url: false
-                accept: .svg
-                hint: SVG-Datei für die Überschrift
-                media_folder: /apps/website/public/assets/headings
-                public_folder: /assets/headings
-              - { name: description, label: Beschreibung, widget: text, hint: "HTML (z.B. Links) ist erlaubt" }
-          - name: mushroomShowcaseHeadingSvg
-            label: Pilz-Showcase Überschrift SVG
-            widget: image
-            choose_url: false
-            accept: .svg
-            hint: SVG-Datei für die Pilz-Showcase Überschrift
-            media_folder: /apps/website/public/assets/headings
-            public_folder: /assets/headings
-          - { name: mushroomShowcaseTitle, label: Pilz-Showcase Titel (für Barrierefreiheit), widget: string, hint: Text-Titel für Screen-Reader }
-          - { name: mushroomShowcaseImage, label: Pilz-Showcase Bild, widget: image, choose_url: false, accept: "image/*", hint: Hochauflösendes Pilzbild }
-          - { name: mushroomShowcaseImageAlt, label: Pilz-Showcase Bild Alt-Text, widget: string }
-          - { name: mushroomShowcaseGrowingMethodsText, label: Pilz-Showcase Text, widget: text, required: false, hint: Kurzer Text über Anbaumethoden und Qualität }
+              - { name: title, label: Überschrift, widget: string }
+              - { name: intro, label: Einleitung, widget: string }
+              - name: items
+                label: Schritte
+                widget: list
+                min: 4
+                max: 4
+                summary: "{{fields.title}}"
+                hint: Genau vier Comic-Bilder, die Reihenfolge bestimmt die Nummerierung.
+                fields:
+                  - { name: title, label: Titel, widget: string }
+                  - { name: text, label: Text, widget: text, hint: "HTML (z.B. Links) ist erlaubt" }
+                  - { name: image, label: Bild, widget: image, choose_url: false, accept: "image/*", required: false, hint: Ohne Bild erscheint eine Farbfläche }
+                  - { name: imageAlt, label: Bild Alt-Text, widget: string, required: false, hint: "Beschreibender Alt-Text, nur nötig wenn ein Bild gesetzt ist" }
+          - name: products
+            label: Abschnitt „Such dir was aus“
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Überschrift, widget: string }
+              - name: items
+                label: Karten
+                widget: list
+                min: 3
+                max: 3
+                summary: "{{fields.title}}"
+                hint: "Drei Karten: Pilze, Growkits, Tinkturen (Farben sind fest je Position)"
+                fields:
+                  - { name: title, label: Titel, widget: string }
+                  - { name: text, label: Text, widget: text }
+                  - { name: link, label: Link, widget: string, hint: 'z.B. "/growkits/"' }
+                  - { name: image, label: Bild, widget: image, choose_url: false, accept: "image/*" }
+                  - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
+          - name: gastro
+            label: Abschnitt Gastronomie
+            widget: object
+            collapsed: true
+            fields:
+              - { name: label, label: Kleine Zeile, widget: string }
+              - { name: title, label: Überschrift, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: buttonText, label: Button-Text, widget: string }
+              - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: "Beschreibt das Foto neben dem Text (Bild selbst ist im Template festgelegt)" }
 
       - name: about-us-page
         label: Über-uns-Seite
@@ -87,10 +109,49 @@ collections:
         fields:
           - { name: title, label: Seitentitel (SEO), widget: string, hint: SEO-optimierter Titel für die Seite }
           - { name: description, label: Meta-Beschreibung (SEO), widget: text, hint: SEO-Beschreibung für Suchmaschinen }
-          - { name: heroTitle, label: Haupt-Überschrift, widget: string }
-          - { name: heroSubtitle, label: Untertitel, widget: string }
-          - { name: images, label: Bilder-Galerie, widget: image, multiple: true, choose_url: false, accept: "image/*", hint: "Bilder aus dem Labor, Team-Fotos oder Pilzfotos" }
-          - { name: body, label: Inhalt, widget: markdown, hint: "Text über das Team, Arbeitsweise, Werte etc." }
+          - { name: heroTitle, label: Kleine Zeile (Teil 1), widget: string, hint: 'Erscheint zusammen mit dem Untertitel als „Über uns – Die shroom-mates aus Leipzig“ über der Hauptzeile' }
+          - { name: heroSubtitle, label: Kleine Zeile (Teil 2), widget: string }
+          - { name: heroName, label: Hauptzeile, widget: string }
+          - { name: heroEmmiAlt, label: Foto Emmi Alt-Text, widget: string }
+          - { name: heroTimAlt, label: Foto Tim Alt-Text, widget: string }
+          - name: timeline
+            label: Zeitleiste
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Überschrift, widget: string }
+              - name: items
+                label: Stationen
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: year, label: Jahr, widget: string, required: false }
+                  - { name: title, label: Titel, widget: string }
+                  - { name: text, label: Text, widget: text }
+                  - { name: image, label: Bild, widget: image, choose_url: false, accept: "image/*", required: false, hint: Ohne Bild erscheint eine Farbfläche }
+                  - { name: imageAlt, label: Bild Alt-Text, widget: string, required: false, hint: "Beschreibender Alt-Text, nur nötig wenn ein Bild gesetzt ist" }
+          - name: values
+            label: Werte („Das ist uns wichtig“)
+            widget: list
+            summary: "{{fields.title}}"
+            hint: Nummerierte Zeilen mit Foto
+            fields:
+              - { name: title, label: Titel, widget: string }
+              - { name: text, label: Text, widget: text, hint: "HTML (z.B. Links) ist erlaubt" }
+              - { name: image, label: Bild, widget: image, choose_url: false, accept: "image/*" }
+              - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
+          - name: where
+            label: Abschnitt „Wo ihr uns findet“
+            widget: object
+            collapsed: true
+            hint: Der Text darunter steht im Inhalt (Abschnitt „## Wo ihr uns findet“)
+            fields:
+              - { name: title, label: Überschrift, widget: string }
+              - { name: address, label: Adresse, widget: string }
+              - { name: routeButton, label: Button Route, widget: string }
+              - { name: visitButton, label: Button Besuch, widget: string }
+              - { name: imageAlt, label: Foto Alt-Text, widget: string }
+          - { name: body, label: Inhalt, widget: markdown, hint: 'Die vier Abschnittsüberschriften (## Wer wir sind, ## Wie wir arbeiten, ## Das ist uns wichtig, ## Wo ihr uns findet) bestimmen die Platzierung und dürfen nicht umbenannt werden. Erlaubt: Absätze und Links.' }
 
       - name: growkits-page
         label: Growkits-Seite
@@ -98,15 +159,25 @@ collections:
         fields:
           - { name: title, label: Seitentitel (SEO), widget: string, hint: SEO-optimierter Titel für die Seite }
           - { name: description, label: Meta-Beschreibung (SEO), widget: text, hint: SEO-Beschreibung für Suchmaschinen }
-          - { name: heroTitle, label: Haupt-Überschrift, widget: string }
-          - { name: heroSubtitle, label: Untertitel, widget: string }
+          - { name: heroTitle, label: Kleine Zeile über der Hauptzeile, widget: string, hint: Zugleich H1 der Seite }
+          - { name: heroHeadline, label: Hauptzeile, widget: string }
+          - { name: heroSubtitle, label: Einleitung, widget: text }
+          - { name: heroPrimaryButton, label: Hero-Button 1, widget: string }
+          - { name: heroSecondaryButton, label: Hero-Button 2, widget: string }
           - { name: heroImage, label: Hero-Bild, widget: image, choose_url: false, accept: "image/*" }
           - { name: heroImageAlt, label: Hero-Bild Alt-Text, widget: string }
-          - { name: ctaTitle, label: CTA Überschrift, widget: string, hint: Überschrift für den Call-to-Action Bereich }
-          - { name: ctaText, label: CTA Text, widget: text }
-          - { name: ctaButtonText, label: CTA Button Text, widget: string, hint: 'z.B. "Kontakt aufnehmen"' }
-          - { name: ctaButtonLink, label: CTA Button Link, widget: string, hint: 'z.B. "/kontakt/"' }
-          - { name: body, label: Anleitung, widget: markdown, hint: Allgemeine Anleitung für alle Growkits }
+          - { name: kitsTitle, label: Überschrift Kit-Auswahl, widget: string }
+          - { name: kitDetailsLabel, label: Aufklapp-Titel je Kit, widget: string }
+          - { name: kitShopButton, label: Shop-Button je Kit, widget: string }
+          - { name: guideHarvestImageAlt, label: Anleitung Foto „Ernten“ Alt-Text, widget: string, hint: 'Foto beim Schritt, dessen Titel mit „Ernten“ beginnt' }
+          - { name: ctaTitle, label: Abholen/Shop Überschrift, widget: string }
+          - { name: ctaText, label: Abholen/Shop Text, widget: text }
+          - { name: ctaShopButton, label: Shop-Button, widget: string }
+          - { name: ctaButtonText, label: Kontakt-Button Text, widget: string, hint: 'z.B. "Kontakt aufnehmen"' }
+          - { name: ctaButtonLink, label: Kontakt-Button Link, widget: string, hint: 'z.B. "/kontakt/"' }
+          - { name: shippingLabel, label: Versand-Hinweis Titel, widget: string }
+          - { name: shippingText, label: Versand-Hinweis Text, widget: text }
+          - { name: body, label: Anleitung, widget: markdown, hint: 'Aufbau: „## Überschrift“, Einleitung, dann je Schritt „### 1. Titel“ mit Text (**fett** und *kursiv* erlaubt)' }
 
       - name: faq-page
         label: FAQ-Seite
@@ -114,6 +185,14 @@ collections:
         fields:
           - { name: title, label: Seitentitel (SEO), widget: string, hint: SEO-Titel für die FAQ-Seite }
           - { name: description, label: Meta-Beschreibung (SEO), widget: text, hint: SEO-Beschreibung für Suchmaschinen }
+          - { name: heroEyebrow, label: Kleine Zeile über der Hauptzeile, widget: string, hint: Zugleich H1 der Seite }
+          - { name: heroHeadline, label: Hauptzeile, widget: string }
+          - { name: heroLead, label: Einleitung, widget: text }
+          - { name: helpTitle, label: Hilfe-Box Überschrift, widget: string }
+          - { name: helpText, label: Hilfe-Box Text, widget: string, hint: Steht direkt vor der E-Mail-Adresse }
+          - { name: helpEmail, label: Hilfe-Box E-Mail, widget: string }
+          - { name: helpButton, label: Hilfe-Box Button, widget: string, hint: Führt zur Kontaktseite }
+          - { name: moreLinkText, label: Link-Text bei Antworten mit Link, widget: string, hint: 'z.B. "Mehr erfahren"' }
           - name: faqs
             label: FAQ-Einträge
             widget: list
@@ -130,13 +209,25 @@ collections:
         fields:
           - { name: title, label: Seitentitel (SEO), widget: string, hint: SEO-optimierter Titel für die Seite }
           - { name: description, label: Meta-Beschreibung (SEO), widget: text, hint: SEO-Beschreibung für Suchmaschinen }
-          - { name: heroTitle, label: Haupt-Überschrift, widget: string }
+          - { name: heroEyebrow, label: Kleine Zeile über der Hauptzeile, widget: string, hint: Zugleich H1 der Seite }
+          - { name: heroTitle, label: Hauptzeile, widget: string }
           - { name: heroSubtitle, label: Untertitel, widget: string, required: false }
-          - { name: heroImage, label: Hero-Bild, widget: image, choose_url: false, accept: "image/*" }
-          - { name: heroImageAlt, label: Hero-Bild Alt-Text, widget: string }
+          - { name: heroButton, label: Hero-Button, widget: string, hint: Springt zum Anfrage-Bereich }
+          - name: heroPhotos
+            label: Hero-Fotos
+            widget: list
+            min: 3
+            max: 3
+            summary: "{{fields.imageAlt}}"
+            hint: Drei Fotos, das erste wird hochkant größer dargestellt
+            fields:
+              - { name: image, label: Bild, widget: image, choose_url: false, accept: "image/*" }
+              - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
+          - { name: heroImage, label: Vorschaubild (Social Media), widget: image, choose_url: false, accept: "image/*", hint: "Erscheint nur als Vorschau beim Teilen des Links (og:image), nicht auf der Seite" }
           - { name: introTitle, label: Einleitung Überschrift, widget: string }
           - { name: introText, label: Einleitung Text, widget: text }
           - { name: introText2, label: Einleitung Text 2, widget: text, required: false }
+          - { name: sortenTitle, label: Sorten Überschrift, widget: string }
           - name: sorten
             label: Sorten
             widget: list
@@ -144,6 +235,9 @@ collections:
             fields:
               - { name: title, label: Sortenname, widget: string }
               - { name: description, label: Beschreibung, widget: text }
+              - { name: image, label: Bild, widget: image, choose_url: false, accept: "image/*" }
+              - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
+          - { name: vorteileTitle, label: Vorteile Überschrift, widget: string }
           - name: vorteile
             label: Vorteile
             widget: list
@@ -161,12 +255,18 @@ collections:
         fields:
           - { name: title, label: Seitentitel (SEO), widget: string, hint: SEO-optimierter Titel für die Seite }
           - { name: description, label: Meta-Beschreibung (SEO), widget: text, hint: SEO-Beschreibung für Suchmaschinen }
-          - { name: heroTitle, label: Haupt-Überschrift, widget: string }
-          - { name: heroSubtitle, label: Untertitel, widget: string, required: false }
-          - { name: heroImage, label: Hero-Bild, widget: image, choose_url: false, accept: "image/*" }
-          - { name: heroImageAlt, label: Hero-Bild Alt-Text, widget: string }
+          - { name: heroTitle, label: Kleine Zeile über der Hauptzeile, widget: string, hint: Zugleich H1 der Seite }
+          - { name: heroHeadline, label: Hauptzeile, widget: string }
+          - { name: heroImage, label: Vorschaubild (Social Media), widget: image, choose_url: false, accept: "image/*", hint: "Erscheint nur als Vorschau beim Teilen des Links (og:image), nicht auf der Seite" }
+          - { name: heroPhotoAlt, label: Hero-Foto Alt-Text, widget: string, hint: "Beschreibt das Foto neben der Überschrift (Bild selbst ist im Template festgelegt)" }
           - { name: introText, label: Einleitungstext, widget: text, hint: "Allgemeiner Einleitungstext (Herstellung, Dosierung etc.)" }
-          - { name: disclaimerText, label: Disclaimer-Text, widget: text, hint: Rechtlicher Hinweis am Seitenende (HCVO-konform) }
+          - name: facts
+            label: Eckdaten
+            widget: list
+            summary: "{{fields.label}}: {{fields.value}}"
+            fields:
+              - { name: label, label: Bezeichnung, widget: string }
+              - { name: value, label: Wert, widget: string }
           - name: tinctures
             label: Tinkturen auf dieser Seite
             widget: list
@@ -177,8 +277,27 @@ collections:
               - { name: botanicalName, label: Botanischer Name, widget: string }
               - { name: image, label: Produkt-Bild, widget: image, choose_url: false, accept: "image/*" }
               - { name: imageAlt, label: Bild Alt-Text, widget: string }
-              - { name: color, label: Hintergrundfarbe, widget: string, required: false, hint: 'Hex-Farbe (z.B. "#b0b1f1")' }
+              - { name: size, label: Füllmenge, widget: string, hint: 'z.B. "50 ml"' }
               - { name: description, label: Beschreibung, widget: text, hint: 'HTML für Quellenverweise erlaubt, z.B. <sup><a href="#quelle-1">1</a></sup>' }
+          - { name: shopButton, label: Shop-Button (je Tinktur), widget: string }
+          - name: process
+            label: Abschnitt „Warum doppelt?“
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Überschrift, widget: string }
+              - { name: intro, label: Einleitung, widget: text }
+              - name: steps
+                label: Schritte
+                widget: list
+                min: 5
+                max: 5
+                summary: "{{fields.title}}"
+                hint: Genau fünf Schritte, die Reihenfolge bestimmt die Nummerierung.
+                fields:
+                  - { name: title, label: Titel, widget: string }
+                  - { name: text, label: Text, widget: text }
+          - { name: quellenTitle, label: Quellen Überschrift, widget: string }
           - name: quellen
             label: Wissenschaftliche Quellen
             widget: list
@@ -187,6 +306,34 @@ collections:
             fields:
               - { name: title, label: Quellenbezeichnung, widget: string }
               - { name: url, label: URL, widget: string }
+          - { name: disclaimerText, label: Disclaimer-Text, widget: text, hint: Rechtlicher Hinweis am Seitenende (HCVO-konform) }
+
+      - name: mushrooms-page
+        label: Pilze-Seite
+        file: apps/website/src/content/mushrooms-page/content.md
+        fields:
+          - { name: title, label: Seitentitel (SEO), widget: string, hint: SEO-optimierter Titel für die Seite }
+          - { name: description, label: Meta-Beschreibung (SEO), widget: text, hint: SEO-Beschreibung für Suchmaschinen }
+          - { name: heroEyebrow, label: Kleine Zeile über der Hauptzeile, widget: string, hint: Zugleich H1 der Seite }
+          - { name: heroTitle, label: Hauptzeile, widget: string }
+          - { name: heroLead, label: Einleitung, widget: text }
+          - { name: heroImageAlt, label: Hero-Foto Alt-Text, widget: string, hint: "Beschreibt das Foto neben der Überschrift (Bild selbst ist im Template festgelegt)" }
+          - { name: freshTag, label: Etikett „Frisch“, widget: string, hint: Kleines Etikett bei jeder Sorte }
+          - { name: growkitLabel, label: Link-Text zum Growkit, widget: string, hint: Bei Sorten mit passendem Growkit im Shop }
+          - { name: emptyText, label: Hinweis ohne Sorten, widget: string }
+          - { name: bandText, label: Sprechblase im Bildband, widget: string }
+          - name: ctas
+            label: Hinweiskarten am Seitenende
+            widget: list
+            min: 2
+            max: 2
+            summary: "{{fields.title}}"
+            hint: Zwei Karten (Farben sind fest je Position)
+            fields:
+              - { name: label, label: Kleine Zeile, widget: string }
+              - { name: title, label: Titel, widget: string }
+              - { name: text, label: Text, widget: text }
+              - { name: link, label: Link, widget: string, hint: 'z.B. "/kontakt/"' }
 
   # ---------------------------------------------------------------------------
   # Ordner-Collections (mehrere Dateien, Anlegen erlaubt)
@@ -208,7 +355,8 @@ collections:
       - { name: title, label: Pilzsorte, widget: string, hint: 'Name der Pilzsorte (z.B. "Austernpilze")' }
       - { name: image, label: Pilz-Bild, widget: image, choose_url: false, accept: "image/*" }
       - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
-      - { name: color, label: Hintergrundfarbe, widget: string, required: false, hint: 'Farbe für den Textbox-Hintergrund (z.B. "#f5cbcd")' }
+      - { name: latinName, label: Lateinischer Name, widget: string, required: false, hint: 'z.B. "Pleurotus djamor"' }
+      - { name: badge, label: Etikett auf dem Bild, widget: string, required: false, hint: 'z.B. "Nur im Sommer"' }
       - { name: order, label: Sortierung, widget: number, value_type: int, min: 1, default: 1, hint: "Reihenfolge auf der Seite (1, 2, 3, ...)" }
       - { name: body, label: Beschreibung, widget: markdown }
 
@@ -229,28 +377,5 @@ collections:
       - { name: title, label: Growkit-Name, widget: string, hint: "Name des Growkits (z.B. \"Lion's Mane Growkit\")" }
       - { name: image, label: Growkit-Bild, widget: image, choose_url: false, accept: "image/*" }
       - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
-      - { name: color, label: Hintergrundfarbe, widget: string, required: false, hint: 'Farbe für den Abschnitt-Hintergrund (z.B. "#ffe4ec")' }
       - { name: order, label: Sortierung, widget: number, value_type: int, min: 1, default: 1, hint: "Reihenfolge auf der Seite (1, 2, 3, ...)" }
       - { name: body, label: Beschreibung, widget: markdown }
-
-  - name: tinkturen
-    label: Tinkturen-Produkte
-    label_singular: Tinktur
-    icon: science
-    folder: apps/website/src/content/tinkturen
-    extension: md
-    format: frontmatter
-    create: true
-    slug: "{{slug}}"
-    summary: "{{order}}. {{title}}"
-    sortable_fields: [order, title]
-    media_folder: ../../assets/images
-    public_folder: ../../assets/images
-    fields:
-      - { name: title, label: Produktname, widget: string, hint: "Name der Tinktur (z.B. \"Lion's Mane Extrakt\")" }
-      - { name: botanicalName, label: Botanischer Name, widget: string, hint: 'z.B. "Hericium erinaceus · Igelstachelbart"' }
-      - { name: image, label: Produkt-Bild, widget: image, choose_url: false, accept: "image/*" }
-      - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
-      - { name: color, label: Hintergrundfarbe, widget: string, required: false, hint: 'Farbe für den Abschnitt-Hintergrund (z.B. "#b0b1f1")' }
-      - { name: order, label: Sortierung, widget: number, value_type: int, min: 1, default: 1, hint: "Reihenfolge auf der Seite (1, 2, 3, ...)" }
-      - { name: body, label: Beschreibung, widget: markdown, hint: "Herstellung, Inhaltsstoffe und Wirkung (HCVO-konform formulieren)" }

@@ -3,10 +3,42 @@ title: Über uns – Pilzzucht aus Leipzig-Leutzsch | shroom-mates
 description: "Emmi und Tim züchten Edelpilze in der Glasfabrik in Leipzig und stellen Growkits und Pilztinkturen her. Für Privat und Gastronomie."
 heroTitle: Über uns
 heroSubtitle: Die shroom-mates aus Leipzig
-images:
-  - ../../assets/images/mushrooms.jpg
-  - ../../assets/images/hero_rose_tasse.jpg
-  - ../../assets/images/logo_with_shrooms.png
+heroName: "Wir sind Emmi & Tim."
+heroEmmiAlt: "Emmi küsst einen gelben Austernpilz im Growraum"
+heroTimAlt: "Tim hält einen großen Rosenseitling und zeigt darauf"
+timeline:
+  title: "Vom Küchentisch in die Glasfabrik"
+  items:
+    - title: "Die Küche"
+      text: "Ein paar Austernpilze, viel Ausprobieren."
+    - title: "Plagwitzer Markthalle"
+      text: "Die erste eigene Farm. Rosenseitling, Pioppino, Lion's Mane."
+      image: "../../assets/images/fotos/marktstand-lions-mane.jpg"
+      imageAlt: "Marktstand mit einem Korb Lion's Mane"
+    - year: "2026"
+      title: "Glasfabrik Leutzsch"
+      text: "Mehr Platz, eigenes Labor, neue Sorten."
+      image: "../../assets/images/fotos/emmi-glasfabrik-markttisch.jpg"
+      imageAlt: "Emmi an einem Markttisch mit Pilzen in der Backsteinhalle der Glasfabrik"
+values:
+  - title: "Nachhaltig"
+    text: "Ohne künstliche Zusätze. Das Substrat geht nach der Ernte auf den Kompost und zurück in den Kreislauf."
+    image: "../../assets/images/fotos/growraum.jpg"
+    imageAlt: "Austernpilze und Lion's Mane im Growraum"
+  - title: "Regional"
+    text: "Bio-Rohstoffe aus der Region, gezüchtet und verkauft in Leutzsch. Kurze Wege, kein Zwischenhändler."
+    image: "../../assets/images/fotos/emmi-glasfabrik-markttisch.jpg"
+    imageAlt: "Markttisch in der Glasfabrik"
+  - title: "Transparent"
+    text: 'Du kannst sehen, wo und wie deine Pilze wachsen. Komm vorbei oder schau auf <a href="https://www.instagram.com/shroom_mates_le/" target="_blank" rel="noopener noreferrer">Instagram</a>.'
+    image: "../../assets/images/fotos/labor-beimpfen.jpg"
+    imageAlt: "Emmi im Laborkittel mit Austernpilzen"
+where:
+  title: "Glasfabrik, Leutzsch"
+  address: "Franz-Flemming-Straße 25, 04179 Leipzig"
+  routeButton: "Route planen"
+  visitButton: "Besuch anmelden"
+  imageAlt: "Rosenseitling-Büschel aus unserer Farm"
 ---
 
 ## Wer wir sind

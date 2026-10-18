@@ -1,70 +1,51 @@
 ---
 import { Image } from "astro:assets";
-import type { ImageMetadata } from "astro";
-import { getCollection, render } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import { linkBuilders } from "@shroom-mates/ui/site";
-import blackPearl from "../assets/images/fotos/black-pearl.jpg";
 import bunteWelt from "../assets/images/fotos/bunte-pilze-oben.jpg";
-import lionsMane from "../assets/images/fotos/lions-mane-makro.jpg";
-import pioppino from "../assets/images/fotos/pioppino.jpg";
 import rosaLamellen from "../assets/images/fotos/rosa-lamellen.jpg";
-import rosenseitling from "../assets/images/fotos/rosenseitling-bueschel.jpg";
-import whitePearl from "../assets/images/fotos/white-pearl-wandbild.jpg";
 import ProductCard from "../components/ProductCard.astro";
 import Layout from "../layouts/Layout.astro";
 
-const title = "Frische Pilze kaufen in Leipzig – Edelpilze von shroom-mates";
-const description =
-	"Frische Edelpilze direkt vom Züchter in Leipzig-Leutzsch: Rosenseitling, Pioppino, Lion's Mane, White Pearl & mehr. Für Privat und Gastronomie, nachhaltig angebaut mit regionalen Bio-Rohstoffen.";
+const pageEntry = await getEntry("mushrooms-page", "content");
+if (!pageEntry) {
+	throw new Error("Mushrooms page content not found");
+}
+
+const {
+	title,
+	description,
+	heroEyebrow,
+	heroTitle,
+	heroLead,
+	heroImageAlt,
+	freshTag,
+	growkitLabel,
+	emptyText,
+	bandText,
+	ctas,
+} = pageEntry.data;
 
 const { shop } = linkBuilders("website");
 
-// Foto, Kartonfarbe und Zusatzinfos je Sorte (Schlüssel = Dateiname der Sorte)
+// Kartonfarbe und Growkit-Link je Sorte (Schlüssel = Dateiname der Sorte)
 const GROWKIT_AUSTERN = shop("/store/austernseitlinge-growkit");
 const meta: Record<
 	string,
 	{
-		image: ImageMetadata;
 		tone: "lavender" | "pink" | "olive-soft" | "stone" | "paper";
-		latin?: string;
-		badge?: string;
 		kit?: string;
-		kitLabel?: string;
 	}
 > = {
-	"rosa-austernpilze": {
-		image: rosenseitling,
-		tone: "pink",
-		latin: "Pleurotus djamor",
-		badge: "Nur im Sommer",
-		kit: GROWKIT_AUSTERN,
-		kitLabel: "Als Growkit im Shop",
-	},
+	"rosa-austernpilze": { tone: "pink", kit: GROWKIT_AUSTERN },
 	"2025-11-17-lions-mane": {
-		image: lionsMane,
 		tone: "lavender",
-		latin: "Hericium erinaceus",
 		kit: shop("/store/lions-mane-growkit"),
-		kitLabel: "Als Growkit im Shop",
 	},
-	"2025-11-17-white-pearl": {
-		image: whitePearl,
-		tone: "olive-soft",
-		latin: "Pleurotus ostreatus",
-		kit: GROWKIT_AUSTERN,
-		kitLabel: "Als Growkit im Shop",
-	},
-	"2025-11-17-pioppino": {
-		image: pioppino,
-		tone: "paper",
-		latin: "Cyclocybe aegerita",
-	},
-	"2025-11-17-black-pearl": {
-		image: blackPearl,
-		tone: "stone",
-		badge: "Im Winter",
-	},
+	"2025-11-17-white-pearl": { tone: "olive-soft", kit: GROWKIT_AUSTERN },
+	"2025-11-17-pioppino": { tone: "paper" },
+	"2025-11-17-black-pearl": { tone: "stone" },
 };
 
 const mushroomsCollection = await getCollection("mushrooms");
@@ -76,13 +57,12 @@ const mushrooms = await Promise.all(
 			const m = meta[entry.id];
 			return {
 				title: entry.data.title,
-				image: m?.image ?? entry.data.image,
+				image: entry.data.image,
 				imageAlt: entry.data.imageAlt,
 				tone: m?.tone ?? "paper",
-				latin: m?.latin,
-				badge: m?.badge,
+				latin: entry.data.latinName,
+				badge: entry.data.badge,
 				kit: m?.kit,
-				kitLabel: m?.kitLabel,
 				Content,
 				slug: entry.id,
 			};
@@ -120,19 +100,17 @@ const productSchemas = mushrooms.map((mushroom) => ({
     <section class="hero container">
       <div class="hero__copy">
         <h1>
-          <span class="eyebrow hero__eyebrow">Frische Pilze kaufen in Leipzig</span>
-          <span class="hero__title">Unsere Pilze</span>
+          <span class="eyebrow hero__eyebrow">{heroEyebrow}</span>
+          <span class="hero__title">{heroTitle}</span>
         </h1>
-        <p class="lead hero__lead">
-          Wir probieren gerne Neues aus. Jede Sorte hat ihre eigenen Ansprüche, und genau das macht es spannend. Das Sortiment wechselt mit der Jahreszeit.
-        </p>
+        <p class="lead hero__lead">{heroLead}</p>
       </div>
       <div class="hero__media">
         <div class="dots" aria-hidden="true"></div>
         <div class="arch-frame hero__arch">
           <Image
             src={bunteWelt}
-            alt="Austernpilze in Gelb, Rosa und Weiß mit Lion's Mane"
+            alt={heroImageAlt}
             widths={[320, 480, 640, 840]}
             sizes="(max-width: 768px) 80vw, 420px"
             loading="eager"
@@ -157,10 +135,10 @@ const productSchemas = mushrooms.map((mushroom) => ({
             >
               <mushroom.Content />
               <Fragment slot="actions">
-                <span class="tag">Frisch</span>
+                <span class="tag">{freshTag}</span>
                 {mushroom.kit && (
                   <a class="tag" href={mushroom.kit}>
-                    {mushroom.kitLabel} <Icon name="arrow-right" size={16} />
+                    {growkitLabel} <Icon name="arrow-right" size={16} />
                   </a>
                 )}
               </Fragment>
@@ -171,9 +149,7 @@ const productSchemas = mushrooms.map((mushroom) => ({
 
       {
         mushrooms.length === 0 && (
-          <p class="no-content">
-            Derzeit sind keine Pilzsorten verfügbar. Bitte schau später wieder vorbei.
-          </p>
+          <p class="no-content">{emptyText}</p>
         )
       }
     </section>
@@ -189,21 +165,20 @@ const productSchemas = mushrooms.map((mushroom) => ({
         format="webp"
       />
       <div class="container band__inner">
-        <p class="speech-bubble band__bubble">Von Hand geerntet, zum richtigen Zeitpunkt.</p>
+        <p class="speech-bubble band__bubble">{bandText}</p>
       </div>
     </section>
 
     <section class="container ctas" aria-label="Pilze bekommen">
-      <a class="cta cta--accent" href="/gastronomie/">
-        <span class="label">Für Küchen</span>
-        <h2 class="cta__title">Regelmäßig beliefert werden <Icon name="arrow-right" size={32} strokeWidth={3} /></h2>
-        <p>Mengen und Sorten stimmen wir mit dir ab.</p>
-      </a>
-      <a class="cta cta--white" href="/kontakt/">
-        <span class="label cta__label">Für zu Hause</span>
-        <h2 class="cta__title">Pilze reservieren <Icon name="arrow-right" size={32} strokeWidth={3} /></h2>
-        <p>Schreib uns, was du brauchst. Abholen in der Glasfabrik.</p>
-      </a>
+      {
+        ctas.map((cta, i) => (
+          <a class={`cta ${i === 0 ? "cta--accent" : "cta--white"}`} href={cta.link}>
+            <span class={i === 0 ? "label" : "label cta__label"}>{cta.label}</span>
+            <h2 class="cta__title">{cta.title} <Icon name="arrow-right" size={32} strokeWidth={3} /></h2>
+            <p>{cta.text}</p>
+          </a>
+        ))
+      }
     </section>
   </div>
 </Layout>

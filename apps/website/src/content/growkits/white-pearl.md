@@ -2,7 +2,6 @@
 title: White Pearl Growkit
 image: ../../assets/images/photo_5323464934236556943_y.jpg
 imageAlt: White Pearl Austernpilze aus dem Growkit
-color: "#f5f5f5"
 order: 3
 ---
 ## Besonderheiten beim White Pearl

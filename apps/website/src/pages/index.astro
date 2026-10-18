@@ -3,12 +3,7 @@ import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
-import growkitsImage from "../assets/images/growkits.jpg";
-import bunteWelt from "../assets/images/fotos/bunte-pilze-oben.jpg";
-import growraum from "../assets/images/fotos/growraum.jpg";
-import laborBeimpfen from "../assets/images/fotos/labor-beimpfen.jpg";
 import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
-import tinkturenImage from "../assets/images/fotos/tinkturen-reishi.jpg";
 import Layout from "../layouts/Layout.astro";
 
 const landingPageEntries = await getCollection("landing-page");
@@ -22,10 +17,15 @@ const {
 	title,
 	heroImage,
 	heroTitle,
+	heroEyebrow,
+	heroPrimaryButton,
+	heroSecondaryButton,
+	heroMascotAlt,
+	heroBubble,
 	teaserText,
-	values,
-	mushroomShowcaseTitle,
-	mushroomShowcaseGrowingMethodsText,
+	steps,
+	products,
+	gastro,
 } = landingPageContent.data;
 
 // H1 „Hi, wir sind die / shroom‑mates!“: fester Umbruch vor dem Namen,
@@ -33,60 +33,14 @@ const {
 const [heroBefore, ...heroRest] = heroTitle.split("shroom-mates");
 const heroAfter = heroRest.join("shroom-mates");
 
-const value = (name: string) =>
-	values.find((v) => v.title === name)?.description ?? "";
-
-const steps = [
-	{
-		title: "Substrat mischen",
-		text: value("Regional"),
-		placeholder: "var(--color-pink)",
-	},
-	{
-		title: "Beimpfen",
-		text: "Von den Sporen bis zur Ernte machen wir alles selbst.",
-		image: laborBeimpfen,
-		alt: "Im Laborkittel mit einem Büschel Austernpilze",
-	},
-	{
-		title: "Wachsen lassen",
-		text: value("Transparent"),
-		image: growraum,
-		alt: "Austernpilze und Lion's Mane im Growraum",
-	},
-	{
-		title: "Ernten & kompostieren",
-		text: value("Nachhaltig"),
-		placeholder: "var(--color-olive-soft)",
-	},
+// Platzhalterfarbe je Schritt, falls kein Bild gesetzt ist; Kartonfarbe je Produkt
+const placeholders = [
+	"var(--color-pink)",
+	"var(--color-lavender)",
+	"var(--color-pink)",
+	"var(--color-olive-soft)",
 ];
-
-const products = [
-	{
-		title: mushroomShowcaseTitle,
-		text: mushroomShowcaseGrowingMethodsText,
-		href: "/unsere-pilze/",
-		color: "pink",
-		image: bunteWelt,
-		alt: "Austernpilze in Gelb, Rosa und Weiß mit Lion's Mane",
-	},
-	{
-		title: "Growkits",
-		text: "Zieh deine eigenen Mates auf der Fensterbank.",
-		href: "/growkits/",
-		color: "lavender",
-		image: growkitsImage,
-		alt: "Growkits White Pearl, Lion's Mane und Rosenseitling",
-	},
-	{
-		title: "Tinkturen",
-		text: "Handgemacht, doppelt extrahiert.",
-		href: "/tinkturen/",
-		color: "olive-soft",
-		image: tinkturenImage,
-		alt: "Tinkturen Lion's Mane und Reishi mit Cordyceps",
-	},
-];
+const productColors = ["pink", "lavender", "olive-soft"];
 ---
 
 <Layout
@@ -100,37 +54,37 @@ const products = [
     <section class="hero container">
       <div class="hero__copy">
         <h1>
-          <span class="eyebrow hero__eyebrow">Edel- und Vitalpilze aus Leipzig-Leutzsch</span>
+          <span class="eyebrow hero__eyebrow">{heroEyebrow}</span>
           <span class="hero__title">{heroBefore.trim()}<br /><span class="nowrap">shroom&#8209;mates</span>{heroAfter}</span>
         </h1>
         <p class="lead hero__lead">{teaserText}</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="/unsere-pilze/">Alle Pilzsorten entdecken</a>
-          <a class="btn btn--secondary" href="/growkits/">Growkit holen</a>
+          <a class="btn btn--primary" href="/unsere-pilze/">{heroPrimaryButton}</a>
+          <a class="btn btn--secondary" href="/growkits/">{heroSecondaryButton}</a>
         </div>
       </div>
       <div class="hero__mascot">
         <div class="dots" aria-hidden="true"></div>
         <MatesLogo
           class="hero__logo"
-          alt="Die shroom-mates-Maskottchen: ein Austernpilz und ein Lion's Mane"
+          alt={heroMascotAlt}
           width={540}
           sizes="(max-width: 768px) 80vw, 540px"
           loading="eager"
         />
         <p class="speech-bubble hero__bubble">
-          Neu: Wir sind umgezogen, in die Glasfabrik Leutzsch!
+          {heroBubble}
         </p>
       </div>
     </section>
 
     <section class="section section--night steps" aria-labelledby="steps-heading">
       <div class="container steps__inner">
-        <h2 id="steps-heading">Von der Spore bis zur Ernte</h2>
-        <p class="steps__intro">Alles machen wir selbst, hier in Leutzsch. In vier Bildern:</p>
+        <h2 id="steps-heading">{steps.title}</h2>
+        <p class="steps__intro">{steps.intro}</p>
         <ol class="steps__grid" role="list">
           {
-            steps.map((step, i) => (
+            steps.items.map((step, i) => (
               <li class="comic-panel">
                 <div class="comic-panel__head">
                   <span class="comic-panel__num">{String(i + 1).padStart(2, "0")}</span>
@@ -138,7 +92,7 @@ const products = [
                 {step.image ? (
                   <Image
                     src={step.image}
-                    alt={step.alt ?? ""}
+                    alt={step.imageAlt ?? ""}
                     class="comic-panel__img steps__img"
                     widths={[320, 480, 640]}
                     sizes="(max-width: 768px) 90vw, 300px"
@@ -147,7 +101,7 @@ const products = [
                 ) : (
                   <div
                     class="comic-panel__img steps__img steps__placeholder"
-                    style={`--ph: ${step.placeholder}`}
+                    style={`--ph: ${placeholders[i % placeholders.length]}`}
                     aria-hidden="true"
                   />
                 )}
@@ -163,14 +117,14 @@ const products = [
     </section>
 
     <section class="container products" aria-labelledby="products-heading">
-      <h2 id="products-heading" class="text-accent">Such dir was aus</h2>
+      <h2 id="products-heading" class="text-accent">{products.title}</h2>
       <div class="products__grid">
         {
-          products.map((p) => (
-            <a href={p.href} class={`sticker-card sticker-card--${p.color} product`}>
+          products.items.map((p, i) => (
+            <a href={p.link} class={`sticker-card sticker-card--${productColors[i % productColors.length]} product`}>
               <Image
                 src={p.image}
-                alt={p.alt}
+                alt={p.imageAlt}
                 class="product__img"
                 widths={[320, 480, 640, 800]}
                 sizes="(max-width: 768px) 90vw, 380px"
@@ -187,18 +141,16 @@ const products = [
     <section class="container gastro" aria-labelledby="gastro-heading">
       <div class="gastro__box">
         <div class="gastro__copy">
-          <p class="label">Für Restaurants &amp; Cafés</p>
-          <h2 id="gastro-heading">Pilze, am Vortag geerntet.</h2>
-          <p class="gastro__text">
-            Wir beliefern Küchen in Leipzig. Mengen, Sorten und Rhythmus stimmen wir mit dir ab.
-          </p>
+          <p class="label">{gastro.label}</p>
+          <h2 id="gastro-heading">{gastro.title}</h2>
+          <p class="gastro__text">{gastro.text}</p>
           <a class="btn btn--primary" href="/gastronomie/">
-            Für Gastronomie <Icon name="arrow-right" size={20} />
+            {gastro.buttonText} <Icon name="arrow-right" size={20} />
           </a>
         </div>
         <Image
           src={schneidebrett}
-          alt="Pioppino und Seitlinge auf dem Schneidebrett"
+          alt={gastro.imageAlt}
           class="gastro__img"
           widths={[320, 480, 640]}
           sizes="(max-width: 768px) 80vw, 320px"

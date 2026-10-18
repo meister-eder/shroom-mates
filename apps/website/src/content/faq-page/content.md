@@ -1,6 +1,14 @@
 ---
 title: "Häufige Fragen zu Pilzen, Growkits & Tinkturen in Leipzig | shroom-mates"
 description: "Antworten auf häufige Fragen rund um frische Pilze kaufen in Leipzig, Growkits, Pilztinkturen, Gastronomie-Lieferungen und Pilzzucht von shroom-mates."
+heroEyebrow: "Häufige Fragen zu Pilzen, Growkits & Tinkturen"
+heroHeadline: "Frag die Mates."
+heroLead: "Alles rund um frische Pilze kaufen in Leipzig, Growkits zum Selberziehen, handgemachte Pilztinkturen und Gastronomie-Lieferungen."
+helpTitle: "Frage nicht dabei?"
+helpText: "Schreib uns, wir antworten meistens schnell:"
+helpEmail: "hey@shroom-mates.de"
+helpButton: "Zum Kontakt"
+moreLinkText: "Mehr erfahren"
 faqs:
   - question: "Wo kann ich in Leipzig frische Pilze kaufen?"
     answer: "Schreib uns einfach eine Mail an hey@shroom-mates.de oder eine Nachricht auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a>. Wir planen außerdem einen offenen Werksverkauf in unserer Farm in der Glasfabrik. Termine geben wir auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a> bekannt."

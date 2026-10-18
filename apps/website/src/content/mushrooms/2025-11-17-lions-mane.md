@@ -1,8 +1,8 @@
 ---
 title: Lion's mane
-image: ../../assets/images/lions_mane.jpg
+image: "../../assets/images/fotos/lions-mane-makro.jpg"
 imageAlt: Lion's Mane Vitalpilz aus Leipzig - Igel-Stachelbart von shroom-mates
-color: "#b0b1f1"
+latinName: "Hericium erinaceus"
 order: 2
 ---
 Ein Pilz mit vielen Namen: Igel-Stachelbart, Lion's Mane, Pom Pom, Bärenkopf.

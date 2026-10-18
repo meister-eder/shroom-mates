@@ -4,15 +4,23 @@ description: "Growkits aus Leipzig: Pilze zuhause selber züchten mit fertigen
   Pilzzuchtsets von den shroom-mates. Lion's Mane, Rosenseitling & White Pearl.
   Erntereif in 2-3 Wochen, direkt abholen in Leutzsch."
 heroTitle: Pilze selber züchten mit den shroom-mates Growkits
-heroSubtitle: Mit unseren Growkits erntest du in wenigen Wochen frische Pilze zuhause.
+heroHeadline: "Zieh dir deine eigenen Mates."
+heroSubtitle: "Mit unseren Growkits erntest du in wenigen Wochen frische Pilze zuhause. Fertig besiedeltes Substrat, keine Vorkenntnisse nötig: aufschneiden, besprühen, ernten."
+heroPrimaryButton: "Kit aussuchen"
+heroSecondaryButton: "Zur Anleitung"
 heroImage: ../../assets/images/growkits.jpg
 heroImageAlt: Frische Pilze aus dem Growkit
+kitsTitle: "Welches Kit passt zu dir?"
+kitDetailsLabel: "Besonderheiten & Tipps"
+kitShopButton: "Im Shop ansehen"
+guideHarvestImageAlt: "Frisch geerntetes Büschel Rosenseitlinge"
 ctaTitle: Interesse an einem Growkit?
-ctaText: Unsere Growkits sind bald auch in unserem Onlineshop erhältlich! Oder
-  du schreibst uns einfach und kannst sie direkt in unserer Farm in Leutzsch
-  abholen.
+ctaText: "Am einfachsten bestellst du im Shop. Du kannst dein Kit auch bei uns in der Glasfabrik in Leutzsch abholen: Schreib uns kurz, wir legen dir eins zurück."
+ctaShopButton: "Zum Shop"
 ctaButtonText: Kontakt aufnehmen
 ctaButtonLink: /kontakt/
+shippingLabel: "Versand"
+shippingText: "Wir verschicken Growkits auch. Den Rosenseitling nicht in den Wintermonaten: Unter 10 °C stirbt das Myzel."
 ---
 ## So funktioniert's
 

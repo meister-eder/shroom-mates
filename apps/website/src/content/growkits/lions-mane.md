@@ -2,7 +2,6 @@
 title: Lion's Mane Growkit
 image: ../../assets/images/photo_5323464934236556928_y.jpg
 imageAlt: Lion's Mane Pilz (Igelstachelbart) aus dem Growkit
-color: "#b0b1f1"
 order: 1
 ---
 ## Besonderheiten beim Lion's Mane

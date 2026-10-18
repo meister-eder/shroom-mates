@@ -1,8 +1,8 @@
 ---
 title: White Pearl
-image: ../../assets/images/white_pearl.jpg
+image: "../../assets/images/fotos/white-pearl-wandbild.jpg"
 imageAlt: White Pearl Austernpilze aus Leipzig-Leutzsch - shroom-mates
-color: "#7e8503"
+latinName: "Pleurotus ostreatus"
 order: 3
 ---
 Der White Pearl ist unsere Lieblingsvariante des klassischen Austernpilzes (Pleurotus Ostreatus).

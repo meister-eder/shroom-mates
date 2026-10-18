@@ -3,10 +3,6 @@ import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import emmiAusternpilz from "../assets/images/fotos/emmi-austernpilz.jpg";
-import emmiGlasfabrik from "../assets/images/fotos/emmi-glasfabrik-markttisch.jpg";
-import growraum from "../assets/images/fotos/growraum.jpg";
-import laborBeimpfen from "../assets/images/fotos/labor-beimpfen.jpg";
-import marktstand from "../assets/images/fotos/marktstand-lions-mane.jpg";
 import rosenseitling from "../assets/images/fotos/rosenseitling-bueschel.jpg";
 import timFreigestellt from "../assets/images/fotos/tim-freigestellt.png";
 import Layout from "../layouts/Layout.astro";
@@ -16,7 +12,18 @@ if (!aboutUsEntry) {
 	throw new Error("About us page content not found");
 }
 
-const { title, description, heroTitle, heroSubtitle } = aboutUsEntry.data;
+const {
+	title,
+	description,
+	heroTitle,
+	heroSubtitle,
+	heroName,
+	heroEmmiAlt,
+	heroTimAlt,
+	timeline,
+	values,
+	where,
+} = aboutUsEntry.data;
 
 // Der Markdown-Text bleibt die Quelle (CMS). Abschnitte werden anhand der
 // „## “-Überschriften getrennt, damit sie im Layout einzeln platziert werden
@@ -44,51 +51,6 @@ for (const block of (aboutUsEntry.body ?? "").split(/^## /m).slice(1)) {
 }
 const section = (name: string) => sections.get(name) ?? [];
 
-// Zeitleiste „Vom Küchentisch in die Glasfabrik“
-const timeline = [
-	{
-		title: "Die Küche",
-		text: "Ein paar Austernpilze, viel Ausprobieren.",
-		image: null,
-		alt: "",
-	},
-	{
-		title: "Plagwitzer Markthalle",
-		text: "Die erste eigene Farm. Rosenseitling, Pioppino, Lion's Mane.",
-		image: marktstand,
-		alt: "Marktstand mit einem Korb Lion's Mane",
-	},
-	{
-		year: "2026",
-		title: "Glasfabrik Leutzsch",
-		text: "Mehr Platz, eigenes Labor, neue Sorten.",
-		image: emmiGlasfabrik,
-		alt: "Emmi an einem Markttisch mit Pilzen in der Backsteinhalle der Glasfabrik",
-	},
-];
-
-// „Das ist uns wichtig“: Nummer, Titel, Text, Foto je Zeile
-const values = [
-	{
-		title: "Nachhaltig",
-		text: "Ohne künstliche Zusätze. Das Substrat geht nach der Ernte auf den Kompost und zurück in den Kreislauf.",
-		image: growraum,
-		alt: "Austernpilze und Lion's Mane im Growraum",
-	},
-	{
-		title: "Regional",
-		text: "Bio-Rohstoffe aus der Region, gezüchtet und verkauft in Leutzsch. Kurze Wege, kein Zwischenhändler.",
-		image: emmiGlasfabrik,
-		alt: "Markttisch in der Glasfabrik",
-	},
-	{
-		title: "Transparent",
-		text: 'Du kannst sehen, wo und wie deine Pilze wachsen. Komm vorbei oder schau auf <a href="https://www.instagram.com/shroom_mates_le/" target="_blank" rel="noopener noreferrer">Instagram</a>.',
-		image: laborBeimpfen,
-		alt: "Emmi im Laborkittel mit Austernpilzen",
-	},
-];
-
 const mapsLink =
 	"https://www.google.com/maps/search/?api=1&query=Franz-Flemming-Stra%C3%9Fe+25+Leipzig";
 ---
@@ -98,14 +60,14 @@ const mapsLink =
     <section class="container about-hero">
       <div class="about-hero__copy">
         <h1 class="eyebrow about-hero__eyebrow">{heroTitle} – {heroSubtitle}</h1>
-        <p class="about-hero__title">Wir sind Emmi &amp; Tim.</p>
+        <p class="about-hero__title">{heroName}</p>
         <div class="about-hero__lead lead" set:html={(section("Wer wir sind")[0] ?? "")} />
       </div>
       <div class="about-hero__photos">
         <div class="dots" aria-hidden="true"></div>
         <Image
           src={emmiAusternpilz}
-          alt="Emmi küsst einen gelben Austernpilz im Growraum"
+          alt={heroEmmiAlt}
           class="about-hero__emmi"
           widths={[320, 480, 640, 800]}
           sizes="(max-width: 900px) 70vw, 400px"
@@ -114,7 +76,7 @@ const mapsLink =
         />
         <Image
           src={timFreigestellt}
-          alt="Tim hält einen großen Rosenseitling und zeigt darauf"
+          alt={heroTimAlt}
           class="about-hero__tim"
           widths={[200, 320, 480]}
           sizes="(max-width: 900px) 34vw, 200px"
@@ -125,15 +87,15 @@ const mapsLink =
 
     <section class="section section--night timeline" aria-labelledby="timeline-heading">
       <div class="container">
-        <h2 id="timeline-heading">Vom Küchentisch in die Glasfabrik</h2>
+        <h2 id="timeline-heading">{timeline.title}</h2>
         <ol class="timeline__grid" role="list">
           {
-            timeline.map((step) => (
+            timeline.items.map((step) => (
               <li class="timeline__item">
                 {step.image ? (
                   <Image
                     src={step.image}
-                    alt={step.alt}
+                    alt={step.imageAlt ?? ""}
                     class="timeline__img"
                     widths={[320, 480, 640]}
                     sizes="(max-width: 768px) 90vw, 400px"
@@ -178,7 +140,7 @@ const mapsLink =
               <div class="arch-frame values__frame">
                 <Image
                   src={v.image}
-                  alt={v.alt}
+                  alt={v.imageAlt}
                   widths={[180, 360, 540]}
                   sizes="180px"
                   format="webp"
@@ -194,20 +156,20 @@ const mapsLink =
       <div class="container where__inner">
         <div class="where__copy">
           <p class="eyebrow">Wo ihr uns findet</p>
-          <h2 id="where-heading">Glasfabrik, Leutzsch</h2>
-          <address class="where__address">Franz-Flemming-Straße 25, 04179 Leipzig</address>
+          <h2 id="where-heading">{where.title}</h2>
+          <address class="where__address">{where.address}</address>
           {section("Wo ihr uns findet").map((p) => <p class="where__text" set:html={p} />)}
           <div class="where__actions">
             <a class="btn btn--primary" href={mapsLink} target="_blank" rel="noopener noreferrer">
-              <Icon name="map-pin" size={20} /> Route planen
+              <Icon name="map-pin" size={20} /> {where.routeButton}
             </a>
-            <a class="btn btn--secondary" href="/kontakt/">Besuch anmelden</a>
+            <a class="btn btn--secondary" href="/kontakt/">{where.visitButton}</a>
           </div>
         </div>
         <div class="arch-frame where__photo">
           <Image
             src={rosenseitling}
-            alt="Rosenseitling-Büschel aus unserer Farm"
+            alt={where.imageAlt}
             widths={[320, 480, 640]}
             sizes="(max-width: 900px) 90vw, 460px"
             format="webp"

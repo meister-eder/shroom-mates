@@ -10,31 +10,38 @@ if (!faqPageEntry) {
 	throw new Error("FAQ page content not found");
 }
 
-const { title, description } = faqPageEntry.data;
+const {
+	title,
+	description,
+	heroEyebrow,
+	heroHeadline,
+	heroLead,
+	helpTitle,
+	helpText,
+	helpEmail,
+	helpButton,
+} = faqPageEntry.data;
 ---
 
 <Layout title={title} description={description} active="faq" isLandingPage>
   <div class="faq-page">
     <div class="container faq-layout">
       <div class="faq-aside">
-        <h1 class="eyebrow faq-eyebrow">Häufige Fragen zu Pilzen, Growkits &amp; Tinkturen</h1>
-        <p class="faq-title">Frag die Mates.</p>
-        <p class="lead faq-lead">
-          Alles rund um frische Pilze kaufen in Leipzig, Growkits zum
-          Selberziehen, handgemachte Pilztinkturen und Gastronomie-Lieferungen.
-        </p>
+        <h1 class="eyebrow faq-eyebrow">{heroEyebrow}</h1>
+        <p class="faq-title">{heroHeadline}</p>
+        <p class="lead faq-lead">{heroLead}</p>
         <div class="faq-mascot">
           <div class="dots" aria-hidden="true"></div>
           <MatesLogo class="faq-mascot__logo" alt="" width={340} sizes="(max-width: 900px) 70vw, 340px" loading="eager" />
         </div>
         <div class="faq-help">
-          <h2 class="faq-help__title">Frage nicht dabei?</h2>
+          <h2 class="faq-help__title">{helpTitle}</h2>
           <p>
-            Schreib uns, wir antworten meistens schnell:
-            <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+            {helpText}
+            <a href={`mailto:${helpEmail}`}>{helpEmail}</a>
           </p>
           <a class="btn btn--primary" href="/kontakt/">
-            Zum Kontakt <Icon name="arrow-right" size={20} />
+            {helpButton} <Icon name="arrow-right" size={20} />
           </a>
         </div>
       </div>

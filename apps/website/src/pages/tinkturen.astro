@@ -15,11 +15,17 @@ const {
 	title,
 	description,
 	heroTitle,
+	heroHeadline,
 	heroImage,
+	heroPhotoAlt,
 	introText,
-	disclaimerText,
+	facts,
 	tinctures,
+	shopButton,
+	process,
+	quellenTitle,
 	quellen,
+	disclaimerText,
 } = tinkturenPageEntry.data;
 
 const { shop } = linkBuilders("website");
@@ -36,19 +42,13 @@ const processedTinctures = tinctures.map((t) => {
 	};
 });
 
-const facts = [
-	{ label: "Herstellung", value: "Doppelextraktion — Alkohol + Heißwasser" },
-	{ label: "Herkunft", value: "Eigene Indoor-Farm, Leipzig Leutzsch" },
-	{ label: "Substrat", value: "Regionales Substrat, ohne Zusätze" },
-	{ label: "Dosierung", value: "1–2 Pipetten täglich" },
-];
-
-const process = [
-	{ title: "Züchten", text: "Eigene Kultur, eigenes Substrat, eigene Farm.", bg: "var(--color-cream)" },
-	{ title: "Ernten & trocknen", text: "Nur der Fruchtkörper kommt in die Tinktur.", bg: "var(--color-cream)" },
-	{ title: "Alkohol-Mazeration", text: "Die Pilze ziehen in Alkohol.", bg: "var(--color-lavender)" },
-	{ title: "Heißwasser-Extrakt", text: "Dieselben Pilze, nochmal in heißem Wasser.", bg: "var(--color-pink)" },
-	{ title: "Mischen & abfüllen", text: "Von Hand gemischt und abgefüllt.", bg: "var(--color-accent)" },
+// Hintergrundfarbe der Nummern im Ablauf (nach Position)
+const processColors = [
+	"var(--color-cream)",
+	"var(--color-cream)",
+	"var(--color-lavender)",
+	"var(--color-pink)",
+	"var(--color-accent)",
 ];
 
 // Structured data for SEO
@@ -80,7 +80,7 @@ const productSchemas = tinctures.map((t) => ({
 			<div class="hero__copy">
 				<h1>
 					<span class="eyebrow hero__eyebrow">{heroTitle}</span>
-					<span class="hero__title">Von der Kultur zur Tinktur.</span>
+					<span class="hero__title">{heroHeadline}</span>
 				</h1>
 				<p class="lead hero__lead">{introText}</p>
 			</div>
@@ -89,7 +89,7 @@ const productSchemas = tinctures.map((t) => ({
 				<div class="arch-frame hero__arch">
 					<Image
 						src={tinkturenHero}
-						alt="Zwei Tinkturfläschchen: Lion's Mane und Reishi mit Cordyceps"
+						alt={heroPhotoAlt}
 						widths={[320, 480, 640, 840]}
 						sizes="(max-width: 768px) 80vw, 420px"
 						loading="eager"
@@ -132,9 +132,9 @@ const productSchemas = tinctures.map((t) => ({
 								<h3 class="tincture__title">{t.title}</h3>
 								<p class="tincture__text" set:html={t.description} />
 								<div class="tincture__footer">
-									<span class="tincture__size">50 ml</span>
+									<span class="tincture__size">{t.size}</span>
 									<a class="btn btn--primary" href={t.shopHref}>
-										Im Shop kaufen <Icon name="arrow-right" size={20} />
+										{shopButton} <Icon name="arrow-right" size={20} />
 									</a>
 								</div>
 							</div>
@@ -146,15 +146,13 @@ const productSchemas = tinctures.map((t) => ({
 
 		<section class="section section--paper process" aria-labelledby="process-heading">
 			<div class="process__inner">
-				<h2 id="process-heading">Warum doppelt?</h2>
-				<p class="process__intro">
-					Alkohol löst andere Stoffe als heißes Wasser. Deshalb machen wir beides und mischen am Ende.
-				</p>
+				<h2 id="process-heading">{process.title}</h2>
+				<p class="process__intro">{process.intro}</p>
 				<ol class="process__list" role="list">
 					{
-						process.map((step, i) => (
+						process.steps.map((step, i) => (
 							<li>
-								<span class="process__num" style={`background: ${step.bg}`}>{i + 1}</span>
+								<span class="process__num" style={`background: ${processColors[i % processColors.length]}`}>{i + 1}</span>
 								<h3>{step.title}</h3>
 								<p>{step.text}</p>
 							</li>
@@ -168,7 +166,7 @@ const productSchemas = tinctures.map((t) => ({
 			{
 				quellen && quellen.length > 0 && (
 					<div class="quellen-card">
-						<h2>Quellen</h2>
+						<h2>{quellenTitle}</h2>
 						<ol>
 							{quellen.map((q, i) => (
 								<li id={`quelle-${i + 1}`}>

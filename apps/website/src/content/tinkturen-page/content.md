@@ -2,24 +2,30 @@
 title: "Pilztinkturen & Pilzextrakte aus Leipzig kaufen | shroom-mates"
 description: "Handgemachte Pilztinkturen & Pilzextrakte als Doppelextrakt aus Leipzig-Leutzsch. Lion's Mane, Reishi & Cordyceps aus eigenem Anbau auf regionalem Bio-Substrat, ohne Zusätze."
 heroTitle: "Unsere Pilztinkturen"
-heroSubtitle: "Handgemacht von der Kultur zur Tinktur"
+heroHeadline: "Von der Kultur zur Tinktur."
 heroImage: ../../assets/images/tinkturen.jpeg
-heroImageAlt: "Handgemachte Pilztinkturen von shroom-mates aus Leipzig"
+heroPhotoAlt: "Zwei Tinkturfläschchen: Lion's Mane und Reishi mit Cordyceps"
 introText: >-
   Wir bauen unsere Pilze selbst an, in unserer Farm in der Glasfabrik
   in Leipzig-Leutzsch, ohne Zusätze, auf regionalem Bio-Substrat. Alle Tinkturen
   entstehen als Doppelextrakt: zuerst Alkohol-Mazeration, dann
   Heißwasserextrakt. Wir verarbeiten ausschließlich den Fruchtkörper,
   kein Myzel oder Körnerbrut.
-disclaimerText: >-
-  Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene Ernährung.
-  Nicht zur Diagnose oder Behandlung von Krankheiten.
+facts:
+  - label: "Herstellung"
+    value: "Doppelextraktion — Alkohol + Heißwasser"
+  - label: "Herkunft"
+    value: "Eigene Indoor-Farm, Leipzig Leutzsch"
+  - label: "Substrat"
+    value: "Regionales Substrat, ohne Zusätze"
+  - label: "Dosierung"
+    value: "1–2 Pipetten täglich"
 tinctures:
   - title: "Lion's Mane Extrakt"
     botanicalName: "Hericium erinaceus · Igelstachelbart"
     image: ../../assets/images/lions_mane.jpg
     imageAlt: "Frischer Lion's Mane Pilz von shroom-mates, Grundlage für den Extrakt"
-    color: "#b0b1f1"
+    size: "50 ml"
     description: >-
       Lion's Mane enthält Hericenone und Erinacine, Verbindungen, die so in
       keinem anderen Pilz vorkommen. Sie können die Produktion des
@@ -32,7 +38,7 @@ tinctures:
     botanicalName: "Ganoderma lucidum & Cordyceps militaris"
     image: ../../assets/images/mushrooms.jpg
     imageAlt: "Getrocknete Reishi-Pilze von shroom-mates, Basis des Doppelextrakts"
-    color: "#f5cbcd"
+    size: "50 ml"
     description: >-
       Reishi und Cordyceps sind beide Adaptogene, die den Körper
       bei Belastung unterstützen.
@@ -48,6 +54,22 @@ tinctures:
       In der traditionellen chinesischen Medizin wird er bei Erschöpfung und
       Atemwegsbeschwerden
       eingesetzt.<sup><a href="#quelle-6" aria-label="Quelle 6">6</a></sup>
+shopButton: "Im Shop kaufen"
+process:
+  title: "Warum doppelt?"
+  intro: "Alkohol löst andere Stoffe als heißes Wasser. Deshalb machen wir beides und mischen am Ende."
+  steps:
+    - title: "Züchten"
+      text: "Eigene Kultur, eigenes Substrat, eigene Farm."
+    - title: "Ernten & trocknen"
+      text: "Nur der Fruchtkörper kommt in die Tinktur."
+    - title: "Alkohol-Mazeration"
+      text: "Die Pilze ziehen in Alkohol."
+    - title: "Heißwasser-Extrakt"
+      text: "Dieselben Pilze, nochmal in heißem Wasser."
+    - title: "Mischen & abfüllen"
+      text: "Von Hand gemischt und abgefüllt."
+quellenTitle: "Quellen"
 quellen:
   - title: >-
       Docherty et al. (2023) – Hericium erinaceus: Molecular Mechanisms in Nerve Regeneration
@@ -67,4 +89,7 @@ quellen:
   - title: >-
       Frontiers in Nutrition (2025) – Bioactive Compounds in Medicinal Mushrooms
     url: https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2025.1670416/full
+disclaimerText: >-
+  Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene Ernährung.
+  Nicht zur Diagnose oder Behandlung von Krankheiten.
 ---

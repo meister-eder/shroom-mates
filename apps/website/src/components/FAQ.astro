@@ -9,18 +9,12 @@
 import Icon from "@shroom-mates/ui/Icon.astro";
 import { getEntry } from "astro:content";
 
-interface FAQItem {
-	question: string;
-	answer: string;
-	link?: string;
-}
-
 const faqPageEntry = await getEntry("faq-page", "content");
 if (!faqPageEntry) {
 	throw new Error("FAQ page content not found");
 }
 
-const faqs: FAQItem[] = faqPageEntry.data.faqs;
+const { faqs, moreLinkText } = faqPageEntry.data;
 
 const faqSchema = {
 	"@context": "https://schema.org",
@@ -53,7 +47,7 @@ const faqSchema = {
           <p set:html={faq.answer} />
           {faq.link && (
             <p class="faq-link">
-              <a href={faq.link}>Mehr erfahren</a>
+              <a href={faq.link}>{moreLinkText}</a>
             </p>
           )}
         </div>

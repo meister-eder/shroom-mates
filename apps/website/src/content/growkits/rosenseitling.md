@@ -1,8 +1,7 @@
 ---
 title: Rosenseitling Growkit
-image: ../../assets/images/hero_rose_tasse.jpg
+image: "../../assets/images/fotos/rosenseitling-wandbild.jpg"
 imageAlt: Rosa Austernpilze (Rosenseitlinge) aus dem Growkit
-color: "#ffe4ec"
 order: 2
 ---
 ## Besonderheiten beim Rosenseitling

@@ -2,13 +2,6 @@
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
-import bunteWelt from "../assets/images/fotos/bunte-pilze-oben.jpg";
-import marktstand from "../assets/images/fotos/marktstand-lions-mane.jpg";
-import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
-import blackPearl from "../assets/images/fotos/black-pearl.jpg";
-import lionsMane from "../assets/images/fotos/lions-mane-makro.jpg";
-import pioppino from "../assets/images/fotos/pioppino.jpg";
-import rosaLamellen from "../assets/images/fotos/rosa-lamellen.jpg";
 import Layout from "../layouts/Layout.astro";
 
 const gastroPageEntry = await getEntry("gastronomie-page", "content");
@@ -19,13 +12,18 @@ if (!gastroPageEntry) {
 const {
 	title,
 	description,
+	heroEyebrow,
 	heroTitle,
 	heroSubtitle,
+	heroButton,
+	heroPhotos,
 	heroImage,
 	introTitle,
 	introText,
 	introText2,
+	sortenTitle,
 	sorten,
+	vorteileTitle,
 	vorteile,
 	ctaTitle,
 	ctaText,
@@ -33,15 +31,6 @@ const {
 	ctaButtonLink,
 	ctaEmail,
 } = gastroPageEntry.data;
-
-// Foto + Alt-Text je Sorte (Schlüssel = Titel aus dem Content); Fallback: Saisonsorten
-const sortenFotos: Record<string, { image: ImageMetadata; alt: string }> = {
-	Austernpilze: { image: rosaLamellen, alt: "Rosa Austernpilze am Block" },
-	"Lion's Mane": { image: lionsMane, alt: "Lion's Mane in Nahaufnahme" },
-	Pioppino: { image: pioppino, alt: "Pioppino-Büschel" },
-	Saisonsorten: { image: blackPearl, alt: "Black Pearl, eine Saisonsorte" },
-};
-const fallbackFoto = { image: blackPearl, alt: "" };
 
 const gastroSchema = {
 	"@context": "https://schema.org",
@@ -76,39 +65,25 @@ const gastroSchema = {
     <section class="gastro-hero">
       <div class="container gastro-hero__inner">
         <div class="gastro-hero__copy">
-          <h1 class="eyebrow eyebrow--on-dark gastro-hero__eyebrow">Pilze für Gastronomie in Leipzig</h1>
+          <h1 class="eyebrow eyebrow--on-dark gastro-hero__eyebrow">{heroEyebrow}</h1>
           <p class="gastro-hero__title">{heroTitle}</p>
           {heroSubtitle && <p class="gastro-hero__lead">{heroSubtitle}</p>}
-          <a class="btn btn--accent gastro-hero__cta" href="#anfrage">Angebot anfragen</a>
+          <a class="btn btn--accent gastro-hero__cta" href="#anfrage">{heroButton}</a>
         </div>
         <div class="gastro-hero__photos">
-          <Image
-            src={bunteWelt}
-            alt="Austernpilze in Gelb, Rosa und Weiß mit Lion's Mane"
-            class="gastro-hero__img gastro-hero__img--tall"
-            widths={[320, 480, 640]}
-            sizes="(max-width: 900px) 50vw, 280px"
-            loading="eager"
-            format="webp"
-          />
-          <Image
-            src={marktstand}
-            alt="Korb mit Lion's Mane am Marktstand"
-            class="gastro-hero__img"
-            widths={[320, 480, 640]}
-            sizes="(max-width: 900px) 50vw, 280px"
-            loading="eager"
-            format="webp"
-          />
-          <Image
-            src={schneidebrett}
-            alt="Pioppino und Seitlinge auf dem Schneidebrett"
-            class="gastro-hero__img"
-            widths={[320, 480, 640]}
-            sizes="(max-width: 900px) 50vw, 280px"
-            loading="eager"
-            format="webp"
-          />
+          {
+            heroPhotos.map((photo, i) => (
+              <Image
+                src={photo.image}
+                alt={photo.imageAlt}
+                class={i === 0 ? "gastro-hero__img gastro-hero__img--tall" : "gastro-hero__img"}
+                widths={[320, 480, 640]}
+                sizes="(max-width: 900px) 50vw, 280px"
+                loading="eager"
+                format="webp"
+              />
+            ))
+          }
         </div>
       </div>
     </section>
@@ -122,39 +97,36 @@ const gastroSchema = {
     </section>
 
     <section class="container gastro-sorten" aria-labelledby="sorten-heading">
-      <h2 id="sorten-heading" class="text-accent">Was auf den Teller kommt</h2>
+      <h2 id="sorten-heading" class="text-accent">{sortenTitle}</h2>
       <p class="sr-only">Unser Sortiment für die Gastronomie</p>
       <ul class="sorten-grid" role="list">
         {
-          sorten.map((sorte) => {
-            const foto = sortenFotos[sorte.title] ?? fallbackFoto;
-            return (
-              <li>
-                <figure class="sorte">
-                  <div class="arch-frame sorte__frame">
-                    <Image
-                      src={foto.image}
-                      alt={foto.alt}
-                      widths={[320, 480, 640]}
-                      sizes="(max-width: 768px) 90vw, 280px"
-                      format="webp"
-                    />
-                  </div>
-                  <figcaption>
-                    <h3 class="sorte__title">{sorte.title}</h3>
-                    <p>{sorte.description}</p>
-                  </figcaption>
-                </figure>
-              </li>
-            );
-          })
+          sorten.map((sorte) => (
+            <li>
+              <figure class="sorte">
+                <div class="arch-frame sorte__frame">
+                  <Image
+                    src={sorte.image}
+                    alt={sorte.imageAlt}
+                    widths={[320, 480, 640]}
+                    sizes="(max-width: 768px) 90vw, 280px"
+                    format="webp"
+                  />
+                </div>
+                <figcaption>
+                  <h3 class="sorte__title">{sorte.title}</h3>
+                  <p>{sorte.description}</p>
+                </figcaption>
+              </figure>
+            </li>
+          ))
         }
       </ul>
     </section>
 
     <section class="section section--night vorteile" aria-labelledby="vorteile-heading">
       <div class="container vorteile__inner">
-        <h2 id="vorteile-heading">Warum shroom-mates?</h2>
+        <h2 id="vorteile-heading">{vorteileTitle}</h2>
         <ul class="vorteile__list" role="list">
           {
             vorteile.map((vorteil) => (
