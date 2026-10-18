@@ -18,7 +18,19 @@ shroom-mates.de {
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.web3forms.com; frame-src https://www.google.com; font-src 'self'"
+	}
+
+	# CSP for the public site (everything except the CMS admin)
+	@notadmin not path /admin /admin/*
+	header @notadmin Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.web3forms.com; frame-src https://www.google.com; font-src 'self'"
+
+	# Sveltia CMS admin (/admin/): talks to the GitHub API, previews use blob: URLs.
+	# Declared after the cache rules above so its Cache-Control wins.
+	@admin path /admin /admin/*
+	header @admin {
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; media-src 'self' blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.githubusercontent.com; frame-src 'self' blob:; worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+		Cache-Control "no-cache"
+		X-Robots-Tag "noindex, nofollow"
 	}
 
 	# Compression

@@ -1,6 +1,11 @@
 name: Deploy
 
 on:
+  # CMS commits (Sveltia → GitHub API) land on `shop` and deploy automatically.
+  # When switching production to `main`, change the branch here too.
+  push:
+    branches: [shop]
+    paths: ['apps/website/**']
   workflow_dispatch:
     inputs:
       branch:
@@ -31,10 +36,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch || github.sha }}
-          fetch-depth: 2
+          # Full history so a multi-commit push can be diffed (before..sha)
+          fetch-depth: 0
 
       - name: Check if only website changed
         id: check
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
           # Manual dispatch → always do a full deploy
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -42,7 +50,14 @@ jobs:
             exit 0
           fi
 
-          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+          # Push: compare the whole pushed range; fall back to the last commit
+          # (new branch → before is 0000…, force-push → before may be unknown)
+          BASE=HEAD~1
+          if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ] \
+             && git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+            BASE="$BEFORE_SHA"
+          fi
+          CHANGED=$(git diff --name-only "$BASE" HEAD)
           printf "Changed files:\n%s\n" "$CHANGED"
 
           NON_WEBSITE=$(echo "$CHANGED" | grep -v '^apps/website/' | grep -v '^$' || true)

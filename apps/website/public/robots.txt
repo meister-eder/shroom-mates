@@ -3,6 +3,7 @@
 
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 # Sitemaps
 Sitemap: https://shroom-mates.de/sitemap-index.xml
@@ -10,13 +11,14 @@ Sitemap: https://shroom-mates.de/sitemap-index.xml
 # Google-specific
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
 
 User-agent: Googlebot-Image
 Allow: /
+Disallow: /admin/
 
 # Crawl-delay for good practice
 Crawl-delay: 1
 
-# Disallow admin or private areas (if any in the future)
-# Disallow: /admin/
+# Admin (Sveltia CMS) ist oben je User-agent ausgeschlossen
 # Disallow: /private/

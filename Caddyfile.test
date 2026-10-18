@@ -9,6 +9,11 @@ shroom-mates.159.195.31.11.sslip.io {
 	file_server
 	try_files {path} {path}.html {path}/index.html
 
+	# Sveltia CMS admin: always revalidate so config.yml changes apply at once
+	# (this test server sets no CSP, so no admin-specific CSP is needed here)
+	@admin path /admin /admin/*
+	header @admin Cache-Control "no-cache"
+
 	# Branded 404 page from the static build
 	handle_errors 404 {
 		root * /srv/website

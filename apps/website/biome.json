@@ -13,7 +13,9 @@
 			"!**/.astro",
 			"!**/node_modules",
 			"!skills-lock.json",
-			"!public/site.webmanifest"
+			"!public/site.webmanifest",
+			"!public/admin/sveltia-cms.js",
+			"!public/admin/chunks"
 		]
 	},
 	"formatter": {

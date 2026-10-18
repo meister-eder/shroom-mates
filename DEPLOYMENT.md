@@ -46,6 +46,14 @@ The workflow:
 
 Pushes that only touch `apps/website/` take a fast path that just syncs the static build.
 
+**Automatic deploys:** besides the manual run, the workflow also triggers on every
+`push` to the `shop` branch that touches `apps/website/**` (this is what deploys
+CMS edits, see [Content editing](#content-editing-sveltia-cms)). A push deploys
+the pushed commit (`github.sha`); change detection compares the whole pushed range
+(`before..sha`), so it takes the website-only fast path only if *none* of the pushed
+commits touched anything outside `apps/website/`. Manual runs always do a full deploy.
+Deploys are serialized (`concurrency: deploy-production`), so rapid CMS saves queue up.
+
 ## Configuration
 
 ### GitHub secrets
@@ -155,6 +163,63 @@ $C restart medusa           # restart one service
 ./scripts/backup-postgres.sh
 docker image prune -f && docker builder prune -f   # free disk space
 ```
+
+## Content editing (Sveltia CMS)
+
+The static website is edited with [Sveltia CMS](https://github.com/sveltia/sveltia-cms),
+a Git-based CMS with no server of its own: the admin UI is just static files served
+with the website.
+
+- **URL:** `https://shroom-mates.<domain>/admin/` (test server: `https://shroom-mates.<DEPLOY_HOST>.sslip.io/admin/`)
+- **Backend:** GitHub repo `meister-eder/shroom-mates`, branch `shop`
+  (later `main`). Uploaded images go to `apps/website/src/assets/images`.
+
+### Logging in with a token
+
+1. On GitHub: **Settings → Developer settings → Personal access tokens →
+   Fine-grained tokens → Generate new token**.
+2. Resource owner: the account owning the repo. **Repository access: Only select
+   repositories → `shroom-mates`**. Set an **expiration date**.
+3. Permissions → Repository permissions → **Contents: Read and write** (nothing else).
+4. Open `/admin/`, choose **Sign in with Token**, paste the token. The token stays in
+   the browser's local storage; use a private device and revoke it on GitHub if lost.
+
+### What happens when you save
+
+Saving (publishing) an entry creates a commit on `shop` via the GitHub API →
+the `push` trigger starts **Deploy** → only `apps/website/` changed, so the
+website-only fast path builds the site and rsyncs `dist/` to the server → live after
+about 2–3 minutes. Progress: **Actions → Deploy**. Because the CMS commits directly,
+pull before working locally on the same branch.
+
+### Switching the branch to `main`
+
+When production moves from `shop` to `main`, change it in two places:
+`branch:` in `apps/website/public/admin/config.yml`, `branches:` under `push:` in
+`.github/workflows/deploy-server.yml`. If `main` is branch-protected, direct CMS commits need a bypass rule for the editors.
+
+### CSP
+
+`Caddyfile` serves a separate, stricter-scoped Content-Security-Policy for `/admin/*`
+that additionally allows `connect-src https://api.github.com` (plus
+`raw.githubusercontent.com` / `*.githubusercontent.com`) and `blob:` for image
+previews. The CSP of the public site is unchanged. `/admin/*` is also sent with
+`Cache-Control: no-cache` (config changes apply immediately) and
+`X-Robots-Tag: noindex`. `Caddyfile.test` has no CSP, only the `no-cache` header.
+If the admin UI shows blocked requests in the browser console, extend the `@admin`
+CSP in `Caddyfile`.
+
+### Optional: "Sign in with GitHub" (OAuth)
+
+Not set up. It needs a GitHub OAuth App plus an auth proxy such as
+[sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) (Cloudflare Worker or
+self-hosted); then set `base_url` in the `backend` section of `config.yml` to the
+proxy and add the proxy origin to the `/admin/*` `connect-src` (and `form-action` if
+needed) in `Caddyfile`. Until then, token login is the only online option.
+
+### Local editing
+
+See "Editing website content with Sveltia CMS" in `docs/LOCAL_DEVELOPMENT.md`.
 
 ## Going to production
 

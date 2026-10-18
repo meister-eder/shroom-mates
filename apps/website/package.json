@@ -3,8 +3,11 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
+		"predev": "node scripts/copy-cms.mjs",
 		"dev": "astro dev",
+		"prestart": "node scripts/copy-cms.mjs",
 		"start": "astro dev",
+		"prebuild": "node scripts/copy-cms.mjs",
 		"build": "astro check && astro build",
 		"preview": "astro preview",
 		"astro": "astro",
@@ -22,6 +25,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.6",
+		"@sveltia/cms": "0.248.0",
 		"@types/bun": "^1.3.1"
 	}
 }

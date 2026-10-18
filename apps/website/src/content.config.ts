@@ -51,7 +51,7 @@ const landingPage = defineCollection({
 				z.object({
 					title: z.string(),
 					// SVG headings are stored in public/ directory, so they remain strings
-					// PagesCMS outputs them to /assets/headings/ which is publicly accessible
+					// The CMS (Sveltia) writes them as /assets/headings/ which is publicly accessible
 					headingSvg: z.string(),
 					description: z.string(),
 				}),
@@ -76,7 +76,7 @@ const aboutUsPage = defineCollection({
 			heroTitle: z.string(),
 			heroSubtitle: z.string(),
 			// Multiple images for lab photos and team photos
-			// With PagesCMS multiple image field, this becomes an array of image paths
+			// With the CMS multiple image field, this becomes an array of image paths
 			images: z.array(image()),
 		}),
 });
