@@ -115,6 +115,7 @@ const growSteps = [
   },
 ];
 
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 ---
 
 <Layout
@@ -284,7 +285,7 @@ const growSteps = [
               })}
               {showVariety && (
                 <li class="pair-card pair-card--more">
-                  <img src="/mascot.webp" alt="" width="96" height="96" class="pair-card__img pair-card__img--plain" loading="lazy" />
+                  <MatesLogo alt="" width={96} class="pair-card__img pair-card__img--plain" />
                   <span>
                     <a href={websiteUrl("/unsere-pilze/")} class="pair-card__title">
                       Mehr über {varietyName} <span aria-hidden="true">→</span>

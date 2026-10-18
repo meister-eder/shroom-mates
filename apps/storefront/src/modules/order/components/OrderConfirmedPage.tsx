@@ -1,14 +1,27 @@
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { formatProviderName } from "@lib/checkout/payment-providers";
 import { formatAddressLines, isSameAddress } from "@lib/utils/address";
 import type { StoreOrder } from "@medusajs/types";
 import { CartTotals } from "@modules/common/components/CartTotals";
 import { LineItemRow } from "@modules/common/components/LineItemRow";
-import { INSTAGRAM_URL, websiteUrl } from "@shroom-mates/ui/site";
+import { INSTAGRAM_URL } from "@shroom-mates/ui/site";
 
 interface OrderConfirmedPageProps {
   countryCode: string;
   order: StoreOrder;
 }
+
+const WaveEdge = ({ flip = false }: { flip?: boolean }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 1440 56"
+    preserveAspectRatio="none"
+    className="block h-14 w-full fill-ink"
+    style={flip ? { margin: "-1px 0 0", transform: "scaleY(-1)" } : { margin: "0 0 -1px" }}
+  >
+    <path d="M0 56V28C80 6 160 6 240 28S400 50 480 28 640 6 720 28 880 50 960 28 1120 6 1200 28 1360 50 1440 28V56Z" />
+  </svg>
+);
 
 const NEXT_STEPS = [
   ["Bestätigung", "Eine Bestätigung geht per E-Mail an dich."],
@@ -34,16 +47,10 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
     <div aria-label="Bestellbestätigung" className="overflow-hidden">
       <section className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-10 px-4 pb-16 pt-12 sm:px-8">
         <div className="relative h-[300px] min-w-0 flex-[0_1_420px] sm:h-[380px]">
-          <div
-            className="dots absolute inset-[30px] rounded-full"
-            aria-hidden="true"
-          />
-          <img
-            src="/mascot.webp"
+          <MatesEyes
+            size={340}
             alt="Die Maskottchen der shroom-mates"
-            width="340"
-            height="340"
-            className="relative mx-auto mt-2.5 block w-[260px] sm:w-[340px] [filter:drop-shadow(6px_6px_0_var(--color-ink))]"
+            className="mx-auto mt-2.5 max-w-full [filter:drop-shadow(6px_6px_0_var(--color-ink))]"
           />
         </div>
         <div className="min-w-0 flex-[1_1_480px]">
@@ -62,36 +69,37 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
         </div>
       </section>
 
-      <section className="bg-ink px-4 py-16 text-cream sm:px-8">
+      <WaveEdge />
+      <section className="bg-ink px-4 py-[72px] text-cream sm:px-8">
         <div className="mx-auto max-w-[1280px]">
           <h2 className="m-0 mb-8 text-[clamp(36px,4.4vw,60px)]! leading-[.95]! text-accent-light">
-            Wie es weitergeht
+            Wie es jetzt weitergeht
           </h2>
-          <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5 p-0">
+          <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[18px] p-0">
             {NEXT_STEPS.map(([title, text], i) => (
               <li
                 key={title}
-                className="comic-panel [box-shadow:4px_4px_0_var(--color-accent)]"
+                className={`p-[22px] text-ink ${i === 0 ? "bg-olive-soft" : "bg-cream"}`}
               >
-                <div
-                  className={`comic-panel__head ${i === 0 ? "comic-panel__head--lavender" : ""}`}
+                <p
+                  className={`m-0 mb-1.5 font-mono text-[13px] ${i === 0 ? "" : "text-accent-dark"}`}
                 >
-                  <span className="comic-panel__num">{String(i + 1).padStart(2, "0")}</span>
-                </div>
-                <div className="comic-panel__body">
-                  <h3 className="mb-1.5 text-2xl! font-black! [font-family:var(--font-display)]">
-                    {title}
-                  </h3>
-                  <p className="m-0 text-[15px]">{text}</p>
-                </div>
+                  {String(i + 1).padStart(2, "0")}
+                  {i === 0 ? " · jetzt" : ""}
+                </p>
+                <h3 className="mb-1.5 text-2xl! font-extrabold! [font-family:var(--font-display)]">
+                  {title}
+                </h3>
+                <p className="m-0 text-[15px]">{text}</p>
               </li>
             ))}
           </ol>
         </div>
       </section>
+      <WaveEdge flip />
 
       <section className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-8 px-4 pb-24 pt-16 sm:px-8">
-        <div className="min-w-0 flex-[1_1_460px] rounded-[26px] border-[3px] border-ink bg-paper p-6 shadow-card">
+        <div className="min-w-0 flex-[1_1_460px] rounded-none border-2 border-accent bg-paper p-6">
           <h2 className={H2}>Deine Bestellung</h2>
           <div className="mb-4 border-b-2 border-ink pb-2">
             {order.items?.map((item) => (
@@ -151,15 +159,8 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
         </div>
 
         <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
-          <a
-            href={websiteUrl("/growkits/")}
-            className="block rounded-[26px] border-[3px] border-ink bg-lavender p-6 text-ink no-underline shadow-[6px_6px_0_var(--color-ink)]"
-          >
-            <p className="m-0 mb-1.5 font-display text-[26px] font-black">Schon mal lesen?</p>
-            <p className="m-0">Zur Growkit-Anleitung →</p>
-          </a>
           <a href={`/${countryCode}/store`} className="btn btn--secondary btn--block min-h-14 text-lg">
-            Weiter einkaufen
+            Zurück zum Shop
           </a>
           <a
             href={INSTAGRAM_URL}

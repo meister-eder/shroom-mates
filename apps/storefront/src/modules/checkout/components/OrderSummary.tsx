@@ -12,7 +12,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
   return (
     <aside
       aria-labelledby="order-summary-title"
-      className="rounded-[26px] border-[3px] border-ink bg-paper p-[22px] shadow-card lg:sticky lg:top-6"
+      className="rounded-none border-2 border-accent bg-paper p-[22px] lg:sticky lg:top-6"
     >
       <h2
         id="order-summary-title"

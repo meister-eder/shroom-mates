@@ -6,6 +6,7 @@ import frauncesUrl from "@fontsource-variable/fraunces/files/fraunces-latin-full
 import { ClientRouter } from "astro:transitions";
 import Footer from "@shroom-mates/ui/Footer.astro";
 import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
+import WaveRoller from "@shroom-mates/ui/WaveRoller.astro";
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
 import type { NavKey } from "@shroom-mates/ui/site";
 
@@ -313,7 +314,7 @@ const breadcrumbSchema = {
       )
     }
     <meta name="author" content="shroom-mates - Emmelie Kunz & Tim Eder" />
-    <meta name="theme-color" content="#fdfcea" />
+    <meta name="theme-color" content="#e9eaff" />
 
     <!-- Language alternates (for future expansion) -->
     <link rel="alternate" hreflang="de" href={canonicalURL} />
@@ -340,6 +341,7 @@ const breadcrumbSchema = {
 
 
       <LayoutScripts />
+      <WaveRoller />
 
       <script>
         // Fallback transitions for browsers without View Transitions API

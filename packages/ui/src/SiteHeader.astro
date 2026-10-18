@@ -3,7 +3,7 @@
  * Site header shared by website and shop (Redesign 2026).
  *
  * Desktop: mascot + wordmark left, NavPills right (Kontakt, then the cart).
- * Mobile: menu button left, wordmark centre, cart right; the menu is a
+ * Mobile: menu button left, wordmark centre (no mascot), Instagram icon + cart right; the menu is a
  * full-screen overlay on ink with large Fraunces links.
  *
  * Usage (website):  <SiteHeader app="website" active="growkits" ticker={[...]} />
@@ -17,6 +17,8 @@
  */
 import { Image } from "astro:assets";
 import logoWithShrooms from "./assets/logo_with_shrooms.png";
+import MatesLogo from "./MatesLogo.astro";
+import logoFont from "./assets/logo_font.svg?url";
 import Icon from "./Icon.astro";
 import { INSTAGRAM_URL, linkBuilders, mainNav, type AppId, type NavKey } from "./site";
 
@@ -114,21 +116,13 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
       aria-controls="nav-links"
       type="button"
     >
-      <Icon name="menu" size={22} strokeWidth={2.6} class="hamburger__open" />
-      <Icon name="close" size={22} strokeWidth={2.6} class="hamburger__close" />
+      <span class="hamburger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
     </button>
 
     <a href={home} class="brand" aria-label="shroom-mates Startseite">
-      <Image
-        src={logoWithShrooms}
-        alt=""
-        width={116}
-        height={116}
-        loading="eager"
-        format="webp"
-        class="brand__logo"
-      />
+      <MatesLogo class="brand__logo" alt="" width={58} loading="eager" />
       <span class="brand__word" aria-hidden="true">shroom<br />mates</span>
+      <span class="brand__wordmark" aria-hidden="true" style={`--wordmark: url(${logoFont})`}></span>
     </a>
 
     <ul class="nav-links" id="nav-links" role="list">
@@ -170,14 +164,19 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
       </li>
     </ul>
 
-    {
-      hasCart && (
-        <div class="header-cart">
-          <slot name="cart" />
-          <slot name="end" />
-        </div>
-      )
-    }
+    <div class:list={["header-cart", { "header-cart--ig-only": !hasCart }]}>
+      <a
+        href={INSTAGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="header-ig"
+        aria-label="Instagram (öffnet in neuem Tab)"
+      >
+        <Icon name="instagram" size={26} />
+      </a>
+      <slot name="cart" />
+      <slot name="end" />
+    </div>
   </nav>
 </header>
 
@@ -188,8 +187,7 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
     left: 0;
     width: 100%;
     z-index: 1000;
-    background: var(--color-cream);
-    border-bottom: 3px solid var(--color-ink);
+    background: var(--color-bg);
   }
 
   /* ── Info line (shop) ─────────────────────────────── */
@@ -247,7 +245,11 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
   .brand :global(.brand__logo) {
     width: 58px;
     height: 58px;
-    object-fit: contain;
+    flex: none;
+  }
+
+  .brand__wordmark {
+    display: none;
   }
 
   .brand__word {
@@ -278,8 +280,26 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
     gap: 8px;
   }
 
+  /* Instagram icon is mobile-only (desktop has the link in the page) */
+  .header-ig {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--color-accent);
+  }
+
+  .header-cart--ig-only {
+    display: none;
+  }
+
   .nav-pill {
     padding: 0.5rem 1rem;
+  }
+
+  .nav-pill--accent {
+    padding-inline: 1.1rem;
   }
 
   /* Compact pills so 8 links + Pilzkorb stay on one line down to 1241px;
@@ -315,39 +335,97 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
       width: 48px;
       height: 48px;
       padding: 0;
-      border: 2px solid var(--color-ink);
-      border-radius: 50%;
-      background: #fff;
-      color: var(--color-ink);
+      border: 0;
+      background: none;
       cursor: pointer;
     }
 
-    .hamburger :global(.hamburger__close),
-    .hamburger[aria-expanded="true"] :global(.hamburger__open) {
-      display: none;
+    .site-header {
+      border-bottom: 2px solid var(--color-accent);
     }
 
-    .hamburger[aria-expanded="true"] :global(.hamburger__close) {
+    /* three orange bars (30 x 3 px), become an X when open */
+    .hamburger__bars {
+      position: relative;
       display: block;
+      width: 48px;
+      height: 48px;
     }
 
-    .brand {
-      gap: 6px;
+    .hamburger__bars i {
+      position: absolute;
+      left: 9px;
+      width: 30px;
+      height: 3px;
+      border-radius: 3px;
+      background: var(--color-accent);
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    .hamburger__bars i:nth-child(1) {
+      top: 12.5px;
+    }
+
+    .hamburger__bars i:nth-child(2) {
+      top: 22.5px;
+    }
+
+    .hamburger__bars i:nth-child(3) {
+      top: 32.5px;
+    }
+
+    .hamburger[aria-expanded="true"] .hamburger__bars i:nth-child(1) {
+      transform: translateY(10px) rotate(45deg);
+    }
+
+    .hamburger[aria-expanded="true"] .hamburger__bars i:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger[aria-expanded="true"] .hamburger__bars i:nth-child(3) {
+      transform: translateY(-10px) rotate(-45deg);
+    }
+
+    .hamburger:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hamburger__bars i {
+        transition: none;
+      }
     }
 
     .brand :global(.brand__logo) {
-      width: 40px;
-      height: 40px;
+      display: none;
     }
 
     .brand__word {
-      font-size: 21px;
-      line-height: 0.86;
+      display: none;
     }
 
-    .header-cart {
+    /* Bentley wordmark (SVG, tinted with the accent colour) */
+    .brand__wordmark {
+      display: block;
+      width: 88px;
+      aspect-ratio: 42.47 / 15.81;
+      background: var(--color-accent);
+      -webkit-mask: var(--wordmark) center / contain no-repeat;
+      mask: var(--wordmark) center / contain no-repeat;
+    }
+
+    .header-cart,
+    .header-cart--ig-only {
+      display: flex;
       grid-column: 3;
       justify-self: end;
+    }
+
+    .header-ig {
+      display: inline-flex;
     }
 
     /* Full-screen overlay on ink */

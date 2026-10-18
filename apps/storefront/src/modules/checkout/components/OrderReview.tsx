@@ -17,7 +17,7 @@ export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
   const shipping = cart.shipping_methods?.[0];
 
   return (
-    <section className="rounded-[18px] border-2 border-ink bg-paper p-4 sm:p-5" aria-label="Bestellübersicht">
+    <section className="rounded-none border-2 border-ink bg-paper p-4 sm:p-5" aria-label="Bestellübersicht">
       <h3 className="mb-3 font-display text-[22px]! leading-none! font-black">Deine Bestellung</h3>
       <div className="mb-3">
         {cart.items?.map((item) => (

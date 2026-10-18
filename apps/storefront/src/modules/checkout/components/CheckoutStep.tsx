@@ -13,7 +13,7 @@ interface CheckoutStepProps {
 const SHELL: Record<StepState, string> = {
   active: "bg-white shadow-card",
   done: "bg-white",
-  inactive: "bg-paper opacity-60",
+  inactive: "bg-[#f4f4ff] opacity-60",
 };
 
 const HEAD: Record<StepState, string> = {
@@ -31,7 +31,7 @@ export const CheckoutStep = ({
   children,
 }: CheckoutStepProps) => (
   <section
-    className={`overflow-hidden rounded-[26px] border-[3px] border-ink ${SHELL[state]}`}
+    className={`overflow-hidden rounded-none border-2 border-accent ${SHELL[state]}`}
   >
     <div
       className={`flex items-center justify-between gap-4 px-[22px] py-[18px] ${HEAD[state]}`}

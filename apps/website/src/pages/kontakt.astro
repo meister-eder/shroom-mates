@@ -101,7 +101,7 @@ const topics = [
           </div>
 
           <button type="submit" class="btn btn--primary contact-submit">
-            Abschicken <Icon name="arrow-right" size={20} />
+            Ab geht die Post <Icon name="arrow-right" size={20} />
           </button>
           <div id="result" class="contact-result" role="status" aria-live="polite"></div>
         </form>
@@ -185,7 +185,7 @@ const topics = [
   .contact-card {
     padding: 22px;
     border: 3px solid var(--color-ink);
-    border-radius: 24px;
+    border-radius: 0;
     box-shadow: 6px 6px 0 var(--color-ink);
   }
 
@@ -229,7 +229,7 @@ const topics = [
     padding: 36px;
     background: var(--color-white);
     border: 3px solid var(--color-ink);
-    border-radius: 32px;
+    border-radius: 0;
     box-shadow: var(--shadow-teaser);
   }
 
@@ -267,8 +267,9 @@ const topics = [
   }
 
   .contact-topics .chip[aria-pressed="true"] {
+    border-color: var(--color-ink);
     background: var(--color-accent);
-    color: var(--color-ink);
+    color: var(--color-cream);
   }
 
   .contact-row {
@@ -298,7 +299,7 @@ const topics = [
 
     .form-card {
       padding: 22px 18px;
-      border-radius: 24px;
+      border-radius: 0;
       box-shadow: 6px 6px 0 var(--color-ink);
     }
 

@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import MyceliumScroll from "@shroom-mates/ui/MyceliumScroll.astro";
 import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
 import Layout from "../layouts/Layout.astro";
 
@@ -50,6 +51,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
   isLandingPage={true}
   active="home"
 >
+  <MyceliumScroll />
   <div class="landing">
     <section class="hero container">
       <div class="hero__copy">
@@ -86,9 +88,6 @@ const productColors = ["pink", "lavender", "olive-soft"];
           {
             steps.items.map((step, i) => (
               <li class="comic-panel">
-                <div class="comic-panel__head">
-                  <span class="comic-panel__num">{String(i + 1).padStart(2, "0")}</span>
-                </div>
                 {step.image ? (
                   <Image
                     src={step.image}
@@ -106,6 +105,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
                   />
                 )}
                 <div class="comic-panel__body">
+                  <p class="steps__num">{String(i + 1).padStart(2, "0")}</p>
                   <h3 class="steps__title">{step.title}</h3>
                   <p set:html={step.text} />
                 </div>
@@ -172,19 +172,27 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   /* ── Hero ───────────────────────────────────────── */
+  /* Headline über die volle Breite, darunter Text links und Maskottchen rechts */
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 32px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "title title"
+      "lead mascot"
+      "actions mascot";
+    grid-template-rows: auto auto 1fr;
+    column-gap: 40px;
     padding-top: 32px;
     padding-bottom: 80px;
   }
 
+  .hero__copy {
+    display: contents;
+  }
+
   .hero h1 {
+    grid-area: title;
     letter-spacing: -0.02em;
-    /* Hero-Kontext: Name muss in die Textspalte passen (nowrap) */
-    font-size: clamp(40px, 6.6vw, 96px);
   }
 
   .hero__eyebrow {
@@ -201,11 +209,16 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   .hero__lead {
+    grid-area: lead;
+    align-self: end;
     max-width: 34ch;
     margin: 28px 0 0;
+    font-size: 1.3125rem;
   }
 
   .hero__actions {
+    grid-area: actions;
+    align-self: start;
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
@@ -213,8 +226,9 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   .hero__mascot {
+    grid-area: mascot;
     position: relative;
-    min-height: 420px;
+    min-height: 520px;
   }
 
   .hero__mascot .dots {
@@ -252,7 +266,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
     max-width: 52ch;
     margin: 0 0 40px;
     font-size: 1.1875rem;
-    color: #e9e6cf;
+    color: #d7d9fc;
   }
 
   .steps__grid {
@@ -265,8 +279,17 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   .steps__grid > .comic-panel {
-    border-radius: 6px;
+    border: 0;
+    border-radius: 0;
     background: var(--color-cream);
+    box-shadow: none;
+  }
+
+  .steps__num {
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-accent-dark);
   }
 
   .steps__grid :global(.steps__img) {
@@ -351,7 +374,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
     background: var(--color-accent);
     color: var(--color-ink);
     border: 3px solid var(--color-ink);
-    border-radius: 32px;
+    border-radius: 0;
     box-shadow: var(--shadow-teaser);
   }
 
@@ -383,7 +406,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
     height: 360px;
     object-fit: cover;
     border: 3px solid var(--color-ink);
-    border-radius: 20px;
+    border-radius: 0;
     transform: rotate(3deg);
   }
 
@@ -395,6 +418,11 @@ const productColors = ["pink", "lavender", "olive-soft"];
   @media (max-width: 900px) {
     .hero {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "title"
+        "lead"
+        "actions"
+        "mascot";
       padding-bottom: 56px;
     }
 
@@ -432,7 +460,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
 
     .gastro__box {
       padding: 28px 20px;
-      border-radius: 24px;
+      border-radius: 0;
       box-shadow: 6px 6px 0 var(--color-ink);
     }
 

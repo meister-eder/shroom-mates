@@ -21,7 +21,7 @@ export const OptionCard = ({
   aside,
 }: OptionCardProps) => (
   <label
-    className={`flex items-center justify-between gap-4 rounded-[20px] border-[3px] border-ink px-[18px] py-4 focus-within:outline-[3px] focus-within:outline-offset-2 focus-within:outline-accent ${
+    className={`flex items-center justify-between gap-4 rounded-none border-2 border-accent px-[18px] py-4 focus-within:outline-[3px] focus-within:outline-offset-2 focus-within:outline-accent ${
       checked ? "bg-cream shadow-[4px_4px_0_var(--color-accent)]" : "bg-white"
     } ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
   >

@@ -206,7 +206,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         )}
 
         {isSumUp && (
-          <div className="rounded-[18px] border-2 border-dashed border-ink bg-white p-4 sm:p-5">
+          <div className="rounded-none border-2 border-dashed border-ink bg-white p-4 sm:p-5">
             {isSaving || (!sumupCheckoutId && !error) ? (
               <p className="text-muted">Zahlung wird initialisiert...</p>
             ) : (
@@ -264,7 +264,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             <a
               href={`/${countryCode}/gewaehrleistung`}
               target="_blank"
-              className="flex items-center gap-4 rounded-[18px] border-2 border-ink bg-white p-3 text-[14px] leading-snug text-ink no-underline [&:hover_strong]:underline"
+              className="flex items-center gap-4 rounded-none border-2 border-ink bg-white p-3 text-[14px] leading-snug text-ink no-underline [&:hover_strong]:underline"
               aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
             >
               <img

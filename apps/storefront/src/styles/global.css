@@ -90,7 +90,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  border-radius: 0;
   font-family: "DM Mono", monospace;
   font-size: 0.7rem;
   font-weight: 500;
@@ -122,8 +122,8 @@
 .input-field {
   width: 100%;
   padding: 0.7rem 0.875rem;
-  border: 1.5px solid #d1cdc5;
-  border-radius: 8px;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
   background: #fff;
   font-family: "Geist Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
@@ -136,7 +136,7 @@
 }
 
 .input-field:hover {
-  border-color: #999;
+  border-color: var(--color-ink);
 }
 
 .input-field:focus {
@@ -209,9 +209,9 @@ select.input-field {
 .shop-card,
 .checkout-step {
   background: var(--bg-color);
-  border: 2px solid #000;
-  border-radius: 8px;
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .checkout-step {
@@ -223,7 +223,7 @@ select.input-field {
   align-items: center;
   gap: 0.875rem;
   padding: 1.125rem 1.5rem;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid var(--border-subtle);
   background: var(--bg-accent);
 }
 
@@ -234,7 +234,7 @@ select.input-field {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  border: 2px solid var(--border-subtle);
   font-family: "DM Mono", monospace;
   font-weight: 700;
   font-size: 0.8rem;
@@ -320,8 +320,8 @@ select.input-field {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  border: 2px solid #000;
-  border-radius: 8px;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
   background: #fff;
   cursor: pointer;
   transition:
@@ -331,7 +331,7 @@ select.input-field {
 
 .option-card.selected {
   border-color: var(--accent);
-  background: #fff9f5;
+  background: var(--color-cream);
   box-shadow: 0 0 0 1px var(--accent);
 }
 
@@ -355,8 +355,8 @@ select.input-field {
   height: 4rem;
   flex-shrink: 0;
   object-fit: cover;
-  border: 2px solid #000;
-  border-radius: 8px;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
   background: var(--bg-warm);
 }
 
@@ -370,15 +370,15 @@ select.input-field {
 /* ── Order summary card ───────────────────────────────────────────────────── */
 .order-summary-card {
   background: var(--bg-color);
-  border: 2px solid #000;
-  border-radius: 8px;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .order-summary-header {
   padding: 1rem 1.375rem;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid var(--border-subtle);
   background: var(--bg-accent);
 }
 
@@ -400,7 +400,7 @@ select.input-field {
   align-items: baseline;
   padding: 0.875rem 0 0;
   margin-top: 0.625rem;
-  border-top: 1.5px solid #ccc;
+  border-top: 1.5px solid var(--border-subtle);
   font-weight: 700;
   font-size: 1.075rem;
 }
@@ -427,13 +427,13 @@ select.input-field {
 .order-final {
   display: grid;
   gap: 1rem;
-  border-top: 2px solid rgba(0, 0, 0, 0.08);
+  border-top: 2px solid var(--border-subtle);
   padding-top: 1.25rem;
 }
 
 .order-review {
   background: var(--bg-accent);
-  border-radius: 8px;
+  border-radius: 0;
   padding: 1rem 1.25rem;
 }
 
@@ -443,7 +443,7 @@ select.input-field {
   gap: 1rem;
   padding: 0.75rem;
   border: 2px solid #003399;
-  border-radius: 8px;
+  border-radius: 0;
   background: #fff;
   color: var(--text-color);
   font-size: 0.85rem;
@@ -455,7 +455,7 @@ select.input-field {
   width: 64px;
   height: auto;
   flex-shrink: 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-subtle);
 }
 
 .warranty-notice:hover strong {

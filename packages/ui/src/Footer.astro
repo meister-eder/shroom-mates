@@ -41,22 +41,38 @@ interface Props {
 const { app = "website", countryCode = "de", legalExtended } = Astro.props;
 const columns = footerColumns(app, countryCode, legalExtended);
 const currentYear = new Date().getFullYear();
+
+/* Augen der Footer-Zeichnung (Pixelkoordinaten im 1200 x 547-Raster des Bildes) */
+const eyes = [{"x": 1003.2, "y": 199.9, "rx": 8.5, "ry": 7.5}, {"x": 979.0, "y": 206.9, "rx": 7.0, "ry": 6.5}, {"x": 1160.2, "y": 303.7, "rx": 4.0, "ry": 8.5}, {"x": 1145.9, "y": 307.2, "rx": 4.5, "ry": 9.0}, {"x": 181.3, "y": 307.4, "rx": 4.5, "ry": 5.0}, {"x": 196.8, "y": 309.4, "rx": 4.5, "ry": 6.0}, {"x": 1050.6, "y": 335.1, "rx": 4.0, "ry": 5.5}, {"x": 1062.7, "y": 335.6, "rx": 4.5, "ry": 7.5}, {"x": 674.6, "y": 346.0, "rx": 3.0, "ry": 6.0}, {"x": 662.3, "y": 349.3, "rx": 3.0, "ry": 6.5}, {"x": 883.5, "y": 349.6, "rx": 5.0, "ry": 5.0}, {"x": 897.1, "y": 354.6, "rx": 4.5, "ry": 5.0}, {"x": 72.3, "y": 381.0, "rx": 7.0, "ry": 8.0}, {"x": 101.6, "y": 381.4, "rx": 7.0, "ry": 7.0}, {"x": 439.5, "y": 389.2, "rx": 3.0, "ry": 6.0}, {"x": 749.7, "y": 431.3, "rx": 7.0, "ry": 3.5}, {"x": 786.0, "y": 442.7, "rx": 7.5, "ry": 4.0}, {"x": 204.1, "y": 467.4, "rx": 8.0, "ry": 9.5}, {"x": 526.3, "y": 493.7, "rx": 4.5, "ry": 5.0}, {"x": 512.2, "y": 494.6, "rx": 3.5, "ry": 5.0}, {"x": 126.9, "y": 494.7, "rx": 4.0, "ry": 4.0}];
+const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
 ---
 
 <footer class="site-footer" role="contentinfo">
-  <Image
-    class="footer-drawing"
-    src={drawing}
-    alt="Gezeichnete Menge kleiner Pilzfiguren mit Gesichtern"
-    widths={[640, 1180, 1536]}
-    sizes="(min-width: 1260px) 1180px, 100vw"
-    format="webp"
-    loading="lazy"
-  />
+  <div class="footer-drawing-wrap" data-footer-eyes>
+    <Image
+      class="footer-drawing"
+      src={drawing}
+      alt="Gezeichnete Menge kleiner Pilzfiguren mit Gesichtern"
+      widths={[640, 1180, 1536]}
+      sizes="(min-width: 1260px) 1180px, 100vw"
+      format="webp"
+      loading="lazy"
+    />
+    <svg class="footer-eyes" viewBox="0 0 1200 547" aria-hidden="true" focusable="false">
+      {
+        eyes.map((e) => (
+          <g data-eye data-cx={e.x} data-cy={e.y} data-r={Math.min(e.rx, e.ry)}>
+            <ellipse cx={e.x} cy={e.y} rx={e.rx + 3} ry={e.ry + 3} fill={BODY} />
+            <ellipse class="footer-eyes__pupil" cx={e.x} cy={e.y} rx={e.rx} ry={e.ry} fill="#15132b" />
+          </g>
+        ))
+      }
+    </svg>
+  </div>
 
   <div class="footer-main">
     <p class="footer-claim">
-      <span>Bis bald</span> <span>in der</span> <span>Glasfabrik!</span>
+      <span>Mush love,</span> <span>eure</span> <span>shroom mates!</span>
     </p>
 
     <nav class="footer-cols" aria-label="Footer">
@@ -116,39 +132,53 @@ const currentYear = new Date().getFullYear();
   .site-footer {
     width: 100%;
     margin-top: auto;
-    padding: 72px var(--gutter) 40px;
+    padding: 0 var(--gutter) 40px;
     overflow: hidden;
-    background: var(--color-night);
-    color: var(--color-paper);
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  .footer-drawing-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
   }
 
   .site-footer :global(.footer-drawing) {
     display: block;
     width: 100%;
-    max-width: 1180px;
-    margin: 0 auto 48px;
     height: auto;
+  }
+
+  .footer-eyes {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
   }
 
   .footer-main {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 48px;
+    gap: 40px;
     max-width: var(--container);
     margin: 0 auto;
     padding-top: 48px;
-    border-top: 2px solid var(--color-paper);
+    border-top: 2px solid var(--color-accent);
   }
 
   .footer-claim {
-    flex: 1 1 420px;
+    flex: 1 1 100%;
     margin: 0;
+    text-align: center;
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(48px, 6vw, 96px);
-    line-height: 0.88;
+    font-size: clamp(40px, 6vw, 88px);
+    line-height: 0.95;
     color: var(--color-accent);
     text-wrap: balance;
   }
@@ -158,10 +188,14 @@ const currentYear = new Date().getFullYear();
   }
 
   .footer-cols {
-    flex: 2 1 560px;
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 32px 16px;
     font-size: 16px;
     line-height: 1.8;
   }
@@ -175,7 +209,7 @@ const currentYear = new Date().getFullYear();
     line-height: 1.4;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #a39e8a;
+    color: var(--color-muted);
   }
 
   .footer-col ul {
@@ -192,20 +226,15 @@ const currentYear = new Date().getFullYear();
   .footer-col a {
     display: inline-block;
     padding-block: 2px;
-    color: var(--color-paper);
+    color: var(--color-ink);
     text-decoration: none;
     overflow-wrap: anywhere;
   }
 
   .footer-col a:hover {
-    color: var(--color-accent-light);
+    color: var(--color-accent-dark);
     text-decoration: underline;
     text-underline-offset: 3px;
-  }
-
-  .footer-col a:focus-visible,
-  .footer-credit a:focus-visible {
-    outline-color: var(--color-paper);
   }
 
   .footer-actions {
@@ -216,7 +245,7 @@ const currentYear = new Date().getFullYear();
   .footer-actions :global(a) {
     padding: 0.5rem 1.1rem;
     min-height: 44px;
-    border: 2px solid var(--color-paper);
+    border: 2px solid var(--color-ink);
     border-radius: var(--radius-pill);
     font-weight: 700;
   }
@@ -224,28 +253,71 @@ const currentYear = new Date().getFullYear();
   .footer-credit {
     max-width: var(--container);
     margin: 48px auto 0;
+    text-align: center;
     font-family: var(--font-mono);
     font-size: 13px;
-    color: #a39e8a;
+    color: var(--color-muted);
   }
 
   .footer-credit a {
-    color: var(--color-paper);
+    color: var(--color-ink);
   }
 
   .footer-credit :global(.footer-credit__icon) {
     display: inline-block;
     vertical-align: -3px;
-    color: var(--color-accent-light);
+    color: var(--color-accent);
   }
 
   @media (max-width: 768px) {
-    .site-footer {
-      padding-top: 48px;
-    }
-
     .footer-cols {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
+
+<script>
+  // Pupils follow the pointer (rAF-throttled). Touch / reduced motion: they keep
+  // their drawn position.
+  function init() {
+    const wrap = document.querySelector<HTMLElement>("[data-footer-eyes]");
+    if (!wrap || wrap.dataset.ready) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    wrap.dataset.ready = "1";
+    const svg = wrap.querySelector("svg") as SVGSVGElement;
+    const eyes = [...svg.querySelectorAll<SVGGElement>("[data-eye]")].map((g) => ({
+      pupil: g.querySelector<SVGEllipseElement>(".footer-eyes__pupil")!,
+      cx: Number(g.dataset.cx),
+      cy: Number(g.dataset.cy),
+      r: Number(g.dataset.r),
+    }));
+    let px = 0;
+    let py = 0;
+    let frame = 0;
+    const draw = () => {
+      frame = 0;
+      const rect = svg.getBoundingClientRect();
+      const k = rect.width / 1200;
+      for (const e of eyes) {
+        const dx = px - (rect.left + e.cx * k);
+        const dy = py - (rect.top + e.cy * k);
+        const d = Math.hypot(dx, dy) || 1;
+        const reach = Math.min(1, d / 160) * (e.r * 0.7);
+        e.pupil.setAttribute("transform", `translate(${((dx / d) * reach).toFixed(2)} ${((dy / d) * reach).toFixed(2)})`);
+      }
+    };
+    addEventListener(
+      "pointermove",
+      (ev) => {
+        px = ev.clientX;
+        py = ev.clientY;
+        if (!frame) frame = requestAnimationFrame(draw);
+      },
+      { passive: true },
+    );
+  }
+  document.addEventListener("astro:page-load", init);
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
+</script>

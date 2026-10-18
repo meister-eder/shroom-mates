@@ -379,7 +379,7 @@ const productSchemas = growkits.map((growkit) => ({
   .hero__media .dots {
     position: absolute;
     inset: 0 40px 40px 0;
-    border-radius: 40px;
+    border-radius: 0;
   }
 
   .hero__media :global(.hero__img) {
@@ -426,7 +426,7 @@ const productSchemas = growkits.map((growkit) => ({
     max-width: 56ch;
     margin: 0 0 16px;
     font-size: 1.1875rem;
-    color: #e9e6cf;
+    color: #d7d9fc;
   }
 
   .guide__grid {
@@ -439,7 +439,7 @@ const productSchemas = growkits.map((growkit) => ({
   }
 
   .guide__grid > .comic-panel {
-    border-radius: 6px;
+    border-radius: 0;
     background: var(--color-cream);
   }
 
@@ -473,7 +473,7 @@ const productSchemas = growkits.map((growkit) => ({
   .guide__fallback {
     max-width: 70ch;
     margin-top: 24px;
-    color: #e9e6cf;
+    color: #d7d9fc;
   }
 
   .guide__fallback :global(a) {
@@ -570,5 +570,15 @@ const productSchemas = growkits.map((growkit) => ({
     .hero__media :global(.hero__img) {
       rotate: none;
     }
+  }
+
+  /* Growkit-Auswahl: Band mit gerader Kante statt Wellen */
+  .kits {
+    border-block: 3px solid var(--color-ink);
+  }
+
+  .kits::before,
+  .kits::after {
+    display: none;
   }
 </style>

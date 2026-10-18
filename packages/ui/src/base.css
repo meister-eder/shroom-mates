@@ -7,10 +7,11 @@
    dieselben Werte hat. Alte Namen (--accent, --text-color, …) bleiben. */
 :root {
   /* Flächen */
-  --color-cream: #fdfcea;
-  --color-paper: #f2eedb;
-  --color-ink: #1d1d1d;
-  --color-night: #141210;
+  --color-bg: #e9eaff;
+  --color-cream: #fffdf5;
+  --color-paper: #d7d9fc;
+  --color-ink: #1c1a33;
+  --color-night: #13122a;
   --color-white: #ffffff;
 
   /* Akzent: Orange nur groß (>= 24px bold) oder mit Tinte darauf;
@@ -20,19 +21,22 @@
   --color-accent-light: #ff9c7e;
 
   /* Produktfarben (Growkit-Kartons) */
-  --color-lavender: #b0b1f1;
-  --color-pink: #f5cbcd;
-  --color-olive-soft: #d8da8a;
+  --color-lavender: #9fa2f7;
+  --color-pink: #ffc4d2;
+  --color-olive-soft: #f2ec8a;
   --color-olive: #7e8503;
-  --color-stone: #868174;
-  --color-muted: #5c5a50;
+  --color-indigo: #3d41b8;
+  --color-stone: #7c7da6;
+  --color-green: #36e27b;
+  --color-muted: #55557a;
 
   --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
   --font-body: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
-  --radius-card: 28px;
-  --radius-img: 16px;
+  --radius-card: 0;
+  --radius-img: 0;
+  --radius-arch: 200px 200px 0 0;
   --radius-pill: 999px;
   --shadow-btn: 4px 4px 0 var(--color-ink);
   --shadow-card: 8px 8px 0 var(--color-ink);
@@ -48,11 +52,11 @@
   --color-earth-light: #f5edd6;
   --text-color: var(--color-ink);
   --text-muted: var(--color-muted);
-  --bg-color: #ffffff;
+  --bg-color: var(--color-cream);
   --bg-accent: var(--color-cream);
   --bg-warm: var(--color-paper);
   --border-color: var(--color-ink);
-  --border-subtle: #e0d8c8;
+  --border-subtle: #b9bbe6;
   --focus-color: var(--color-ink);
 
   /* Layout (navbar heights are synced to the real header by LayoutScripts) */
@@ -87,7 +91,7 @@ html {
   font-size: 17px;
   line-height: 1.55;
   color: var(--color-ink);
-  background: var(--color-cream);
+  background: var(--color-bg);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -97,7 +101,7 @@ body {
   padding: 0;
   overflow-x: hidden;
   font-family: var(--font-body);
-  background: var(--color-cream);
+  background: var(--color-bg);
   color: var(--color-ink);
 }
 

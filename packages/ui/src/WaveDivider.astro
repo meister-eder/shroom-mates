@@ -1,0 +1,51 @@
+---
+/**
+ * Wave edge between two light sections (Redesign 2026, version B).
+ * Place it directly above a band (default) or below it (`flip`).
+ * Dark bands and the footer keep a straight edge, so don't use it there.
+ *
+ * Usage: <WaveDivider color="var(--color-paper)" />   (top edge of the band)
+ *        <WaveDivider color="var(--color-paper)" flip /> (bottom edge)
+ */
+interface Props {
+  /** Fill, same colour as the band the wave belongs to */
+  color?: string;
+  /** Mirror vertically for the bottom edge of a band */
+  flip?: boolean;
+}
+
+const { color = "var(--color-paper)", flip = false } = Astro.props;
+---
+
+<svg
+  class:list={["wave-divider", { "wave-divider--flip": flip }]}
+  aria-hidden="true"
+  viewBox="0 0 1440 56"
+  preserveAspectRatio="none"
+  style={`--wave-fill: ${color}`}
+>
+  <path
+    d="M0 56V28C80 6 160 6 240 28S400 50 480 28 640 6 720 28 880 50 960 28 1120 6 1200 28 1360 50 1440 28V56Z"
+  ></path>
+</svg>
+
+<style>
+  .wave-divider {
+    display: block;
+    width: 100%;
+    height: 56px;
+    margin: 0 0 -1px;
+    fill: var(--wave-fill);
+  }
+
+  .wave-divider--flip {
+    margin: -1px 0 0;
+    transform: scaleY(-1);
+  }
+
+  @media (max-width: 768px) {
+    .wave-divider {
+      height: 32px;
+    }
+  }
+</style>

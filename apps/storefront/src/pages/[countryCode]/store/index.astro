@@ -5,7 +5,8 @@ import { listProducts } from "@lib/data/products";
 import { getRegionParams } from "@lib/params/region-params";
 import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
 import StoreHero from "@modules/store/components/StoreHero.astro";
-import FreshLink from "@modules/store/components/FreshLink.astro";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import NewsBand from "@modules/store/components/NewsBand.astro";
 
 export const getStaticPaths = getRegionParams;
 
@@ -113,13 +114,7 @@ const getCategory = (product: (typeof products)[number]) =>
     {
       !error && filteredProducts.length === 0 && (
         <div class="empty-state" role="status">
-          <img
-            src="/mascot.webp"
-            alt=""
-            aria-hidden="true"
-            width="140"
-            height="140"
-          />
+          <MatesLogo alt="" width={140} />
           <p class="empty-state__title">Hier wächst noch nichts.</p>
           <p>Keine Produkte in dieser Kategorie.</p>
           <a href={`/${countryCode}/store`} class="btn btn--primary">
@@ -156,6 +151,7 @@ const getCategory = (product: (typeof products)[number]) =>
       9,95 €). Lieferzeit 3–5 Werktage, Lieferung nur innerhalb Deutschlands.
     </p>
 
-    <FreshLink />
   </div>
+
+  <NewsBand />
 </Layout>

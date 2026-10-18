@@ -1,0 +1,90 @@
+---
+/**
+ * A little mushroom that rolls along the top wave of every `.section--paper`
+ * band while scrolling (down = right, up = back, turns around at the edges).
+ * Static / hidden with reduced motion. Include once per page (website layout).
+ */
+---
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  const SVG =
+    '<svg viewBox="0 0 36 36" width="48" height="48"><rect x="12" y="17" width="12" height="17" rx="4" fill="#fffdf5" stroke="#1c1a33" stroke-width="2"/><path d="M3 20a15 14 0 0 1 30 0z" fill="#7d4d2c" stroke="#1c1a33" stroke-width="2" stroke-linejoin="round"/><circle cx="15.5" cy="25" r="1.1" fill="#1c1a33"/><circle cx="20.5" cy="25" r="1.1" fill="#1c1a33"/><path d="M15.2 28.6q2.8 2.6 5.6 0" fill="none" stroke="#1c1a33" stroke-width="1.3" stroke-linecap="round"/><circle cx="12" cy="13" r="2" fill="#fffdf5"/><circle cx="22" cy="10" r="2.2" fill="#fffdf5"/><circle cx="27" cy="16" r="1.6" fill="#fffdf5"/></svg>';
+
+  function init() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const bands = [...document.querySelectorAll<HTMLElement>(".section--paper")].filter(
+      (b) => getComputedStyle(b, "::before").display !== "none",
+    );
+    if (!bands.length || document.body.dataset.waveRoller) return;
+    document.body.dataset.waveRoller = "1";
+
+    const W = 1440;
+    const M = 40;
+    const span = W - 2 * M;
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute(
+      "d",
+      "M0 28C80 6 160 6 240 28S400 50 480 28 640 6 720 28 880 50 960 28 1120 6 1200 28 1360 50 1440 28",
+    );
+    const len = path.getTotalLength();
+    const waveY = (x: number) => {
+      let lo = 0;
+      let hi = len;
+      for (let i = 0; i < 24; i++) {
+        const mid = (lo + hi) / 2;
+        if (path.getPointAtLength(mid).x < x) lo = mid;
+        else hi = mid;
+      }
+      return path.getPointAtLength(hi).y;
+    };
+
+    const rollers = bands.map((band) => {
+      const el = document.createElement("div");
+      el.setAttribute("aria-hidden", "true");
+      el.style.cssText =
+        "position:absolute;z-index:2;width:48px;height:48px;margin-left:-24px;pointer-events:none";
+      el.innerHTML = SVG;
+      band.append(el);
+      return el;
+    });
+
+    let offset = 0;
+    let lastY = window.scrollY;
+    let frame = 0;
+    const draw = () => {
+      frame = 0;
+      const t = (((offset * 0.9) % (2 * span)) + 2 * span) % (2 * span);
+      const rx = M + (t <= span ? t : 2 * span - t);
+      const wy = waveY(rx);
+      rollers.forEach((el, i) => {
+        const h = bands[i].clientWidth < 768 ? 32 : 56;
+        el.style.left = `${(rx / W) * 100}%`;
+        // wave sits above the band: its box starts h px above the band's top edge
+        el.style.top = `${Math.round(-h + (wy * h) / 56 - 45)}px`;
+        el.style.transform = `rotate(${Math.round((rx / 24) * 57.3)}deg)`;
+      });
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(draw);
+    };
+    addEventListener(
+      "scroll",
+      () => {
+        offset += window.scrollY - lastY;
+        lastY = window.scrollY;
+        schedule();
+      },
+      { passive: true },
+    );
+    addEventListener("resize", schedule);
+    draw();
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    delete document.body.dataset.waveRoller;
+    init();
+  });
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
+</script>
