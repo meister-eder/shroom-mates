@@ -1,6 +1,14 @@
 ---
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import bunteWelt from "../assets/images/fotos/bunte-pilze-oben.jpg";
+import marktstand from "../assets/images/fotos/marktstand-lions-mane.jpg";
+import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
+import blackPearl from "../assets/images/fotos/black-pearl.jpg";
+import lionsMane from "../assets/images/fotos/lions-mane-makro.jpg";
+import pioppino from "../assets/images/fotos/pioppino.jpg";
+import rosaLamellen from "../assets/images/fotos/rosa-lamellen.jpg";
 import Layout from "../layouts/Layout.astro";
 
 const gastroPageEntry = await getEntry("gastronomie-page", "content");
@@ -14,7 +22,6 @@ const {
 	heroTitle,
 	heroSubtitle,
 	heroImage,
-	heroImageAlt,
 	introTitle,
 	introText,
 	introText2,
@@ -27,6 +34,15 @@ const {
 	ctaEmail,
 } = gastroPageEntry.data;
 
+// Foto + Alt-Text je Sorte (Schlüssel = Titel aus dem Content); Fallback: Saisonsorten
+const sortenFotos: Record<string, { image: ImageMetadata; alt: string }> = {
+	Austernpilze: { image: rosaLamellen, alt: "Rosa Austernpilze am Block" },
+	"Lion's Mane": { image: lionsMane, alt: "Lion's Mane in Nahaufnahme" },
+	Pioppino: { image: pioppino, alt: "Pioppino-Büschel" },
+	Saisonsorten: { image: blackPearl, alt: "Black Pearl, eine Saisonsorte" },
+};
+const fallbackFoto = { image: blackPearl, alt: "" };
+
 const gastroSchema = {
 	"@context": "https://schema.org",
 	"@type": "Service",
@@ -38,10 +54,10 @@ const gastroSchema = {
 		name: "shroom-mates",
 		address: {
 			"@type": "PostalAddress",
-			streetAddress: "Markranstädter Straße 8",
+			streetAddress: "Franz-Flemming-Straße 25",
 			addressLocality: "Leipzig",
 			addressRegion: "Sachsen",
-			postalCode: "04229",
+			postalCode: "04179",
 			addressCountry: "DE",
 		},
 	},
@@ -53,345 +69,375 @@ const gastroSchema = {
 };
 ---
 
-<Layout title={title} description={description} ogImage={heroImage?.src}>
-    <script
-        type="application/ld+json"
-        set:html={JSON.stringify(gastroSchema)}
-    />
+<Layout title={title} description={description} ogImage={heroImage?.src} active="gastro" isLandingPage>
+  <script type="application/ld+json" set:html={JSON.stringify(gastroSchema)} />
 
-    <!-- Hero Section with Image -->
-    <section class="hero">
-        <Image
-            src={heroImage}
-            alt={heroImageAlt}
-            class="hero-image"
-            width={1920}
-            height={1080}
-            priority
+  <div class="gastro-page">
+    <section class="gastro-hero">
+      <div class="container gastro-hero__inner">
+        <div class="gastro-hero__copy">
+          <h1 class="eyebrow eyebrow--on-dark gastro-hero__eyebrow">Pilze für Gastronomie in Leipzig</h1>
+          <p class="gastro-hero__title">{heroTitle}</p>
+          {heroSubtitle && <p class="gastro-hero__lead">{heroSubtitle}</p>}
+          <a class="btn btn--accent gastro-hero__cta" href="#anfrage">Angebot anfragen</a>
+        </div>
+        <div class="gastro-hero__photos">
+          <Image
+            src={bunteWelt}
+            alt="Austernpilze in Gelb, Rosa und Weiß mit Lion's Mane"
+            class="gastro-hero__img gastro-hero__img--tall"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 900px) 50vw, 280px"
+            loading="eager"
             format="webp"
-            decoding="async"
-        />
+          />
+          <Image
+            src={marktstand}
+            alt="Korb mit Lion's Mane am Marktstand"
+            class="gastro-hero__img"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 900px) 50vw, 280px"
+            loading="eager"
+            format="webp"
+          />
+          <Image
+            src={schneidebrett}
+            alt="Pioppino und Seitlinge auf dem Schneidebrett"
+            class="gastro-hero__img"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 900px) 50vw, 280px"
+            loading="eager"
+            format="webp"
+          />
+        </div>
+      </div>
     </section>
 
-    <main class="gastro-page">
-        <section class="title-section reveal">
-            <h1>{heroTitle}</h1>
-            {heroSubtitle && <p class="subtitle">{heroSubtitle}</p>}
-        </section>
+    <section class="container gastro-intro" aria-labelledby="intro-heading">
+      <h2 id="intro-heading" class="text-accent">{introTitle}</h2>
+      <div class="gastro-intro__text">
+        <p class="lead">{introText}</p>
+        {introText2 && <p class="lead">{introText2}</p>}
+      </div>
+    </section>
 
-        <section class="intro-section reveal" aria-label="Einleitung">
-            <div class="content-grid">
-                <div class="text-content">
-                    <h2>{introTitle}</h2>
-                    <p>{introText}</p>
-                    {introText2 && <p>{introText2}</p>}
-                </div>
-            </div>
-        </section>
+    <section class="container gastro-sorten" aria-labelledby="sorten-heading">
+      <h2 id="sorten-heading" class="text-accent">Was auf den Teller kommt</h2>
+      <p class="sr-only">Unser Sortiment für die Gastronomie</p>
+      <ul class="sorten-grid" role="list">
+        {
+          sorten.map((sorte) => {
+            const foto = sortenFotos[sorte.title] ?? fallbackFoto;
+            return (
+              <li>
+                <figure class="sorte">
+                  <div class="arch-frame sorte__frame">
+                    <Image
+                      src={foto.image}
+                      alt={foto.alt}
+                      widths={[320, 480, 640]}
+                      sizes="(max-width: 768px) 90vw, 280px"
+                      format="webp"
+                    />
+                  </div>
+                  <figcaption>
+                    <h3 class="sorte__title">{sorte.title}</h3>
+                    <p>{sorte.description}</p>
+                  </figcaption>
+                </figure>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
 
-        <section class="sorten-section" aria-label="Verfügbare Pilzsorten">
-            <h2>Unser Sortiment für die Gastronomie</h2>
-            <div class="sorten-grid">
-                {
-                    sorten.map((sorte, index) => (
-                        <article
-                            class="sorte-card reveal-scale"
-                            style={`--reveal-delay: ${index * 100}ms`}
-                        >
-                            <h3>{sorte.title}</h3>
-                            <p>{sorte.description}</p>
-                        </article>
-                    ))
-                }
-            </div>
-        </section>
+    <section class="section section--night vorteile" aria-labelledby="vorteile-heading">
+      <div class="container vorteile__inner">
+        <h2 id="vorteile-heading">Warum shroom-mates?</h2>
+        <ul class="vorteile__list" role="list">
+          {
+            vorteile.map((vorteil) => (
+              <li>
+                <Icon name="check" size={28} strokeWidth={3} class="vorteile__icon" />
+                <span set:html={vorteil} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
 
-        <section class="vorteile-section" aria-label="Vorteile für Gastronomen">
-            <h2>Warum shroom-mates?</h2>
-            <ul class="vorteile-list">
-                {
-                    vorteile.map((vorteil, index) => (
-                        <li
-                            class="reveal"
-                            style={`--reveal-delay: ${index * 80}ms`}
-                            set:html={vorteil}
-                        />
-                    ))
-                }
-            </ul>
-        </section>
-
-        <section class="cta-section reveal" aria-label="Kontakt aufnehmen">
-            <h2>{ctaTitle}</h2>
-            <p>{ctaText}</p>
-            <div class="cta-buttons">
-                <a href={ctaButtonLink} class="cta-button primary"
-                    >{ctaButtonText}</a
-                >
-                {
-                    ctaEmail && (
-                        <a
-                            href={`mailto:${ctaEmail}`}
-                            class="cta-button secondary"
-                        >
-                            {ctaEmail}
-                        </a>
-                    )
-                }
-            </div>
-        </section>
-    </main>
+    <section id="anfrage" class="container gastro-cta" aria-labelledby="cta-heading">
+      <div class="gastro-cta__box">
+        <h2 id="cta-heading">{ctaTitle}</h2>
+        <p class="lead">{ctaText}</p>
+        <div class="gastro-cta__actions">
+          <a href={ctaButtonLink} class="btn btn--primary">{ctaButtonText}</a>
+          {
+            ctaEmail && (
+              <a class="gastro-cta__mail" href={`mailto:${ctaEmail}`}>
+                {ctaEmail}
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </section>
+  </div>
 </Layout>
 
 <style>
-    /* Hero Section - full-bleed image like growkits/tinkturen */
-    .hero {
-        position: relative;
-        width: calc(100vw - var(--scrollbar-width, 0px));
-        height: 70vh;
-        margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-        margin-top: -1.5rem;
-        overflow: hidden;
+  .gastro-page {
+    padding-top: var(--navbar-height);
+    overflow-x: clip;
+  }
+
+  /* ── Hero (dunkles Band) ────────────────────────── */
+  .gastro-hero {
+    margin-top: 0;
+    padding: 64px 0 72px;
+    background: var(--color-night);
+    color: var(--color-paper);
+    border-bottom: 3px solid var(--color-ink);
+  }
+
+  .gastro-hero__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .gastro-hero__copy {
+    flex: 1 1 480px;
+    min-width: 0;
+  }
+
+  .gastro-hero__eyebrow {
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .gastro-hero__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(44px, 7.4vw, 112px);
+    line-height: 0.9;
+    color: var(--color-accent);
+    text-wrap: balance;
+  }
+
+  .gastro-hero__lead {
+    max-width: 42ch;
+    margin: 24px 0 0;
+    font-size: 1.3125rem;
+    line-height: 1.5;
+    color: #cfcab4;
+  }
+
+  .gastro-hero__cta {
+    margin-top: 32px;
+    box-shadow: 4px 4px 0 var(--color-paper);
+  }
+
+  .gastro-hero__photos {
+    flex: 1 1 340px;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .gastro-hero__photos :global(.gastro-hero__img) {
+    width: 100%;
+    height: 182px;
+    object-fit: cover;
+    border: 3px solid var(--color-paper);
+    border-radius: 20px;
+    box-sizing: border-box;
+  }
+
+  .gastro-hero__photos :global(.gastro-hero__img--tall) {
+    grid-row: span 2;
+    height: 380px;
+  }
+
+  /* ── Intro ──────────────────────────────────────── */
+  .gastro-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 24px 64px;
+    align-items: start;
+    padding-top: 96px;
+  }
+
+  .gastro-intro__text p {
+    margin: 0 0 1rem;
+  }
+
+  /* ── Sortiment: Foto-Karten mit Bildunterschrift ── */
+  .gastro-sorten {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  .gastro-sorten > h2 {
+    margin-bottom: 40px;
+  }
+
+  .sorten-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 40px 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sorte {
+    margin: 0;
+  }
+
+  .sorte__frame {
+    aspect-ratio: 3 / 4;
+  }
+
+  .sorte__frame :global(img) {
+    height: 100%;
+  }
+
+  .sorte figcaption {
+    padding: 20px 4px 0;
+  }
+
+  .sorte__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: 1.875rem;
+  }
+
+  .sorte figcaption p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* ── Vorteile (dunkles Band) ────────────────────── */
+  .vorteile__inner > h2 {
+    margin-bottom: 40px;
+    color: var(--color-accent-light);
+  }
+
+  .vorteile__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .vorteile__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border-radius: 18px;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+  }
+
+  .vorteile__list :global(.vorteile__icon) {
+    flex: none;
+    color: var(--color-accent-dark);
+  }
+
+  /* ── Anfrage ────────────────────────────────────── */
+  .gastro-cta {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  .gastro-cta__box {
+    padding: 48px;
+    background: var(--color-accent);
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    border-radius: 32px;
+    box-shadow: var(--shadow-teaser);
+  }
+
+  .gastro-cta__box h2 {
+    max-width: 14ch;
+    margin-bottom: 16px;
+    font-size: clamp(40px, 5vw, 64px);
+  }
+
+  .gastro-cta__box .lead {
+    max-width: 44ch;
+    margin: 0 0 28px;
+  }
+
+  .gastro-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 28px;
+  }
+
+  .gastro-cta__box .btn--primary {
+    box-shadow: 4px 4px 0 var(--color-cream);
+  }
+
+  .gastro-cta__mail {
+    color: var(--color-ink);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 900px) {
+    .gastro-intro {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gastro-hero {
+      padding: 40px 0 56px;
     }
 
-    .hero-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-bottom: 2px solid var(--text-color);
+    .gastro-hero__photos :global(.gastro-hero__img) {
+      height: 150px;
     }
 
-    .gastro-page {
-        min-height: 30vh;
+    .gastro-hero__photos :global(.gastro-hero__img--tall) {
+      height: 316px;
     }
 
-    .title-section {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 3rem 2rem 1rem;
-        text-align: center;
+    .gastro-intro,
+    .gastro-sorten,
+    .gastro-cta {
+      padding-top: 56px;
     }
 
-    h1 {
-        font-size: clamp(2rem, 5vw, 2.5rem);
-        font-weight: 700;
-        line-height: 1.2;
-        color: var(--text-color);
-        margin: 0 0 1rem;
-        font-family: "DM Mono", monospace;
+    .gastro-sorten,
+    .gastro-cta {
+      padding-bottom: 56px;
     }
 
-    .subtitle {
-        font-size: clamp(1rem, 2vw, 1.2rem);
-        color: var(--text-color);
-        margin: 0;
-        opacity: 0.8;
-        line-height: 1.6;
+    .gastro-cta__box {
+      padding: 28px 20px;
+      border-radius: 24px;
+      box-shadow: 6px 6px 0 var(--color-ink);
     }
-
-    .intro-section {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 2rem 2rem 3rem;
-    }
-
-    .text-content h2 {
-        font-size: 1.6rem;
-        margin: 0 0 1rem;
-        font-family: "DM Mono", monospace;
-    }
-
-    .text-content p {
-        font-size: 1.05rem;
-        line-height: 1.7;
-        margin: 0 0 1rem;
-    }
-
-    .sorten-section {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 3rem 2rem;
-    }
-
-    .sorten-section h2 {
-        font-size: 1.6rem;
-        text-align: center;
-        margin: 0 0 2rem;
-        font-family: "DM Mono", monospace;
-    }
-
-    .sorten-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .sorte-card {
-        padding: 1.5rem;
-        border: 2px solid var(--text-color);
-        border-radius: 12px;
-        background: var(--bg-accent);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .sorte-card:hover {
-        transform: translateY(-3px) rotate(-0.5deg);
-        box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.15);
-    }
-
-    .sorte-card h3 {
-        font-size: 1.2rem;
-        margin: 0 0 0.5rem;
-        font-family: "DM Mono", monospace;
-    }
-
-    .sorte-card p {
-        margin: 0;
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-
-    .vorteile-section {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 3rem 2rem;
-    }
-
-    .vorteile-section h2 {
-        font-size: 1.6rem;
-        text-align: center;
-        margin: 0 0 2rem;
-        font-family: "DM Mono", monospace;
-    }
-
-    .vorteile-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .vorteile-list li {
-        font-size: 1.05rem;
-        line-height: 1.6;
-        padding: 1rem 1.25rem;
-        border: 2px solid var(--text-color);
-        border-radius: 8px;
-        background: var(--bg-color);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.08);
-    }
-
-    .vorteile-list li:hover {
-        transform: translateX(4px);
-        box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.12);
-        border-color: var(--accent);
-    }
-
-    .cta-section {
-        text-align: center;
-        padding: 3rem 2rem 4rem;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .cta-section h2 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin: 0 0 1rem;
-        font-family: "DM Mono", monospace;
-    }
-
-    .cta-section p {
-        font-size: 1.05rem;
-        line-height: 1.6;
-        margin: 0 0 2rem;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .cta-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .cta-button {
-        display: inline-block;
-        padding: 0.8rem 2rem;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: 500;
-        text-decoration: none;
-        font-family: "DM Mono", monospace;
-        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        border: 2px solid var(--text-color);
-    }
-
-    .cta-button:hover {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .cta-button:active {
-        transform: translate(4px, 4px);
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .cta-button.primary:hover {
-        background: var(--accent);
-        border-color: var(--accent);
-    }
-
-    .cta-button:focus-visible {
-        outline: 2px solid var(--focus-color, #000);
-        outline-offset: 2px;
-    }
-
-    .cta-button.primary {
-        background: var(--text-color);
-        color: var(--bg-color);
-    }
-
-    .cta-button.secondary {
-        background: var(--bg-color);
-        color: var(--text-color);
-    }
-
-    @media (max-width: 768px) {
-        .hero {
-            height: 50vh;
-            margin-top: -1rem;
-        }
-
-        .title-section {
-            padding: 2rem 1.5rem 0.5rem;
-        }
-
-        .intro-section {
-            padding: 1.5rem;
-        }
-
-        .sorten-section {
-            padding: 2rem 1.5rem;
-        }
-
-        .sorten-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .vorteile-section {
-            padding: 2rem 1.5rem;
-        }
-
-        .cta-section {
-            padding: 2rem 1.5rem 3rem;
-        }
-    }
+  }
 </style>

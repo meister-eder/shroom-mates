@@ -1,0 +1,43 @@
+---
+// Short shop hero: eyebrow, the page's H1, lead and two cut-out cups on dots.
+import { Image } from "astro:assets";
+import seitlingTasse from "@assets/seitling-tasse.webp";
+import whitePearlTasse from "@assets/white-pearl-tasse.webp";
+
+interface Props {
+  title?: string;
+  lead?: string;
+}
+
+const {
+  title = "Growkits & Tinkturen aus Leipzig",
+  lead = "Alles aus unserer Farm in der Glasfabrik Leutzsch.",
+} = Astro.props;
+---
+
+<section class="store-hero" aria-labelledby="store-hero-title">
+  <div class="store-hero__text">
+    <p class="eyebrow">Shop · selbst gezüchtet in Leipzig</p>
+    <h1 id="store-hero-title" class="store-hero__title">{title}</h1>
+    <p class="store-hero__lead">{lead}</p>
+  </div>
+  <div class="store-hero__art" aria-hidden="true">
+    <div class="store-hero__dots dots"></div>
+    <Image
+      src={seitlingTasse}
+      alt=""
+      class="store-hero__cup store-hero__cup--left"
+      widths={[240, 480]}
+      sizes="(max-width: 768px) 40vw, 240px"
+      loading="eager"
+    />
+    <Image
+      src={whitePearlTasse}
+      alt=""
+      class="store-hero__cup store-hero__cup--right"
+      widths={[240, 480]}
+      sizes="(max-width: 768px) 36vw, 220px"
+      loading="eager"
+    />
+  </div>
+</section>

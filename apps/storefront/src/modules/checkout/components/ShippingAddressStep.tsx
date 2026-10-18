@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
   AddressFields,
+  ERROR_CLASS,
   type AddressValues,
   type CheckoutFormValues,
   type RegionCountry,
@@ -132,9 +133,9 @@ interface ShippingAddressStepProps {
 
 const AddressBlock = ({ label, lines }: { label: string; lines: string[] }) => (
   <div>
-    <p className="input-label mb-1">{label}</p>
+    <p className="label mb-1">{label}</p>
     {lines.map((line, i) => (
-      <p key={i} className="text-muted">
+      <p key={i}>
         {line}
       </p>
     ))}
@@ -152,7 +153,7 @@ const ReadOnlyView = ({
 
   return (
     <CheckoutStep number={1} title="Lieferadresse" state="done" onEdit={onEdit}>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
         <AddressBlock label="Lieferadresse" lines={formatAddressLines(cart.shipping_address)} />
         <AddressBlock label="Kontakt" lines={cart.email ? [cart.email] : []} />
         <AddressBlock
@@ -274,44 +275,45 @@ export const ShippingAddressStep = ({
           />
 
           {/* Billing same as shipping */}
-          <label className="flex items-center gap-2 cursor-pointer select-none">
+          <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
               {...register("billingSameAsShipping")}
-              className="w-4 h-4 accent-black"
+              className="w-[22px] h-[22px] accent-ink"
             />
-            <span className="text-sm">Rechnungsadresse entspricht der Lieferadresse</span>
+            <span>Rechnungsadresse entspricht der Lieferadresse</span>
           </label>
 
           {/* Email / Phone */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="input-label" htmlFor="checkout-email">E-Mail *</label>
+            <div className="field">
+              <label htmlFor="checkout-email">E-Mail *</label>
               <input
                 id="checkout-email"
                 type="email"
                 autoComplete="email"
                 {...register("email")}
-                className={`input-field${errors.email ? " error" : ""}`}
+                aria-invalid={errors.email ? true : undefined}
               />
-              {errors.email && <p className="input-error">{errors.email.message}</p>}
+              {errors.email && <p className={ERROR_CLASS}>{errors.email.message}</p>}
             </div>
-            <div>
-              <label className="input-label" htmlFor="checkout-phone">Telefon <span className="label-optional">(optional)</span></label>
+            <div className="field">
+              <label htmlFor="checkout-phone">Telefon <span className="font-normal text-sm">(optional)</span></label>
               <input
                 id="checkout-phone"
                 type="tel"
                 autoComplete="tel"
                 {...register("phone")}
-                className="input-field"
+                aria-invalid={errors.phone ? true : undefined}
               />
+              {errors.phone && <p className={ERROR_CLASS}>{errors.phone.message}</p>}
             </div>
           </div>
 
           {/* Billing address section */}
           {!billingSameAsShipping && (
-            <div className="pt-4" style={{ borderTop: "2px solid var(--border-subtle)" }}>
-              <h3 className="input-label mb-4" style={{ fontSize: "1rem" }}>Rechnungsadresse</h3>
+            <div className="pt-5 border-t-2 border-ink">
+              <h3 className="mb-4 text-xl! font-black!">Rechnungsadresse</h3>
               <AddressFields
                 prefix="billing"
                 register={register}
@@ -322,13 +324,13 @@ export const ShippingAddressStep = ({
           )}
 
           {submitError && (
-            <p className="input-error">{submitError}</p>
+            <p className={ERROR_CLASS} role="alert">{submitError}</p>
           )}
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-accent w-full"
+            className="btn btn--primary btn--block min-h-[58px] text-lg"
           >
             {isSubmitting ? "Wird gespeichert..." : "Weiter zur Lieferung"}
           </button>

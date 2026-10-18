@@ -24,10 +24,10 @@ const rows = [
 
 {
   rows.length > 0 && (
-    <dl class="grid grid-cols-2 gap-x-8 gap-y-4">
+    <dl class="spec-list">
       {rows.map(([label, value]) => (
         <div>
-          <dt class="font-semibold">{label}</dt>
+          <dt>{label}</dt>
           <dd>{value}</dd>
         </div>
       ))}

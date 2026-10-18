@@ -1,5 +1,8 @@
 ---
 import { getEntry } from "astro:content";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import FAQ from "../components/FAQ.astro";
 import Layout from "../layouts/Layout.astro";
 
 const faqPageEntry = await getEntry("faq-page", "content");
@@ -7,278 +10,136 @@ if (!faqPageEntry) {
 	throw new Error("FAQ page content not found");
 }
 
-const { title, description, faqs } = faqPageEntry.data;
-
-// FAQPage structured data for Google rich snippets
-const faqSchema = {
-	"@context": "https://schema.org",
-	"@type": "FAQPage",
-	mainEntity: faqs.map((faq) => ({
-		"@type": "Question",
-		name: faq.question,
-		acceptedAnswer: {
-			"@type": "Answer",
-			text: faq.answer,
-		},
-	})),
-};
+const { title, description } = faqPageEntry.data;
 ---
 
-<Layout title={title} description={description}>
-    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
-
-    <main>
-        <div class="hero-section">
-            <h1>Häufige Fragen zu Pilzen, Growkits & Tinkturen</h1>
-            <p class="subtitle">
-                Alles rund um frische Pilze kaufen in Leipzig, Growkits zum
-                Selberziehen, handgemachte Pilztinkturen und
-                Gastronomie-Lieferungen.
-            </p>
+<Layout title={title} description={description} active="faq" isLandingPage>
+  <div class="faq-page">
+    <div class="container faq-layout">
+      <div class="faq-aside">
+        <h1 class="eyebrow faq-eyebrow">Häufige Fragen zu Pilzen, Growkits &amp; Tinkturen</h1>
+        <p class="faq-title">Frag die Mates.</p>
+        <p class="lead faq-lead">
+          Alles rund um frische Pilze kaufen in Leipzig, Growkits zum
+          Selberziehen, handgemachte Pilztinkturen und Gastronomie-Lieferungen.
+        </p>
+        <div class="faq-mascot">
+          <div class="dots" aria-hidden="true"></div>
+          <MatesLogo class="faq-mascot__logo" alt="" width={340} sizes="(max-width: 900px) 70vw, 340px" loading="eager" />
         </div>
-
-        <div class="faq-content">
-            <div class="faq-list">
-                {
-                    faqs.map((faq, index) => (
-                        <details
-                            class="faq-item reveal"
-                            style={`--reveal-delay: ${index * 80}ms`}
-                        >
-                            <summary class="faq-question">
-                                <span>{faq.question}</span>
-                                <svg
-                                    class="faq-chevron"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    aria-hidden="true"
-                                    focusable="false"
-                                >
-                                    <polyline points="6 9 12 15 18 9" />
-                                </svg>
-                            </summary>
-                            <div class="faq-answer">
-                                <p set:html={faq.answer} />
-                            </div>
-                        </details>
-                    ))
-                }
-            </div>
-
-            <section class="faq-cta reveal" aria-label="Kontakt">
-                <h2>Noch Fragen?</h2>
-                <p>
-                    Schreib uns einfach an
-                    <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a> oder
-                    besuche unsere <a href="/kontakt/">Kontaktseite</a>.
-                </p>
-            </section>
+        <div class="faq-help">
+          <h2 class="faq-help__title">Frage nicht dabei?</h2>
+          <p>
+            Schreib uns, wir antworten meistens schnell:
+            <a href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+          </p>
+          <a class="btn btn--primary" href="/kontakt/">
+            Zum Kontakt <Icon name="arrow-right" size={20} />
+          </a>
         </div>
-    </main>
+      </div>
+
+      <div class="faq-main">
+        <FAQ />
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <style>
-    main {
-        min-height: 100vh;
-        padding: 0;
+  .faq-page {
+    padding-top: var(--navbar-height);
+    overflow-x: clip;
+  }
+
+  .faq-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 56px;
+    padding-top: 40px;
+    padding-bottom: 112px;
+  }
+
+  .faq-aside {
+    flex: 1 1 300px;
+    min-width: 0;
+  }
+
+  .faq-main {
+    flex: 2 1 560px;
+    min-width: 0;
+  }
+
+  .faq-eyebrow {
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .faq-title {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(48px, 7vw, 104px);
+    line-height: 0.9;
+    color: var(--color-accent);
+    text-wrap: balance;
+  }
+
+  .faq-lead {
+    max-width: 34ch;
+    margin: 0;
+  }
+
+  .faq-mascot {
+    position: relative;
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+
+  .faq-mascot .dots {
+    position: absolute;
+    inset: 40px 20px 0 40px;
+    border-radius: 50%;
+  }
+
+  .faq-mascot :global(.faq-mascot__logo) {
+    position: relative;
+    max-width: 340px;
+    filter: drop-shadow(5px 5px 0 var(--color-ink));
+  }
+
+  .faq-help {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--color-white);
+    border: 3px solid var(--color-ink);
+    border-radius: 24px;
+    box-shadow: 6px 6px 0 var(--color-ink);
+  }
+
+  .faq-help__title {
+    margin: 0 0 8px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .faq-help p {
+    margin: 0 0 16px;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 768px) {
+    .faq-layout {
+      gap: 40px;
+      padding-bottom: 64px;
     }
 
-    .hero-section {
-        width: calc(100vw - var(--scrollbar-width, 0px));
-        margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-        margin-top: -1.5rem;
-        padding: 4.5rem 2rem 3.5rem;
-        text-align: center;
-        background: var(--bg-accent);
-        border-bottom: 2px solid #000;
+    .faq-help {
+      box-shadow: 4px 4px 0 var(--color-ink);
     }
-
-    h1 {
-        font-size: clamp(2rem, 4vw, 2.8rem);
-        font-weight: 700;
-        line-height: 1.2;
-        color: var(--text-color);
-        margin: 0 0 0.5rem;
-        font-family: "DM Mono", monospace;
-    }
-
-    h1::after {
-        content: "";
-        display: block;
-        width: 60px;
-        height: 3px;
-        background: var(--accent);
-        margin: 0.75rem auto 0;
-        border-radius: 2px;
-    }
-
-    .subtitle {
-        font-size: clamp(1rem, 2vw, 1.15rem);
-        color: var(--text-color);
-        margin: 1.25rem auto 0;
-        opacity: 0.75;
-        max-width: 600px;
-        line-height: 1.6;
-    }
-
-    .faq-content {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 3rem 2rem;
-    }
-
-    .faq-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-    }
-
-    .faq-item {
-        border-top: 2px solid #000;
-        padding: 0;
-        transition: background-color 0.2s ease;
-    }
-
-    .faq-item:last-child {
-        border-bottom: 2px solid #000;
-    }
-
-    .faq-item[open] {
-        background: rgba(253, 252, 234, 0.5);
-    }
-
-    .faq-question {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.25rem 0.75rem;
-        cursor: pointer;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-color);
-        list-style: none;
-        gap: 1rem;
-        transition: color 0.2s ease;
-    }
-
-    .faq-question:hover {
-        color: var(--accent);
-    }
-
-    .faq-question::-webkit-details-marker {
-        display: none;
-    }
-
-    .faq-question::marker {
-        content: "";
-    }
-
-    .faq-question:focus-visible {
-        outline: 2px solid var(--focus-color, #000);
-        outline-offset: -2px;
-    }
-
-    .faq-chevron {
-        flex-shrink: 0;
-        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-        color: var(--accent);
-    }
-
-    .faq-item[open] .faq-chevron {
-        transform: rotate(180deg);
-    }
-
-    .faq-answer {
-        padding: 0 0.75rem 1.5rem;
-        font-size: 1rem;
-        line-height: 1.7;
-        color: var(--text-color);
-        animation: faq-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    @keyframes faq-slide-in {
-        from {
-            opacity: 0;
-            transform: translateY(-8px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .faq-answer :global(a) {
-        color: var(--accent);
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
-
-    .faq-answer :global(a:hover) {
-        text-decoration-thickness: 2px;
-    }
-
-    .faq-cta {
-        margin-top: 4rem;
-        text-align: center;
-        padding: 2rem;
-        background: var(--bg-color);
-        border-radius: 8px;
-        border: 2px solid #000;
-        box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .faq-cta h2 {
-        font-size: 1.5rem;
-        margin: 0 0 0.75rem 0;
-        font-family: "DM Mono", monospace;
-    }
-
-    .faq-cta p {
-        margin: 0;
-        font-size: 1.05rem;
-        line-height: 1.6;
-    }
-
-    .faq-cta a {
-        color: var(--accent);
-        text-decoration: underline;
-        text-underline-offset: 3px;
-        font-weight: 600;
-    }
-
-    .faq-cta a:hover {
-        text-decoration-thickness: 2px;
-    }
-
-    @media (max-width: 768px) {
-        .hero-section {
-            padding: 3.5rem 1.5rem 2.5rem;
-            margin-top: -1rem;
-        }
-
-        .faq-content {
-            padding: 2rem 1.5rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .hero-section {
-            padding: 2.5rem 1rem 2rem;
-        }
-
-        .faq-content {
-            padding: 1.5rem 1rem;
-        }
-
-        .faq-question {
-            font-size: 1rem;
-            padding: 1rem 0.5rem;
-        }
-    }
+  }
 </style>

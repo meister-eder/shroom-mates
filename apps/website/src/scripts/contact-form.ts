@@ -5,10 +5,34 @@ const ERROR_MESSAGE =
 	"Ups, das hat nicht geklappt. Deine Nachricht ist noch im Formular – versuch es gleich nochmal oder schreib uns an hey@shroom-mates.de.";
 
 if (form && result) {
+	// Themen-Chips: echte <button aria-pressed>, genau ein Thema (oder keins).
+	// Der Wert landet im versteckten Feld „topic“ und geht mit ab.
+	const topicInput = form.querySelector<HTMLInputElement>('input[name="topic"]');
+	const chips = Array.from(
+		form.querySelectorAll<HTMLButtonElement>("[data-topic]"),
+	);
+
+	const selectTopic = (selected: HTMLButtonElement | null) => {
+		for (const chip of chips) {
+			chip.setAttribute("aria-pressed", String(chip === selected));
+		}
+		if (topicInput) topicInput.value = selected?.dataset.topic ?? "";
+	};
+
+	for (const chip of chips) {
+		chip.addEventListener("click", () => {
+			const isPressed = chip.getAttribute("aria-pressed") === "true";
+			selectTopic(isPressed ? null : chip);
+		});
+	}
+
 	form.addEventListener("submit", async (e: SubmitEvent) => {
 		e.preventDefault();
 
-		const json = JSON.stringify(Object.fromEntries(new FormData(form)));
+		const data = Object.fromEntries(new FormData(form));
+		// Leeres Thema nicht mitschicken
+		if (!data.topic) delete data.topic;
+		const json = JSON.stringify(data);
 
 		result.textContent = "Bitte warten...";
 		result.style.display = "";
@@ -32,6 +56,7 @@ if (form && result) {
 			// Only clear the form once the message was actually sent.
 			result.textContent = "Danke! Deine Nachricht ist bei uns angekommen.";
 			form.reset();
+			selectTopic(null);
 			setTimeout(() => {
 				result.style.display = "none";
 			}, 5000);

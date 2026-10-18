@@ -4,8 +4,9 @@ export const listProducts = async (regionId: string) => {
   try {
     const { products } = await sdk.store.product.list({
       region_id: regionId,
-      // categories feed the filter strip on /store
-      fields: "*variants.calculated_price,*categories",
+      // categories feed the filter chips on /store; inventory disables quick-add
+      fields:
+        "*variants.calculated_price,+variants.inventory_quantity,*categories",
     });
     return products;
   } catch (error) {
@@ -15,7 +16,7 @@ export const listProducts = async (regionId: string) => {
 };
 
 const PRODUCT_FIELDS =
-  "*variants.calculated_price,+variants.inventory_quantity,*variants.images,+metadata,+tags,";
+  "*variants.calculated_price,+variants.inventory_quantity,*variants.images,*categories,+metadata,+tags,";
 
 /**
  * Product by URL slug. Accepts the handle, or a legacy product ID

@@ -13,12 +13,12 @@ if (!countryCode) {
 ---
 
 <Layout
-  title="Warenkorb"
-  description="Überprüfe die Artikel in deinem Warenkorb."
+  title="Dein Pilzkorb"
+  description="Überprüfe die Artikel in deinem Pilzkorb."
   noindex
 >
   <!-- Client-only: rendered from the browser's cart -->
   <CartPage client:only="react" countryCode={countryCode}>
-    <p slot="fallback" class="text-muted text-center py-16">Warenkorb wird geladen…</p>
+    <p slot="fallback" class="page-note">Pilzkorb wird geladen…</p>
   </CartPage>
 </Layout>

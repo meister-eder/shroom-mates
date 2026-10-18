@@ -151,6 +151,7 @@ async function loadCart(): Promise<void> {
 export async function addToCart(
   variantId: string,
   quantity: number,
+  { openSidebar = true }: { openSidebar?: boolean } = {},
 ): Promise<void> {
   try {
     // Ensure cart exists
@@ -176,8 +177,8 @@ export async function addToCart(
     );
 
     $cart.set(updatedCart);
-    // Open sidebar after adding item
-    $isCartSidebarOpen.set(true);
+    // Open sidebar after adding item (callers with their own feedback opt out)
+    if (openSidebar) $isCartSidebarOpen.set(true);
   } catch (error) {
     console.error("Failed to add item to cart:", error);
     throw error;

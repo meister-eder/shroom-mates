@@ -3,12 +3,22 @@ import { getProductPrice } from "../../../../lib/utils/get-product-price";
 import type { ProductVariant } from "../../../../types/global";
 import Thumbnail from "../thumbnail/Thumbnail.astro";
 import Price from "./Price.astro";
+import { QuickAdd } from "./QuickAdd";
 import { basePriceLabel } from "../../../../lib/utils/base-price";
+import { isProductInStock } from "../../../../lib/utils/is-product-in-stock";
+import { stickerColor } from "../../../../lib/utils/product-color";
+
+type PreviewVariant = ProductVariant & {
+  title?: string | null;
+  manage_inventory?: boolean | null;
+  allow_backorder?: boolean | null;
+  inventory_quantity?: number | null;
+};
 
 interface Props {
   /** URL slug (product handle) */
   handle: string;
-  variants: ProductVariant[];
+  variants: PreviewVariant[];
   thumbnailUrl?: string;
   imageUrl?: string;
   title: string;
@@ -27,42 +37,80 @@ const basePrice = basePriceLabel(
   cheapestPrice?.variant_title,
   title,
 );
+const color = stickerColor({ handle, title });
+
+// Quick-add only when there is nothing to choose (exactly one variant)
+const onlyVariant = variants.length === 1 ? variants[0] : undefined;
+const canQuickAdd =
+  !!onlyVariant &&
+  !!cheapestPrice &&
+  isProductInStock({
+    manage_inventory: onlyVariant.manage_inventory ?? false,
+    allow_backorder: onlyVariant.allow_backorder ?? false,
+    inventory_quantity: onlyVariant.inventory_quantity,
+  });
+const hasChoice = variants.length > 1;
+
+// Weight / size line ("250g · 500g · 1kg", "50ml"); "Standard" is no information
+const variantTitles = variants
+  .map((v) => v.title)
+  .filter((t): t is string => !!t && t !== "Standard");
+const metaLine = variantTitles.join(" · ");
 ---
 
-<a
-  href={`/${countryCode}/store/${handle}`}
-  class="product-card"
-  aria-label={`${title}${cheapestPrice ? " — ab " + cheapestPrice.calculated_price : ""}`}
->
-  <Thumbnail
-    imageUrl={thumbnailUrl || imageUrl}
-    title={title}
-    priority={priority}
-  />
-
-  <div class="product-card-body">
+<li class={`sticker-card sticker-card--${color} product-tile`}>
+  <div class="product-tile__media">
+    <Thumbnail
+      imageUrl={thumbnailUrl || imageUrl}
+      title={title}
+      priority={priority}
+    />
     {
       categoryName && (
-        <span
-          class="badge badge-category"
-          aria-label={`Kategorie: ${categoryName}`}
-        >
+        <span class="product-tile__cat" aria-hidden="true">
           {categoryName}
         </span>
       )
     }
-    <p class="product-card-title">{title}</p>
+  </div>
+
+  <div class="product-tile__body">
+    <h2 class="product-tile__title">
+      <a
+        href={`/${countryCode}/store/${handle}`}
+        class="product-card"
+        aria-label={`${title}${cheapestPrice ? (hasChoice ? " — ab " : " — ") + cheapestPrice.calculated_price : ""}${categoryName ? `, ${categoryName}` : ""}`}
+      >
+        {title}
+      </a>
+    </h2>
     {
       cheapestPrice && (
-        <div class="mt-auto pt-1">
+        <div class="product-tile__price">
+          {hasChoice && <span class="product-tile__from">ab </span>}
           <Price
             priceType={cheapestPrice.price_type ?? ""}
             originalPrice={cheapestPrice.original_price}
             calculatedPrice={cheapestPrice.calculated_price}
-            basePrice={basePrice}
           />
         </div>
       )
     }
+    {
+      (metaLine || basePrice) && (
+        <p class="product-tile__meta">
+          {metaLine}
+          {metaLine && basePrice && " · "}
+          {basePrice}
+        </p>
+      )
+    }
+    {
+      canQuickAdd && onlyVariant && (
+        <div class="product-tile__action">
+          <QuickAdd client:visible variantId={onlyVariant.id} title={title} />
+        </div>
+      )
+    }
   </div>
-</a>
+</li>

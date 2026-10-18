@@ -1,40 +1,17 @@
 ---
-// Thin wrapper: website links absolute, shop links relative
-import type { FooterLink } from "@shroom-mates/ui/Footer.astro";
+// Shared footer in shop mode (legal links incl. AGB / Widerruf / Gewährleistung)
 import SharedFooter from "@shroom-mates/ui/Footer.astro";
-import { footerLinks, websiteUrl } from "@shroom-mates/ui/site";
 
 interface Props {
   countryCode: string;
 }
 
 const { countryCode } = Astro.props;
-
-const links: FooterLink[] = footerLinks(
-  websiteUrl,
-  (path) => path.replace(/^\/de\//, `/${countryCode}/`),
-  { website: true, shop: false },
-  { href: `/${countryCode}/datenschutz` },
-);
 ---
 
-<SharedFooter links={links}>
+<SharedFooter app="shop" countryCode={countryCode}>
   <!-- § 356a BGB: withdrawal function, prominently placed on every page -->
-  <a slot="actions" href={`/${countryCode}/vertrag-widerrufen`} class="btn-outline withdraw-button">
+  <a slot="actions" href={`/${countryCode}/vertrag-widerrufen`}>
     Vertrag widerrufen
   </a>
 </SharedFooter>
-
-<style>
-  .withdraw-button {
-    align-self: flex-start;
-    margin-top: 0.75rem;
-    background: var(--bg-color);
-  }
-
-  @media (max-width: 768px) {
-    .withdraw-button {
-      align-self: center;
-    }
-  }
-</style>

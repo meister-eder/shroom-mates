@@ -1,8 +1,10 @@
 ---
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import { linkBuilders } from "@shroom-mates/ui/site";
+import tinkturenHero from "../assets/images/fotos/tinkturen-reishi.jpg";
 import Layout from "../layouts/Layout.astro";
-import { readableTextColor } from "../utils/color";
 
 const tinkturenPageEntry = await getEntry("tinkturen-page", "content");
 if (!tinkturenPageEntry) {
@@ -13,20 +15,41 @@ const {
 	title,
 	description,
 	heroTitle,
-	heroSubtitle,
 	heroImage,
-	heroImageAlt,
 	introText,
 	disclaimerText,
 	tinctures,
 	quellen,
 } = tinkturenPageEntry.data;
 
-// Compute readable text colors for tincture accent backgrounds
-const processedTinctures = tinctures.map((t) => ({
-	...t,
-	textColor: t.color ? readableTextColor(t.color) : undefined,
-}));
+const { shop } = linkBuilders("website");
+
+// Kartonfarbe + Shop-Produkt je Tinktur (Shop-Handles aus dem Seed)
+const processedTinctures = tinctures.map((t) => {
+	const isLions = /lion/i.test(t.title);
+	return {
+		...t,
+		tone: isLions ? "lavender" : "pink",
+		shopHref: shop(
+			`/store/${isLions ? "lions-mane-tinktur" : "reishi-cordyceps-tinktur"}`,
+		),
+	};
+});
+
+const facts = [
+	{ label: "Herstellung", value: "Doppelextraktion — Alkohol + Heißwasser" },
+	{ label: "Herkunft", value: "Eigene Indoor-Farm, Leipzig Leutzsch" },
+	{ label: "Substrat", value: "Regionales Substrat, ohne Zusätze" },
+	{ label: "Dosierung", value: "1–2 Pipetten täglich" },
+];
+
+const process = [
+	{ title: "Züchten", text: "Eigene Kultur, eigenes Substrat, eigene Farm.", bg: "var(--color-cream)" },
+	{ title: "Ernten & trocknen", text: "Nur der Fruchtkörper kommt in die Tinktur.", bg: "var(--color-cream)" },
+	{ title: "Alkohol-Mazeration", text: "Die Pilze ziehen in Alkohol.", bg: "var(--color-lavender)" },
+	{ title: "Heißwasser-Extrakt", text: "Dieselben Pilze, nochmal in heißem Wasser.", bg: "var(--color-pink)" },
+	{ title: "Mischen & abfüllen", text: "Von Hand gemischt und abgefüllt.", bg: "var(--color-accent)" },
+];
 
 // Structured data for SEO
 const productSchemas = tinctures.map((t) => ({
@@ -45,548 +68,433 @@ const productSchemas = tinctures.map((t) => ({
 }));
 ---
 
-<Layout title={title} description={description} ogImage={heroImage?.src}>
+<Layout title={title} description={description} ogImage={heroImage?.src} isLandingPage={true} active="tinkturen">
 	{
 		productSchemas.map((schema) => (
-			<script
-				type="application/ld+json"
-				set:html={JSON.stringify(schema)}
-			/>
+			<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 		))
 	}
 
-	<!-- Hero -->
-	<section class="hero" id="content">
-		<div class="hero-image-wrapper">
-			<Image
-				src={heroImage}
-				alt={heroImageAlt}
-				width={1400}
-				height={700}
-				format="webp"
-				class="hero-image"
-				loading="eager"
-			/>
-		</div>
-		<div class="hero-overlay">
-			<h1>{heroTitle}</h1>
-			{heroSubtitle && <p class="hero-subtitle">{heroSubtitle}</p>}
-		</div>
-	</section>
-
-	<!-- Intro + Facts -->
-	<section class="intro reveal" aria-label="Über unsere Tinkturen">
-		<div class="intro-text-card">
-			<p>{introText}</p>
-		</div>
-		<div class="facts">
-			<div class="fact">
-				<span class="fact-label">Herstellung</span>
-				<span class="fact-value"
-					>Doppelextraktion — Alkohol + Heißwasser</span
-				>
+	<div class="page">
+		<section class="hero container" id="content">
+			<div class="hero__copy">
+				<h1>
+					<span class="eyebrow hero__eyebrow">{heroTitle}</span>
+					<span class="hero__title">Von der Kultur zur Tinktur.</span>
+				</h1>
+				<p class="lead hero__lead">{introText}</p>
 			</div>
-			<div class="fact">
-				<span class="fact-label">Herkunft</span>
-				<span class="fact-value"
-					>Eigene Indoor-Farm, Leipzig Plagwitz</span
-				>
-			</div>
-			<div class="fact">
-				<span class="fact-label">Substrat</span>
-				<span class="fact-value">Regionales Substrat, ohne Zusätze</span
-				>
-			</div>
-			<div class="fact">
-				<span class="fact-label">Dosierung</span>
-				<span class="fact-value">1–2 Pipetten täglich</span>
-			</div>
-		</div>
-	</section>
-
-	<!-- Tincture Sections -->
-	<section class="tinctures" aria-label="Unsere Tinkturen">
-		<h2 class="section-heading">Unsere Tinkturen</h2>
-		{
-			processedTinctures.map((tincture, i) => (
-				<article
-					class={`tincture ${i % 2 === 1 ? "tincture--reversed" : ""}`}
-				>
-					<div class="tincture-image-wrapper">
-						<Image
-							src={tincture.image}
-							alt={tincture.imageAlt}
-							width={800}
-							height={800}
-							format="webp"
-							loading="lazy"
-							class="tincture-image"
-						/>
-					</div>
-					<div
-						class="tincture-content"
-						style={
-							tincture.color
-								? `background-color: ${tincture.color}; color: ${tincture.textColor}`
-								: ""
-						}
-					>
-						<div class="tincture-header">
-							<h2>{tincture.title}</h2>
-							<p class="botanical">
-								<em>{tincture.botanicalName}</em>
-							</p>
-						</div>
-						<p
-							class="tincture-description"
-							set:html={tincture.description}
-						/>
-					</div>
-				</article>
-			))
-		}
-	</section>
-
-	<!-- Quellen -->
-	{
-		quellen && quellen.length > 0 && (
-			<section class="quellen" aria-label="Wissenschaftliche Quellen">
-				<div class="quellen-card">
-					<h2>Quellen</h2>
-					<ol>
-						{quellen.map((q, i) => (
-							<li id={`quelle-${i + 1}`}>
-								<a
-									href={q.url}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{q.title}
-								</a>
-							</li>
-						))}
-					</ol>
+			<div class="hero__media">
+				<div class="dots" aria-hidden="true"></div>
+				<div class="arch-frame hero__arch">
+					<Image
+						src={tinkturenHero}
+						alt="Zwei Tinkturfläschchen: Lion's Mane und Reishi mit Cordyceps"
+						widths={[320, 480, 640, 840]}
+						sizes="(max-width: 768px) 80vw, 420px"
+						loading="eager"
+						format="webp"
+					/>
 				</div>
-			</section>
-		)
-	}
+			</div>
+		</section>
 
-	<!-- Disclaimer -->
-	{
-		disclaimerText && (
-			<section class="disclaimer-section" aria-label="Hinweis">
-				<p class="disclaimer">{disclaimerText}</p>
-			</section>
-		)
-	}
+		<section class="container facts-wrap" aria-label="Über unsere Tinkturen">
+			<dl class="facts">
+				{
+					facts.map((f) => (
+						<div class="fact">
+							<dt>{f.label}</dt>
+							<dd>{f.value}</dd>
+						</div>
+					))
+				}
+			</dl>
+		</section>
+
+		<section class="container tinctures" aria-labelledby="tinctures-heading">
+			<h2 id="tinctures-heading" class="sr-only">Unsere Tinkturen</h2>
+			<div class="tinctures__grid">
+				{
+					processedTinctures.map((t) => (
+						<article class={`sticker-card sticker-card--${t.tone} tincture`}>
+							<Image
+								src={t.image}
+								alt={t.imageAlt}
+								class="tincture__img"
+								widths={[320, 480, 640]}
+								sizes="(max-width: 768px) 90vw, 280px"
+								format="webp"
+								loading="lazy"
+							/>
+							<div class="tincture__body">
+								<p class="tincture__botanical">{t.botanicalName}</p>
+								<h3 class="tincture__title">{t.title}</h3>
+								<p class="tincture__text" set:html={t.description} />
+								<div class="tincture__footer">
+									<span class="tincture__size">50 ml</span>
+									<a class="btn btn--primary" href={t.shopHref}>
+										Im Shop kaufen <Icon name="arrow-right" size={20} />
+									</a>
+								</div>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="section section--paper process" aria-labelledby="process-heading">
+			<div class="process__inner">
+				<h2 id="process-heading">Warum doppelt?</h2>
+				<p class="process__intro">
+					Alkohol löst andere Stoffe als heißes Wasser. Deshalb machen wir beides und mischen am Ende.
+				</p>
+				<ol class="process__list" role="list">
+					{
+						process.map((step, i) => (
+							<li>
+								<span class="process__num" style={`background: ${step.bg}`}>{i + 1}</span>
+								<h3>{step.title}</h3>
+								<p>{step.text}</p>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
+
+		<section class="container end" aria-label="Quellen und Hinweis">
+			{
+				quellen && quellen.length > 0 && (
+					<div class="quellen-card">
+						<h2>Quellen</h2>
+						<ol>
+							{quellen.map((q, i) => (
+								<li id={`quelle-${i + 1}`}>
+									<a href={q.url} target="_blank" rel="noopener noreferrer">
+										{q.title}
+									</a>
+								</li>
+							))}
+						</ol>
+					</div>
+				)
+			}
+			{disclaimerText && <p class="disclaimer">{disclaimerText}</p>}
+		</section>
+	</div>
 </Layout>
 
 <style>
-	/* ===== Hero ===== */
+	.page {
+		padding-top: var(--navbar-height);
+		overflow-x: clip;
+	}
+
+	/* ── Hero ───────────────────────────────────────── */
 	.hero {
-		position: relative;
-		width: calc(100vw - var(--scrollbar-width, 0px));
-		margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-		margin-top: -1.5rem;
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		align-items: center;
+		gap: 48px;
+		padding-top: 32px;
+		padding-bottom: 72px;
 	}
 
-	.hero::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			to top,
-			rgba(0, 0, 0, 0.55) 0%,
-			rgba(0, 0, 0, 0.15) 40%,
-			transparent 70%
-		);
-		pointer-events: none;
-		z-index: 1;
-	}
-
-	@media (max-width: 768px) {
-		.hero {
-			margin-top: -1rem;
-		}
-	}
-
-	.hero-image-wrapper {
-		overflow: hidden;
-	}
-
-	.hero-image {
-		width: 100%;
-		height: 55vh;
-		min-height: 300px;
-		object-fit: cover;
+	.hero__eyebrow {
 		display: block;
+		margin-bottom: 18px;
+		font-size: 0.875rem;
+		line-height: 1.4;
+		color: var(--color-accent-dark);
 	}
 
-	.hero-overlay {
+	.hero__title {
+		display: block;
+		font-size: clamp(2.75rem, 7.4vw, 7rem);
+		line-height: 0.9;
+		color: var(--color-accent);
+	}
+
+	.hero__lead {
+		max-width: 44ch;
+		margin: 24px 0 0;
+	}
+
+	.hero__media {
+		position: relative;
+		padding: 24px;
+	}
+
+	.hero__media .dots {
 		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 2;
-		text-align: center;
-		padding: 3rem 2rem;
+		inset: 30px 0 0 50px;
+		border-radius: 50%;
 	}
 
-	.hero-overlay h1 {
-		font-family: "DM Mono", monospace;
-		font-size: clamp(1.8rem, 4vw, 3rem);
-		font-weight: 700;
-		line-height: 1.15;
-		margin: 0 0 0.5rem;
-		color: #fff;
-		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-		max-width: 700px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	.hero-subtitle {
-		font-size: clamp(0.95rem, 1.5vw, 1.15rem);
-		margin: 0;
-		color: rgba(255, 255, 255, 0.9);
-		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
-		max-width: 550px;
-		margin-left: auto;
-		margin-right: auto;
-		line-height: 1.5;
-	}
-
-	/* ===== Intro ===== */
-	.intro {
-		max-width: 1000px;
+	.hero__arch {
+		position: relative;
+		width: 100%;
+		max-width: 420px;
+		height: 540px;
 		margin: 0 auto;
-		padding: 1.5rem 1.5rem 2.5rem;
+		box-shadow: var(--shadow-teaser);
 	}
 
-	.intro-text-card {
-		background: var(--bg-color);
-		border: 2px solid #000;
-		border-radius: 8px;
-		padding: 1.5rem;
-		box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
-		margin-bottom: 1.25rem;
-	}
-
-	.intro-text-card p {
-		font-size: 1rem;
-		line-height: 1.75;
-		margin: 0;
-		color: var(--text-color);
+	/* ── Fakten ─────────────────────────────────────── */
+	.facts-wrap {
+		padding-bottom: 72px;
 	}
 
 	.facts {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.75rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+		gap: 16px;
+		margin: 0;
 	}
 
 	.fact {
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-		background: var(--bg-color);
-		border: 2px solid #000;
-		border-radius: 8px;
-		padding: 0.85rem 1rem;
-		box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.12);
-		transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+		padding: 16px 18px;
+		background: #fff;
+		border: 2px solid var(--color-ink);
+		border-radius: 18px;
 	}
 
-	.fact:hover {
-		transform: translateY(-2px);
-		box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
-	}
-
-	.fact-label {
-		font-family: "DM Mono", monospace;
-		font-size: 0.7rem;
-		font-weight: 600;
-		text-transform: uppercase;
+	.fact dt {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
 		letter-spacing: 0.08em;
-		color: var(--accent);
+		text-transform: uppercase;
+		color: var(--color-accent-dark);
 	}
 
-	.fact-value {
-		font-size: 0.85rem;
+	.fact dd {
+		margin: 6px 0 0;
+		font-size: 1.0625rem;
 		line-height: 1.4;
-		color: var(--text-color);
 	}
 
-	/* ===== Tincture Sections ===== */
+	/* ── Tinkturen ──────────────────────────────────── */
 	.tinctures {
-		padding: 1.5rem 0;
+		padding-bottom: 112px;
 	}
 
-	.section-heading {
-		font-size: clamp(1.5rem, 3vw, 2.2rem);
-		font-weight: 700;
-		text-align: center;
-		margin: 0 0 0.5rem 0;
-		color: var(--text-color);
-		font-family: "DM Mono", monospace;
-	}
-
-	.section-heading::after {
-		content: "";
-		display: block;
-		width: 60px;
-		height: 3px;
-		background: var(--accent);
-		margin: 0.75rem auto 2rem;
-		border-radius: 2px;
+	.tinctures__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+		gap: 40px;
+		align-items: stretch;
 	}
 
 	.tincture {
-		width: calc(100vw - var(--scrollbar-width, 0px));
-		margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-		border-top: 2px solid #000;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 20px;
+		padding: 18px;
+		min-width: 0;
+	}
+
+	.tincture :global(.tincture__img) {
+		flex: 1 1 200px;
+		min-width: 0;
+		height: 340px;
+		box-sizing: border-box;
+	}
+
+	.tincture__body {
+		display: flex;
+		flex: 1 1 220px;
+		flex-direction: column;
+		gap: 12px;
+		min-width: 0;
+		padding: 8px 4px;
+	}
+
+	.tincture__botanical {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		font-style: italic;
+	}
+
+	.tincture__title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-weight: 900;
+		font-variation-settings: "SOFT" 100;
+		font-size: clamp(2rem, 3vw, 2.5rem);
+		line-height: 0.95;
+	}
+
+	.tincture__text {
+		margin: 0;
+		font-size: 1.0625rem;
+		line-height: 1.5;
+	}
+
+	/* Quellen-Hochzahlen: Link in Tinte, unterstrichen, Zielgröße ausreichend */
+	.tincture__text :global(sup a) {
+		color: var(--color-ink);
+		font-weight: 700;
+		padding: 0 3px;
+	}
+
+	.tincture__footer {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: auto;
+		padding-top: 14px;
+		border-top: 2px solid var(--color-ink);
+	}
+
+	.tincture__size {
+		font-family: var(--font-mono);
+		font-size: 0.9375rem;
+	}
+
+	/* ── Prozess ────────────────────────────────────── */
+	.process__inner {
+		max-width: var(--container, 1280px);
+		margin-inline: auto;
+	}
+
+	.process__inner > h2 {
+		margin-bottom: 12px;
+	}
+
+	.process__intro {
+		max-width: 56ch;
+		margin: 0 0 48px;
+		font-size: 1.1875rem;
+	}
+
+	.process__list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+		gap: 24px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.process__list li {
 		display: flex;
 		flex-direction: column;
+		gap: 14px;
 	}
 
-	.tincture:last-child {
-		border-bottom: 2px solid #000;
-	}
-
-	.tincture-image-wrapper {
-		overflow: hidden;
-		aspect-ratio: 4 / 3;
-	}
-
-	.tincture-image {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: top;
-		display: block;
-		transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-
-	.tincture:hover .tincture-image {
-		transform: scale(1.04);
-	}
-
-	.tincture-content {
-		padding: 2rem 1.5rem 2.5rem;
-		background: var(--bg-color);
-	}
-
-	.tincture-header {
-		margin-bottom: 1rem;
-	}
-
-	.tincture-header h2 {
-		font-family: "DM Mono", monospace;
-		font-size: 1.75rem;
-		font-weight: 700;
-		line-height: 1.2;
-		margin: 0 0 0.25rem;
-	}
-
-	.botanical {
-		font-size: 0.9rem;
-		margin: 0;
-		opacity: 0.7;
-	}
-
-	.tincture-description {
-		font-size: 1rem;
-		line-height: 1.75;
-		margin: 0;
-	}
-
-	/* Citation superscripts inside set:html descriptions */
-	.tincture-description :global(sup) {
-		font-size: 0.65em;
-		line-height: 0;
-		vertical-align: super;
-	}
-
-	.tincture-description :global(sup a) {
-		display: inline-flex;
+	.process__num {
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 1.4em;
-		height: 1.4em;
-		padding: 0 0.2em;
-		margin-left: 1px;
-		border-radius: 999px;
-		background: rgba(0, 0, 0, 0.1);
-		color: inherit;
-		text-decoration: none;
-		font-weight: 600;
-		font-size: 0.9em;
-		transition: background 0.15s;
+		width: 72px;
+		height: 72px;
+		border: 3px solid var(--color-ink);
+		border-radius: 50%;
+		box-shadow: var(--shadow-btn);
+		font-family: var(--font-display);
+		font-weight: 900;
+		font-size: 2rem;
 	}
 
-	.tincture-description :global(sup a:hover) {
-		background: rgba(0, 0, 0, 0.2);
+	.process__list h3 {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 800;
 	}
 
-	.tincture-description :global(sup a:focus-visible) {
-		outline: 2px solid var(--focus-color, #000);
-		outline-offset: 2px;
+	.process__list p {
+		margin: 0;
+		line-height: 1.5;
 	}
 
-	/* ===== Quellen ===== */
-	.quellen {
-		max-width: 800px;
-		margin: 0 auto;
-		padding: 3rem 1.5rem 2rem;
+	/* ── Quellen + Hinweis ──────────────────────────── */
+	.end {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 32px;
+		padding-top: 72px;
+		padding-bottom: 96px;
 	}
 
 	.quellen-card {
-		background: var(--bg-color);
-		border: 2px solid #000;
-		border-radius: 8px;
-		padding: 1.75rem;
-		box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+		flex: 1 1 420px;
+		min-width: 0;
+		padding: 28px;
+		background: #fff;
+		border: 3px solid var(--color-ink);
+		border-radius: 24px;
 	}
 
 	.quellen-card h2 {
-		font-family: "DM Mono", monospace;
-		font-size: 1.5rem;
-		font-weight: 700;
-		margin: 0 0 1rem;
-		color: var(--text-color);
+		margin: 0 0 12px;
+		font-size: 1.625rem;
+		font-weight: 800;
 	}
 
 	.quellen-card ol {
 		margin: 0;
 		padding-left: 1.5rem;
-		list-style-type: decimal;
+		font-size: 0.9375rem;
+		line-height: 1.6;
 	}
 
 	.quellen-card li {
-		font-size: 0.9rem;
-		line-height: 1.6;
-		margin: 0.5rem 0;
-		color: var(--text-color);
-		scroll-margin-top: calc(var(--navbar-height) + 1rem);
+		margin-bottom: 0.6rem;
+		scroll-margin-top: calc(var(--navbar-height) + 16px);
+		overflow-wrap: anywhere;
 	}
 
-	.quellen-card a {
-		color: var(--accent);
-		text-decoration: underline;
-		text-underline-offset: 2px;
-		word-break: break-word;
-	}
-
-	.quellen-card a:hover {
-		text-decoration-thickness: 2px;
-	}
-
-	.quellen-card a:focus-visible {
-		outline: 2px solid var(--focus-color, #000);
-		outline-offset: 2px;
-	}
-
-	/* ===== Disclaimer ===== */
-	.disclaimer-section {
-		max-width: 800px;
-		margin: 0 auto;
-		padding: 0 1.5rem 3rem;
+	.quellen-card li:target {
+		background: var(--color-olive-soft);
 	}
 
 	.disclaimer {
-		font-size: 0.85rem;
-		line-height: 1.5;
-		color: var(--focus-color);
-		text-align: center;
-		font-style: italic;
-		border-top: 1px solid #ddd;
-		padding-top: 1.5rem;
+		flex: 1 1 320px;
+		align-self: center;
 		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		line-height: 1.7;
 	}
 
-	/* ===== Tablet ===== */
-	@media (min-width: 769px) {
-		.hero-image {
-			height: 60vh;
+	/* ── Responsive ─────────────────────────────────── */
+	@media (max-width: 900px) {
+		.hero {
+			grid-template-columns: minmax(0, 1fr);
+			padding-bottom: 48px;
 		}
 
-		.hero-overlay {
-			padding: 3.5rem 2rem;
-		}
-
-		.intro {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 2rem;
-			align-items: start;
-			padding: 2.5rem 2rem 3.5rem;
-		}
-
-		.intro-text-card {
-			margin-bottom: 0;
-		}
-
-		.tincture {
-			flex-direction: row;
-			min-height: 50vh;
-		}
-
-		.tincture--reversed {
-			flex-direction: row-reverse;
-		}
-
-		.tincture-image-wrapper {
-			width: 50%;
-			aspect-ratio: auto;
-			min-height: 50vh;
-			flex-shrink: 0;
-		}
-
-		.tincture-content {
-			width: 50%;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			padding: 3rem 4rem;
-		}
-
-		.tincture-header h2 {
-			font-size: 2.2rem;
-		}
-
-		.quellen {
-			padding: 4rem 2rem 3rem;
-		}
-
-		.quellen-card {
-			padding: 2rem;
-		}
-
-		.disclaimer-section {
-			padding: 0 2rem 4rem;
+		.hero__arch {
+			height: 420px;
 		}
 	}
 
-	/* ===== Small Mobile ===== */
-	@media (max-width: 480px) {
-		.hero-overlay {
-			padding: 2rem 1.5rem;
+	@media (max-width: 768px) {
+		.facts-wrap {
+			padding-bottom: 48px;
 		}
 
-		.facts {
-			grid-template-columns: 1fr;
+		.tinctures {
+			padding-bottom: 64px;
 		}
 
-		.tincture-header h2 {
-			font-size: 1.5rem;
+		.tincture :global(.tincture__img) {
+			height: 260px;
+		}
+
+		.end {
+			padding-top: 48px;
+			padding-bottom: 56px;
 		}
 
 		.quellen-card {
-			padding: 1.25rem;
-		}
-
-		.quellen-card h2 {
-			font-size: 1.3rem;
+			padding: 20px;
 		}
 	}
 </style>

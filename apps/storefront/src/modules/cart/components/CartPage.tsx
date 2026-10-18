@@ -5,8 +5,11 @@ import {
   updateLineItemQuantity,
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
+import { stickerColor, stickerColorVar } from "@lib/utils/product-color";
 import { useStore } from "@nanostores/react";
 import { CartTotals } from "@modules/common/components/CartTotals";
+import { QtyStepper } from "@modules/common/components/QtyStepper";
+import { useState } from "react";
 
 interface CartPageProps {
   countryCode: string;
@@ -15,23 +18,16 @@ interface CartPageProps {
 export const CartPage = ({ countryCode }: CartPageProps) => {
   const cart = useStore($cart);
   const isCartLoading = useStore($isCartLoading);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  const handleRemoveItem = async (lineItemId: string) => {
+  const run = async (lineItemId: string, action: () => Promise<void>) => {
+    setBusyId(lineItemId);
     try {
-      await removeFromCart(lineItemId);
+      await action();
     } catch (error) {
-      console.error("Failed to remove item:", error);
-    }
-  };
-
-  const handleQuantityChange = async (
-    lineItemId: string,
-    newQuantity: number,
-  ) => {
-    try {
-      await updateLineItemQuantity(lineItemId, newQuantity);
-    } catch (error) {
-      console.error("Failed to update quantity:", error);
+      console.error("Failed to update cart:", error);
+    } finally {
+      setBusyId(null);
     }
   };
 
@@ -39,177 +35,135 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
   const isEmpty = itemCount === 0;
 
   if (!cart && isCartLoading) {
-    return <p className="text-muted text-center py-16">Warenkorb wird geladen…</p>;
+    return <p className="page-note">Pilzkorb wird geladen…</p>;
   }
   const currencyCode = cart?.currency_code || "EUR";
 
   return (
-    <div className="max-w-7xl mx-auto px-8 py-8">
+    <div className="cart-page">
       {isEmpty ? (
-        <div className="text-center py-16">
-          <h1 className="page-heading mb-4">Dein Warenkorb ist leer</h1>
-          <p className="text-muted mb-6">Füge Artikel zu deinem Warenkorb hinzu</p>
-          <a
-            href={`/${countryCode}/store`}
-            className="btn-accent inline-block"
-          >
+        <div className="cart-empty cart-empty--page">
+          <img
+            src="/mascot.webp"
+            alt=""
+            aria-hidden="true"
+            width={180}
+            height={180}
+            className="cart-empty__mascot"
+          />
+          <h1 className="page-title">Dein Pilzkorb ist leer</h1>
+          <p className="cart-empty__title">Hier wächst noch nichts.</p>
+          <p className="cart-empty__text">Die Mates langweilen sich.</p>
+          <a href={`/${countryCode}/store`} className="btn btn--primary">
             Weiter einkaufen
           </a>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left column: Cart items */}
-          <div className="lg:col-span-2">
-            <h1 className="page-heading mb-6">Warenkorb</h1>
+        <div className="cart-page__grid">
+          <div>
+            <h1 className="page-title">Dein Pilzkorb</h1>
 
-            {/* Cart items table */}
-            <div className="shop-card overflow-hidden">
-              <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 bg-[var(--bg-accent)] border-b-2 border-black/10 text-sm font-medium font-mono">
-                <div className="col-span-5">Artikel</div>
-                <div className="col-span-2 text-center">Anzahl</div>
-                <div className="col-span-2 text-right">Preis</div>
-                <div className="col-span-2 text-right">Gesamt</div>
-                <div className="col-span-1"></div>
-              </div>
-
+            <ul className="cart-page__items" role="list">
               {cart?.items?.map((item) => {
+                const product = item.variant?.product;
                 const thumbnailUrl =
-                  item.variant?.product?.thumbnail ||
-                  item.variant?.product?.images?.[0]?.url;
-                const productTitle = item.variant?.product?.title || "Product";
+                  item.thumbnail || product?.thumbnail || product?.images?.[0]?.url;
+                const productTitle = product?.title || item.title || "Produkt";
                 const variantTitle = item.variant?.title || "";
                 const unitPrice = item.unit_price || 0;
                 const quantity = item.quantity || 1;
-                const lineTotal = unitPrice * quantity;
+                const color = stickerColorVar(
+                  stickerColor({ handle: product?.handle, title: productTitle }),
+                );
+                const busy = busyId === item.id;
 
                 return (
-                  <div
-                    key={item.id}
-                    className="grid grid-cols-12 gap-4 p-4 border-b border-black/10 last:border-0 items-center"
-                  >
-                    {/* Item */}
-                    <div className="col-span-12 md:col-span-5 flex gap-4">
-                      {thumbnailUrl && (
-                        <img
-                          src={thumbnailUrl}
-                          alt={productTitle}
-                          className="line-item-thumb w-20 h-20"
-                          loading="lazy"
-                        />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium mb-1">{productTitle}</h3>
-                        {variantTitle && (
-                          <p className="text-sm text-muted">
-                            Variante: {variantTitle}
-                          </p>
-                        )}
+                  <li key={item.id} className="cart-line cart-line--page" aria-busy={busy}>
+                    {thumbnailUrl ? (
+                      <img
+                        src={thumbnailUrl}
+                        alt={productTitle}
+                        className="cart-line__thumb"
+                        style={{ borderColor: color }}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div
+                        className="cart-line__thumb"
+                        style={{ borderColor: color, background: color }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="cart-line__body">
+                      <div className="cart-line__top">
+                        <p className="cart-line__name">{productTitle}</p>
+                        <p className="cart-line__total">
+                          {convertToLocale({ amount: unitPrice * quantity, currencyCode })}
+                        </p>
                       </div>
-                    </div>
-
-                    {/* Quantity */}
-                    <div className="col-span-6 md:col-span-2">
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          onClick={() =>
-                            handleQuantityChange(item.id, quantity - 1)
-                          }
-                          className="w-11 h-11 flex items-center justify-center border-2 border-black rounded-md bg-white hover:bg-[var(--bg-accent)] text-lg"
-                          aria-label={
+                      <p className="cart-line__meta">
+                        {variantTitle && variantTitle !== "Standard" && `${variantTitle} · `}
+                        {convertToLocale({ amount: unitPrice, currencyCode })} pro Stück
+                      </p>
+                      <div className="cart-line__actions">
+                        <QtyStepper
+                          value={quantity}
+                          label={`Anzahl ${productTitle}`}
+                          disabled={busy}
+                          decreaseLabel={
                             quantity <= 1 ? `${productTitle} entfernen` : "Menge verringern"
                           }
-                        >
-                          −
-                        </button>
-                        <span
-                          className="w-10 text-center font-medium tabular-nums"
-                          aria-live="polite"
-                          aria-label={`Menge: ${quantity}`}
-                        >
-                          {quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            handleQuantityChange(item.id, quantity + 1)
+                          onDecrease={() =>
+                            run(item.id, () => updateLineItemQuantity(item.id, quantity - 1))
                           }
-                          className="w-11 h-11 flex items-center justify-center border-2 border-black rounded-md bg-white hover:bg-[var(--bg-accent)] text-lg"
-                          aria-label="Menge erhöhen"
+                          onIncrease={() =>
+                            run(item.id, () => updateLineItemQuantity(item.id, quantity + 1))
+                          }
+                        />
+                        <button
+                          type="button"
+                          onClick={() => run(item.id, () => removeFromCart(item.id))}
+                          disabled={busy}
+                          className="text-btn"
+                          aria-label={`${productTitle} aus dem Pilzkorb entfernen`}
                         >
-                          +
+                          Entfernen
                         </button>
                       </div>
                     </div>
-
-                    {/* Price */}
-                    <div className="col-span-3 md:col-span-2 text-right text-sm">
-                      {convertToLocale({
-                        amount: unitPrice,
-                        currencyCode,
-                      })}
-                    </div>
-
-                    {/* Total */}
-                    <div className="col-span-3 md:col-span-2 text-right font-medium">
-                      {convertToLocale({
-                        amount: lineTotal,
-                        currencyCode,
-                      })}
-                    </div>
-
-                    {/* Remove */}
-                    <div className="col-span-12 md:col-span-1 flex justify-end md:justify-center">
-                      <button
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="w-11 h-11 flex items-center justify-center rounded-md text-red-600 hover:text-red-700 hover:bg-red-50"
-                        aria-label={`${productTitle} aus dem Warenkorb entfernen`}
-                      >
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
 
-          {/* Right column: Order summary */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 order-summary-card">
-              <div className="order-summary-header">
-                <h2 className="checkout-step-title">Zusammenfassung</h2>
-              </div>
-              <div className="order-summary-body">
-                <CartTotals
-                  currencyCode={currencyCode}
-                  itemTotal={cart?.item_total}
-                  shippingTotal={cart?.shipping_total}
-                  shippingPending={!cart?.shipping_methods?.length}
-                  taxTotal={cart?.tax_total}
-                  discountTotal={cart?.discount_total}
-                  total={cart?.total}
-                />
-                <a href={`/${countryCode}/checkout`} className="btn-accent w-full mt-6">
-                  Zur Kasse
-                </a>
-                <p className="shop-terms-hint">
-                  Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und
-                  weiteren Zahlarten über SumUp.
-                </p>
-              </div>
-            </div>
-          </div>
+          <aside className="summary-card" aria-labelledby="cart-summary-title">
+            <h2 id="cart-summary-title" className="summary-card__title">
+              Zusammenfassung
+            </h2>
+            <CartTotals
+              currencyCode={currencyCode}
+              itemTotal={cart?.item_total}
+              shippingTotal={cart?.shipping_total}
+              shippingPending={!cart?.shipping_methods?.length}
+              taxTotal={cart?.tax_total}
+              discountTotal={cart?.discount_total}
+              total={cart?.total}
+            />
+            <a
+              href={`/${countryCode}/checkout`}
+              className="btn btn--primary btn--block btn--lg"
+            >
+              Zur Kasse
+            </a>
+            <p className="summary-card__hint">
+              Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und
+              weiteren Zahlarten über SumUp.
+            </p>
+            <a href={`/${countryCode}/store`} className="cart-drawer__more">
+              Weiter stöbern
+            </a>
+          </aside>
         </div>
       )}
     </div>

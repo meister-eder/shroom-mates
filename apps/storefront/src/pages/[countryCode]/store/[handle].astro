@@ -1,9 +1,12 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import { retrieveProduct } from "@lib/data/products";
+import { Image } from "astro:assets";
+import { listProducts, retrieveProduct } from "@lib/data/products";
 import { getRegion } from "@lib/data/regions";
 import { getProductPrice } from "@lib/utils/get-product-price";
-import { basePriceLabel } from "@lib/utils/base-price";
+import { serverImageSrc } from "@lib/utils/image";
+import { stickerColor } from "@lib/utils/product-color";
+import { websiteUrl } from "@shroom-mates/ui/site";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
@@ -54,15 +57,64 @@ const {
   height,
 } = product ?? {};
 
-const { cheapestPrice } = getProductPrice({
-  productVariants: variants ?? [],
-});
-const basePrice = basePriceLabel(
-  cheapestPrice?.calculated_price_number,
-  cheapestPrice?.currency_code,
-  cheapestPrice?.variant_title,
-  title,
+const category = product?.categories?.[0];
+const isGrowkit = product?.categories?.some((c) => c.handle === "growkits");
+const color = stickerColor({ handle: product?.handle, title });
+
+// Latin name only when the shop data has one (subtitle or metadata.latin_name)
+const meta = (product?.metadata ?? {}) as Record<string, unknown>;
+const text = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+const latinName = text(meta.latin_name) ?? text(product?.subtitle);
+const contents = text(meta.inhalt);
+const care = text(meta.pflege);
+const hasAttributes = !!(
+  material ||
+  origin_country ||
+  type?.value ||
+  weight ||
+  (length && width && height)
 );
+
+// "Passt dazu": one product from the other category, one from the same
+let related: Awaited<ReturnType<typeof listProducts>> = [];
+if (product) {
+  try {
+    const all = (await listProducts(region.id)).filter(
+      (p) =>
+        p.id !== product!.id &&
+        !p.categories?.some((c) => c.handle === "frische-pilze"),
+    );
+    const sameCat = all.filter((p) => p.categories?.[0]?.handle === category?.handle);
+    const otherCat = all.filter((p) => p.categories?.[0]?.handle !== category?.handle);
+    related = [otherCat[0], sameCat[0]].filter(Boolean).slice(0, 2);
+    if (related.length < 2) related = all.slice(0, 2);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// "Mehr über Lion's Mane →": variety name = title without product-type words
+const varietyName = (title ?? "")
+  .replace(/\b(growkit|tinktur|\d+\s?ml)\b/gi, "")
+  .replace(/\s+/g, " ")
+  .trim();
+const showVariety = !!varietyName && varietyName !== title;
+
+const growSteps = [
+  {
+    title: "Auspacken",
+    text: "Kreuz in die Folie schneiden, an einen hellen Ort ohne direkte Sonne stellen.",
+  },
+  {
+    title: "Feucht halten",
+    text: "2–3 × täglich besprühen: feucht, nicht nass.",
+  },
+  {
+    title: "Ernten",
+    text: "Vorsichtig abdrehen, kurz bevor die Hüte komplett aufschirmen.",
+  },
+];
+
 ---
 
 <Layout
@@ -72,49 +124,191 @@ const basePrice = basePriceLabel(
   image={images?.[0]?.url}
   type="product"
 >
-  {error && <p class="text-red-700">{error.message}</p>}
+  {error && <p class="error-banner" role="alert">{error.message}</p>}
   {
     product && (
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 px-8 py-8 max-w-[1200px] mx-auto">
-        <ImageCarouselWrapper
-          images={images ?? []}
-          alt={title ?? "Produktbild"}
-        />
+      <>
+        <nav class="crumbs" aria-label="Brotkrumen">
+          <a href={`/${countryCode}/store`}>Shop</a>
+          {category && (
+            <>
+              <span aria-hidden="true">›</span>
+              <a href={`/${countryCode}/store?kategorie=${category.handle}`}>
+                {category.name}
+              </a>
+            </>
+          )}
+          <span aria-hidden="true">›</span>
+          <span aria-current="page">{title}</span>
+        </nav>
 
-        <div class="flex flex-col gap-12">
-          <div class="flex flex-col gap-4">
-            <h1 class="text-4xl font-bold">{title}</h1>
-            <p class="text-gray-600">{description}</p>
-            <p
-              class="text-3xl font-bold"
-              style="color: var(--accent, #ff4908);"
-            >
-              {cheapestPrice?.calculated_price}
-            </p>
-            <p class="text-sm text-muted -mt-3">
-              {basePrice && <span>{basePrice} · </span>}inkl. MwSt., zzgl. Versandkosten
-            </p>
+        <div class="pdp">
+          <div class="pdp__media">
+            <ImageCarouselWrapper
+              images={images ?? []}
+              alt={title ?? "Produktbild"}
+              color={color}
+            />
           </div>
 
-          <ProductActions
-            options={options ?? []}
-            variants={variants ?? []}
-            productId={product?.id ?? handle}
-            regionId={region.id}
-            client:load
-          />
+          <div class="pdp__info">
+            {category && (
+              <div class="pdp__pills">
+                <span class={`cat-pill cat-pill--${color}`}>{category.name}</span>
+              </div>
+            )}
+            <div>
+              <h1 class="pdp__title">{title}</h1>
+              {latinName && <p class="pdp__latin">{latinName}</p>}
+            </div>
+            {description && <p class="pdp__lead">{description}</p>}
 
-          <ProductAttributes
-            material={material}
-            origin_country={origin_country}
-            type={type}
-            weight={weight}
-            length={length}
-            width={width}
-            height={height}
-          />
+            <ProductActions
+              options={options ?? []}
+              variants={variants ?? []}
+              productId={product?.id ?? handle}
+              productTitle={title ?? ""}
+              regionId={region.id}
+              client:load
+            />
+
+            <ul class="check-list" role="list">
+              <li>
+                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                Versand in 3–5 Werktagen, ab 4,95 €
+              </li>
+              <li>
+                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                Selbst gezüchtet in der Glasfabrik Leutzsch
+              </li>
+              <li>
+                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                Lieferung innerhalb Deutschlands
+              </li>
+            </ul>
+
+            <div class="accordion">
+              {contents && (
+                <details class="acc" id="inhalt" open>
+                  <summary>Was drin ist</summary>
+                  <p>{contents}</p>
+                </details>
+              )}
+              {care && (
+                <details class="acc" id="pflege" open={!contents}>
+                  <summary>Pflege-Tipps</summary>
+                  <p>{care}</p>
+                </details>
+              )}
+              {hasAttributes && (
+                <details class="acc" id="details" open={!contents && !care}>
+                  <summary>Produktdetails</summary>
+                  <ProductAttributes
+                    material={material}
+                    origin_country={origin_country}
+                    type={type}
+                    weight={weight}
+                    length={length}
+                    width={width}
+                    height={height}
+                  />
+                </details>
+              )}
+              <details class="acc" id="versand" open={!contents && !care && !hasAttributes}>
+                <summary>Versand &amp; Rückgabe</summary>
+                <p>
+                  Standard 4,95 € (3–5 Werktage), Express 9,95 € (1–2
+                  Werktage). Lieferung nur innerhalb Deutschlands. Alle Preise
+                  inkl. MwSt. Infos zum Widerruf findest du in der{" "}
+                  <a href={`/${countryCode}/widerruf`}>Widerrufsbelehrung</a>.
+                </p>
+              </details>
+            </div>
+          </div>
         </div>
-      </div>
+
+        {isGrowkit && (
+          <section class="full-bleed how-band" aria-labelledby="how-title">
+            <div class="how-band__inner">
+              <h2 id="how-title" class="how-band__title">So einfach geht's</h2>
+              <ol class="how-band__steps" role="list">
+                {growSteps.map((step, i) => (
+                  <li class="comic-panel">
+                    <div class={`comic-panel__head${i === 1 ? " comic-panel__head--lavender" : ""}`}>
+                      <span class="comic-panel__num">{String(i + 1).padStart(2, "0")}</span>
+                      <span>{step.title}</span>
+                    </div>
+                    <div class="comic-panel__body">
+                      <p>{step.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <a class="how-band__link" href={websiteUrl("/growkits/")}>
+                Zur ganzen Anleitung <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </section>
+        )}
+
+        {(related.length > 0 || showVariety) && (
+          <section class="pairs" aria-labelledby="pairs-title">
+            <h2 id="pairs-title" class="pairs__title">Passt dazu</h2>
+            <ul class="pairs__grid" role="list">
+              {related.map((p) => {
+                const price = getProductPrice({ productVariants: p.variants ?? [] }).cheapestPrice;
+                const src = p.thumbnail ?? p.images?.[0]?.url;
+                return (
+                  <li class={`pair-card pair-card--${stickerColor({ handle: p.handle, title: p.title })}`}>
+                    {src ? (
+                      <Image
+                        src={serverImageSrc(src)}
+                        width={96}
+                        height={96}
+                        alt=""
+                        format="webp"
+                        loading="lazy"
+                        class="pair-card__img"
+                      />
+                    ) : (
+                      <span class="pair-card__img sticker-card__placeholder" aria-hidden="true" />
+                    )}
+                    <span>
+                      <a href={`/${countryCode}/store/${p.handle}`} class="pair-card__title">
+                        {p.title}
+                      </a>
+                      {price && <span class="pair-card__price">{price.calculated_price}</span>}
+                    </span>
+                  </li>
+                );
+              })}
+              {showVariety && (
+                <li class="pair-card pair-card--more">
+                  <img src="/mascot.webp" alt="" width="96" height="96" class="pair-card__img pair-card__img--plain" loading="lazy" />
+                  <span>
+                    <a href={websiteUrl("/unsere-pilze/")} class="pair-card__title">
+                      Mehr über {varietyName} <span aria-hidden="true">→</span>
+                    </a>
+                    <span class="pair-card__sub">Alles zur Sorte</span>
+                  </span>
+                </li>
+              )}
+            </ul>
+          </section>
+        )}
+      </>
     )
   }
 </Layout>
+
+<script>
+  // "zzgl. Versandkosten" jumps to the shipping accordion and opens it
+  document.addEventListener("click", (e) => {
+    const link = (e.target as Element | null)?.closest<HTMLAnchorElement>(
+      'a[href="#versand"]',
+    );
+    if (!link) return;
+    const details = document.getElementById("versand") as HTMLDetailsElement | null;
+    if (details) details.open = true;
+  });
+</script>

@@ -5,7 +5,7 @@ heroImageAlt: Rosafarbene Austernpilze in einer Tasse
 logoImage: ../../assets/images/logo_with_shrooms.png
 logoImageAlt: Shroom-Mates Logo mit Pilzen
 heroTitle: Hi, wir sind die shroom-mates!
-teaserText: Edel- und Vitalpilze aus der Plagwitzer Markthalle in Leipzig. Frisch für dich oder dein Restaurant, als Growkit zum Selberziehen oder als handgemachte Tinktur. Alles selbst gezüchtet.
+teaserText: Edel- und Vitalpilze aus der Glasfabrik in Leipzig-Leutzsch. Frisch für dich oder dein Restaurant, als Growkit zum Selberziehen oder als handgemachte Tinktur. Alles selbst gezüchtet.
 values:
   - title: Nachhaltig
     headingSvg: /assets/headings/nachhaltig.svg
@@ -13,7 +13,7 @@ values:
   - title: Regional
     headingSvg: /assets/headings/regional.svg
     description: Unser Substrat mischen wir ausschließlich aus regionalen
-      Bio-Rohstoffen. Unsere zentrale Lage in Plagwitz garantiert kurze
+      Bio-Rohstoffen. Unsere Lage in Leutzsch garantiert kurze
       Lieferwege.
   - title: Transparent
     headingSvg: /assets/headings/transparent.svg

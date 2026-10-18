@@ -27,8 +27,9 @@ export interface CheckoutFormValues {
   billing: AddressValues;
 }
 
-const INPUT_BASE = "input-field";
-const ERROR = "input-error";
+export const ERROR_CLASS =
+  "input-error field__error text-accent-dark! [&::before]:bg-accent-dark!";
+const ERROR = ERROR_CLASS;
 
 interface AddressFieldsProps {
   prefix: "shipping" | "billing";
@@ -50,27 +51,25 @@ export const AddressFields = ({
     <div className="space-y-4">
       {/* Row 1: First name / Last name */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-firstName`}>Vorname *</label>
+        <div className="field">
+          <label htmlFor={`${prefix}-firstName`}>Vorname *</label>
           <input
             id={`${prefix}-firstName`}
             type="text"
             autoComplete="given-name"
             {...register(f("firstName"))}
             aria-invalid={errors.firstName ? true : undefined}
-            className={`${INPUT_BASE}${errors.firstName ? " error" : ""}`}
           />
           {errors.firstName && <p className={ERROR}>{errors.firstName.message}</p>}
         </div>
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-lastName`}>Nachname *</label>
+        <div className="field">
+          <label htmlFor={`${prefix}-lastName`}>Nachname *</label>
           <input
             id={`${prefix}-lastName`}
             type="text"
             autoComplete="family-name"
             {...register(f("lastName"))}
             aria-invalid={errors.lastName ? true : undefined}
-            className={`${INPUT_BASE}${errors.lastName ? " error" : ""}`}
           />
           {errors.lastName && <p className={ERROR}>{errors.lastName.message}</p>}
         </div>
@@ -78,53 +77,49 @@ export const AddressFields = ({
 
       {/* Row 2: Address / Company */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-address`}>Straße und Hausnummer *</label>
+        <div className="field">
+          <label htmlFor={`${prefix}-address`}>Straße und Hausnummer *</label>
           <input
             id={`${prefix}-address`}
             type="text"
             autoComplete="street-address"
             {...register(f("address"))}
             aria-invalid={errors.address ? true : undefined}
-            className={`${INPUT_BASE}${errors.address ? " error" : ""}`}
           />
           {errors.address && <p className={ERROR}>{errors.address.message}</p>}
         </div>
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-company`}>Firma <span className="label-optional">(optional)</span></label>
+        <div className="field">
+          <label htmlFor={`${prefix}-company`}>Firma <span className="font-normal text-sm">(optional)</span></label>
           <input
             id={`${prefix}-company`}
             type="text"
             autoComplete="organization"
             {...register(f("company"))}
-            className={INPUT_BASE}
           />
         </div>
       </div>
 
       {/* Row 3: Postal code / City */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-postalCode`}>PLZ *</label>
+        <div className="field">
+          <label htmlFor={`${prefix}-postalCode`}>PLZ *</label>
           <input
             id={`${prefix}-postalCode`}
             type="text"
             autoComplete="postal-code"
             {...register(f("postalCode"))}
             aria-invalid={errors.postalCode ? true : undefined}
-            className={`${INPUT_BASE}${errors.postalCode ? " error" : ""}`}
           />
           {errors.postalCode && <p className={ERROR}>{errors.postalCode.message}</p>}
         </div>
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-city`}>Stadt *</label>
+        <div className="field">
+          <label htmlFor={`${prefix}-city`}>Stadt *</label>
           <input
             id={`${prefix}-city`}
             type="text"
             autoComplete="address-level2"
             {...register(f("city"))}
             aria-invalid={errors.city ? true : undefined}
-            className={`${INPUT_BASE}${errors.city ? " error" : ""}`}
           />
           {errors.city && <p className={ERROR}>{errors.city.message}</p>}
         </div>
@@ -132,14 +127,13 @@ export const AddressFields = ({
 
       {/* Row 4: Country / State */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-country`}>Land *</label>
+        <div className="field">
+          <label htmlFor={`${prefix}-country`}>Land *</label>
           <select
             id={`${prefix}-country`}
             autoComplete="country"
             {...register(f("country"))}
             aria-invalid={errors.country ? true : undefined}
-            className={`${INPUT_BASE}${errors.country ? " error" : ""}`}
           >
             <option disabled value="">Land auswählen</option>
             {countries.map((c) => (
@@ -150,14 +144,13 @@ export const AddressFields = ({
           </select>
           {errors.country && <p className={ERROR}>{errors.country.message}</p>}
         </div>
-        <div>
-          <label className="input-label" htmlFor={`${prefix}-province`}>Bundesland <span className="label-optional">(optional)</span></label>
+        <div className="field">
+          <label htmlFor={`${prefix}-province`}>Bundesland <span className="font-normal text-sm">(optional)</span></label>
           <input
             id={`${prefix}-province`}
             type="text"
             autoComplete="address-level1"
             {...register(f("province"))}
-            className={INPUT_BASE}
           />
         </div>
       </div>

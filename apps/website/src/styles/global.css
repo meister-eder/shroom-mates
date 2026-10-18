@@ -1,107 +1,13 @@
+/* Website-spezifische Ergänzungen.
+   Tokens, Typografie, Buttons, Sektionen, Karten und Reveal-Klassen kommen aus
+   @shroom-mates/ui (base.css / utilities.css). */
+
 :root {
-	/* Shared tokens live in @shroom-mates/ui/base.css */
-	--accent-gradient: linear-gradient(
-		45deg,
-		rgb(var(--accent)),
-		rgb(var(--accent-light)) 30%,
-		rgb(10, 10, 10) 60%
-	);
 	--navbar-height-scrolled: 5.5rem;
 	--navbar-height-mobile-scrolled: 3.5rem;
 }
 
-body {
-	color: var(--text-color);
-}
-
-* {
-	color: inherit;
-}
-
-/* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-	*,
-	*::before,
-	*::after {
-		animation-duration: 0.01ms !important;
-		animation-iteration-count: 1 !important;
-		transition-duration: 0.01ms !important;
-	}
-
-	/* The reveal script doesn't run with reduced motion; show everything */
-	.reveal,
-	.reveal-left,
-	.reveal-right,
-	.reveal-scale {
-		opacity: 1 !important;
-		transform: none !important;
-	}
-}
-
-/* ===== Scroll-Triggered Reveal Animations ===== */
-
-.reveal {
-	opacity: 0;
-	transform: translateY(30px);
-	transition:
-		opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-		transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal.reveal--visible {
-	opacity: 1;
-	transform: translateY(0);
-}
-
-.reveal-left {
-	opacity: 0;
-	transform: translateX(-40px);
-	transition:
-		opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-		transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-left.reveal--visible {
-	opacity: 1;
-	transform: translateX(0);
-}
-
-.reveal-right {
-	opacity: 0;
-	transform: translateX(40px);
-	transition:
-		opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-		transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-right.reveal--visible {
-	opacity: 1;
-	transform: translateX(0);
-}
-
-.reveal-scale {
-	opacity: 0;
-	transform: scale(0.92);
-	transition:
-		opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-		transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-scale.reveal--visible {
-	opacity: 1;
-	transform: scale(1);
-}
-
-/* Stagger delay utility — set via inline style --reveal-delay */
-.reveal[style*="--reveal-delay"],
-.reveal-left[style*="--reveal-delay"],
-.reveal-right[style*="--reveal-delay"],
-.reveal-scale[style*="--reveal-delay"] {
-	transition-delay: var(--reveal-delay);
-}
-
 /* ===== Global View Transitions ===== */
-/* Apply a gentle fade to all view transitions */
 @view-transition {
 	navigation: auto;
 }
@@ -136,57 +42,18 @@ body {
 	}
 }
 
-/* ===== Reusable Section Styles ===== */
+/* ===== Hilfsklassen für Unterseiten ===== */
 
-/* Base section styling - consistent padding and borders */
-.section {
-	padding: 4rem 1rem;
-	background: var(--bg-color);
-	border-top: 2px solid #000;
-	width: 100%;
-	box-sizing: border-box;
-	overflow-x: hidden;
-}
-
-/* Alternative background for sections */
-.section--alt-bg {
-	background: #f8f8f8;
-}
-
-/* Checkered background pattern */
-.section--checkered {
-	background-size: 20px 20px;
-	background-image:
-		linear-gradient(to right, #ebc477c5 1px, transparent 1px),
-		linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
-}
-
-/* Override border-top when needed */
-.section--no-border {
-	border-top: none;
-}
-
-/* Centered container for section content */
+/* Zentrierter Container innerhalb einer .section */
 .section-container {
-	max-width: 1200px;
+	max-width: var(--container, 1280px);
 	margin: 0 auto;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-/* Section headings - consistent typography */
-.section-heading {
-	font-size: 2.5rem;
-	color: var(--text-color);
-	margin-bottom: 1rem;
-	font-family: "DM Mono", monospace;
-	text-align: center;
-}
-
-/* Section subtitle */
 .section-subtitle {
 	font-size: 1.2rem;
-	color: var(--text-color);
 	margin-bottom: 3rem;
 	max-width: 600px;
 	margin-left: auto;
@@ -194,89 +61,6 @@ body {
 	text-align: center;
 }
 
-/* ===== Reusable Button Styles ===== */
-
-.btn {
-	padding: 0.8rem 2rem;
-	text-decoration: none;
-	border-radius: 6px;
-	font-family: "DM Mono", monospace;
-	font-weight: 500;
-	transition: all 0.3s ease;
-	display: inline-block;
-	text-align: center;
-	cursor: pointer;
-}
-
-.btn--primary {
-	background: #000;
-	color: #fff;
-	box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-}
-
-.btn--primary:hover {
-	transform: translate(2px, 2px);
-	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-	background: var(--accent, #ff4908);
-}
-
-.btn--secondary {
-	border: 2px solid #000;
-	color: var(--text-color);
-	background: #fff;
-	box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
-}
-
-.btn--secondary:hover {
-	transform: translate(2px, 2px);
-	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
-	background: #f5f5f5;
-}
-
-/* ===== Reusable Card Styles ===== */
-
-.card {
-	background: var(--bg-color);
-	border: 3px solid #000;
-	border-radius: 12px;
-	padding: 1.5rem;
-	transition: all 0.3s ease;
-	box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-}
-
-.card:hover {
-	transform: translateY(-4px) rotate(-0.5deg);
-	box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.25);
-}
-
 .card--light {
-	background: #f8f8f8;
-	border: 2px solid #000;
-}
-
-/* ===== Responsive Adjustments ===== */
-
-@media (max-width: 768px) {
-	.section {
-		padding: 3rem 0.5rem;
-	}
-
-	.section-container {
-		padding: 0 0.5rem;
-	}
-
-	.section-heading {
-		font-size: 2rem;
-	}
-
-	.btn {
-		width: 100%;
-		box-sizing: border-box;
-	}
-}
-
-@media (max-width: 480px) {
-	.section-heading {
-		font-size: 1.8rem;
-	}
+	background: var(--color-paper);
 }

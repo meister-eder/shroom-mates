@@ -28,6 +28,10 @@ export default defineConfig({
     host: true,
   },
   vite: {
+    // CSP is `script-src 'self'`: never inline hoisted scripts into the HTML.
+    build: {
+      assetsInlineLimit: 0,
+    },
     resolve: {
       dedupe: ["react", "react-dom"],
     },

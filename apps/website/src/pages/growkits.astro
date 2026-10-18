@@ -1,42 +1,96 @@
 ---
 import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import { getCollection, getEntry, render } from "astro:content";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import { linkBuilders } from "@shroom-mates/ui/site";
+import rosenseitlingWand from "../assets/images/fotos/rosenseitling-wandbild.jpg";
+import rosenseitlingBueschel from "../assets/images/fotos/rosenseitling-bueschel.jpg";
 import ProductCard from "../components/ProductCard.astro";
 import Layout from "../layouts/Layout.astro";
 
-// Get the growkits page content (generic instructions)
+const { shop } = linkBuilders("website");
+
+// Generische Anleitung (CMS)
 const growkitsPageEntry = await getEntry("growkits-page", "content");
 if (!growkitsPageEntry) {
 	throw new Error("Growkits page content not found");
 }
 const { Content: PageContent } = await render(growkitsPageEntry);
 
-const {
-	title,
-	description,
-	heroTitle,
-	heroSubtitle,
-	heroImage,
-	heroImageAlt,
-	ctaTitle,
-	ctaText,
-	ctaButtonText,
-	ctaButtonLink,
-} = growkitsPageEntry.data;
+const { title, description, heroTitle, heroSubtitle, heroImage, heroImageAlt, ctaTitle, ctaButtonText, ctaButtonLink } =
+	growkitsPageEntry.data;
 
-// Get growkit varieties from the collection
+// Anleitung für die Comic-Panels aus dem Markdown lesen:
+// "## Überschrift", Einleitung, dann "### 1\. Titel" + Text je Schritt.
+// Klappt das nicht (Struktur im CMS geändert), rendern wir den Text unverändert.
+const escapeHtml = (s: string) =>
+	s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const inlineMd = (s: string) =>
+	escapeHtml(s)
+		.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+		.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, "<em>$1</em>");
+const paragraphs = (s: string) =>
+	s
+		.split(/\n\s*\n/)
+		.map((p) => p.trim())
+		.filter(Boolean)
+		.map(inlineMd);
+
+const [introPart, ...stepParts] = (growkitsPageEntry.body ?? "").split(/^###\s+/m);
+const guideHeading =
+	introPart.match(/^##\s+(.+)$/m)?.[1]?.trim() ?? "So funktioniert's";
+const guideIntro = paragraphs(introPart.replace(/^##\s+.+$/m, ""));
+const steps = stepParts.map((part) => {
+	const [first, ...rest] = part.split("\n");
+	return {
+		title: first.replace(/^\d+\\?\.\s*/, "").trim(),
+		text: paragraphs(rest.join("\n")),
+	};
+});
+
+// Foto je Schritt (sonst Platzhalter in Kartonfarbe mit Rasterpunkten)
+const stepImage = (stepTitle: string) =>
+	/^Ernten/i.test(stepTitle)
+		? {
+				image: rosenseitlingBueschel,
+				alt: "Frisch geerntetes Büschel Rosenseitlinge",
+			}
+		: undefined;
+const placeholders = ["var(--color-pink)", "var(--color-lavender)", "var(--color-olive-soft)"];
+
+// Kartonfarbe, Foto und Shop-Produkt je Growkit
+const kitMeta: Record<
+	string,
+	{
+		tone: "lavender" | "pink" | "olive-soft";
+		handle: string;
+		image?: ImageMetadata;
+	}
+> = {
+	"lions-mane": { tone: "lavender", handle: "lions-mane-growkit" },
+	rosenseitling: {
+		tone: "pink",
+		handle: "austernseitlinge-growkit",
+		image: rosenseitlingWand,
+	},
+	"white-pearl": { tone: "olive-soft", handle: "austernseitlinge-growkit" },
+};
+
 const growkitsCollection = await getCollection("growkits");
 const growkits = await Promise.all(
 	growkitsCollection
 		.sort((a, b) => a.data.order - b.data.order)
 		.map(async (entry) => {
 			const { Content } = await render(entry);
+			const m = kitMeta[entry.id];
 			return {
 				title: entry.data.title,
-				image: entry.data.image,
+				image: m?.image ?? entry.data.image,
 				imageAlt: entry.data.imageAlt,
 				Content,
-				color: entry.data.color,
+				tone: m?.tone ?? "paper",
+				shopHref: m ? shop(`/store/${m.handle}`) : shop("/store"),
 				slug: entry.id,
 			};
 		}),
@@ -120,405 +174,386 @@ const productSchemas = growkits.map((growkit) => ({
 }));
 ---
 
-<Layout title={title} description={description} ogImage={heroImage?.src}>
-  <!-- HowTo Schema for SEO -->
-  <script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />
-
-  <!-- Product Schemas for each growkit variety -->
+<Layout title={title} description={description} ogImage={heroImage?.src} isLandingPage={true} active="growkits">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(howToSchema)} />
   {
     productSchemas.map((schema) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
     ))
   }
 
-  <!-- Hero Section with Image + Text Overlay -->
-  {
-    heroImage && (
-      <section class="hero">
+  <div class="page">
+    <section class="hero container">
+      <div class="hero__copy">
+        <h1>
+          <span class="eyebrow hero__eyebrow">{heroTitle}</span>
+          <span class="hero__title">Zieh dir deine eigenen Mates.</span>
+        </h1>
+        <p class="lead hero__lead">
+          {heroSubtitle} Fertig besiedeltes Substrat, keine Vorkenntnisse nötig: aufschneiden, besprühen, ernten.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#kits">Kit aussuchen</a>
+          <a class="btn btn--secondary" href="#anleitung">Zur Anleitung</a>
+        </div>
+      </div>
+      <div class="hero__media">
+        <div class="dots" aria-hidden="true"></div>
         <Image
           src={heroImage}
           alt={heroImageAlt || "Growkits Anleitung"}
-          class="hero-image"
-          width={1920}
-          height={1080}
-          priority
+          class="hero__img"
+          widths={[320, 480, 640, 840]}
+          sizes="(max-width: 900px) 90vw, 520px"
+          loading="eager"
           format="webp"
-          decoding="async"
         />
-        <div class="hero-overlay">
-          <h1 class="hero-title">{heroTitle}</h1>
-          {heroSubtitle && <p class="hero-subtitle">{heroSubtitle}</p>}
+      </div>
+    </section>
+
+    {
+      growkits.length > 0 && (
+        <section id="kits" class="section section--paper kits" aria-labelledby="kits-heading">
+          <div class="kits__inner">
+            <h2 id="kits-heading">Welches Kit passt zu dir?</h2>
+            <div class="kits__grid">
+              {growkits.map((growkit) => (
+                <ProductCard
+                  title={growkit.title}
+                  image={growkit.image}
+                  imageAlt={growkit.imageAlt}
+                  tone={growkit.tone}
+                  headingLevel={3}
+                  id={growkit.slug}
+                >
+                  <details class="kit-details">
+                    <summary>Besonderheiten &amp; Tipps</summary>
+                    <growkit.Content />
+                  </details>
+                  <a slot="actions" class="btn btn--primary" href={growkit.shopHref}>
+                    Im Shop ansehen <Icon name="arrow-right" size={20} />
+                  </a>
+                </ProductCard>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <section id="anleitung" class="section section--night guide" aria-labelledby="guide-heading">
+      <div class="guide__inner">
+        <h2 id="guide-heading">{guideHeading}</h2>
+        {
+          steps.length > 0 ? (
+            <>
+              {guideIntro.map((p) => <p class="guide__intro" set:html={p} />)}
+              <ol class="guide__grid" role="list">
+                {steps.map((step, i) => {
+                  const photo = stepImage(step.title);
+                  return (
+                    <li class="comic-panel">
+                      <div class="comic-panel__head">
+                        <span class="comic-panel__num">{String(i + 1).padStart(2, "0")}</span>
+                      </div>
+                      {photo ? (
+                        <Image
+                          src={photo.image}
+                          alt={photo.alt}
+                          class="comic-panel__img guide__img"
+                          widths={[320, 480, 640]}
+                          sizes="(max-width: 768px) 90vw, 300px"
+                          format="webp"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div
+                          class="comic-panel__img guide__img guide__placeholder"
+                          style={`--ph: ${placeholders[i % placeholders.length]}`}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <div class="comic-panel__body">
+                        <h3 class="guide__title">{step.title}</h3>
+                        {step.text.map((p) => <p set:html={p} />)}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </>
+          ) : (
+            <div class="guide__fallback"><PageContent /></div>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="container pickup" aria-label="Abholen und Versand">
+      <div class="pickup__card">
+        <h2 class="pickup__title">{ctaTitle || "Interesse an einem Growkit?"}</h2>
+        <p>
+          Am einfachsten bestellst du im Shop. Du kannst dein Kit auch bei uns in der Glasfabrik in Leutzsch abholen: Schreib uns kurz, wir legen dir eins zurück.
+        </p>
+        <div class="pickup__actions">
+          <a class="btn btn--primary" href={shop("/store")}>Zum Shop <Icon name="arrow-right" size={20} /></a>
+          {ctaButtonText && ctaButtonLink && (
+            <a class="btn btn--secondary" href={ctaButtonLink}>{ctaButtonText}</a>
+          )}
         </div>
-      </section>
-    )
-  }
-
-  <!-- Main Content Section -->
-  <section class="growkits-section reveal" id="content">
-    <!-- Generic Instructions from CMS -->
-    <div class="instructions-content">
-      <PageContent />
-    </div>
-  </section>
-
-  <!-- Growkit Varieties Section -->
-  {
-    growkits.length > 0 && (
-      <section class="varieties-section" aria-label="Growkit Sorten">
-        <h2 class="section-heading">Unsere Growkit Sorten</h2>
-
-        <div class="varieties-grid">
-          {growkits.map((growkit) => (
-            <ProductCard
-              title={growkit.title}
-              image={growkit.image}
-              imageAlt={growkit.imageAlt}
-              color={growkit.color}
-              headingLevel={3}
-              id={growkit.slug}
-            >
-              <growkit.Content />
-            </ProductCard>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  <!-- CTA Section -->
-  {
-    ctaTitle && (
-      <section class="cta-section reveal" aria-label="Kontakt">
-        <h2>{ctaTitle}</h2>
-        {ctaText && <p>{ctaText}</p>}
-        {ctaButtonText && ctaButtonLink && (
-          <a href={ctaButtonLink} class="cta-button">
-            {ctaButtonText}
-          </a>
-        )}
-      </section>
-    )
-  }
+      </div>
+      <div class="pickup__note">
+        <p class="label">Versand</p>
+        <p>
+          Wir verschicken Growkits auch. Den Rosenseitling nicht in den Wintermonaten: Unter 10 °C stirbt das Myzel.
+        </p>
+      </div>
+    </section>
+  </div>
 </Layout>
 
 <style>
-  /* Hero Section */
+  .page {
+    padding-top: var(--navbar-height);
+    overflow-x: clip;
+  }
+
+  /* ── Hero ───────────────────────────────────────── */
   .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 48px;
+    padding-top: 32px;
+    padding-bottom: 88px;
+  }
+
+  .hero__eyebrow {
+    display: block;
+    max-width: 44ch;
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--color-accent-dark);
+  }
+
+  .hero__title {
+    display: block;
+    font-size: clamp(2.75rem, 7.4vw, 7rem);
+    line-height: 0.9;
+    color: var(--color-accent);
+  }
+
+  .hero__lead {
+    max-width: 38ch;
+    margin: 24px 0 0;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 32px;
+  }
+
+  .hero__media {
     position: relative;
-    width: calc(100vw - var(--scrollbar-width, 0px));
-    height: 70vh;
-    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-    margin-top: -1.5rem;
-    overflow: hidden;
+    padding: 24px;
   }
 
-  .hero::after {
-    content: "";
+  .hero__media .dots {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.55) 0%,
-      rgba(0, 0, 0, 0.15) 40%,
-      transparent 70%
-    );
-    pointer-events: none;
-    z-index: 1;
+    inset: 0 40px 40px 0;
+    border-radius: 40px;
   }
 
-  .hero-image {
+  .hero__media :global(.hero__img) {
+    position: relative;
+    display: block;
     width: 100%;
-    height: 100%;
+    height: 480px;
     object-fit: cover;
-    border-bottom: 2px solid #000;
+    border: 3px solid var(--color-ink);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-teaser);
+    rotate: 2deg;
   }
 
-  .hero-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    padding: 3rem 2rem;
-    text-align: center;
+  /* ── Kits ───────────────────────────────────────── */
+  .kits__inner,
+  .guide__inner {
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
   }
 
-  .hero-title {
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 700;
-    line-height: 1.15;
-    margin: 0 0 0.6rem 0;
-    color: #fff;
-    font-family: "DM Mono", monospace;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+  .kits h2 {
+    margin-bottom: 48px;
   }
 
-  .hero-subtitle {
-    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    max-width: 550px;
-    margin-left: auto;
-    margin-right: auto;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  .kits__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 40px 32px;
+    align-items: start;
+  }
+
+  .kit-details {
+    padding-top: 0;
+  }
+
+  /* ── Anleitung ──────────────────────────────────── */
+  .guide__inner > h2 {
+    margin-bottom: 12px;
+    color: var(--color-accent-light);
+  }
+
+  .guide__intro {
+    max-width: 56ch;
+    margin: 0 0 16px;
+    font-size: 1.1875rem;
+    color: #e9e6cf;
+  }
+
+  .guide__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 18px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .guide__grid > .comic-panel {
+    border-radius: 6px;
+    background: var(--color-cream);
+  }
+
+  .guide__grid :global(.guide__img) {
+    height: 150px;
+  }
+
+  .guide__placeholder {
+    background:
+      radial-gradient(rgba(29, 29, 29, 0.13) 1.4px, transparent 1.5px) 0 0 / 12px 12px,
+      var(--ph);
+  }
+
+  .guide__title {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+  }
+
+  .comic-panel__body :global(p) {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
     line-height: 1.5;
   }
 
-  /* Main Content Section */
-  .growkits-section {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 3rem 2rem;
+  .comic-panel__body :global(p:last-child) {
+    margin-bottom: 0;
   }
 
-  /* Prose styles for markdown content */
-  .instructions-content {
-    background: var(--bg-color);
-    border: 2px solid var(--focus-color, #000);
-    border-radius: 8px;
-    padding: 2.5rem;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
-    position: relative;
+  .guide__fallback {
+    max-width: 70ch;
+    margin-top: 24px;
+    color: #e9e6cf;
   }
 
-  .instructions-content :global(h2) {
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin: 2.5rem 0 1rem 0;
-    color: var(--text-color);
-    font-family: "DM Mono", monospace;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  .guide__fallback :global(a) {
+    color: var(--color-accent-light);
   }
 
-  .instructions-content :global(h2:first-child) {
-    margin-top: 0;
-  }
-
-  .instructions-content :global(h3) {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin: 1.75rem 0 0.6rem 0;
-    color: var(--accent);
-    font-family: "DM Mono", monospace;
+  /* ── Abholen / Versand ──────────────────────────── */
+  .pickup {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 32px;
+    padding-top: 96px;
+    padding-bottom: 96px;
   }
 
-  .instructions-content :global(p) {
-    font-size: 1rem;
-    line-height: 1.75;
-    margin: 0 0 1rem 0;
-    color: var(--text-color);
+  .pickup__card {
+    flex: 1 1 420px;
+    min-width: 0;
+    padding: 36px;
+    background: var(--color-lavender);
+    border: 3px solid var(--color-ink);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
   }
 
-  .instructions-content :global(strong) {
-    font-weight: 700;
+  .pickup__title {
+    margin-bottom: 12px;
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    line-height: 1;
   }
 
-  .instructions-content :global(em) {
-    font-style: italic;
+  .pickup__card p {
+    margin: 0 0 24px;
+    font-size: 1.125rem;
+    line-height: 1.5;
   }
 
-  .instructions-content :global(ul),
-  .instructions-content :global(ol) {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-  }
-
-  .instructions-content :global(li) {
-    font-size: 1rem;
-    line-height: 1.7;
-    margin: 0.5rem 0;
-  }
-
-  .instructions-content :global(hr) {
-    border: none;
-    border-top: 2px solid #eee;
-    margin: 2rem 0;
-  }
-
-  .instructions-content :global(a) {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .instructions-content :global(a:hover) {
-    text-decoration-thickness: 2px;
-  }
-
-  /* Varieties Section */
-  .varieties-section {
-    padding: 3rem 0;
-  }
-
-  .section-heading {
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    font-weight: 700;
-    text-align: center;
-    margin: 0 0 0.5rem 0;
-    color: var(--text-color);
-    font-family: "DM Mono", monospace;
-  }
-
-  .section-heading::after {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 3px;
-    background: var(--accent);
-    margin: 0.75rem auto 2rem;
-    border-radius: 2px;
-  }
-
-  .varieties-grid {
+  .pickup__actions {
     display: flex;
-    flex-direction: column;
-    gap: 0;
-    width: calc(100vw - var(--scrollbar-width, 0px));
-    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
+    flex-wrap: wrap;
+    gap: 14px;
   }
 
-  /* CTA Section */
-  .cta-section {
-    text-align: center;
-    padding: 4rem 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
+  .pickup__note {
+    flex: 1 1 320px;
+    min-width: 0;
+    padding: 36px;
+    background: #fff;
+    border: 3px dashed var(--color-ink);
+    border-radius: var(--radius-card);
   }
 
-  .cta-section::before {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 3px;
-    background: var(--accent);
-    margin: 0 auto 2rem;
-    border-radius: 2px;
+  .pickup__note .label {
+    margin: 0 0 10px;
+    color: var(--color-accent-dark);
   }
 
-  .cta-section h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0 0 1rem 0;
-    color: var(--text-color);
-    font-family: "DM Mono", monospace;
+  .pickup__note p:last-child {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.5;
   }
 
-  .cta-section p {
-    font-size: 1.1rem;
-    color: var(--text-color);
-    margin: 0 0 2rem 0;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
-  }
-
-  .cta-button {
-    display: inline-block;
-    padding: 0.8rem 2rem;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 1rem;
-    font-family: "DM Mono", monospace;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .cta-button:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-    background: var(--accent);
-  }
-
-  .cta-button:active {
-    transform: translate(4px, 4px);
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .cta-button:focus-visible {
-    outline: 2px solid var(--focus-color, #000);
-    outline-offset: 2px;
-  }
-
-  /* Tablet breakpoint */
-  @media (max-width: 968px) {
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 900px) {
     .hero {
-      height: 50vh;
+      grid-template-columns: minmax(0, 1fr);
+      padding-bottom: 56px;
     }
 
-    .instructions-content {
-      padding: 1.5rem;
-    }
-
-    .section-heading {
-      font-size: 1.7rem;
+    .hero__media :global(.hero__img) {
+      height: 340px;
     }
   }
 
-  /* Mobile breakpoint */
   @media (max-width: 768px) {
-    .hero {
-      height: 40vh;
-      margin-top: -1rem;
+    .pickup {
+      padding-top: 56px;
+      padding-bottom: 56px;
     }
 
-    .hero-overlay {
-      padding: 2rem 1.5rem;
+    .pickup__card,
+    .pickup__note {
+      padding: 24px 20px;
     }
 
-    .growkits-section {
-      padding: 2rem 1.5rem;
-    }
-
-    .instructions-content {
-      padding: 1.25rem;
-    }
-
-    .instructions-content :global(h2) {
-      font-size: 1.4rem;
-    }
-
-    .instructions-content :global(h3) {
-      font-size: 1.05rem;
-    }
-
-    .varieties-section {
-      padding: 2rem 0;
-    }
-
-    .section-heading {
-      font-size: 1.5rem;
-      padding: 0 1.5rem;
-    }
-
-    .cta-section {
-      padding: 2rem 1.5rem;
-    }
-
-    .cta-section h2 {
-      font-size: 1.5rem;
-    }
-
-    .cta-section p {
-      font-size: 1rem;
+    .pickup__card {
+      box-shadow: 6px 6px 0 var(--color-ink);
     }
   }
 
-  /* Small mobile breakpoint */
-  @media (max-width: 480px) {
-    .hero {
-      height: 35vh;
+  @media (prefers-reduced-motion: reduce) {
+    .hero__media :global(.hero__img) {
+      rotate: none;
     }
   }
 </style>

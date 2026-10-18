@@ -3,6 +3,7 @@
 import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
 import "@styles/global.css";
+import "@styles/shop.css";
 import { WEBSITE_URL } from "@shroom-mates/ui/site";
 
 const DEFAULT_REGION = import.meta.env.DEFAULT_REGION || "de";
@@ -19,48 +20,14 @@ const DEFAULT_REGION = import.meta.env.DEFAULT_REGION || "de";
   </head>
   <body>
     <main class="not-found">
-      <p class="code">404</p>
-      <h1 class="page-heading">Diese Seite ist uns entwischt.</h1>
-      <p class="text-muted">Den Link gibt es nicht (mehr). Hier geht's weiter:</p>
-      <div class="actions">
-        <a href={`/${DEFAULT_REGION}/store`} class="btn-accent">Zum Sortiment</a>
-        <a href={WEBSITE_URL} class="link">Zur Website</a>
+      <img src="/mascot.webp" alt="" aria-hidden="true" width="180" height="180" />
+      <p class="not-found__code">404</p>
+      <h1 class="not-found__title">Diese Seite ist uns entwischt.</h1>
+      <p>Den Link gibt es nicht (mehr). Hier geht's weiter:</p>
+      <div class="not-found__actions">
+        <a href={`/${DEFAULT_REGION}/store`} class="btn btn--primary">Zum Sortiment</a>
+        <a href={WEBSITE_URL} class="btn btn--secondary">Zur Website</a>
       </div>
     </main>
   </body>
 </html>
-
-<style>
-  .not-found {
-    max-width: 32rem;
-    margin: 0 auto;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 1rem;
-  }
-
-  .code {
-    font-family: "DM Mono", monospace;
-    font-size: 4rem;
-    color: var(--accent);
-    margin: 0;
-  }
-
-  .actions {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .link {
-    font-family: "DM Mono", monospace;
-    color: var(--text-color);
-  }
-</style>

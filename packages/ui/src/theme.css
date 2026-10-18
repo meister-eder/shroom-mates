@@ -1,23 +1,54 @@
 /* ===================================================================
-   Shroom-Mates Design Tokens — Tailwind CSS v4 Theme
-   Shared across apps/website and apps/storefront
+   Shroom-Mates Design Tokens — Tailwind CSS v4 Theme (Redesign 2026)
+   Shared across apps/website and apps/storefront.
+   `static` = alle Variablen werden immer ausgegeben (auch wenn keine
+   Tailwind-Utility sie nutzt), damit plain-CSS (utilities.css) sie lesen kann.
+   Die Website nutzt kein Tailwind und bekommt dieselben Werte aus base.css.
+   ⚠ Änderungen hier bitte in base.css (:root) spiegeln.
    =================================================================== */
 
-@theme {
-  /* Brand Colors */
+@theme static {
+  /* Flächen */
+  --color-cream: #fdfcea;
+  --color-paper: #f2eedb;
+  --color-ink: #1d1d1d;
+  --color-night: #141210;
+  --color-white: #ffffff;
+
+  /* Akzent. Orange nur groß (>= 24px bold) oder mit Tinte darauf;
+     kleiner orange Text = accent-dark */
   --color-accent: #ff4908;
-  --color-accent-light: #ff9c7e;
   --color-accent-dark: #bf2300;
-  --color-text: #1d1d1d;
+  --color-accent-light: #ff9c7e;
+
+  /* Produktfarben (Growkit-Kartons) */
+  --color-lavender: #b0b1f1;
+  --color-pink: #f5cbcd;
+  --color-olive-soft: #d8da8a;
+  --color-olive: #7e8503;
+  --color-stone: #868174;
+
+  /* Aliase (alte Namen funktionieren weiter) */
+  --color-text: var(--color-ink);
   --color-bg: #ffffff;
-  --color-bg-accent: #fdfcea;
+  --color-bg-accent: var(--color-cream);
   --color-focus: #5f5f5f;
+  --color-muted: #5c5a50;
 
   /* Typography */
-  --font-body: "Geist Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", monospace;
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-body: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
 
-  /* Navbar Heights */
+  /* Radien + Schatten */
+  --radius-card: 28px;
+  --radius-img: 16px;
+  --radius-pill: 999px;
+  --shadow-btn: 4px 4px 0 var(--color-ink);
+  --shadow-card: 8px 8px 0 var(--color-ink);
+  --shadow-teaser: 10px 10px 0 var(--color-ink);
+
+  /* Navbar Heights (legacy, vom Header-Script synchronisiert) */
   --spacing-navbar: 7.5rem;
   --spacing-navbar-scrolled: 5.5rem;
   --spacing-navbar-mobile: 4.5rem;

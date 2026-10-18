@@ -51,9 +51,9 @@ export class CheckoutFlow {
     await this.page.waitForTimeout(300); // React state update
   }
 
-  /** Click "In den Warenkorb" on the product detail page */
+  /** Click "Rein ins Körbchen" on the product detail page */
   async addToCart() {
-    await this.page.getByRole("button", { name: /In den Warenkorb/ }).click();
+    await this.page.getByRole("button", { name: /Rein ins Körbchen/ }).click();
     // Wait for the cart store to update (nanostores)
     await this.page.waitForTimeout(1000);
   }
@@ -70,10 +70,10 @@ export class CheckoutFlow {
   /** Assert the cart has items (not empty) */
   async assertCartHasItems() {
     await this.goToCart();
-    await this.page.waitForSelector("h1:has-text('Warenkorb')");
+    await this.page.waitForSelector("h1:has-text('Pilzkorb')");
     // The empty state shows "Dein Warenkorb ist leer"
     await expect(
-      this.main.getByText("Dein Warenkorb ist leer"),
+      this.main.getByText(/Dein (Warenkorb|Pilzkorb) ist leer/),
     ).not.toBeVisible();
   }
 
@@ -220,7 +220,7 @@ export class CheckoutFlow {
 
   async assertEmptyCartMessage() {
     await expect(
-      this.main.getByRole("heading", { name: "Dein Warenkorb ist leer" }),
+      this.main.getByRole("heading", { name: /Dein (Warenkorb|Pilzkorb) ist leer/ }),
     ).toBeVisible();
   }
 

@@ -16,11 +16,8 @@ type CheckoutStep = "address" | "delivery" | "payment";
 
 const VALID_STEPS: CheckoutStep[] = ["address", "delivery", "payment"];
 
-const STEP_LABELS: Record<CheckoutStep, string> = {
-  address: "Adresse",
-  delivery: "Lieferung",
-  payment: "Zahlung",
-};
+// 04 "Prüfen" lives inside the payment page (order review + button).
+const RAIL = ["Adresse", "Lieferung", "Zahlung", "Prüfen"] as const;
 
 function readStepFromUrl(): CheckoutStep {
   const params = new URLSearchParams(window.location.search);
@@ -67,23 +64,29 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
 
   if (!cart && isCartLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center text-muted">
-        Warenkorb wird geladen…
+      <div className="mx-auto max-w-7xl px-4 py-16 text-center text-muted sm:px-8">
+        Pilzkorb wird geladen…
       </div>
     );
   }
 
   if (!cart || !cart.items?.length) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h1 className="page-heading mb-4">Dein Warenkorb ist leer</h1>
-        <p className="text-muted mb-6">
-          Füge Produkte hinzu, bevor du zur Kasse gehst.
+      <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
+        <img
+          src="/mascot.webp"
+          alt=""
+          width="160"
+          height="160"
+          className="mb-6 h-40 w-40 object-contain"
+        />
+        <h1 className="mb-4 text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">
+          Dein Pilzkorb ist leer
+        </h1>
+        <p className="mb-8 text-lg">
+          Hier wächst noch nichts. Füge Produkte hinzu, bevor du zur Kasse gehst.
         </p>
-        <a
-          href={`/${countryCode}/store`}
-          className="btn-accent inline-block"
-        >
+        <a href={`/${countryCode}/store`} className="btn btn--accent">
           Weiter einkaufen
         </a>
       </div>
@@ -93,28 +96,42 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
   const currentIdx = VALID_STEPS.indexOf(step);
 
   return (
-    <div className="section-inner py-8">
-      <p className="shop-terms-hint mb-4">
+    <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-8 sm:px-8">
+      <h1 className="mb-6 text-[clamp(44px,5vw,72px)]! leading-[.92]! text-accent">Kasse</h1>
+      <nav aria-label="Checkout-Schritte" className="mb-4">
+        <ol className="m-0 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-4">
+          {RAIL.map((label, i) => {
+            const isDone = i < currentIdx;
+            const isCurrent = i === currentIdx;
+            return (
+              <li
+                key={label}
+                aria-current={isCurrent ? "step" : undefined}
+                className={`flex items-center gap-2.5 rounded-pill border-2 border-ink px-3.5 py-2.5 text-[15px] font-bold ${
+                  isCurrent
+                    ? "bg-ink text-cream"
+                    : isDone
+                      ? "bg-olive-soft text-ink"
+                      : "bg-transparent text-ink"
+                }`}
+              >
+                <span className="font-mono text-[13px] font-normal" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {label}
+                {isDone && <span className="sr-only"> (erledigt)</span>}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+      <p className="mb-8 max-w-prose text-[15px]">
         Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und weiteren
         Zahlarten über SumUp.
       </p>
-      <nav aria-label="Checkout-Schritte" className="mb-8">
-        <ol className="checkout-progress">
-          {VALID_STEPS.map((s, i) => (
-            <li
-              key={s}
-              className={i < currentIdx ? "done" : i === currentIdx ? "active" : undefined}
-              aria-current={i === currentIdx ? "step" : undefined}
-            >
-              {i < currentIdx ? "✓ " : ""}
-              {STEP_LABELS[s]}
-            </li>
-          ))}
-        </ol>
-      </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 flex flex-col gap-4">
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
+        <div className="flex min-w-0 flex-col gap-4">
           <ShippingAddressStep
             cart={cart}
             countries={countries}
@@ -144,9 +161,7 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
           />
         </div>
 
-        <div className="lg:col-span-1">
-          <OrderSummary cart={cart} />
-        </div>
+        <OrderSummary cart={cart} />
       </div>
     </div>
   );

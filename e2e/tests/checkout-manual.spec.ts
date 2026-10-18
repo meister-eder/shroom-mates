@@ -144,7 +144,7 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
 
     // Remove item
     const removeBtn = checkout.main.locator(
-      'button[aria-label$="aus dem Warenkorb entfernen"]',
+      'button[aria-label$="aus dem Pilzkorb entfernen"]',
     );
     if (await removeBtn.isVisible()) {
       await removeBtn.click();

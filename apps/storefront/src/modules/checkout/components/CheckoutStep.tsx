@@ -10,19 +10,19 @@ interface CheckoutStepProps {
   children?: ReactNode;
 }
 
-const CheckIcon = () => (
-  <svg className="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-    <path
-      d="M2 6l3 3 5-5"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+const SHELL: Record<StepState, string> = {
+  active: "bg-white shadow-card",
+  done: "bg-white",
+  inactive: "bg-paper opacity-60",
+};
 
-/** Card shell shared by the address, delivery and payment steps. */
+const HEAD: Record<StepState, string> = {
+  active: "bg-lavender border-b-[3px] border-ink",
+  done: "bg-cream border-b-2 border-ink",
+  inactive: "bg-cream",
+};
+
+/** ComicPanel shell shared by the checkout steps (address, delivery, payment, review). */
 export const CheckoutStep = ({
   number,
   title,
@@ -30,22 +30,31 @@ export const CheckoutStep = ({
   onEdit,
   children,
 }: CheckoutStepProps) => (
-  <section className={`checkout-step${state === "inactive" ? " inactive" : ""}`}>
-    <div className="checkout-step-header">
-      <div
-        className={`checkout-step-number${state === "inactive" ? "" : ` ${state}`}`}
-      >
-        {state === "done" ? <CheckIcon /> : number}
-      </div>
-      <h2 className="checkout-step-title">{title}</h2>
+  <section
+    className={`overflow-hidden rounded-[26px] border-[3px] border-ink ${SHELL[state]}`}
+  >
+    <div
+      className={`flex items-center justify-between gap-4 px-[22px] py-[18px] ${HEAD[state]}`}
+    >
+      <h2 className="m-0 flex items-center gap-3 font-display text-[26px]! leading-none! font-black">
+        <span className="comic-panel__num text-sm" aria-hidden="true">
+          {String(number).padStart(2, "0")}
+        </span>
+        {title}
+      </h2>
       {state === "done" && onEdit && (
-        <button type="button" onClick={onEdit} className="checkout-edit-btn">
-          Bearbeiten
+        <button
+          type="button"
+          onClick={onEdit}
+          aria-label={`Ändern: ${title}`}
+          className="min-h-11 cursor-pointer border-0 bg-transparent px-1 font-body text-base font-semibold underline hover:text-accent-dark"
+        >
+          Ändern
         </button>
       )}
     </div>
     {state !== "inactive" && children && (
-      <div className="checkout-step-body">{children}</div>
+      <div className="px-[22px] py-[22px]">{children}</div>
     )}
   </section>
 );

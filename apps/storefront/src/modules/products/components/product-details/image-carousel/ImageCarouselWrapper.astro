@@ -6,9 +6,11 @@ import { ImageCarousel, type OptimizedCarouselImage } from "./ImageCarousel";
 interface Props {
   images: { url: string }[];
   alt: string;
+  /** Kartonfarbe, z. B. "lavender" */
+  color?: string;
 }
 
-const { images, alt } = Astro.props;
+const { images, alt, color = "paper" } = Astro.props;
 
 const imageUrls = images.map((image) => image.url);
 
@@ -18,11 +20,11 @@ const optimizedImages: OptimizedCarouselImage[] = await Promise.all(
       getImage({
         src: serverImageSrc(imageUrl),
         width: 1049,
-        height: 1312,
+        height: 1100,
         format: "webp",
-        quality: 50,
+        quality: 70,
         widths: [524, 1049],
-        sizes: "(max-width: 1049px) 524px, 1049px",
+        sizes: "(max-width: 768px) 92vw, 560px",
       }),
       getImage({
         src: serverImageSrc(imageUrl),
@@ -40,7 +42,7 @@ const optimizedImages: OptimizedCarouselImage[] = await Promise.all(
           main.srcSet.values.length > 0 ? main.srcSet.attribute : undefined,
         width: main.attributes.width as number,
         height: main.attributes.height as number,
-        sizes: "(max-width: 1049px) 524px, 1049px",
+        sizes: "(max-width: 768px) 92vw, 560px",
       },
       thumb: {
         src: thumb.src,
@@ -54,4 +56,4 @@ const optimizedImages: OptimizedCarouselImage[] = await Promise.all(
 );
 ---
 
-<ImageCarousel images={optimizedImages} alt={alt} client:visible />
+<ImageCarousel images={optimizedImages} alt={alt} color={color} client:load />

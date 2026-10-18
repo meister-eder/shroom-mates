@@ -29,6 +29,10 @@ export default defineConfig({
 	},
 	// Performance optimizations
 	vite: {
+		// CSP is `script-src 'self'`: never inline hoisted scripts into the HTML.
+		build: {
+			assetsInlineLimit: 0,
+		},
 		environments: {
 			client: {
 				build: {
@@ -48,7 +52,6 @@ export default defineConfig({
 		sitemap({
 			filter: (page) =>
 				![
-					"https://shroom-mates.de/ueber-uns/",
 					"https://shroom-mates.de/about/",
 					"https://shroom-mates.de/shrooms/",
 					"https://shroom-mates.de/news/",

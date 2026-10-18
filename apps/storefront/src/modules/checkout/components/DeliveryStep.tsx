@@ -4,6 +4,7 @@ import { convertToLocale } from "@lib/utils/money";
 import type { StoreCart, StoreCartShippingOptionWithServiceZone } from "@medusajs/types";
 import { useEffect, useState } from "react";
 import { CheckoutStep } from "./CheckoutStep";
+import { ERROR_CLASS } from "./AddressFields";
 import { OptionCard } from "./OptionCard";
 
 interface DeliveryStepProps {
@@ -85,9 +86,9 @@ export const DeliveryStep = ({
     return (
       <CheckoutStep number={2} title="Lieferung" state="done" onEdit={onEdit}>
         {method && (
-          <div className="text-sm">
-            <p className="input-label mb-1">Versandart</p>
-            <p className="text-muted">
+          <div>
+            <p className="label mb-1">Versandart</p>
+            <p>
               {method.name} — {formatPrice(method.amount)}
             </p>
           </div>
@@ -99,17 +100,17 @@ export const DeliveryStep = ({
   return (
     <CheckoutStep number={2} title="Lieferung" state="active">
       {isLoading && (
-        <p className="text-sm mb-4 text-muted">Versandoptionen werden geladen...</p>
+        <p className="mb-4 text-muted">Versandoptionen werden geladen...</p>
       )}
 
       {!isLoading && shippingOptions.length === 0 && !error && (
-        <p className="text-sm mb-4 text-muted">
+        <p className="mb-4 text-muted">
           Keine Versandoptionen für deine Adresse verfügbar.
         </p>
       )}
 
       {!isLoading && shippingOptions.length > 0 && (
-        <div className="space-y-3 mb-6">
+        <div className="mb-6 flex flex-col gap-3">
           {shippingOptions.map((option) => (
             <OptionCard
               key={option.id}
@@ -117,7 +118,7 @@ export const DeliveryStep = ({
               value={option.id}
               checked={selectedOptionId === option.id}
               onSelect={handleOptionChange}
-              aside={<span className="text-sm font-mono">{formatPrice(option.amount)}</span>}
+              aside={<span className="font-mono text-lg">{formatPrice(option.amount)}</span>}
             >
               {option.name}
             </OptionCard>
@@ -125,13 +126,13 @@ export const DeliveryStep = ({
         </div>
       )}
 
-      {error && <p className="input-error mb-4">{error}</p>}
+      {error && <p className={`${ERROR_CLASS} mb-4`} role="alert">{error}</p>}
 
       <button
         type="button"
         disabled={!selectedOptionId || isSaving}
         onClick={onContinue}
-        className="btn-accent w-full"
+        className="btn btn--primary btn--block min-h-[58px] text-lg"
       >
         {isSaving ? "Wird gespeichert..." : "Weiter zur Zahlung"}
       </button>

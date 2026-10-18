@@ -3,9 +3,9 @@ title: "Häufige Fragen zu Pilzen, Growkits & Tinkturen in Leipzig | shroom-mate
 description: "Antworten auf häufige Fragen rund um frische Pilze kaufen in Leipzig, Growkits, Pilztinkturen, Gastronomie-Lieferungen und Pilzzucht von shroom-mates."
 faqs:
   - question: "Wo kann ich in Leipzig frische Pilze kaufen?"
-    answer: "Schreib uns einfach eine Mail an hey@shroom-mates.de oder eine Nachricht auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a>. Wir planen außerdem einen offenen Werksverkauf in unserer Farm in der Plagwitzer Markthalle. Termine geben wir auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a> bekannt."
+    answer: "Schreib uns einfach eine Mail an hey@shroom-mates.de oder eine Nachricht auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a>. Wir planen außerdem einen offenen Werksverkauf in unserer Farm in der Glasfabrik. Termine geben wir auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a> bekannt."
   - question: "Welche Pilzsorten züchtet ihr in Leipzig?"
-    answer: "Rosenseitlinge, Pioppino, Lion's Mane (Igelstachelbart), White Pearl, Black Pearl und je nach Saison weitere Sorten. Wir züchten alles selbst in unserer Farm in der Plagwitzer Markthalle. Was gerade wächst, siehst du auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a> oder frag kurz per Mail nach."
+    answer: "Rosenseitlinge, Pioppino, Lion's Mane (Igelstachelbart), White Pearl, Black Pearl und je nach Saison weitere Sorten. Wir züchten alles selbst in unserer Farm in der Glasfabrik. Was gerade wächst, siehst du auf <a href='https://www.instagram.com/shroom_mates_le/'>Instagram</a> oder frag kurz per Mail nach."
   - question: "Sind eure Pilze bio-zertifiziert?"
     answer: "Nein, eine offizielle Bio-Zertifizierung haben wir nicht. Der Prozess ist für kleine Betriebe wie unseren sehr aufwendig. Wir verwenden aber ausschließlich regionale Rohstoffe in Bio-Qualität für unser Substrat und züchten ohne künstliche Zusätze."
   - question: "Wie lagert man frische Pilze richtig?"
@@ -15,9 +15,10 @@ faqs:
   - question: "Was ist ein Growkit und wie funktioniert Pilze selber züchten?"
     answer: "Ein Growkit ist ein fertiges Pilzzuchtset für Zuhause. Im Kit steckt fertig besiedeltes Substrat, du musst es nur regelmäßig besprühen und an einen hellen Platz ohne direkte Sonne stellen. Nach 1-2 Wochen kannst du ernten. Die genaue Anleitung findest du auf unserer <a href='/growkits'>Growkits-Seite</a>."
   - question: "Kann ich Growkits in Leipzig abholen?"
-    answer: "Ja, du kannst dein Growkit direkt bei uns in der Plagwitzer Markthalle (Markranstädter Straße 8, Leipzig) abholen. Schreib uns vorher kurz an hey@shroom-mates.de, damit wir eins für dich bereitstellen."
+    answer: "Ja, du kannst dein Growkit direkt bei uns in der Glasfabrik (Franz-Flemming-Straße 25, 04179 Leipzig-Leutzsch) abholen. Schreib uns vorher kurz an hey@shroom-mates.de, damit wir eins für dich bereitstellen."
   - question: "Was sind Pilztinkturen und Pilzextrakte?"
     answer: "Unsere Pilztinkturen sind handgemachte Doppelextrakte aus Fruchtkörpern, die wir selbst in Leipzig züchten. Der Doppelextrakt (Alkohol-Mazeration + Heißwasserextrakt) löst sowohl alkohol- als auch wasserlösliche Wirkstoffe. Aktuell bieten wir Lion's Mane und Reishi+Cordyceps an. Details gibt's auf unserer <a href='/tinkturen'>Tinkturen-Seite</a>."
   - question: "Versendet ihr Pilze, Growkits und Tinkturen auch per Post?"
     answer: "Growkits und Tinkturen versenden wir deutschlandweit per Post. Frische Pilze liefern wir direkt in Leipzig und Umgebung. Rosenseitling-Growkits verschicken wir allerdings nicht im Winter, weil das Mycel bei Kälte abstirbt."
 ---
+<!-- TODO Umzug: Werksverkauf/Abholung/Termine in der Glasfabrik inhaltlich prüfen (FAQ-Antworten Abholung + Werksverkauf) -->

@@ -3,32 +3,74 @@
    (tokens, background, layout wrapper, accessibility helpers).
    =================================================================== */
 
+/* Tokens — spiegeln theme.css (@theme), damit die Website ohne Tailwind
+   dieselben Werte hat. Alte Namen (--accent, --text-color, …) bleiben. */
 :root {
-  /* Brand colours */
-  --accent: #ff4908;
-  --accent-light: #ff9c7e;
-  --accent-dark: #bf2300;
+  /* Flächen */
+  --color-cream: #fdfcea;
+  --color-paper: #f2eedb;
+  --color-ink: #1d1d1d;
+  --color-night: #141210;
+  --color-white: #ffffff;
+
+  /* Akzent: Orange nur groß (>= 24px bold) oder mit Tinte darauf;
+     kleiner orange Text = --color-accent-dark */
+  --color-accent: #ff4908;
+  --color-accent-dark: #bf2300;
+  --color-accent-light: #ff9c7e;
+
+  /* Produktfarben (Growkit-Kartons) */
+  --color-lavender: #b0b1f1;
+  --color-pink: #f5cbcd;
+  --color-olive-soft: #d8da8a;
+  --color-olive: #7e8503;
+  --color-stone: #868174;
+  --color-muted: #5c5a50;
+
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-body: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+
+  --radius-card: 28px;
+  --radius-img: 16px;
+  --radius-pill: 999px;
+  --shadow-btn: 4px 4px 0 var(--color-ink);
+  --shadow-card: 8px 8px 0 var(--color-ink);
+  --shadow-teaser: 10px 10px 0 var(--color-ink);
+
+  /* Legacy-Aliase */
+  --accent: var(--color-accent);
+  --accent-light: var(--color-accent-light);
+  --accent-dark: var(--color-accent-dark);
   --color-forest: #2d5a27;
   --color-forest-light: #e8f0e7;
   --color-earth: #8b6914;
   --color-earth-light: #f5edd6;
-
-  /* Neutrals */
-  --text-color: #1d1d1d;
-  --text-muted: #6b6b6b;
+  --text-color: var(--color-ink);
+  --text-muted: var(--color-muted);
   --bg-color: #ffffff;
-  --bg-accent: #fdfcea;
-  --bg-warm: #faf8f2;
-  --border-color: #000000;
+  --bg-accent: var(--color-cream);
+  --bg-warm: var(--color-paper);
+  --border-color: var(--color-ink);
   --border-subtle: #e0d8c8;
-  --focus-color: #5f5f5f;
+  --focus-color: var(--color-ink);
 
   /* Layout (navbar heights are synced to the real header by LayoutScripts) */
-  --content-max-width: 1200px;
+  --container: 1280px;
+  --gutter: 32px;
+  --section-gap: 92px;
+  --content-max-width: 1280px;
   --navbar-height: 7.5rem;
   --navbar-height-mobile: 4.5rem;
   --scrollbar-width: 0px;
   --duration: 0.2s;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --gutter: 16px;
+    --section-gap: 56px;
+  }
 }
 
 * {
@@ -41,13 +83,12 @@ html {
   padding: 0;
   scroll-behavior: smooth;
   overflow-x: hidden;
-  font-family: "Geist Sans", system-ui, sans-serif;
-  color: var(--text-color);
-  background: var(--bg-color);
-  background-size: 20px 20px;
-  background-image:
-    linear-gradient(to right, #ebc477c5 1px, transparent 1px),
-    linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--color-ink);
+  background: var(--color-cream);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -55,6 +96,9 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  font-family: var(--font-body);
+  background: var(--color-cream);
+  color: var(--color-ink);
 }
 
 img {
@@ -62,17 +106,70 @@ img {
   max-width: 100%;
 }
 
+/* ── Typografie ────────────────────────────────────────────────────── */
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(40px, 8.4vw, 124px);
+  line-height: 0.9;
+}
+
+h2 {
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 0.95;
+}
+
+h3 {
+  font-family: var(--font-body);
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.lead {
+  font-size: 21px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--color-accent-dark);
+}
+
+/* Orange-Regel (M13): große Headline darf orange sein, kleiner Text nicht */
+.text-accent {
+  color: var(--color-accent);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
 /* ── Accessibility ─────────────────────────────────────────────────── */
 .skip-link {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: var(--text-color);
-  color: var(--bg-color);
-  padding: 8px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
   text-decoration: none;
-  z-index: 1001;
-  border-radius: 4px;
+  z-index: 2000;
 }
 
 .skip-link:focus {
@@ -92,8 +189,8 @@ img {
 }
 
 :focus-visible {
-  outline: 2px solid var(--focus-color);
-  outline-offset: 2px;
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -112,19 +209,6 @@ img {
   flex-direction: column;
   min-height: 100vh;
   position: relative;
-}
-
-/* Subtle grain texture overlay */
-.site-wrapper::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 200px 200px;
 }
 
 .site-main {
@@ -148,22 +232,15 @@ img {
   }
 }
 
-/* ── Section heading (website style: centred, short orange bar) ───── */
+/* ── Section heading (Legacy; LegalPage u. a.) ───────────────────── */
 .section-heading {
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 700;
-  text-align: center;
-  margin: 0 0 0.5rem;
-  color: var(--text-color);
-  font-family: "DM Mono", monospace;
-}
-
-.section-heading::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 3px;
-  background: var(--accent);
-  margin: 0.75rem auto 2rem;
-  border-radius: 2px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 0.95;
+  text-align: left;
+  margin: 0 0 1.5rem;
+  color: var(--color-ink);
+  text-wrap: balance;
 }

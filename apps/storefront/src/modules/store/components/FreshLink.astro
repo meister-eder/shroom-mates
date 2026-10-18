@@ -1,0 +1,20 @@
+---
+// Link card instead of a "fresh mushrooms" category: they are not sold here.
+import { Image } from "astro:assets";
+import { websiteUrl } from "@shroom-mates/ui/site";
+import lionsMane from "@assets/lions-mane-makro.webp";
+---
+
+<a href={websiteUrl("/unsere-pilze/")} class="fresh-link">
+  <Image
+    src={lionsMane}
+    alt=""
+    width={144}
+    height={144}
+    class="fresh-link__img"
+    format="webp"
+    loading="lazy"
+  />
+  <span class="fresh-link__title">Lieber frische Pilze?</span>
+  <span class="fresh-link__cta">Zu unseren Sorten <span aria-hidden="true">→</span></span>
+</a>

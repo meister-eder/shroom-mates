@@ -1,4 +1,28 @@
 ---
+/**
+ * Site footer shared by website and shop (Redesign 2026): night band, big
+ * mushroom drawing, "Bis bald in der Glasfabrik!" and four link columns.
+ *
+ *   Website: <Footer app="website" />
+ *   Shop:    <Footer app="shop" countryCode={cc}>
+ *              <a slot="actions" href=…>Vertrag widerrufen</a>   (§ 356a BGB)
+ *            </Footer>
+ *
+ * `legalExtended` adds AGB / Widerruf / Gewährleistung (default: shop only).
+ * The old `links` prop is ignored (deprecated).
+ */
+import { Image } from "astro:assets";
+import drawing from "./assets/shroom-mates-drawing.png";
+import Icon from "./Icon.astro";
+import {
+  ADDRESS,
+  CONTACT_EMAIL,
+  INSTAGRAM_URL,
+  REPO_URL,
+  footerColumns,
+  type AppId,
+} from "./site";
+
 export interface FooterLink {
   label: string;
   href: string;
@@ -7,208 +31,221 @@ export interface FooterLink {
 }
 
 interface Props {
-  links: FooterLink[];
+  app?: AppId;
+  countryCode?: string;
+  legalExtended?: boolean;
+  /** @deprecated links are derived from `app` */
+  links?: FooterLink[];
 }
 
-const { links } = Astro.props;
+const { app = "website", countryCode = "de", legalExtended } = Astro.props;
+const columns = footerColumns(app, countryCode, legalExtended);
 const currentYear = new Date().getFullYear();
 ---
 
-<footer role="contentinfo">
-  <div class="footer-container">
-    <div class="footer-content">
-      <!-- Left: Copyright -->
-      <div class="footer-section footer-copyright">
-        <p class="copyright-text">
-          &copy; {currentYear}
-          <span class="highlight">shroom-mates</span>
-        </p>
-        <p class="built-with">
-          built with 🍄 and <a
-            href="https://github.com/meister-eder/shroom-mates"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub Repository (opens in new tab)"
-            class="footer-link">free software</a
-          > in Leipzig
-        </p>
-        <slot name="actions" />
-      </div>
+<footer class="site-footer" role="contentinfo">
+  <Image
+    class="footer-drawing"
+    src={drawing}
+    alt="Gezeichnete Menge kleiner Pilzfiguren mit Gesichtern"
+    widths={[640, 1180, 1536]}
+    sizes="(min-width: 1260px) 1180px, 100vw"
+    format="webp"
+    loading="lazy"
+  />
 
-      <!-- Right: Links -->
-      <div class="footer-section footer-links">
-        <nav aria-label="Footer Navigation">
-          <ul class="footer-nav">
-            {
-              links.map((link) => (
+  <div class="footer-main">
+    <p class="footer-claim">
+      <span>Bis bald</span> <span>in der</span> <span>Glasfabrik!</span>
+    </p>
+
+    <nav class="footer-cols" aria-label="Footer">
+      {
+        columns.map((col) => (
+          <div class="footer-col">
+            <p class="footer-col__title">{col.title}</p>
+            <ul role="list">
+              {col.links.map((l) => (
                 <li>
-                  <a
-                    href={link.href}
-                    class:list={["footer-link", { "email-link": link.isEmail }]}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    aria-label={link.isEmail
-                      ? `E-Mail an ${link.href.replace("mailto:", "")} senden`
-                      : undefined}
-                  >
-                    {link.label}
-                  </a>
+                  <a href={l.href}>{l.label}</a>
                 </li>
-              ))
-            }
-          </ul>
-        </nav>
+              ))}
+              {col.title === "Rechtliches" && Astro.slots.has("actions") && (
+                <li class="footer-actions">
+                  <slot name="actions" />
+                </li>
+              )}
+            </ul>
+          </div>
+        ))
+      }
+      <div class="footer-col">
+        <p class="footer-col__title">Kontakt</p>
+        <address>
+          {ADDRESS.name}<br />
+          {ADDRESS.street}<br />
+          {ADDRESS.city}
+        </address>
+        <ul role="list">
+          <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+          <li>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              Instagram<span class="sr-only"> (öffnet in neuem Tab)</span>
+            </a>
+          </li>
+        </ul>
       </div>
-    </div>
+    </nav>
   </div>
+
+  <p class="footer-credit">
+    &copy; {currentYear} shroom-mates &middot; gebaut mit <Icon
+      name="mushroom"
+      size={18}
+      strokeWidth={2}
+      label="Pilzen"
+      class="footer-credit__icon"
+    /> und freier Software &middot;
+    <a href={REPO_URL} target="_blank" rel="noopener noreferrer"
+      >Code auf GitHub<span class="sr-only"> (öffnet in neuem Tab)</span></a
+    >
+  </p>
 </footer>
 
 <style>
-  footer {
+  .site-footer {
     width: 100%;
-    background: var(--bg-accent, #fdfcea);
-    border-top: 3px solid #000;
-    position: relative;
     margin-top: auto;
+    padding: 72px var(--gutter) 40px;
+    overflow: hidden;
+    background: var(--color-night);
+    color: var(--color-paper);
   }
 
-  footer::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-size: 20px 20px;
-    background-image:
-      linear-gradient(to right, #ebc47740 1px, transparent 1px),
-      linear-gradient(to bottom, #ebc47740 1px, transparent 1px);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  .footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2.5rem 2rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .footer-content {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2rem;
-    align-items: center;
-  }
-
-  .footer-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .footer-copyright {
-    justify-self: start;
-    text-align: left;
-  }
-
-  .copyright-text {
-    margin: 0;
-    font-family: "DM Mono", monospace;
-    font-size: 1rem;
-    font-weight: 500;
-  }
-
-  .highlight {
-    color: var(--accent, #ff4908);
-    font-weight: bold;
-  }
-
-  .built-with {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #5f5f5f;
-  }
-
-  .footer-links {
-    justify-self: end;
-  }
-
-  .footer-nav {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-end;
-  }
-
-  .footer-link {
-    color: var(--text-color, #1d1d1d);
-    text-decoration: none;
-    font-family: "DM Mono", monospace;
-    font-size: 0.95rem;
-    position: relative;
-    transition:
-      color 0.2s ease,
-      transform 0.2s ease;
-    padding: 0.25rem 0;
-    display: inline-block;
-  }
-
-  .footer-link::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--accent, #ff4908);
-    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .footer-link:hover::after,
-  .footer-link:focus-visible::after {
+  .site-footer :global(.footer-drawing) {
+    display: block;
     width: 100%;
+    max-width: 1180px;
+    margin: 0 auto 48px;
+    height: auto;
   }
 
-  .footer-link:hover,
-  .footer-link:focus-visible {
-    color: var(--accent, #ff4908);
-    transform: translateX(-3px);
+  .footer-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 48px;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding-top: 48px;
+    border-top: 2px solid var(--color-paper);
   }
 
-  .footer-link:focus-visible {
-    outline: 2px solid var(--focus-color, #5f5f5f);
-    outline-offset: 2px;
+  .footer-claim {
+    flex: 1 1 420px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 0.88;
+    color: var(--color-accent);
+    text-wrap: balance;
   }
 
-  .email-link {
-    font-weight: 500;
+  .footer-claim span {
+    white-space: nowrap;
+  }
+
+  .footer-cols {
+    flex: 2 1 560px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 32px;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .footer-col__title {
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-variation-settings: normal;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #a39e8a;
+  }
+
+  .footer-col ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer-col address {
+    margin: 0 0 8px;
+    font-style: normal;
+  }
+
+  .footer-col a {
+    display: inline-block;
+    padding-block: 2px;
+    color: var(--color-paper);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .footer-col a:hover {
+    color: var(--color-accent-light);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .footer-col a:focus-visible,
+  .footer-credit a:focus-visible {
+    outline-color: var(--color-paper);
+  }
+
+  .footer-actions {
+    margin-top: 10px;
+  }
+
+  /* Withdraw button etc. passed via slot="actions" */
+  .footer-actions :global(a) {
+    padding: 0.5rem 1.1rem;
+    min-height: 44px;
+    border: 2px solid var(--color-paper);
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+  }
+
+  .footer-credit {
+    max-width: var(--container);
+    margin: 48px auto 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: #a39e8a;
+  }
+
+  .footer-credit a {
+    color: var(--color-paper);
+  }
+
+  .footer-credit :global(.footer-credit__icon) {
+    display: inline-block;
+    vertical-align: -3px;
+    color: var(--color-accent-light);
   }
 
   @media (max-width: 768px) {
-    .footer-container {
-      padding: 2rem 1rem;
+    .site-footer {
+      padding-top: 48px;
     }
 
-    .footer-content {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      text-align: center;
-    }
-
-    .footer-copyright,
-    .footer-links {
-      justify-self: center;
-      text-align: center;
-    }
-
-    .footer-nav {
-      align-items: center;
-      gap: 0.75rem;
+    .footer-cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>

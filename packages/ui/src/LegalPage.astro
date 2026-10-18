@@ -30,40 +30,51 @@ const { title, draft = true } = Astro.props;
 
 <style>
   .legal-page {
-    max-width: 780px;
+    max-width: 820px;
     margin: 0 auto;
     padding: 2rem 0 4rem;
   }
 
+  .legal-page > h1 {
+    margin-bottom: 1.5rem;
+    color: var(--color-accent);
+  }
+
   .legal-draft {
-    background: #fff8d6;
-    border: 2px solid #000;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
     margin: 0 0 2rem;
+    padding: 0.85rem 1.1rem;
+    background: #fff8d6;
+    border: 3px solid var(--color-ink);
+    border-radius: 18px;
+    font-size: 0.9375rem;
   }
 
   .legal-body {
-    background: var(--bg-color);
-    border: 2px solid #000;
-    border-radius: 8px;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
     padding: 2rem 2.5rem;
-    font-size: 1rem;
-    line-height: 1.7;
+    background: var(--color-white);
+    border: 3px solid var(--color-ink);
+    border-radius: var(--radius-card, 28px);
+    box-shadow: var(--shadow-card, 8px 8px 0 #1d1d1d);
+    font-size: 1.0625rem;
+    line-height: 1.65;
     overflow-wrap: anywhere;
   }
 
   .legal-body :global(h2) {
-    font-family: "DM Mono", monospace;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 2rem 0 0.75rem;
+    margin: 2.25rem 0 0.75rem;
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    line-height: 1.1;
+    text-wrap: balance;
   }
 
   .legal-body :global(h2:first-child) {
     margin-top: 0;
+  }
+
+  .legal-body :global(h3) {
+    margin: 1.5rem 0 0.5rem;
+    font-size: 1.1875rem;
+    line-height: 1.25;
   }
 
   .legal-body :global(p),
@@ -78,8 +89,12 @@ const { title, draft = true } = Astro.props;
   }
 
   .legal-body :global(a) {
-    color: var(--accent-dark, #bf2300);
-    text-decoration: underline;
+    color: var(--color-accent-dark, #bf2300);
+    text-underline-offset: 3px;
+  }
+
+  .legal-body :global(a:hover) {
+    color: var(--color-ink);
   }
 
   .legal-body :global(mark) {
@@ -98,6 +113,8 @@ const { title, draft = true } = Astro.props;
   @media (max-width: 640px) {
     .legal-body {
       padding: 1.25rem 1rem;
+      border-radius: 20px;
+      box-shadow: 4px 4px 0 var(--color-ink);
     }
   }
 </style>

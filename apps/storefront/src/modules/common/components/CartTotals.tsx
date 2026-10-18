@@ -27,31 +27,31 @@ export const CartTotals = ({
     convertToLocale({ amount: amount ?? 0, currencyCode });
 
   return (
-    <div>
-      <div className="order-summary-line">
-        <span className="text-muted">Zwischensumme (inkl. MwSt.)</span>
-        <span>{fmt(itemTotal)}</span>
+    <dl className="cart-totals">
+      <div className="cart-totals__line">
+        <dt>Zwischensumme (inkl. MwSt.)</dt>
+        <dd>{fmt(itemTotal)}</dd>
       </div>
-      <div className="order-summary-line">
-        <span className="text-muted">{shippingLabel}</span>
-        <span className={shippingPending ? "text-muted" : undefined}>
+      <div className="cart-totals__line">
+        <dt>{shippingLabel}</dt>
+        <dd className={shippingPending ? "cart-totals__pending" : undefined}>
           {shippingPending ? "wird im nächsten Schritt berechnet" : fmt(shippingTotal)}
-        </span>
+        </dd>
       </div>
       {(discountTotal ?? 0) > 0 && (
-        <div className="order-summary-line" style={{ color: "var(--color-forest)" }}>
-          <span>Rabatt</span>
-          <span>−{fmt(discountTotal)}</span>
+        <div className="cart-totals__line cart-totals__line--discount">
+          <dt>Rabatt</dt>
+          <dd>−{fmt(discountTotal)}</dd>
         </div>
       )}
-      <div className="order-summary-line text-xs text-muted">
-        <span>davon MwSt.</span>
-        <span>{fmt(taxTotal)}</span>
+      <div className="cart-totals__line cart-totals__line--small">
+        <dt>davon MwSt.</dt>
+        <dd>{fmt(taxTotal)}</dd>
       </div>
-      <div className="order-summary-total">
-        <span>{shippingPending ? "Gesamt (zzgl. Versand)" : "Gesamt"}</span>
-        <span>{fmt(total)}</span>
+      <div className="cart-totals__line cart-totals__line--total">
+        <dt>{shippingPending ? "Gesamt (zzgl. Versand)" : "Gesamt"}</dt>
+        <dd>{fmt(total)}</dd>
       </div>
-    </div>
+    </dl>
   );
 };

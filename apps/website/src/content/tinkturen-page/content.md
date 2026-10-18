@@ -1,13 +1,13 @@
 ---
 title: "Pilztinkturen & Pilzextrakte aus Leipzig kaufen | shroom-mates"
-description: "Handgemachte Pilztinkturen & Pilzextrakte als Doppelextrakt aus Leipzig-Plagwitz. Lion's Mane, Reishi & Cordyceps aus eigenem Anbau auf regionalem Bio-Substrat, ohne Zusätze."
+description: "Handgemachte Pilztinkturen & Pilzextrakte als Doppelextrakt aus Leipzig-Leutzsch. Lion's Mane, Reishi & Cordyceps aus eigenem Anbau auf regionalem Bio-Substrat, ohne Zusätze."
 heroTitle: "Unsere Pilztinkturen"
 heroSubtitle: "Handgemacht von der Kultur zur Tinktur"
 heroImage: ../../assets/images/tinkturen.jpeg
 heroImageAlt: "Handgemachte Pilztinkturen von shroom-mates aus Leipzig"
 introText: >-
-  Wir bauen unsere Pilze selbst an, in unserer Farm in der Plagwitzer
-  Markthalle, ohne Zusätze, auf regionalem Bio-Substrat. Alle Tinkturen
+  Wir bauen unsere Pilze selbst an, in unserer Farm in der Glasfabrik
+  in Leipzig-Leutzsch, ohne Zusätze, auf regionalem Bio-Substrat. Alle Tinkturen
   entstehen als Doppelextrakt: zuerst Alkohol-Mazeration, dann
   Heißwasserextrakt. Wir verarbeiten ausschließlich den Fruchtkörper,
   kein Myzel oder Körnerbrut.

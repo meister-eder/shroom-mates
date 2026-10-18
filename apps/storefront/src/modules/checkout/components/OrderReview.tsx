@@ -17,8 +17,8 @@ export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
   const shipping = cart.shipping_methods?.[0];
 
   return (
-    <section className="order-review" aria-label="Bestellübersicht">
-      <h3 className="input-label mb-2">Deine Bestellung</h3>
+    <section className="rounded-[18px] border-2 border-ink bg-paper p-4 sm:p-5" aria-label="Bestellübersicht">
+      <h3 className="mb-3 font-display text-[22px]! leading-none! font-black">Deine Bestellung</h3>
       <div className="mb-3">
         {cart.items?.map((item) => (
           <LineItemRow
@@ -41,11 +41,11 @@ export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
         discountTotal={cart.discount_total}
         total={cart.total}
       />
-      <div className="text-sm mt-4 flex flex-wrap justify-between gap-2">
-        <span className="text-muted">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t-2 border-ink pt-3">
+        <span>
           Lieferung an: {formatAddressLines(cart.shipping_address).join(", ")}
         </span>
-        <a href={`/${countryCode}/checkout?step=address`} className="checkout-edit-btn">
+        <a href={`/${countryCode}/checkout?step=address`} className="inline-flex min-h-11 items-center font-semibold text-accent-dark underline hover:text-ink">
           Ändern
         </a>
       </div>

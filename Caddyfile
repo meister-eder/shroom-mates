@@ -24,6 +24,14 @@ shroom-mates.de {
 	# Compression
 	encode gzip zstd
 
+	# Canonical URLs end with a slash: /faq → /faq/ (avoids duplicate content)
+	@noslash {
+		not path */
+		not path *.*
+		file {path}/index.html
+	}
+	redir @noslash {path}/ 301
+
 	# SPA fallback for clean URLs
 	try_files {path} {path}.html {path}/index.html
 

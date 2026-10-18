@@ -1,6 +1,6 @@
 import { goToOrderConfirmation } from "@lib/checkout/order-handoff";
 import { getCheckoutCartId, placeOrder } from "@lib/stores/cart";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 interface CheckoutCompletePageProps {
   countryCode: string;
@@ -63,49 +63,53 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
 
   if (state.kind === "completing") {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="page-heading mb-4">Zahlung wird verarbeitet…</h1>
-        <p className="text-muted">Bitte warte einen Moment, deine Bestellung wird abgeschlossen.</p>
-      </div>
+      <Shell title="Zahlung wird verarbeitet…">
+        <p className="text-lg">Bitte warte einen Moment, deine Bestellung wird abgeschlossen.</p>
+      </Shell>
     );
   }
 
   if (state.kind === "pending") {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="page-heading mb-4">Zahlung wird noch bestätigt</h1>
-        <p className="text-muted mb-8">
+      <Shell title="Zahlung wird noch bestätigt">
+        <p className="mb-8 text-lg">
           Das dauert länger als üblich. Du erhältst eine Bestätigungs-E-Mail, sobald deine
           Bestellung eingegangen ist.
         </p>
-        <button type="button" className="btn-accent" onClick={() => setAttempt((a) => a + 1)}>
+        <button type="button" className="btn btn--accent" onClick={() => setAttempt((a) => a + 1)}>
           Erneut prüfen
         </button>
-      </div>
+      </Shell>
     );
   }
 
   if (state.kind === "no_cart") {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="page-heading mb-4">Keine offene Bestellung gefunden</h1>
-        <p className="text-muted mb-8">
+      <Shell title="Keine offene Bestellung gefunden">
+        <p className="mb-8 text-lg">
           Falls deine Zahlung erfolgreich war, erhältst du eine Bestätigung per E-Mail.
         </p>
-        <a href={`/${countryCode}/store`} className="btn-accent inline-block">
+        <a href={`/${countryCode}/store`} className="btn btn--accent">
           Weiter einkaufen
         </a>
-      </div>
+      </Shell>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-      <h1 className="page-heading mb-4">Zahlung konnte nicht verarbeitet werden</h1>
-      <p className="text-muted mb-8">{state.message}</p>
-      <a href={`/${countryCode}/checkout?step=payment`} className="btn-accent inline-block">
+    <Shell title="Zahlung konnte nicht verarbeitet werden">
+      <p className="mb-8 text-lg">{state.message}</p>
+      <a href={`/${countryCode}/checkout?step=payment`} className="btn btn--accent">
         Zurück zur Kasse
       </a>
-    </div>
+    </Shell>
   );
 };
+
+const Shell = ({ title, children }: { title: string; children: ReactNode }) => (
+  <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
+    <img src="/mascot.webp" alt="" width="160" height="160" className="mb-6 h-40 w-40 object-contain" />
+    <h1 className="mb-4 text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">{title}</h1>
+    {children}
+  </div>
+);

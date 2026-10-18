@@ -2,14 +2,14 @@
 title: Growkits kaufen in Leipzig – Pilze selber züchten | shroom-mates
 description: "Growkits aus Leipzig: Pilze zuhause selber züchten mit fertigen
   Pilzzuchtsets von den shroom-mates. Lion's Mane, Rosenseitling & White Pearl.
-  Erntereif in 2-3 Wochen, direkt abholen in Plagwitz."
+  Erntereif in 2-3 Wochen, direkt abholen in Leutzsch."
 heroTitle: Pilze selber züchten mit den shroom-mates Growkits
 heroSubtitle: Mit unseren Growkits erntest du in wenigen Wochen frische Pilze zuhause.
 heroImage: ../../assets/images/growkits.jpg
 heroImageAlt: Frische Pilze aus dem Growkit
 ctaTitle: Interesse an einem Growkit?
 ctaText: Unsere Growkits sind bald auch in unserem Onlineshop erhältlich! Oder
-  du schreibst uns einfach und kannst sie direkt in unserer Farm in Plagwitz
+  du schreibst uns einfach und kannst sie direkt in unserer Farm in Leutzsch
   abholen.
 ctaButtonText: Kontakt aufnehmen
 ctaButtonLink: /kontakt/

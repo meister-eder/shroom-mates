@@ -1,243 +1,313 @@
 ---
-import FAQ from "../components/FAQ.astro";
+import Icon from "@shroom-mates/ui/Icon.astro";
 import LocationInfo from "../components/LocationInfo.astro";
 import Layout from "../layouts/Layout.astro";
 
 const title =
 	"Kontakt – Pilze, Growkits & Tinkturen bestellen in Leipzig | shroom-mates";
 const description =
-	"Frische Pilze, Growkits oder Tinkturen bestellen in Leipzig? Kontaktiere shroom-mates in Plagwitz. Für Privatkunden und Gastronomie, Lieferung in Leipzig und Versand per Post.";
+	"Frische Pilze, Growkits oder Tinkturen bestellen in Leipzig? Kontaktiere shroom-mates in Leutzsch. Für Privatkunden und Gastronomie, Lieferung in Leipzig und Versand per Post.";
+
+const topics = [
+	"Frische Pilze",
+	"Growkits",
+	"Tinkturen",
+	"Gastronomie",
+	"Etwas anderes",
+];
 ---
 
-<Layout title={title} description={description}>
-  <section class="contact-hero">
-    <h1>Schreib uns was Nettes</h1>
-    <p class="contact-intro">
-      Wir liefern an Privatkunden und Gastronomiebetriebe in Leipzig. Fragen zu
-      <a href="/unsere-pilze/">Pilzen</a>, <a href="/growkits/">Growkits</a> oder
-      <a href="/tinkturen/">Tinkturen</a>? Oder brauchst du ein Angebot für dein
-      <a href="/gastronomie/">Restaurant</a>? Schreib uns einfach.
-    </p>
-  </section>
+<Layout title={title} description={description} active="kontakt" isLandingPage>
+  <div class="contact-page">
+    <section class="container contact-layout">
+      <div class="contact-info">
+        <h1 class="eyebrow contact-eyebrow">Kontakt: Pilze, Growkits &amp; Tinkturen bestellen in Leipzig</h1>
+        <p class="contact-title">Schreib uns!</p>
+        <a class="contact-mail" href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+        <p class="contact-intro">
+          Wir liefern an Privatkunden und Gastronomiebetriebe in Leipzig. Fragen zu
+          <a href="/unsere-pilze/">Pilzen</a>, <a href="/growkits/">Growkits</a> oder
+          <a href="/tinkturen/">Tinkturen</a>? Oder brauchst du ein Angebot für dein
+          <a href="/gastronomie/">Restaurant</a>? Schreib uns einfach.
+        </p>
 
-  <section class="contact-section">
-    <div class="content">
+        <div class="contact-cards">
+          <div class="contact-card contact-card--visit">
+            <p class="label">Besuch</p>
+            <p>
+              Glasfabrik<br />
+              Franz-Flemming-Straße 25<br />
+              04179 Leipzig-Leutzsch
+            </p>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Franz-Flemming-Stra%C3%9Fe+25+Leipzig"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Route planen
+            </a>
+          </div>
+          <div class="contact-card contact-card--insta">
+            <p class="label">Daily Business</p>
+            <p>Werksverkauf-Termine und was gerade wächst.</p>
+            <a href="https://www.instagram.com/shroom_mates_le/" target="_blank" rel="noopener noreferrer">
+              @shroom_mates_le
+            </a>
+          </div>
+          <div class="contact-card contact-card--faq">
+            <p class="label">Schnelle Antworten</p>
+            <p>Lieferung, Lagerung, Growkits: vieles steht schon bei den häufigen Fragen.</p>
+            <a href="/faq/">Zu den Fragen</a>
+          </div>
+        </div>
+      </div>
+
       <div class="form-card">
-        <form method="POST" id="form">
+        <form method="POST" id="form" class="contact-form">
           <input
             type="hidden"
             name="access_key"
             value="d69f2b91-fe55-4258-97a9-6bb53285b5e2"
           />
-          <div class="form-group">
-            <label for="name">Dein Name</label>
-            <input type="text" id="name" name="name" required />
+          <input type="hidden" name="topic" value="" />
+
+          <fieldset class="contact-topics">
+            <legend class="field__label">Worum geht's?</legend>
+            <div class="contact-topics__chips">
+              {
+                topics.map((topic) => (
+                  <button type="button" class="chip" data-topic={topic} aria-pressed="false">
+                    {topic}
+                  </button>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="contact-row">
+            <div class="field">
+              <label for="name">Dein Name</label>
+              <input type="text" id="name" name="name" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="email">E-Mail</label>
+              <input type="email" id="email" name="email" autocomplete="email" required />
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
-          </div>
-
-          <div class="form-group">
+          <div class="field">
             <label for="message">Nachricht</label>
-            <textarea id="message" name="message" required></textarea>
+            <textarea id="message" name="message" rows="5" required></textarea>
           </div>
 
-          <button type="submit" class="submit-button">Abschicken</button>
-          <div id="result" aria-live="polite"></div>
+          <button type="submit" class="btn btn--primary contact-submit">
+            Abschicken <Icon name="arrow-right" size={20} />
+          </button>
+          <div id="result" class="contact-result" role="status" aria-live="polite"></div>
         </form>
       </div>
-    </div>
+    </section>
+
     <script>
       import "../scripts/contact-form.ts";
     </script>
-  </section>
 
-  <style>
-    .contact-hero {
-      width: calc(100vw - var(--scrollbar-width, 0px));
-      margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-      margin-top: -1.5rem;
-      background: var(--bg-accent);
-      border-bottom: 2px solid #000;
-      padding: 4rem 2rem 3.5rem;
-      text-align: center;
-    }
+    <LocationInfo />
+  </div>
+</Layout>
 
-    h1 {
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 700;
-      line-height: 1.2;
-      margin: 0 0 0.5rem 0;
-      color: var(--text-color);
-      font-family: "DM Mono", monospace;
-    }
+<style>
+  .contact-page {
+    padding-top: var(--navbar-height);
+    overflow-x: clip;
+  }
 
-    h1::after {
-      content: "";
-      display: block;
-      width: 60px;
-      height: 3px;
-      background: var(--accent);
-      margin: 0.75rem auto 0;
-      border-radius: 2px;
-    }
+  .contact-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 56px;
+    padding-top: 40px;
+    padding-bottom: 96px;
+  }
 
-    .contact-intro {
-      max-width: 600px;
-      margin: 1.5rem auto 0 auto;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: var(--text-color);
-    }
+  .contact-info {
+    flex: 1 1 420px;
+    min-width: 0;
+  }
 
-    .contact-intro a {
-      color: var(--accent);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      font-weight: 600;
-    }
+  .contact-eyebrow {
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
 
-    .contact-intro a:hover {
-      text-decoration-thickness: 2px;
-    }
+  .contact-title {
+    margin: 0 0 28px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(48px, 7vw, 104px);
+    line-height: 0.9;
+    color: var(--color-accent);
+  }
 
-    .contact-section {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-    }
+  .contact-mail {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: clamp(1.5rem, 3.4vw, 2.75rem);
+    color: var(--color-ink);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 6px;
+    overflow-wrap: anywhere;
+  }
 
-    .content {
-      max-width: 600px;
-      margin: 0 auto;
+  .contact-mail:hover {
+    color: var(--color-accent-dark);
+  }
+
+  .contact-intro {
+    max-width: 44ch;
+    margin: 24px 0 0;
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+
+  .contact-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 18px;
+    margin-top: 40px;
+  }
+
+  .contact-card {
+    padding: 22px;
+    border: 3px solid var(--color-ink);
+    border-radius: 24px;
+    box-shadow: 6px 6px 0 var(--color-ink);
+  }
+
+  .contact-card--visit {
+    background: var(--color-lavender);
+  }
+
+  .contact-card--insta {
+    background: var(--color-pink);
+  }
+
+  .contact-card--faq {
+    background: var(--color-paper);
+  }
+
+  .contact-card .label {
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+  }
+
+  .contact-card p:not(.label) {
+    margin: 0 0 12px;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  .contact-card a {
+    color: var(--color-ink);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-intro a {
+    font-weight: 700;
+  }
+
+  /* ── Formular ───────────────────────────────────── */
+  .form-card {
+    flex: 1 1 480px;
+    min-width: 0;
+    padding: 36px;
+    background: var(--color-white);
+    border: 3px solid var(--color-ink);
+    border-radius: 32px;
+    box-shadow: var(--shadow-teaser);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-topics {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .contact-topics legend {
+    margin-bottom: 10px;
+    padding: 0;
+  }
+
+  .contact-topics__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* gewählt = Orange mit Tinte-Text (Mockup), sonst Creme */
+  .contact-topics .chip {
+    background: var(--color-cream);
+  }
+
+  .contact-topics .chip:hover {
+    background: var(--color-paper);
+  }
+
+  .contact-topics .chip[aria-pressed="true"] {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  .contact-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 16px;
+  }
+
+  .contact-submit {
+    align-self: flex-start;
+  }
+
+  .contact-result {
+    min-height: 1.5em;
+    font-weight: 600;
+  }
+
+  .contact-result:empty {
+    min-height: 0;
+  }
+
+  @media (max-width: 768px) {
+    .contact-layout {
+      gap: 40px;
+      padding-bottom: 64px;
     }
 
     .form-card {
-      background: var(--bg-color);
-      border: 2px solid #000;
-      border-radius: 8px;
-      padding: 2.5rem;
-      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+      padding: 22px 18px;
+      border-radius: 24px;
+      box-shadow: 6px 6px 0 var(--color-ink);
     }
 
-    .form-group {
-      margin-bottom: 1.5rem;
+    .contact-card {
+      box-shadow: 4px 4px 0 var(--color-ink);
     }
 
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      font-family: "DM Mono", monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-color);
+    .contact-submit {
+      align-self: stretch;
     }
-
-    input,
-    textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      border: 2px solid #ddd;
-      border-radius: 6px;
-      font-family: inherit;
-      background: #fff;
-      color: var(--text-color);
-      transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-    }
-
-    input:focus,
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(255, 73, 8, 0.1);
-    }
-
-    textarea {
-      height: 150px;
-      resize: vertical;
-    }
-
-    .submit-button {
-      padding: 0.8rem 2rem;
-      font-size: 1rem;
-      font-weight: 500;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: "DM Mono", monospace;
-      background: #000;
-      color: #fff;
-      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .submit-button:hover {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-      background: var(--accent);
-    }
-
-    .submit-button:active {
-      transform: translate(4px, 4px);
-      box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .submit-button:focus-visible {
-      outline: 2px solid var(--focus-color, #000);
-      outline-offset: 2px;
-    }
-
-    #result {
-      margin-top: 1rem;
-      padding: 1rem;
-      text-align: center;
-      font-weight: 500;
-      color: var(--text-color);
-    }
-
-    @media (max-width: 768px) {
-      .contact-hero {
-        padding: 3rem 1.5rem 2.5rem;
-        margin-top: -1rem;
-      }
-
-      .contact-section {
-        padding: 2rem 1.5rem;
-      }
-
-      .form-card {
-        padding: 1.5rem;
-      }
-
-      .submit-button {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .contact-hero {
-        padding: 2.5rem 1rem 2rem;
-      }
-
-      .form-card {
-        padding: 1.25rem;
-      }
-
-      input,
-      textarea {
-        padding: 0.6rem 0.75rem;
-        font-size: 0.95rem;
-      }
-    }
-  </style>
-
-  <LocationInfo />
-  <FAQ />
-</Layout>
+  }
+</style>

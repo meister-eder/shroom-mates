@@ -15,11 +15,14 @@
     "./Footer.astro": "./src/Footer.astro",
     "./SiteHeader.astro": "./src/SiteHeader.astro",
     "./PageHero.astro": "./src/PageHero.astro",
+    "./Icon.astro": "./src/Icon.astro",
+    "./MatesLogo.astro": "./src/MatesLogo.astro",
     "./LegalPage.astro": "./src/LegalPage.astro",
     "./legal/*": "./src/legal/*"
   },
   "dependencies": {
-    "@fontsource/dm-mono": "^5.3.0",
-    "@fontsource/geist-sans": "^5.2.5"
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0"
   }
 }

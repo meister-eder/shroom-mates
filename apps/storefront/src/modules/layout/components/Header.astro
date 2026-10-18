@@ -1,22 +1,29 @@
 ---
-// Same header as the website (shared component); the cart sits next to Instagram.
+// Same header as the website (shared SiteHeader): the Pilzkorb pill sits
+// right next to "Kontakt". Info line instead of the website's ticker.
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
-import { navLinks, websiteUrl } from "@shroom-mates/ui/site";
 import { CartButton } from "./CartButton";
 
 interface Props {
   countryCode: string;
   regionId: string | null;
+  active?: "shop" | "none";
 }
 
-const { countryCode, regionId } = Astro.props;
+const { countryCode, regionId, active = "shop" } = Astro.props;
+
+const info = [
+  "Versand in 3–5 Werktagen",
+  "Selbst gezüchtet in Leipzig",
+  "Sicher bezahlen mit SumUp",
+];
 ---
 
 <SiteHeader
-  homeHref={`/${countryCode}`}
-  links={navLinks(websiteUrl)}
-  shopHref={`/${countryCode}/store`}
-  shopActive
+  app="shop"
+  countryCode={countryCode}
+  active={active === "shop" ? "shop" : undefined}
+  info={info}
 >
-  <CartButton slot="end" client:load regionId={regionId} />
+  <CartButton slot="cart" client:load regionId={regionId} />
 </SiteHeader>

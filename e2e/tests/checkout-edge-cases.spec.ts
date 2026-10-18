@@ -26,7 +26,7 @@ test.describe("Checkout — Edge Cases (B6)", () => {
 
     // Should show empty cart message, not the checkout form
     await expect(
-      checkout.main.getByRole("heading", { name: "Dein Warenkorb ist leer" }),
+      checkout.main.getByRole("heading", { name: "Dein Pilzkorb ist leer" }),
     ).toBeVisible({ timeout: 5000 });
 
     // "Weiter einkaufen" link should be present
@@ -158,9 +158,9 @@ test.describe("Checkout — Edge Cases (B6)", () => {
     // Select manual payment
     await checkout.selectManualPayment();
 
-    // Now go back to delivery step (click Bearbeiten on delivery)
+    // Now go back to delivery step (click Ändern on delivery)
     const editButtons = checkout.page.getByRole("button", {
-      name: /Bearbeiten/,
+      name: /Ändern/,
     });
     const deliveryEditBtn = editButtons.nth(1); // index 1 = delivery (index 0 = address)
     if (await deliveryEditBtn.isVisible()) {
@@ -254,7 +254,7 @@ test.describe("Checkout — Additional Robustness", () => {
 
     // Add to cart button
     await expect(
-      page.getByRole("button", { name: /In den Warenkorb/ }),
+      page.getByRole("button", { name: /Rein ins Körbchen/ }),
     ).toBeVisible();
   });
 });

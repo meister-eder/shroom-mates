@@ -17,20 +17,22 @@ export const LineItemRow = ({
   unitPrice,
   currencyCode,
 }: LineItemRowProps) => (
-  <div className="flex gap-3 py-2">
+  <div className="line-row">
     {thumbnail ? (
       <img src={thumbnail} alt={title} className="line-item-thumb" loading="lazy" />
     ) : (
       <div className="line-item-thumb" />
     )}
-    <div className="flex-1 min-w-0">
-      <p className="font-medium text-sm truncate">{title}</p>
-      {subtitle && subtitle !== "Standard" && <p className="text-xs text-muted">{subtitle}</p>}
-      <div className="flex justify-between mt-1 text-sm">
-        <span className="text-muted">
+    <div className="line-row__body">
+      <p className="line-row__name">{title}</p>
+      {subtitle && subtitle !== "Standard" && (
+        <p className="line-row__meta">{subtitle}</p>
+      )}
+      <div className="line-row__sum">
+        <span className="line-row__meta">
           {quantity}× {convertToLocale({ amount: unitPrice, currencyCode })}
         </span>
-        <span className="font-medium">
+        <span className="line-row__total">
           {convertToLocale({ amount: unitPrice * quantity, currencyCode })}
         </span>
       </div>

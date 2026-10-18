@@ -5,10 +5,12 @@ import {
 } from "@lib/checkout/payment-providers";
 import { goToOrderConfirmation } from "@lib/checkout/order-handoff";
 import { sdk } from "@lib/sdk";
+import { convertToLocale } from "@lib/utils/money";
 import { initPaymentSession, placeOrder } from "@lib/stores/cart";
 import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckoutStep } from "./CheckoutStep";
+import { ERROR_CLASS } from "./AddressFields";
 import { OptionCard } from "./OptionCard";
 import { OrderReview } from "./OrderReview";
 import { type SumUpCardHandle, SumUpWidget, type SumUpResponseType } from "./SumUpWidget";
@@ -154,136 +156,170 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
   };
 
   if (mode === "inactive") {
-    return <CheckoutStep number={3} title="Zahlung" state="inactive" />;
+    return (
+      <>
+        <CheckoutStep number={3} title="Zahlung" state="inactive" />
+        <CheckoutStep number={4} title="Prüfen & bestellen" state="inactive" />
+      </>
+    );
   }
 
+  const errorMessage = error && (
+    <p className={`${ERROR_CLASS} mb-4`} role="alert">
+      {error}
+    </p>
+  );
+  const orderTotal = convertToLocale({
+    amount: cart.total ?? 0,
+    currencyCode: cart.currency_code || "EUR",
+  });
+
   return (
-    <CheckoutStep number={3} title="Zahlung" state="active">
-      {isLoading && (
-        <p className="text-sm mb-4 text-muted">Zahlungsoptionen werden geladen...</p>
-      )}
+    <>
+      <CheckoutStep number={3} title="Zahlung" state="active">
+        {isLoading && <p className="mb-4 text-muted">Zahlungsoptionen werden geladen...</p>}
 
-      {!isLoading && paymentProviders.length === 0 && !error && (
-        <p className="text-sm mb-4 text-muted">Keine Zahlungsoptionen verfügbar.</p>
-      )}
+        {!isLoading && paymentProviders.length === 0 && !error && (
+          <p className="mb-4 text-muted">Keine Zahlungsoptionen verfügbar.</p>
+        )}
 
-      {!isLoading && paymentProviders.length > 0 && (
-        <div className="space-y-3 mb-6">
-          {paymentProviders.map((provider) => (
-            <OptionCard
-              key={provider.id}
-              name="payment_provider"
-              value={provider.id}
-              checked={selectedProviderId === provider.id}
-              disabled={isSaving || isPlacing || isProcessing}
-              onSelect={handleProviderChange}
-            >
-              {formatProviderName(provider.id)}
-              {isTestProvider(provider.id) && (
-                <span
-                  className="badge"
-                  style={{
-                    fontSize: "0.7rem",
-                    background: "var(--color-earth-light)",
-                    borderColor: "var(--color-earth)",
-                    color: "var(--color-earth)",
-                  }}
-                >
-                  Nur zum Testen
-                </span>
-              )}
-            </OptionCard>
-          ))}
-        </div>
-      )}
+        {!isLoading && paymentProviders.length > 0 && (
+          <div className="mb-6 flex flex-col gap-3">
+            {paymentProviders.map((provider) => (
+              <OptionCard
+                key={provider.id}
+                name="payment_provider"
+                value={provider.id}
+                checked={selectedProviderId === provider.id}
+                disabled={isSaving || isPlacing || isProcessing}
+                onSelect={handleProviderChange}
+              >
+                {formatProviderName(provider.id)}
+                {isTestProvider(provider.id) && (
+                  <span className="rounded-pill border-2 border-ink bg-lavender px-2 py-0.5 font-mono text-xs font-medium">
+                    Nur zum Testen
+                  </span>
+                )}
+              </OptionCard>
+            ))}
+          </div>
+        )}
 
-      {isSumUp && (
-        <div className="mb-6">
-          {isSaving || (!sumupCheckoutId && !error) ? (
-            <p className="text-sm text-muted">Zahlung wird initialisiert...</p>
-          ) : (
-            sumupCheckoutId &&
-            !paymentFailed && (
-              <SumUpWidget
-                key={sumupCheckoutId}
-                checkoutId={sumupCheckoutId}
-                onResponse={handleSumUpResponse}
-                onReady={setSumupCard}
-                onLoadError={() =>
-                  setError("Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.")
-                }
-              />
-            )
-          )}
-          {isProcessing && <p className="text-sm mt-2 text-muted">Zahlung wird verarbeitet…</p>}
-          {isPlacing && <p className="text-sm mt-2 text-muted">Bestellung wird aufgegeben…</p>}
-        </div>
-      )}
+        {isSumUp && (
+          <div className="rounded-[18px] border-2 border-dashed border-ink bg-white p-4 sm:p-5">
+            {isSaving || (!sumupCheckoutId && !error) ? (
+              <p className="text-muted">Zahlung wird initialisiert...</p>
+            ) : (
+              sumupCheckoutId &&
+              !paymentFailed && (
+                <SumUpWidget
+                  key={sumupCheckoutId}
+                  checkoutId={sumupCheckoutId}
+                  onResponse={handleSumUpResponse}
+                  onReady={setSumupCard}
+                  onLoadError={() =>
+                    setError("Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.")
+                  }
+                />
+              )
+            )}
+            {isProcessing && <p className="mt-2 text-muted">Zahlung wird verarbeitet…</p>}
+            {isPlacing && <p className="mt-2 text-muted">Bestellung wird aufgegeben…</p>}
+          </div>
+        )}
 
-      {error && <p className="input-error mb-4">{error}</p>}
+        {!selectedProviderId && errorMessage}
 
-      {isSumUp && paymentFailed && (
-        <button
-          type="button"
-          onClick={() => startSession(selectedProviderId)}
-          disabled={isSaving}
-          className="btn-outline w-full mb-6"
-        >
-          Neue Zahlung starten
-        </button>
-      )}
-
-      {selectedProviderId && (
-        <div className="order-final">
-          <OrderReview cart={cart} countryCode={countryCode} />
-
-          <p className="text-xs text-muted">
-            Es gelten unsere{" "}
-            <a href={`/${countryCode}/agb`} target="_blank" className="underline">AGB</a>.
-            Informationen zu deinem{" "}
-            <a href={`/${countryCode}/widerruf`} target="_blank" className="underline">Widerrufsrecht</a>{" "}
-            und zum{" "}
-            <a href={`/${countryCode}/datenschutz`} target="_blank" className="underline">Datenschutz</a>.
-            Dein Zahlungsmittel wird mit Absenden der Bestellung belastet.
-          </p>
-
-          <a
-            href={`/${countryCode}/gewaehrleistung`}
-            target="_blank"
-            className="warranty-notice"
-            aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
-          >
-            <img src="/legal/gesetzliche-gewaehrleistung.jpg" alt="" width="96" height="131" />
-            <span>
-              <strong>Gesetzliche Gewährleistung</strong>
-              <br />
-              Mindestens zwei Jahre für Waren, die in der EU verkauft werden. Mehr erfahren
-            </span>
-          </a>
-
-          {/* One binding button for every payment method (§ 312j Abs. 3 BGB).
-              For SumUp it submits the card widget, whose own button is hidden. */}
+        {isSumUp && paymentFailed && (
           <button
             type="button"
-            disabled={
-              !session ||
-              isSaving ||
-              isPlacing ||
-              isProcessing ||
-              paymentFailed ||
-              (isSumUp && !sumupCard)
-            }
-            onClick={() => (isSumUp ? sumupCard?.submit() : completeOrder())}
-            className="btn-accent w-full"
+            onClick={() => startSession(selectedProviderId)}
+            disabled={isSaving}
+            className="btn btn--secondary btn--block mt-4"
           >
-            {isPlacing || isProcessing ? "Wird verarbeitet..." : "Zahlungspflichtig bestellen"}
+            Neue Zahlung starten
           </button>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="trust-badge">🔒 Sichere Zahlung</span>
-            <span className="trust-badge">✓ SSL-verschlüsselt</span>
+        )}
+      </CheckoutStep>
+
+      <CheckoutStep
+        number={4}
+        title="Prüfen & bestellen"
+        state={selectedProviderId ? "active" : "inactive"}
+      >
+        {selectedProviderId && (
+          <div className="grid gap-4">
+            <OrderReview cart={cart} countryCode={countryCode} />
+
+            <p className="m-0 text-[15px] leading-relaxed">
+              Es gelten unsere{" "}
+              <a href={`/${countryCode}/agb`} target="_blank" className="text-accent-dark underline hover:text-ink">AGB</a>.
+              Informationen zu deinem{" "}
+              <a href={`/${countryCode}/widerruf`} target="_blank" className="text-accent-dark underline hover:text-ink">Widerrufsrecht</a>{" "}
+              und zum{" "}
+              <a href={`/${countryCode}/datenschutz`} target="_blank" className="text-accent-dark underline hover:text-ink">Datenschutz</a>.
+              Dein Zahlungsmittel wird mit Absenden der Bestellung belastet.
+            </p>
+
+            <a
+              href={`/${countryCode}/gewaehrleistung`}
+              target="_blank"
+              className="flex items-center gap-4 rounded-[18px] border-2 border-ink bg-white p-3 text-[14px] leading-snug text-ink no-underline [&:hover_strong]:underline"
+              aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
+            >
+              <img
+                src="/legal/gesetzliche-gewaehrleistung.jpg"
+                alt=""
+                width="96"
+                height="131"
+                className="h-auto w-16 shrink-0 border-2 border-ink"
+              />
+              <span>
+                <strong>Gesetzliche Gewährleistung</strong>
+                <br />
+                Mindestens zwei Jahre für Waren, die in der EU verkauft werden. Mehr erfahren
+              </span>
+            </a>
+
+            {errorMessage}
+
+            {/* One binding button for every payment method (§ 312j Abs. 3 BGB).
+                For SumUp it submits the card widget, whose own button is hidden. */}
+            <button
+              type="button"
+              disabled={
+                !session ||
+                isSaving ||
+                isPlacing ||
+                isProcessing ||
+                paymentFailed ||
+                (isSumUp && !sumupCard)
+              }
+              onClick={() => (isSumUp ? sumupCard?.submit() : completeOrder())}
+              className="btn btn--accent btn--block min-h-[62px] border-[3px] text-xl font-extrabold shadow-[5px_5px_0_var(--color-ink)]"
+            >
+              {isPlacing || isProcessing
+                ? "Wird verarbeitet..."
+                : `Zahlungspflichtig bestellen · ${orderTotal}`}
+            </button>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[13px]">
+              <span className="inline-flex items-center gap-1.5">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="9" rx="2" />
+                  <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                </svg>
+                Sichere Zahlung
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+                SSL-verschlüsselt
+              </span>
+            </div>
           </div>
-        </div>
-      )}
-    </CheckoutStep>
+        )}
+      </CheckoutStep>
+    </>
   );
 };

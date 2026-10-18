@@ -1,20 +1,21 @@
 ---
+import Layout from "@layouts/Layout.astro";
 import { getRegion } from "@lib/data/regions";
 import { listProducts } from "@lib/data/products";
-import PageHero from "@shroom-mates/ui/PageHero.astro";
-import { websiteUrl } from "@shroom-mates/ui/site";
-import { Image } from "astro:assets";
-import Layout from "../../layouts/Layout.astro";
 import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
-import heroImage from "../../assets/hero-growkits.jpg";
+import StoreHero from "@modules/store/components/StoreHero.astro";
+import FreshLink from "@modules/store/components/FreshLink.astro";
 
 const { countryCode } = Astro.params;
 
 const region = await getRegion(countryCode);
 
-const products = region ? await listProducts(region.id).catch(() => []) : [];
+const allProducts = region ? await listProducts(region.id).catch(() => []) : [];
 
-// Growkits and tinctures first (fresh mushrooms are on request only)
+// Fresh mushrooms are not sold in the shop; growkits and tinctures first
+const products = allProducts.filter(
+  (p) => !p.categories?.some((c) => c.handle === "frische-pilze"),
+);
 const ORDER = ["growkits", "tinkturen"];
 const rank = (p: (typeof products)[number]) => {
   const i = ORDER.indexOf(p.categories?.[0]?.handle ?? "");
@@ -28,174 +29,36 @@ const ogImage = featured[0]?.thumbnail ?? undefined;
   description="Growkits und Pilztinkturen aus Leipzig — direkt vom Erzeuger online bestellen."
   image={ogImage}
 >
-  <PageHero
-    title="Growkits & Tinkturen aus Leipzig"
-    subtitle="Pilze selbst züchten oder als Tinktur genießen — direkt vom Erzeuger, deutschlandweit verschickt."
-  >
-    <Image
-      src={heroImage}
-      alt="Growkits mit wachsenden Pilzen"
-      class="hero-image"
-      widths={[640, 1024, 1600]}
-      sizes="100vw"
-      format="webp"
-      loading="eager"
-      fetchpriority="high"
-    />
-    <Fragment slot="actions">
-      <a href={`/${countryCode}/store`} class="btn-accent">Zum Sortiment</a>
-      <a href={websiteUrl("/growkits/")} class="btn-outline">So funktionieren Growkits</a>
-    </Fragment>
-  </PageHero>
+  <StoreHero />
 
-  <!-- ── Why-us strip ─────────────────────────────────────────────────── -->
-  <section class="why-strip" aria-label="Unsere Vorteile">
-    <div class="section-inner">
-      <ul class="why-grid" role="list">
-        <li class="why-card">
-          <span class="why-icon" aria-hidden="true">🌱</span>
-          <h2 class="why-title">Nachhaltig angebaut</h2>
-          <p class="why-desc">
-            Myzel und Substrat werden regional bezogen und wiederverwertet.
-          </p>
-        </li>
-        <li class="why-card">
-          <span class="why-icon" aria-hidden="true">📦</span>
-          <h2 class="why-title">Versand nach Deutschland</h2>
-          <p class="why-desc">
-            Standard oder Express mit DHL — sicher verpackt.
-          </p>
-        </li>
-        <li class="why-card">
-          <span class="why-icon" aria-hidden="true">🤝</span>
-          <h2 class="why-title">Direkt vom Erzeuger</h2>
-          <p class="why-desc">
-            Kein Zwischenhändler — wir züchten und verkaufen alles selbst.
-          </p>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ── Featured products ─────────────────────────────────────────────── -->
   {
     featured.length > 0 && (
-      <section class="featured-section" aria-labelledby="featured-heading">
-        <div class="section-inner">
-          <h2 id="featured-heading" class="section-heading">
-            Aus unserem Sortiment
-          </h2>
+      <section class="store-section" aria-labelledby="featured-heading">
+        <h2 id="featured-heading" class="store-section__title">
+          Aus unserem Sortiment
+        </h2>
 
-          <ul class="featured-grid" role="list">
-            {featured.map((product, index) => (
-              <li>
-                <ProductPreview
-                  handle={product.handle}
-                  variants={product.variants ?? []}
-                  thumbnailUrl={product.thumbnail ?? undefined}
-                  imageUrl={product.images?.[0]?.url}
-                  title={product.title}
-                  priority={index === 0}
-                  categoryName={product.categories?.[0]?.name}
-                />
-              </li>
-            ))}
-          </ul>
-          <p class="featured-more">
-            <a href={`/${countryCode}/store`} class="btn-outline">
-              Alle Produkte ansehen
-            </a>
-          </p>
-        </div>
+        <ul class="product-grid" role="list">
+          {featured.map((product, index) => (
+            <ProductPreview
+              handle={product.handle}
+              variants={product.variants ?? []}
+              thumbnailUrl={product.thumbnail ?? undefined}
+              imageUrl={product.images?.[0]?.url}
+              title={product.title}
+              priority={index === 0}
+              categoryName={product.categories?.[0]?.name}
+            />
+          ))}
+        </ul>
+        <p class="store-section__more">
+          <a href={`/${countryCode}/store`} class="btn btn--secondary">
+            Alle Produkte ansehen
+          </a>
+        </p>
+
+        <FreshLink />
       </section>
     )
   }
 </Layout>
-
-<style>
-  .why-grid {
-    list-style: none;
-    margin: 0;
-    padding: 3rem 0 1rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .why-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  /* Card style of the website ("So funktioniert's" box) */
-  .why-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 1.5rem;
-    background: var(--bg-color, #fff);
-    border: 2px solid #000;
-    border-radius: 8px;
-    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  .why-icon {
-    font-size: 1.75rem;
-    line-height: 1;
-  }
-
-  .why-title {
-    font-family: "DM Mono", monospace;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 0;
-  }
-
-  .why-desc {
-    font-size: 0.95rem;
-    color: var(--text-muted, #6b6b6b);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  /* ── Featured products ────────────────────────────────────── */
-  .featured-section {
-    padding: 3rem 0 4rem;
-  }
-
-  .featured-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .featured-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 900px) {
-    .featured-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .featured-grid li {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .featured-grid li :global(.product-card) {
-    height: 100%;
-  }
-
-  .featured-more {
-    margin: 2.5rem 0 0;
-    text-align: center;
-  }
-</style>

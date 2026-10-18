@@ -1,230 +1,558 @@
 ---
 import { Image } from "astro:assets";
-import { getEntry, render } from "astro:content";
+import { getEntry } from "astro:content";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import emmiAusternpilz from "../assets/images/fotos/emmi-austernpilz.jpg";
+import emmiGlasfabrik from "../assets/images/fotos/emmi-glasfabrik-markttisch.jpg";
+import growraum from "../assets/images/fotos/growraum.jpg";
+import laborBeimpfen from "../assets/images/fotos/labor-beimpfen.jpg";
+import marktstand from "../assets/images/fotos/marktstand-lions-mane.jpg";
+import rosenseitling from "../assets/images/fotos/rosenseitling-bueschel.jpg";
+import timFreigestellt from "../assets/images/fotos/tim-freigestellt.png";
 import Layout from "../layouts/Layout.astro";
 
-// Get the about-us-page content
 const aboutUsEntry = await getEntry("about-us-page", "content");
-
 if (!aboutUsEntry) {
 	throw new Error("About us page content not found");
 }
 
-const { Content } = await render(aboutUsEntry);
-const { title, description, heroTitle, heroSubtitle, images } =
-	aboutUsEntry.data;
+const { title, description, heroTitle, heroSubtitle } = aboutUsEntry.data;
+
+// Der Markdown-Text bleibt die Quelle (CMS). Abschnitte werden anhand der
+// „## “-Überschriften getrennt, damit sie im Layout einzeln platziert werden
+// können. Unterstützt wird nur, was der Text nutzt: Absätze und [Link](/pfad).
+const escapeHtml = (text: string) =>
+	text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const inline = (text: string) =>
+	escapeHtml(text).replace(
+		/\[([^\]]+)\]\(([^)\s]+)\)/g,
+		(_m, label: string, href: string) => `<a href="${href}">${label}</a>`,
+	);
+
+const sections = new Map<string, string[]>();
+for (const block of (aboutUsEntry.body ?? "").split(/^## /m).slice(1)) {
+	const [heading, ...rest] = block.split("\n");
+	sections.set(
+		heading.trim(),
+		rest
+			.join("\n")
+			.split(/\n{2,}/)
+			.map((paragraph) => paragraph.trim())
+			.filter(Boolean)
+			.map(inline),
+	);
+}
+const section = (name: string) => sections.get(name) ?? [];
+
+// Zeitleiste „Vom Küchentisch in die Glasfabrik“
+const timeline = [
+	{
+		title: "Die Küche",
+		text: "Ein paar Austernpilze, viel Ausprobieren.",
+		image: null,
+		alt: "",
+	},
+	{
+		title: "Plagwitzer Markthalle",
+		text: "Die erste eigene Farm. Rosenseitling, Pioppino, Lion's Mane.",
+		image: marktstand,
+		alt: "Marktstand mit einem Korb Lion's Mane",
+	},
+	{
+		year: "2026",
+		title: "Glasfabrik Leutzsch",
+		text: "Mehr Platz, eigenes Labor, neue Sorten.",
+		image: emmiGlasfabrik,
+		alt: "Emmi an einem Markttisch mit Pilzen in der Backsteinhalle der Glasfabrik",
+	},
+];
+
+// „Das ist uns wichtig“: Nummer, Titel, Text, Foto je Zeile
+const values = [
+	{
+		title: "Nachhaltig",
+		text: "Ohne künstliche Zusätze. Das Substrat geht nach der Ernte auf den Kompost und zurück in den Kreislauf.",
+		image: growraum,
+		alt: "Austernpilze und Lion's Mane im Growraum",
+	},
+	{
+		title: "Regional",
+		text: "Bio-Rohstoffe aus der Region, gezüchtet und verkauft in Leutzsch. Kurze Wege, kein Zwischenhändler.",
+		image: emmiGlasfabrik,
+		alt: "Markttisch in der Glasfabrik",
+	},
+	{
+		title: "Transparent",
+		text: 'Du kannst sehen, wo und wie deine Pilze wachsen. Komm vorbei oder schau auf <a href="https://www.instagram.com/shroom_mates_le/" target="_blank" rel="noopener noreferrer">Instagram</a>.',
+		image: laborBeimpfen,
+		alt: "Emmi im Laborkittel mit Austernpilzen",
+	},
+];
+
+const mapsLink =
+	"https://www.google.com/maps/search/?api=1&query=Franz-Flemming-Stra%C3%9Fe+25+Leipzig";
 ---
 
-<Layout title={title} description={description} noindex>
-  <main aria-label="About us page content">
-    <div class="hero-section">
-      <h1>{heroTitle}</h1>
-      {heroSubtitle && <p class="subtitle">{heroSubtitle}</p>}
-    </div>
+<Layout title={title} description={description} active="ueber-uns" isLandingPage>
+  <div class="about-page">
+    <section class="container about-hero">
+      <div class="about-hero__copy">
+        <h1 class="eyebrow about-hero__eyebrow">{heroTitle} – {heroSubtitle}</h1>
+        <p class="about-hero__title">Wir sind Emmi &amp; Tim.</p>
+        <div class="about-hero__lead lead" set:html={(section("Wer wir sind")[0] ?? "")} />
+      </div>
+      <div class="about-hero__photos">
+        <div class="dots" aria-hidden="true"></div>
+        <Image
+          src={emmiAusternpilz}
+          alt="Emmi küsst einen gelben Austernpilz im Growraum"
+          class="about-hero__emmi"
+          widths={[320, 480, 640, 800]}
+          sizes="(max-width: 900px) 70vw, 400px"
+          loading="eager"
+          format="webp"
+        />
+        <Image
+          src={timFreigestellt}
+          alt="Tim hält einen großen Rosenseitling und zeigt darauf"
+          class="about-hero__tim"
+          widths={[200, 320, 480]}
+          sizes="(max-width: 900px) 34vw, 200px"
+          loading="eager"
+        />
+      </div>
+    </section>
 
-    <div class="content-wrapper">
-      <!-- Main content from CMS -->
-      <article class="content-text">
-        <Content />
-      </article>
-
-      <!-- Image gallery -->
-      <section class="image-gallery" aria-label="Photo gallery">
-        <h2 class="sr-only">Bilder aus unserer Pilzfarm</h2>
-        <div class="gallery-grid">
+    <section class="section section--night timeline" aria-labelledby="timeline-heading">
+      <div class="container">
+        <h2 id="timeline-heading">Vom Küchentisch in die Glasfabrik</h2>
+        <ol class="timeline__grid" role="list">
           {
-            images.map((img, index) => (
-              <figure class="gallery-item">
-                <Image
-                  src={img}
-                  alt={`Bild ${index + 1} aus unserer Pilzfarm`}
-                  width={800}
-                  height={600}
-                  loading={index < 2 ? "eager" : "lazy"}
-                  format="webp"
-                  decoding="async"
-                  class="gallery-image"
-                />
-              </figure>
+            timeline.map((step) => (
+              <li class="timeline__item">
+                {step.image ? (
+                  <Image
+                    src={step.image}
+                    alt={step.alt}
+                    class="timeline__img"
+                    widths={[320, 480, 640]}
+                    sizes="(max-width: 768px) 90vw, 400px"
+                    format="webp"
+                  />
+                ) : (
+                  <div class="timeline__img timeline__placeholder" aria-hidden="true" />
+                )}
+                <div class="timeline__body">
+                  {step.year && <p class="timeline__year">{step.year}</p>}
+                  <h3 class="timeline__title">{step.title}</h3>
+                  <p>{step.text}</p>
+                </div>
+              </li>
             ))
           }
+        </ol>
+      </div>
+    </section>
+
+    <section class="container work" aria-labelledby="work-heading">
+      <div class="work__col">
+        <h2 id="work-heading" class="work__heading">Wer wir sind</h2>
+        {section("Wer wir sind").slice(1).map((p) => <p set:html={p} />)}
+      </div>
+      <div class="work__col">
+        <h2 class="work__heading">Wie wir arbeiten</h2>
+        {section("Wie wir arbeiten").map((p) => <p set:html={p} />)}
+      </div>
+    </section>
+
+    <section class="container values" aria-labelledby="values-heading">
+      <h2 id="values-heading" class="eyebrow values__eyebrow">Das ist uns wichtig</h2>
+      {section("Das ist uns wichtig").map((p) => <p class="values__intro" set:html={p} />)}
+      <ol class="values__list" role="list">
+        {
+          values.map((v, i) => (
+            <li class="values__row">
+              <p class="values__num">{String(i + 1).padStart(2, "0")}</p>
+              <h3 class="values__title">{v.title}</h3>
+              <p class="values__text" set:html={v.text} />
+              <div class="arch-frame values__frame">
+                <Image
+                  src={v.image}
+                  alt={v.alt}
+                  widths={[180, 360, 540]}
+                  sizes="180px"
+                  format="webp"
+                />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="section section--paper where" aria-labelledby="where-heading">
+      <div class="container where__inner">
+        <div class="where__copy">
+          <p class="eyebrow">Wo ihr uns findet</p>
+          <h2 id="where-heading">Glasfabrik, Leutzsch</h2>
+          <address class="where__address">Franz-Flemming-Straße 25, 04179 Leipzig</address>
+          {section("Wo ihr uns findet").map((p) => <p class="where__text" set:html={p} />)}
+          <div class="where__actions">
+            <a class="btn btn--primary" href={mapsLink} target="_blank" rel="noopener noreferrer">
+              <Icon name="map-pin" size={20} /> Route planen
+            </a>
+            <a class="btn btn--secondary" href="/kontakt/">Besuch anmelden</a>
+          </div>
         </div>
-      </section>
-    </div>
-  </main>
+        <div class="arch-frame where__photo">
+          <Image
+            src={rosenseitling}
+            alt="Rosenseitling-Büschel aus unserer Farm"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 900px) 90vw, 460px"
+            format="webp"
+          />
+        </div>
+      </div>
+    </section>
+  </div>
 </Layout>
 
 <style>
-  main {
-    min-height: 100vh;
-    padding: 0;
+  .about-page {
+    padding-top: var(--navbar-height);
+    overflow-x: clip;
   }
 
-  .hero-section {
-    padding: 4rem 2rem 3rem;
-    text-align: center;
-    background: var(--bg-color);
-    border-bottom: 2px solid var(--text-color);
-  }
-
-  h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700;
-    line-height: 1.1;
-    color: var(--text-color);
-    margin: 0 0 1rem;
-  }
-
-  .subtitle {
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-    color: var(--text-color);
-    margin: 0;
-    opacity: 0.8;
-  }
-
-  .content-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 3rem 2rem;
+  /* ── Hero ───────────────────────────────────────── */
+  .about-hero {
     display: flex;
-    flex-direction: column;
-    gap: 4rem;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 48px;
+    padding-top: 40px;
+    padding-bottom: 96px;
   }
 
-  .content-text {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--text-color);
+  .about-hero__copy {
+    flex: 1 1 520px;
+    min-width: 0;
   }
 
-  .content-text :global(h2) {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 2.5rem 0 1rem;
-    line-height: 1.2;
+  .about-hero__eyebrow {
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 
-  .content-text :global(h3) {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 2rem 0 0.8rem;
-    line-height: 1.3;
-  }
-
-  .content-text :global(p) {
-    margin: 0 0 1.5rem;
-  }
-
-  .content-text :global(ul),
-  .content-text :global(ol) {
-    margin: 0 0 1.5rem;
-    padding-left: 2rem;
-  }
-
-  .content-text :global(li) {
-    margin-bottom: 0.5rem;
-  }
-
-  .content-text :global(strong) {
-    font-weight: 700;
-  }
-
-  .content-text :global(em) {
-    font-style: italic;
-  }
-
-  .image-gallery {
-    width: 100%;
-  }
-
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    width: 100%;
-  }
-
-  .gallery-item {
+  .about-hero__title {
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    background: var(--bg-color);
-    border: 2px solid var(--text-color);
-    padding: 1rem;
-    transition: transform 0.2s ease;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(44px, 8vw, 120px);
+    line-height: 0.9;
+    color: var(--color-accent);
+    text-wrap: balance;
   }
 
-  .gallery-item:hover {
-    transform: translateY(-4px);
+  .about-hero__lead {
+    max-width: 40ch;
+    margin: 24px 0 0;
   }
 
-  .gallery-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: 4 / 3;
-    border: 1px solid var(--text-color);
+  .about-hero__photos {
+    position: relative;
+    flex: 1 1 420px;
+    min-width: 0;
+    padding: 24px 24px 44px;
   }
 
-  .sr-only {
+  .about-hero__photos .dots {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    inset: 0 40px 40px 0;
+    border-radius: 40px;
+  }
+
+  .about-hero__photos :global(.about-hero__emmi) {
+    position: relative;
+    display: block;
+    width: 78%;
+    height: 500px;
+    object-fit: cover;
+    border: 3px solid var(--color-ink);
+    border-radius: 28px;
+    box-shadow: var(--shadow-teaser);
+    transform: rotate(-2deg);
+    box-sizing: border-box;
+  }
+
+  .about-hero__photos :global(.about-hero__tim) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 46%;
+    height: auto;
+    filter: drop-shadow(6px 6px 0 var(--color-ink));
+  }
+
+  /* ── Zeitleiste ─────────────────────────────────── */
+  .timeline h2 {
+    margin-bottom: 48px;
+    color: var(--color-accent-light);
+  }
+
+  .timeline__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 18px;
+    margin: 0;
     padding: 0;
-    margin: -1px;
+    list-style: none;
+  }
+
+  .timeline__item {
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border-radius: 6px;
+  }
+
+  .timeline__item :global(.timeline__img),
+  .timeline__placeholder {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 3px solid var(--color-ink);
+  }
+
+  .timeline__placeholder {
+    background:
+      radial-gradient(rgba(29, 29, 29, 0.13) 1.4px, transparent 1.5px) 0 0 / 12px 12px,
+      var(--color-pink);
+  }
+
+  .timeline__body {
+    padding: 18px 20px 22px;
+  }
+
+  .timeline__year {
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-accent-dark);
+  }
+
+  .timeline__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.625rem;
+  }
+
+  .timeline__body p:not(.timeline__year) {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* ── Wie wir arbeiten / Wer wir sind ────────────── */
+  .work {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px 64px;
+    padding-top: 96px;
+  }
+
+  .work__heading {
+    margin-bottom: 20px;
+    font-size: clamp(36px, 4.4vw, 56px);
+    color: var(--color-accent);
+  }
+
+  .work__col p {
+    max-width: 52ch;
+    margin: 0 0 1rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  /* ── Das ist uns wichtig ────────────────────────── */
+  .values {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  .values__eyebrow {
+    margin-bottom: 20px;
+    font-size: 0.9375rem;
+  }
+
+  .values__intro {
+    max-width: 62ch;
+    margin: 0 0 32px;
+    font-size: 1.1875rem;
+    line-height: 1.55;
+  }
+
+  .values__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 3px solid var(--color-ink);
+  }
+
+  .values__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 48px;
+    padding: 36px 0;
+    border-bottom: 3px solid var(--color-ink);
+  }
+
+  .values__num {
+    flex: 0 0 80px;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+  }
+
+  .values__title {
+    flex: 1 1 300px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(40px, 6vw, 88px);
+    line-height: 0.9;
+    color: var(--color-accent);
+    overflow-wrap: anywhere;
+  }
+
+  .values__text {
+    flex: 1 1 280px;
+    margin: 0;
+    font-size: 1.1875rem;
+    line-height: 1.5;
+  }
+
+  .values__text :global(a) {
+    color: var(--color-ink);
+  }
+
+  .values__frame {
+    flex: 0 0 180px;
+    width: 180px;
+    height: 220px;
+    border-radius: 100px 100px 18px 18px;
+    box-shadow: none;
+  }
+
+  /* ── Wo ihr uns findet ──────────────────────────── */
+  .where__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .where__copy {
+    flex: 1 1 420px;
+    min-width: 0;
+  }
+
+  .where__copy h2 {
+    margin: 10px 0 16px;
+  }
+
+  .where__address {
+    margin-bottom: 12px;
+    font-size: 1.1875rem;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .where__text {
+    max-width: 44ch;
+    margin: 0 0 1rem;
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+
+  .where__text :global(a) {
+    color: var(--color-accent-dark);
+    font-weight: 700;
+  }
+
+  .where__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .where__photo {
+    flex: 1 1 400px;
+    min-width: 0;
+    height: 380px;
+    border-radius: 200px 200px 28px 28px;
+  }
+
+  @media (max-width: 900px) {
+    .about-hero__photos :global(.about-hero__emmi) {
+      height: 420px;
+    }
+
+    .work {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   @media (max-width: 768px) {
-    .hero-section {
-      padding: 3rem 1.5rem 2rem;
+    .about-hero {
+      gap: 32px;
+      padding-bottom: 56px;
     }
 
-    .content-wrapper {
-      padding: 2rem 1.5rem;
-      gap: 3rem;
+    .about-hero__photos {
+      padding: 16px 12px 36px;
     }
 
-    .content-text {
-      font-size: 1rem;
-      line-height: 1.7;
+    .about-hero__photos :global(.about-hero__emmi) {
+      height: 340px;
+      box-shadow: 6px 6px 0 var(--color-ink);
     }
 
-    .content-text :global(h2) {
-      font-size: 1.6rem;
-      margin: 2rem 0 0.8rem;
+    .work,
+    .values {
+      padding-top: 56px;
     }
 
-    .content-text :global(h3) {
-      font-size: 1.3rem;
+    .values {
+      padding-bottom: 56px;
     }
 
-    .gallery-grid {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
+    .values__row {
+      gap: 16px 24px;
+      padding: 28px 0;
+    }
+
+    .values__num {
+      flex-basis: 100%;
+    }
+
+    .where__photo {
+      height: 320px;
     }
   }
 
   @media (max-width: 480px) {
-    .hero-section {
-      padding: 2.5rem 1rem 1.5rem;
-    }
-
-    .content-wrapper {
-      padding: 1.5rem 1rem;
-      gap: 2rem;
-    }
-
-    .gallery-grid {
-      gap: 1rem;
-    }
-
-    .gallery-item {
-      padding: 0.75rem;
+    .values__frame {
+      flex-basis: 140px;
+      width: 140px;
+      height: 180px;
     }
   }
 </style>

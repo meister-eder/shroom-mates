@@ -3,23 +3,23 @@
  * LocationInfo Component
  * Displays the farm location with embedded Google Maps.
  */
+import Icon from "@shroom-mates/ui/Icon.astro";
 
-// Google Maps embed URL for shroom-mates location (Markranstädter Str. 8, 04229 Leipzig)
+// Google Maps embed URL for shroom-mates location (Franz-Flemming-Str. 25, 04179 Leipzig; TODO: Koordinaten/Maps-Link verifizieren)
 const mapsEmbedUrl =
-	"https://www.google.com/maps?q=shroom-mates+Leipzig,+Markranstädter+Straße+8,+04229+Leipzig&output=embed";
-const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
+	"https://www.google.com/maps?q=shroom-mates+Leipzig,+Franz-Flemming-Straße+25,+04179+Leipzig&output=embed";
+const mapsLinkUrl = "https://www.google.com/maps/search/?api=1&query=Franz-Flemming-Stra%C3%9Fe+25,+04179+Leipzig";
 ---
 
 <section class="location-info" aria-label="Unser Standort">
-  <h2>Unser Standort</h2>
-
-  <div class="location-content">
+  <div class="container location-content">
+    <h2 class="location-title">Unser Standort</h2>
     <div class="market-info">
       <div class="market-card">
-        <h3>Plagwitzer Markthalle</h3>
+        <h3>Glasfabrik</h3>
         <address>
-          Markranstädter Straße 8<br />
-          04229 Leipzig
+          Franz-Flemming-Straße 25<br />
+          04179 Leipzig
         </address>
         <p class="market-note">
           Schreib uns für Bestellungen und Abholtermine.
@@ -30,10 +30,10 @@ const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
         href={mapsLinkUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="maps-link"
-        aria-label="Standort in Google Maps öffnen"
+        class="btn btn--primary maps-link"
+        aria-label="Standort in Google Maps öffnen (öffnet in neuem Tab)"
       >
-        📍 In Google Maps öffnen
+        <Icon name="map-pin" size={20} /> In Google Maps öffnen
       </a>
     </div>
 
@@ -49,7 +49,7 @@ const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
           TDDDG). Mehr in unserer
           <a href="/datenschutz/#4-google-maps-nur-nach-klick">Datenschutzerklärung</a>.
         </p>
-        <button type="button" class="map-consent-button" data-load-map>
+        <button type="button" class="btn btn--primary map-consent-button" data-load-map>
           Karte laden
         </button>
       </div>
@@ -73,12 +73,91 @@ const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
     iframe.style.display = "block";
     iframe.allowFullscreen = true;
     iframe.referrerPolicy = "no-referrer-when-downgrade";
-    iframe.title = "Karte zur shroom-mates Pilzzucht in Leipzig, Markranstädter Straße 8";
+    iframe.title = "Karte zur shroom-mates Pilzzucht in Leipzig, Franz-Flemming-Straße 25";
     placeholder.replaceWith(iframe);
   });
 </script>
 
 <style>
+  .location-info {
+    padding: 80px 0 96px;
+    background: var(--color-paper);
+    border-top: 3px solid var(--color-ink);
+  }
+
+  .location-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    grid-template-areas:
+      "title title"
+      "info map";
+    gap: 32px 48px;
+    align-items: start;
+  }
+
+  .location-title {
+    grid-area: title;
+  }
+
+  .market-info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .market-card {
+    width: 100%;
+    padding: 24px;
+    background: var(--color-white);
+    border: 3px solid var(--color-ink);
+    border-radius: 24px;
+    box-shadow: var(--shadow-btn);
+  }
+
+  .market-card h3 {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+  }
+
+  .market-card address {
+    margin-bottom: 12px;
+    font-size: 1.125rem;
+    font-style: normal;
+    line-height: 1.5;
+  }
+
+  .market-note {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+  }
+
+  .maps-link {
+    text-decoration: none;
+  }
+
+  .map-container {
+    grid-area: map;
+    position: relative;
+    width: 100%;
+    min-height: 450px;
+    overflow: hidden;
+    background: var(--color-cream);
+    border: 3px solid var(--color-ink);
+    border-radius: 28px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .map-container :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 450px;
+  }
+
   .map-consent {
     min-height: 450px;
     display: flex;
@@ -88,178 +167,55 @@ const mapsLinkUrl = "https://maps.app.goo.gl/MYEGJezHxqpG7d1e6";
     gap: 1rem;
     padding: 2rem;
     text-align: center;
-    background: var(--bg-color);
   }
 
   .map-consent-title {
-    font-family: "DM Mono", monospace;
-    font-weight: 700;
-    font-size: 1.1rem;
     margin: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.5rem;
   }
 
   .map-consent-text {
-    font-size: 0.9rem;
     max-width: 30rem;
     margin: 0;
+    font-size: 0.9375rem;
     line-height: 1.6;
   }
 
   .map-consent-text a {
+    color: var(--color-ink);
     text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  .map-consent-button {
-    padding: 0.7rem 1.5rem;
-    border: 2px solid #000;
-    border-radius: 6px;
-    background: #000;
-    color: #fff;
-    font-family: "DM Mono", monospace;
-    cursor: pointer;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .map-consent-button:hover {
-    background: var(--accent);
-  }
-
-  .location-info {
-    margin-top: 0;
-    padding: 3rem 2rem;
-    width: calc(100vw - var(--scrollbar-width, 0px));
-    margin-left: calc(50% - (100vw - var(--scrollbar-width, 0px)) / 2);
-    background: var(--bg-accent);
-    border-top: 2px solid #000;
-    border-bottom: 2px solid #000;
-  }
-
-  .location-info h2 {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700;
-    text-align: center;
-    margin: 0 0 0.5rem 0;
-    color: var(--text-color);
-    font-family: "DM Mono", monospace;
-  }
-
-  .location-info h2::after {
-    content: "";
-    display: block;
-    width: 50px;
-    height: 3px;
-    background: var(--accent);
-    margin: 0.6rem auto 2rem;
-    border-radius: 2px;
-  }
-
-  .location-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-
-  .market-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .market-card {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  .market-card h3 {
-    font-size: 1.3rem;
-    font-family: "DM Mono", monospace;
-    margin-bottom: 1rem;
-  }
-
-  .market-card address {
-    font-style: normal;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-
-  .market-note {
-    margin-top: 0.5rem;
-    color: #666;
-    font-size: 0.9rem;
-  }
-
-  .maps-link {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 500;
-    text-align: center;
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .maps-link:hover {
-    transform: translate(1px, 1px);
-    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-  }
-
-  .maps-link:focus-visible {
-    outline: 2px solid var(--focus-color, #000);
-    outline-offset: 2px;
-  }
-
-  .map-container {
-    border-radius: 8px;
-    overflow: hidden;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
-    min-height: 450px;
-    height: 450px;
-    width: 100%;
-    position: relative;
-  }
-
-  .map-container iframe {
-    display: block;
-    width: 100%;
-    height: 100%;
+  @media (max-width: 900px) {
+    .location-content {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "title"
+        "info"
+        "map";
+    }
   }
 
   @media (max-width: 768px) {
-    .location-content {
-      grid-template-columns: 1fr;
-    }
-
     .location-info {
-      padding: 1.5rem;
+      padding: 56px 0 64px;
     }
 
-    .location-info h2 {
-      font-size: 1.5rem;
+    .map-container,
+    .map-consent {
+      min-height: 320px;
+    }
+
+    .map-container :global(iframe) {
+      height: 380px;
     }
 
     .map-container {
-      min-height: 300px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .location-info {
-      padding: 1rem;
-    }
-
-    .market-card {
-      padding: 1rem;
+      border-radius: 20px;
+      box-shadow: 4px 4px 0 var(--color-ink);
     }
   }
 </style>

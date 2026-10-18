@@ -1,5 +1,4 @@
-import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface OptimizedImageData {
   src: string;
@@ -18,19 +17,40 @@ export interface OptimizedCarouselImage {
 interface Props {
   images: OptimizedCarouselImage[];
   alt: string;
+  /** Kartonfarbe als Bildgrund, z. B. "lavender" */
+  color?: string;
 }
 
-export const ImageCarousel = ({ images, alt }: Props) => {
-  if (images.length === 0) return null;
-
+/** Sticker image + thumbnails (desktop) or dot navigation (mobile). */
+export const ImageCarousel = ({ images, alt, color = "paper" }: Props) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPreviewing, setIsPreviewing] = useState<boolean>(false);
   const currentImage = images[currentIndex];
 
-  const handlePreview = () => setIsPreviewing(true);
-  const handleClosePreview = () => setIsPreviewing(false);
-  const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) =>
-    event.stopPropagation();
+  useEffect(() => {
+    if (!isPreviewing) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsPreviewing(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isPreviewing]);
+
+  if (images.length === 0 || !currentImage) {
+    return (
+      <div className="gallery">
+        <div className="gallery__frame">
+          <div className="gallery__dots dots" aria-hidden="true" />
+          <div
+            className="gallery__img gallery__img--empty sticker-card__placeholder"
+            style={{ ["--sticker-bg" as string]: `var(--color-${color})` }}
+            role="img"
+            aria-label={alt}
+          />
+        </div>
+      </div>
+    );
+  }
 
   const renderOptimizedImg = (
     data: OptimizedImageData,
@@ -42,7 +62,7 @@ export const ImageCarousel = ({ images, alt }: Props) => {
       sizes={data.sizes}
       width={data.width}
       height={data.height}
-      alt={alt}
+      alt={extraProps?.alt ?? alt}
       loading={extraProps?.loading ?? "lazy"}
       decoding="async"
       draggable={false}
@@ -51,51 +71,79 @@ export const ImageCarousel = ({ images, alt }: Props) => {
   );
 
   return (
-    <>
-      <div
-        className={clsx(
-          "fixed inset-0 bg-black/50 z-50 flex items-center justify-center transition-all duration-200",
-          {
-            "opacity-0 pointer-events-none": !isPreviewing,
-            "opacity-100": isPreviewing,
-          },
-        )}
-        onClick={handleClosePreview}
-      >
-        {renderOptimizedImg(currentImage.main, {
-          className: "object-contain max-w-3xl",
-          onClick: handleImageClick,
-        })}
-      </div>
-
-      <div className="flex flex-col gap-4">
-        {renderOptimizedImg(currentImage.main, {
-          className: "w-full object-cover cursor-pointer",
-          onClick: handlePreview,
-          loading: "eager",
-        })}
-
-        {images.length > 1 && (
-        <div className="flex gap-2 justify-center">
-          {images.map((image, index) => (
-            <button
-              key={image.originalUrl}
-              onClick={() => setCurrentIndex(index)}
-              className="cursor-pointer"
-            >
-              {renderOptimizedImg(image.thumb, {
-                className: clsx(
-                  "aspect-square object-cover ease-in-out duration-200",
-                  {
-                    "shadow-md": currentIndex === index,
-                  },
-                ),
-              })}
-            </button>
-          ))}
+    <div className="gallery">
+      {isPreviewing && (
+        <div
+          className="gallery__lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${alt}, vergrößert`}
+          onClick={() => setIsPreviewing(false)}
+        >
+          {renderOptimizedImg(currentImage.main, {
+            loading: "eager",
+            onClick: (e) => e.stopPropagation(),
+          })}
+          <button
+            type="button"
+            className="round-btn gallery__lightbox-close"
+            aria-label="Vergrößerung schließen"
+            onClick={() => setIsPreviewing(false)}
+            autoFocus
+          >
+            ×
+          </button>
         </div>
-        )}
+      )}
+
+      <div className="gallery__frame">
+        <div className="gallery__dots dots" aria-hidden="true" />
+        <button
+          type="button"
+          className="gallery__open"
+          onClick={() => setIsPreviewing(true)}
+          aria-label="Bild vergrößern"
+          style={{ ["--sticker-bg" as string]: `var(--color-${color})` }}
+        >
+          {renderOptimizedImg(currentImage.main, {
+            className: "gallery__img",
+            loading: "eager",
+          })}
+        </button>
       </div>
-    </>
+
+      {images.length > 1 && (
+        <>
+          <div className="gallery__thumbs" role="group" aria-label="Bilder">
+            {images.map((image, index) => (
+              <button
+                key={image.originalUrl}
+                type="button"
+                onClick={() => setCurrentIndex(index)}
+                aria-pressed={currentIndex === index}
+                aria-label={`Bild ${index + 1} anzeigen`}
+                className="gallery__thumb"
+              >
+                {renderOptimizedImg(image.thumb, { alt: "" })}
+              </button>
+            ))}
+          </div>
+          <div className="gallery__pager" role="group" aria-label="Bilder">
+            {images.map((image, index) => (
+              <button
+                key={image.originalUrl}
+                type="button"
+                onClick={() => setCurrentIndex(index)}
+                aria-pressed={currentIndex === index}
+                aria-label={`Bild ${index + 1}`}
+                className="gallery__pager-btn"
+              >
+                <span />
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };

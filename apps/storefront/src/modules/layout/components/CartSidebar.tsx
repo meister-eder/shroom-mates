@@ -3,15 +3,22 @@ import {
   $isCartSidebarOpen,
   closeCartSidebar,
   removeFromCart,
+  updateLineItemQuantity,
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
+import { stickerColor, stickerColorVar } from "@lib/utils/product-color";
 import { useStore } from "@nanostores/react";
 import { useHydrated } from "@lib/hooks/use-hydrated";
-import { useEffect, useRef } from "react";
+import { Icon } from "@modules/common/components/Icon";
+import { QtyStepper } from "@modules/common/components/QtyStepper";
+import { useEffect, useRef, useState } from "react";
 
 interface CartSidebarProps {
   countryCode: string;
 }
+
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
   const storedCart = useStore($cart);
@@ -19,35 +26,51 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
   // Server markup has no cart; render the real one only after hydration.
   const hydrated = useHydrated();
   const cart = hydrated ? storedCart : null;
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
+  // Escape closes, Tab stays inside the dialog, page scroll is locked.
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
+    if (!isOpen) return;
+
+    const handleKeys = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         closeCartSidebar();
+        return;
+      }
+      if (e.key !== "Tab" || !sidebarRef.current) return;
+      const focusable = Array.from(
+        sidebarRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
+      ).filter((el) => el.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !sidebarRef.current.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !sidebarRef.current.contains(active))) {
+        e.preventDefault();
+        first.focus();
       }
     };
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    returnFocusRef.current = document.activeElement as HTMLElement | null;
+    document.addEventListener("keydown", handleKeys);
+    document.body.style.overflow = "hidden";
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleKeys);
       document.body.style.overflow = "";
+      returnFocusRef.current?.focus?.();
     };
   }, [isOpen]);
 
   useEffect(() => {
     if (isOpen && sidebarRef.current) {
-      const firstFocusable = sidebarRef.current.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      ) as HTMLElement;
-      firstFocusable?.focus();
+      sidebarRef.current.querySelector<HTMLElement>(FOCUSABLE)?.focus();
     }
   }, [isOpen]);
 
@@ -57,166 +80,184 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
     }
   };
 
-  const handleRemoveItem = async (lineItemId: string) => {
+  const run = async (lineItemId: string, action: () => Promise<void>, what: string) => {
+    setBusyId(lineItemId);
     try {
-      await removeFromCart(lineItemId);
+      await action();
     } catch (error) {
-      console.error("Failed to remove item:", error);
+      console.error(`Failed to ${what}:`, error);
+    } finally {
+      setBusyId(null);
     }
   };
 
   const itemCount = cart?.items?.length ?? 0;
   const isEmpty = itemCount === 0;
+  const currencyCode = cart?.currency_code || "EUR";
 
   return (
     <>
-      {/* Backdrop */}
       <div
         ref={backdropRef}
         onClick={handleBackdropClick}
-        className={`fixed inset-0 bg-black bg-opacity-50 z-[1100] transition-opacity duration-300 ${isOpen ? "opacity-50" : "opacity-0 pointer-events-none"
-          }`}
+        className="cart-backdrop"
+        data-open={isOpen}
         aria-hidden="true"
       />
 
-      {/* Sidebar */}
-      <div
+      <aside
         ref={sidebarRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Warenkorb"
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-color)] border-l-2 border-black z-[1101] shadow-xl transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        aria-label="Pilzkorb"
+        className="cart-drawer"
+        data-open={isOpen}
+        inert={!isOpen}
       >
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b-2 border-black bg-[var(--bg-accent)]">
-            <h2 className="checkout-step-title text-xl">Warenkorb</h2>
-            <button
+        <div className="cart-drawer__head">
+          <img
+            src="/mascot.webp"
+            alt=""
+            aria-hidden="true"
+            width={54}
+            height={54}
+            className="cart-drawer__mascot"
+          />
+          <h2 className="cart-drawer__title">Dein Pilzkorb</h2>
+          <button
+            type="button"
+            onClick={closeCartSidebar}
+            className="round-btn"
+            aria-label="Pilzkorb schließen"
+          >
+            <Icon name="close" size={20} strokeWidth={2.6} />
+          </button>
+        </div>
+
+        {isEmpty ? (
+          <div className="cart-empty">
+            <img
+              src="/mascot.webp"
+              alt=""
+              aria-hidden="true"
+              width={180}
+              height={180}
+              className="cart-empty__mascot"
+            />
+            <p className="cart-empty__title">Hier wächst noch nichts.</p>
+            <p className="cart-empty__text">Die Mates langweilen sich.</p>
+            <a
+              href={`/${countryCode}/store`}
               onClick={closeCartSidebar}
-              className="w-11 h-11 -mr-3 flex items-center justify-center text-2xl leading-none hover:text-[var(--accent)]"
-              aria-label="Warenkorb schließen"
+              className="btn btn--primary"
             >
-              ×
-            </button>
+              Zum Sortiment
+            </a>
           </div>
+        ) : (
+          <>
+            <ul className="cart-drawer__items" role="list">
+              {cart?.items?.map((item) => {
+                const product = item.variant?.product;
+                const thumbnailUrl =
+                  item.thumbnail || product?.thumbnail || product?.images?.[0]?.url;
+                const productTitle = product?.title || item.title || "Produkt";
+                const variantTitle = item.variant?.title || "";
+                const unitPrice = item.unit_price || 0;
+                const quantity = item.quantity || 1;
+                const color = stickerColorVar(
+                  stickerColor({ handle: product?.handle, title: productTitle }),
+                );
+                const busy = busyId === item.id;
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
-            {isEmpty ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <p className="text-muted mb-4">Dein Warenkorb ist leer</p>
-                <a
-                  href={`/${countryCode}/store`}
-                  onClick={closeCartSidebar}
-                  className="text-sm hover:underline text-accent"
-                >
-                  Weiter einkaufen
-                </a>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {cart?.items?.map((item) => {
-                  const thumbnailUrl =
-                    item.variant?.product?.thumbnail ||
-                    item.variant?.product?.images?.[0]?.url;
-                  const productTitle =
-                    item.variant?.product?.title || "Produkt";
-                  const variantTitle = item.variant?.title || "";
-                  const unitPrice = item.unit_price || 0;
-                  const currencyCode = cart.currency_code || "EUR";
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex gap-4 pb-6 border-b border-black/10 last:border-0"
-                    >
-                      {/* Thumbnail - matches ImageCarousel thumb pattern (144x144) */}
-                      {thumbnailUrl && (
-                        <img
-                          src={thumbnailUrl}
-                          alt={productTitle}
-                          width={144}
-                          height={144}
-                          className="line-item-thumb"
-                          loading="lazy"
-                          decoding="async"
-                          draggable={false}
-                        />
-                      )}
-
-                      {/* Item details */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-sm mb-1 truncate">
-                          {productTitle}
-                        </h3>
-                        {variantTitle && variantTitle !== "Standard" && (
-                          <p className="text-xs text-muted mb-1">
-                            Variante: {variantTitle}
-                          </p>
-                        )}
-                        <p className="text-xs text-muted mb-2">
-                          Anzahl: {item.quantity}
+                return (
+                  <li key={item.id} className="cart-line" aria-busy={busy}>
+                    {thumbnailUrl ? (
+                      <img
+                        src={thumbnailUrl}
+                        alt=""
+                        width={84}
+                        height={84}
+                        className="cart-line__thumb"
+                        style={{ borderColor: color }}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    ) : (
+                      <div
+                        className="cart-line__thumb"
+                        style={{ borderColor: color, background: color }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <div className="cart-line__body">
+                      <div className="cart-line__top">
+                        <p className="cart-line__name">{productTitle}</p>
+                        <p className="cart-line__total">
+                          {convertToLocale({ amount: unitPrice * quantity, currencyCode })}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium">
-                            {convertToLocale({
-                              amount: unitPrice,
-                              currencyCode,
-                            })}
-                          </p>
-                          <button
-                            onClick={() => handleRemoveItem(item.id)}
-                            className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 py-2 px-1 -mr-1"
-                            aria-label={`${productTitle} aus dem Warenkorb entfernen`}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                            Entfernen
-                          </button>
-                        </div>
+                      </div>
+                      <p className="cart-line__meta">
+                        {variantTitle && variantTitle !== "Standard" && `${variantTitle} · `}
+                        {convertToLocale({ amount: unitPrice, currencyCode })}
+                      </p>
+                      <div className="cart-line__actions">
+                        <QtyStepper
+                          value={quantity}
+                          label={`Anzahl ${productTitle}`}
+                          disabled={busy}
+                          onDecrease={() =>
+                            run(item.id, () => updateLineItemQuantity(item.id, quantity - 1), "update quantity")
+                          }
+                          onIncrease={() =>
+                            run(item.id, () => updateLineItemQuantity(item.id, quantity + 1), "update quantity")
+                          }
+                        />
+                        <button
+                          type="button"
+                          onClick={() => run(item.id, () => removeFromCart(item.id), "remove item")}
+                          disabled={busy}
+                          className="text-btn"
+                          aria-label={`${productTitle} aus dem Pilzkorb entfernen`}
+                        >
+                          Entfernen
+                        </button>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                  </li>
+                );
+              })}
+            </ul>
 
-          {/* Footer */}
-          {!isEmpty && (
-            <div className="border-t-2 border-black p-6 space-y-4 bg-[var(--bg-accent)]">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted">Zwischensumme (inkl. MwSt.)</span>
-                <span className="font-medium">
-                  {convertToLocale({
-                    amount: cart?.item_total || 0,
-                    currencyCode: cart?.currency_code || "EUR",
-                  })}
+            <div className="cart-drawer__foot">
+              <div className="cart-drawer__subtotal">
+                <span>Zwischensumme</span>
+                <span>
+                  {convertToLocale({ amount: cart?.item_total || 0, currencyCode })}
                 </span>
               </div>
+              <p className="cart-drawer__note">
+                inkl. MwSt. · Versand ab 4,95 € im nächsten Schritt
+              </p>
               <a
-                href={`/${countryCode}/cart`}
+                href={`/${countryCode}/checkout`}
                 onClick={closeCartSidebar}
-                className="btn-accent w-full"
+                className="btn btn--primary btn--block btn--lg"
               >
-                Zum Warenkorb
+                Zur Kasse
+              </a>
+              <a
+                href={`/${countryCode}/store`}
+                onClick={closeCartSidebar}
+                className="cart-drawer__more"
+              >
+                Weiter stöbern
               </a>
             </div>
-          )}
-        </div>
-      </div>
+          </>
+        )}
+      </aside>
     </>
   );
 };

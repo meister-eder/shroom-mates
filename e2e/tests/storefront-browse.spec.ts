@@ -50,7 +50,7 @@ test.describe("Storefront — Pages & Navigation", () => {
 
     // Product detail page should have an h1 and add-to-cart button
     await expect(page.locator("h1").first()).toBeVisible();
-    const addBtn = page.getByRole("button", { name: /In den Warenkorb/ });
+    const addBtn = page.getByRole("button", { name: /Rein ins Körbchen/ });
     await expect(addBtn).toBeVisible();
 
     // Navigate back to store

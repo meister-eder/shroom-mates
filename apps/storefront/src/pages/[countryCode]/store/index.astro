@@ -4,6 +4,8 @@ import { getRegion } from "@lib/data/regions";
 import { listProducts } from "@lib/data/products";
 import { getRegionParams } from "@lib/params/region-params";
 import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
+import StoreHero from "@modules/store/components/StoreHero.astro";
+import FreshLink from "@modules/store/components/FreshLink.astro";
 
 export const getStaticPaths = getRegionParams;
 
@@ -25,85 +27,80 @@ try {
   console.error(error);
 }
 
-// Build category list from products for the filter strip
-const categoryMap = new Map<string, string>(); // handle → name
+// Fresh mushrooms are not sold in the shop (link card to the website instead)
+const HIDDEN_CATEGORIES = ["frische-pilze"];
+products = products.filter(
+  (p) => !p.categories?.some((c) => HIDDEN_CATEGORIES.includes(c.handle ?? "")),
+);
+
+// Growkits and tinctures in that order, everything else after
+const ORDER = ["growkits", "tinkturen"];
+const rank = (p: (typeof products)[number]) => {
+  const i = ORDER.indexOf(p.categories?.[0]?.handle ?? "");
+  return i === -1 ? ORDER.length : i;
+};
+products = [...products].sort((a, b) => rank(a) - rank(b));
+
+// Category chips with counts: [handle, name, count]
+const categoryMap = new Map<string, { name: string; count: number }>();
 for (const product of products) {
   for (const cat of product.categories ?? []) {
-    if (cat.handle && cat.name) {
-      categoryMap.set(cat.handle, cat.name);
-    }
+    if (!cat.handle || !cat.name) continue;
+    const entry = categoryMap.get(cat.handle) ?? { name: cat.name, count: 0 };
+    entry.count += 1;
+    categoryMap.set(cat.handle, entry);
   }
 }
-const categories = Array.from(categoryMap.entries()); // [handle, name]
+const categories = Array.from(categoryMap.entries()).sort(
+  ([a], [b]) =>
+    (ORDER.indexOf(a) === -1 ? 99 : ORDER.indexOf(a)) -
+    (ORDER.indexOf(b) === -1 ? 99 : ORDER.indexOf(b)),
+);
 
 // Active category filter from URL
 const activeCategory = Astro.url.searchParams.get("kategorie") ?? "";
 
-// Filter products if a category is selected
 const filteredProducts = activeCategory
   ? products.filter((p) =>
       p.categories?.some((c) => c.handle === activeCategory),
     )
   : products;
 
-// Helper: get first category name for a product
 const getCategory = (product: (typeof products)[number]) =>
   product.categories?.[0]?.name;
-import PageHero from "@shroom-mates/ui/PageHero.astro";
-import { Image } from "astro:assets";
-import heroImage from "../../../assets/hero-tinkturen.jpeg";
 ---
 
 <Layout
   title="Unser Sortiment"
   description="Entdecke unser Sortiment an Growkits und Pilztinkturen aus Leipzig."
+  image={products[0]?.thumbnail ?? undefined}
 >
-  <PageHero
-    compact
-    title="Unser Sortiment"
-    subtitle="Growkits & Tinkturen aus Leipzig — direkt vom Erzeuger"
-  >
-    <Image
-      src={heroImage}
-      alt="Pilztinkturen von shroom-mates"
-      class="hero-image"
-      widths={[640, 1024, 1600]}
-      sizes="100vw"
-      format="webp"
-      loading="eager"
-    />
-  </PageHero>
+  <StoreHero />
 
-  <div class="section-inner" style="padding-top: 2rem; padding-bottom: 4rem;">
-    <!-- Category filter -->
+  <div class="store-section">
     {
       categories.length > 0 && (
-        <nav
-          class="category-filter"
-          aria-label="Produktkategorien filtern"
-          style="margin-bottom: 2rem;"
-        >
+        <nav class="chips" aria-label="Produktkategorien filtern">
           <a
             href={`/${countryCode}/store`}
-            class={`category-pill${!activeCategory ? " active" : ""}`}
+            class={`chip category-pill${!activeCategory ? " active" : ""}`}
             aria-current={!activeCategory ? "page" : undefined}
           >
-            Alle
+            Alles <span class="chip__n">{products.length}</span>
           </a>
-          {categories.map(([handle, name]) => (
+          {categories.map(([handle, { name, count }]) => (
             <a
               href={`/${countryCode}/store?kategorie=${handle}`}
-              class={`category-pill${activeCategory === handle ? " active" : ""}`}
+              class={`chip category-pill${activeCategory === handle ? " active" : ""}`}
               aria-current={activeCategory === handle ? "page" : undefined}
             >
-              {name}
+              {name} <span class="chip__n">{count}</span>
             </a>
           ))}
         </nav>
       )
     }
 
-    <!-- Error state -->
     {
       error && (
         <p class="error-banner" role="alert">
@@ -113,101 +110,52 @@ import heroImage from "../../../assets/hero-tinkturen.jpeg";
       )
     }
 
-    <!-- Empty state -->
     {
       !error && filteredProducts.length === 0 && (
         <div class="empty-state" role="status">
+          <img
+            src="/mascot.webp"
+            alt=""
+            aria-hidden="true"
+            width="140"
+            height="140"
+          />
+          <p class="empty-state__title">Hier wächst noch nichts.</p>
           <p>Keine Produkte in dieser Kategorie.</p>
-          <a
-            href={`/${countryCode}/store`}
-            class="btn-outline"
-            style="margin-top: 1rem; display: inline-flex;"
-          >
-            Alle anzeigen
+          <a href={`/${countryCode}/store`} class="btn btn--primary">
+            Alles anzeigen
           </a>
         </div>
       )
     }
 
-    <!-- Product grid -->
     {
       filteredProducts.length > 0 && (
         <ul
           class="product-grid"
+          role="list"
           aria-label={`${filteredProducts.length} Produkt${filteredProducts.length === 1 ? "" : "e"}`}
         >
           {filteredProducts.map((product, index) => (
-            <li>
-              <ProductPreview
-                handle={product.handle}
-                variants={product.variants ?? []}
-                thumbnailUrl={product.thumbnail ?? undefined}
-                imageUrl={product.images?.[0]?.url}
-                title={product.title}
-                priority={index < 4}
-                categoryName={getCategory(product)}
-              />
-            </li>
+            <ProductPreview
+              handle={product.handle}
+              variants={product.variants ?? []}
+              thumbnailUrl={product.thumbnail ?? undefined}
+              imageUrl={product.images?.[0]?.url}
+              title={product.title}
+              priority={index < 4}
+              categoryName={getCategory(product)}
+            />
           ))}
         </ul>
       )
     }
+
+    <p class="price-note">
+      Alle Preise inkl. MwSt., zzgl. Versandkosten (Standard 4,95 €, Express
+      9,95 €). Lieferzeit 3–5 Werktage, Lieferung nur innerhalb Deutschlands.
+    </p>
+
+    <FreshLink />
   </div>
 </Layout>
-
-<style>
-  /* ── Store Banner ────────────────────────────────────────── */
-
-  /* ── Product grid ────────────────────────────────────────── */
-  .product-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 640px) {
-    .product-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 900px) {
-    .product-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 1200px) {
-    .product-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .product-grid li {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .product-grid li :global(.product-card) {
-    height: 100%;
-  }
-
-  /* ── Error / empty states ────────────────────────────────── */
-  .error-banner {
-    padding: 1rem 1.25rem;
-    border: 2px solid #c0392b;
-    border-radius: 8px;
-    background: #fdf0ee;
-    color: #c0392b;
-    font-size: 0.9rem;
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 4rem 0;
-    color: var(--text-muted, #6b6b6b);
-  }
-</style>

@@ -1,0 +1,321 @@
+---
+/**
+ * Das shroom-mates-Logo (Austernpilz + Lion's Mane) mit lebendigen Augen.
+ *
+ * Rendert das PNG über astro:assets und legt darüber eine Inline-SVG-Ebene
+ * (viewBox 0 0 1024 1024), die die vier gezeichneten Augen pixelgenau
+ * überdeckt. Im Ruhezustand sieht das Ergebnis aus wie das PNG; per Script
+ * folgen die Pupillen dem Mauszeiger und die Maskottchen blinzeln ab und zu.
+ * Touch / ohne Zeiger: Originalblick. prefers-reduced-motion: statisch.
+ *
+ *   <MatesLogo width={420} loading="eager" />
+ */
+import { Image } from "astro:assets";
+import logo from "./assets/logo_with_shrooms.png";
+
+interface Props {
+	class?: string;
+	alt?: string;
+	loading?: "lazy" | "eager";
+	/** Darstellungsbreite in px (bestimmt die srcset-Stufen), Default 480 */
+	width?: number;
+	/** sizes-Attribut; Default `(max-width: {width}px) 100vw, {width}px` */
+	sizes?: string;
+}
+
+const {
+	class: className,
+	alt = "Die shroom-mates: ein Austernpilz und ein Lion's Mane",
+	loading = "lazy",
+	width = 480,
+	sizes = `(max-width: ${width}px) 100vw, ${width}px`,
+} = Astro.props;
+
+const widths = [...new Set([0.5, 0.75, 1, 1.5, 2].map((f) => Math.min(1024, Math.round(width * f))))];
+
+/*
+ * Augen-Geometrie im 1024er-Raster, aus den Pixeln des 8192er-Masters
+ * gefittet (Ellipsen-Fit der Außenkontur, Strichstärke aus Konturabstand,
+ * Pupille per Optimierung gegen die Original-Pupillenfläche).
+ * cx/cy/rot: Augenmitte + Drehung; rx/ry: Außenradien inkl. Strich;
+ * sw: Strichstärke; pu/pv/prx/pry/pphi: Pupillen-Ellipse im lokalen
+ * (gedrehten) Augen-Koordinatensystem, wird auf das Augeninnere geclippt.
+ */
+const mascots = [
+	{
+		name: "oyster",
+		eyes: [
+			{ cx: 353.11, cy: 393.85, rot: 4.24, rx: 21.82, ry: 36.77, sw: 5.63, pu: 15.95, pv: 11.72, prx: 34.27, pry: 34.27, pphi: -7.89 },
+			{ cx: 407.5, cy: 396.92, rot: 4.24, rx: 21.82, ry: 36.77, sw: 5.63, pu: 7.93, pv: 11.28, prx: 21.32, pry: 32.87, pphi: 9.58 },
+		],
+	},
+	{
+		name: "lions-mane",
+		eyes: [
+			{ cx: 665.93, cy: 509.35, rot: 1.85, rx: 25.6, ry: 43.6, sw: 5.63, pu: -8.5, pv: -11.42, prx: 25.88, pry: 38.44, pphi: 17.6 },
+			{ cx: 727.58, cy: 506.61, rot: -0.66, rx: 26.11, ry: 44.49, sw: 5.74, pu: -12.36, pv: -20.79, prx: 26.16, pry: 45.78, pphi: 16.78 },
+		],
+	},
+];
+
+const ORANGE = "#ff4908"; // exakt aus den Pixeln (255, 73, 8)
+const CREAM = "#fdfcea"; // Körper-/Augenfarbe (253, 252, 234)
+const uid = `ml${Math.random().toString(36).slice(2, 8)}`;
+const r = (n: number) => Math.round(n * 100) / 100;
+---
+
+<div class:list={["mates-logo", className]} data-mates-logo>
+	<Image src={logo} alt={alt} width={width} widths={widths} sizes={sizes} loading={loading} decoding="async" />
+	<svg class="mates-logo__eyes" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+		{
+			mascots.map((m, mi) => (
+				<g class="mates-logo__mascot" data-mascot={m.name}>
+					{m.eyes.map((e, ei) => {
+						const ix = r(e.rx - e.sw / 2);
+						const iy = r(e.ry - e.sw / 2);
+						const clipId = `${uid}-${mi}-${ei}`;
+						return (
+							<g
+								transform={`translate(${e.cx} ${e.cy}) rotate(${e.rot})`}
+								data-eye
+								data-cx={e.cx}
+								data-cy={e.cy}
+								data-rot={e.rot}
+								data-ix={ix}
+								data-iy={iy}
+								data-pu={e.pu}
+								data-pv={e.pv}
+							>
+								<clipPath id={clipId}>
+									<ellipse rx={ix} ry={iy} />
+								</clipPath>
+								{/* deckt das gemalte Auge ab (sichtbar beim Blinzeln) */}
+								<ellipse rx={r(e.rx + 1.2)} ry={r(e.ry + 1.2)} fill={CREAM} />
+								<g class="mates-logo__lid">
+									<ellipse rx={ix} ry={iy} fill={CREAM} />
+									<g clip-path={`url(#${clipId})`}>
+										<g class="pupil">
+											<ellipse
+												cx={e.pu}
+												cy={e.pv}
+												rx={e.prx}
+												ry={e.pry}
+												transform={`rotate(${e.pphi} ${e.pu} ${e.pv})`}
+												fill={ORANGE}
+											/>
+										</g>
+									</g>
+									<ellipse rx={ix} ry={iy} fill="none" stroke={ORANGE} stroke-width={e.sw} />
+								</g>
+								<ellipse class="mates-logo__shut" rx={r(e.rx - 1)} ry={r(e.sw * 0.6)} fill={ORANGE} />
+							</g>
+						);
+					})}
+				</g>
+			))
+		}
+	</svg>
+</div>
+
+<style>
+	.mates-logo {
+		position: relative;
+		display: block;
+		max-width: 100%;
+	}
+	.mates-logo :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+	.mates-logo__eyes {
+		position: absolute;
+		/* an die Bildbreite gekoppelt, nicht an die (evtl. gestreckte) Wrapper-Höhe */
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
+		overflow: visible;
+		pointer-events: none;
+	}
+	.mates-logo__lid {
+		transform-origin: 0 0;
+		transition: transform 75ms ease-in-out;
+	}
+	.mates-logo__shut {
+		opacity: 0;
+		transition: opacity 60ms linear;
+	}
+	.is-blinking .mates-logo__lid {
+		transform: scaleY(0.08);
+	}
+	.is-blinking .mates-logo__shut {
+		opacity: 1;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.mates-logo__lid,
+		.mates-logo__shut {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	type Eye = {
+		pupil: SVGGElement;
+		cx: number;
+		cy: number;
+		cos: number;
+		sin: number;
+		ix: number;
+		iy: number;
+		/** Betrag der Ruhe-Auslenkung im auf den Augapfel normierten Raum */
+		m: number;
+		theta0: number;
+		theta: number;
+	};
+	type Instance = { root: HTMLElement; svg: SVGSVGElement; eyes: Eye[]; timers: number[] };
+
+	const instances = new Set<Instance>();
+	const reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+	let pointer: { x: number; y: number } | null = null;
+	let raf = 0;
+	let listening = false;
+
+	const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
+
+	function schedule() {
+		if (!raf) raf = requestAnimationFrame(frame);
+	}
+
+	function frame() {
+		raf = 0;
+		let moving = false;
+		for (const inst of instances) {
+			if (!inst.root.isConnected) {
+				destroy(inst);
+				continue;
+			}
+			const rect = inst.svg.getBoundingClientRect();
+			if (rect.width === 0) continue;
+			const k = rect.width / 1024;
+			for (const eye of inst.eyes) {
+				let target = eye.theta0;
+				if (pointer && !reduceMq.matches) {
+					const dx = pointer.x - (rect.left + eye.cx * k);
+					const dy = pointer.y - (rect.top + eye.cy * k);
+					if (Math.hypot(dx, dy) > 4 * k) {
+						// in das (leicht gedrehte) Augen-Koordinatensystem
+						target = Math.atan2(-dx * eye.sin + dy * eye.cos, dx * eye.cos + dy * eye.sin);
+					} else {
+						target = eye.theta;
+					}
+				}
+				const diff = wrap(target - eye.theta);
+				if (Math.abs(diff) < 0.002) eye.theta = target;
+				else {
+					eye.theta += diff * 0.18;
+					moving = true;
+				}
+				const atRest = Math.abs(wrap(eye.theta - eye.theta0)) < 1e-4;
+				if (atRest) {
+					eye.pupil.style.transform = "";
+				} else {
+					const ox = Math.cos(eye.theta) * eye.m * eye.ix - Math.cos(eye.theta0) * eye.m * eye.ix;
+					const oy = Math.sin(eye.theta) * eye.m * eye.iy - Math.sin(eye.theta0) * eye.m * eye.iy;
+					eye.pupil.style.transform = `translate(${ox.toFixed(2)}px, ${oy.toFixed(2)}px)`;
+				}
+			}
+		}
+		if (moving) schedule();
+	}
+
+	function onPointerMove(e: PointerEvent) {
+		if (e.pointerType === "touch") {
+			if (pointer) {
+				pointer = null;
+				schedule();
+			}
+			return;
+		}
+		pointer = { x: e.clientX, y: e.clientY };
+		schedule();
+	}
+
+	function onPointerGone() {
+		pointer = null;
+		schedule();
+	}
+
+	function onMouseOut(e: MouseEvent) {
+		if (!e.relatedTarget) onPointerGone();
+	}
+
+	function listen() {
+		if (listening) return;
+		listening = true;
+		window.addEventListener("pointermove", onPointerMove, { passive: true });
+		document.documentElement.addEventListener("mouseout", onMouseOut);
+		window.addEventListener("blur", onPointerGone);
+	}
+
+	function blink(inst: Instance, mascot: Element, i: number) {
+		const delay = 4000 + Math.random() * 4000;
+		inst.timers[i] = window.setTimeout(() => {
+			if (!inst.root.isConnected) return destroy(inst);
+			if (!reduceMq.matches && !document.hidden) {
+				mascot.classList.add("is-blinking");
+				window.setTimeout(() => mascot.classList.remove("is-blinking"), 150);
+			}
+			blink(inst, mascot, i);
+		}, delay);
+	}
+
+	function destroy(inst: Instance) {
+		inst.timers.forEach((t) => clearTimeout(t));
+		instances.delete(inst);
+	}
+
+	function init() {
+		if (reduceMq.matches) return;
+		document.querySelectorAll<HTMLElement>("[data-mates-logo]").forEach((root) => {
+			if (root.dataset.matesInit) return;
+			const svg = root.querySelector<SVGSVGElement>(".mates-logo__eyes");
+			if (!svg) return;
+			root.dataset.matesInit = "1";
+			const eyes: Eye[] = [];
+			svg.querySelectorAll<SVGGElement>("[data-eye]").forEach((g) => {
+				const pupil = g.querySelector<SVGGElement>(".pupil");
+				if (!pupil) return;
+				const n = (key: string) => Number(g.dataset[key]);
+				const ix = n("ix");
+				const iy = n("iy");
+				const nu = n("pu") / ix;
+				const nv = n("pv") / iy;
+				const rot = (n("rot") * Math.PI) / 180;
+				const theta0 = Math.atan2(nv, nu);
+				eyes.push({
+					pupil,
+					cx: n("cx"),
+					cy: n("cy"),
+					cos: Math.cos(rot),
+					sin: Math.sin(rot),
+					ix,
+					iy,
+					m: Math.hypot(nu, nv),
+					theta0,
+					theta: theta0,
+				});
+			});
+			const inst: Instance = { root, svg, eyes, timers: [] };
+			instances.add(inst);
+			svg.querySelectorAll(".mates-logo__mascot").forEach((mascot, i) => blink(inst, mascot, i));
+		});
+		if (instances.size) listen();
+	}
+
+	document.addEventListener("astro:page-load", init);
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+	else init();
+</script>

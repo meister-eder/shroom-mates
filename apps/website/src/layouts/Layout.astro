@@ -1,10 +1,13 @@
 ---
 import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
+import "@shroom-mates/ui/utilities.css";
+import frauncesUrl from "@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2?url";
 import { ClientRouter } from "astro:transitions";
+import Footer from "@shroom-mates/ui/Footer.astro";
 import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
+import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
+import type { NavKey } from "@shroom-mates/ui/site";
 
 interface Props {
 	title: string;
@@ -12,17 +15,28 @@ interface Props {
 	ogImage?: string;
 	isLandingPage?: boolean;
 	noindex?: boolean;
+	/** @deprecated ohne Wirkung; der Hintergrund ist überall Creme */
 	noBackground?: boolean;
+	/** Aktiver Navigationspunkt (aria-current im Header) */
+	active?: NavKey;
 }
 
 const {
 	title,
-	description = "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Plagwitz. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.",
+	description = "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Leutzsch. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.",
 	ogImage,
 	isLandingPage = false,
 	noindex = false,
-	noBackground = false,
+	active,
 } = Astro.props;
+
+// Laufband über dem Header: nur belegbare Aussagen
+const tickerItems = [
+	"Neu: Wir sind in die Glasfabrik Leutzsch umgezogen",
+	"Edel- und Vitalpilze aus Leipzig-Leutzsch",
+	"Frische Pilze, Growkits & Tinkturen",
+	"Alles selbst gezüchtet",
+];
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 // Use a better default image - the logo with mushrooms
@@ -43,19 +57,19 @@ const structuredData = {
 		Astro.site,
 	).toString(),
 	description:
-		"Edelpilzzucht in Leipzig-Plagwitz. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
+		"Edelpilzzucht in Leipzig-Leutzsch. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
 	address: {
 		"@type": "PostalAddress",
-		streetAddress: "Markranstädter Straße 8",
+		streetAddress: "Franz-Flemming-Straße 25",
 		addressLocality: "Leipzig",
 		addressRegion: "Sachsen",
-		postalCode: "04229",
+		postalCode: "04179",
 		addressCountry: "DE",
 	},
 	geo: {
 		"@type": "GeoCoordinates",
-		latitude: 51.325545,
-		longitude: 12.330446,
+		latitude: 51.3540, // TODO: Koordinaten verifizieren
+		longitude: 12.3010, // TODO: Koordinaten verifizieren
 	},
 	url: "https://shroom-mates.de",
 	email: "hey@shroom-mates.de",
@@ -207,12 +221,19 @@ const breadcrumbSchema = {
 ---
 
 <!doctype html>
-<html lang="de" class={noBackground ? "no-background" : ""}>
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <ClientRouter />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={frauncesUrl}
+      crossorigin="anonymous"
+    />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -245,14 +266,14 @@ const breadcrumbSchema = {
 
     <!-- Location/Geo Targeting -->
     <meta name="geo.region" content="DE-SN" />
-    <meta name="geo.placename" content="Leipzig" />
-    <meta name="geo.position" content="51.325545403892036;12.330445796958628" />
-    <meta name="ICBM" content="51.325545403892036, 12.330445796958628" />
+    <meta name="geo.placename" content="Leipzig-Leutzsch" />
+    <meta name="geo.position" content="51.3540;12.3010" />
+    <meta name="ICBM" content="51.3540, 12.3010" />
 
     <!-- Keywords for local search -->
     <meta
       name="keywords"
-      content="Pilze Leipzig, Edelpilze Leipzig, frische Pilze kaufen Leipzig, Pilze Gastronomie Leipzig, Pilzlieferant Leipzig, Austernpilze Leipzig, Vitalpilze Leipzig, Growkits Leipzig, Growkits kaufen, Pilze selber züchten, Pilzzuchtset, Pilztinkturen Leipzig, Pilzextrakte Leipzig, Lion's Mane Leipzig, Lion's Mane Tinktur, Reishi Tinktur, Pilzzucht Leipzig, Plagwitzer Markthalle, regionale Pilze Sachsen"
+      content="Pilze Leipzig, Edelpilze Leipzig, frische Pilze kaufen Leipzig, Pilze Gastronomie Leipzig, Pilzlieferant Leipzig, Austernpilze Leipzig, Vitalpilze Leipzig, Growkits Leipzig, Growkits kaufen, Pilze selber züchten, Pilzzuchtset, Pilztinkturen Leipzig, Pilzextrakte Leipzig, Lion's Mane Leipzig, Lion's Mane Tinktur, Reishi Tinktur, Pilzzucht Leipzig, Leutzscher Markthalle, regionale Pilze Sachsen"
     />
 
     <!-- Open Graph -->
@@ -306,7 +327,7 @@ const breadcrumbSchema = {
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
     <div class="site-wrapper">
-      <Header />
+      <SiteHeader app="website" active={active} ticker={tickerItems} />
       <main
         id="main-content"
         class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
@@ -315,7 +336,7 @@ const breadcrumbSchema = {
         <slot />
       </main>
 
-      <Footer />
+      <Footer app="website" />
 
 
       <LayoutScripts />
@@ -379,13 +400,6 @@ const breadcrumbSchema = {
 
       <style is:global>
         @import url("../styles/global.css");
-
-        /* Plain white background (no checkered pattern) */
-        html.no-background,
-        html.no-background body {
-          background: #ffffff;
-          background-image: none;
-        }
 
         /* Fallback transitions for browsers without View Transitions API */
         @media (prefers-reduced-motion: no-preference) {

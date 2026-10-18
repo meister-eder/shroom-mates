@@ -6,12 +6,14 @@ import {
 } from "@lib/stores/cart";
 import { useStore } from "@nanostores/react";
 import { useHydrated } from "@lib/hooks/use-hydrated";
+import { Icon } from "@modules/common/components/Icon";
 import { useEffect } from "react";
 
 interface CartButtonProps {
   regionId?: string | null;
 }
 
+/** Pilzkorb pill in the header (accent button, stroke icon, count badge). */
 export const CartButton = ({ regionId }: CartButtonProps) => {
   const storedCount = useStore($cartItemCount);
   const hydrated = useHydrated();
@@ -27,12 +29,18 @@ export const CartButton = ({ regionId }: CartButtonProps) => {
 
   return (
     <button
+      type="button"
       onClick={() => toggleCartSidebar()}
-      className={`cart-button${cartItemCount > 0 ? " has-items" : ""}`}
-      aria-label={`Warenkorb mit ${cartItemCount} ${cartItemCount === 1 ? "Artikel" : "Artikeln"}`}
+      className={`cart-pill${cartItemCount > 0 ? " has-items" : ""}`}
+      aria-label={`Pilzkorb, ${cartItemCount} Artikel`}
+      aria-haspopup="dialog"
     >
-      <span aria-live="polite" aria-atomic="true">
-        🛒<span className="cart-label"> Warenkorb</span> ({cartItemCount})
+      <Icon name="cart" size={20} />
+      <span className="cart-pill__label" aria-hidden="true">
+        Pilzkorb
+      </span>
+      <span className="cart-pill__count" aria-hidden="true">
+        {cartItemCount}
       </span>
     </button>
   );

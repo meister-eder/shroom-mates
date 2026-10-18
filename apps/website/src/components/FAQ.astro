@@ -1,10 +1,12 @@
 ---
 /**
- * FAQ Component
- * Displays frequently asked questions with FAQPage structured data for SEO.
- * FAQ content is loaded from the CMS-editable content collection as an array.
- * Helps capture featured snippets for common mushroom-related queries in Leipzig.
+ * FAQ-Akkordeon (einzige FAQ-Darstellung, nur auf /faq/ eingebunden).
+ * Native <details name="faq">: kein Script, Tastatur/Screenreader gratis,
+ * immer nur eine Frage offen; die aktive Frage ist lavendel hinterlegt.
+ * Inhalt kommt vollständig aus der Content-Collection „faq-page“; alle
+ * Antworten stehen auch geschlossen im HTML. Liefert FAQPage-JSON-LD mit.
  */
+import Icon from "@shroom-mates/ui/Icon.astro";
 import { getEntry } from "astro:content";
 
 interface FAQItem {
@@ -13,7 +15,6 @@ interface FAQItem {
 	link?: string;
 }
 
-// Load FAQ items from the content collection
 const faqPageEntry = await getEntry("faq-page", "content");
 if (!faqPageEntry) {
 	throw new Error("FAQ page content not found");
@@ -21,7 +22,6 @@ if (!faqPageEntry) {
 
 const faqs: FAQItem[] = faqPageEntry.data.faqs;
 
-// Generate FAQPage Schema for SEO
 const faqSchema = {
 	"@context": "https://schema.org",
 	"@type": "FAQPage",
@@ -36,226 +36,133 @@ const faqSchema = {
 };
 ---
 
-<!-- FAQPage Schema for SEO -->
 <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
-<section class="faq-section" aria-label="Häufig gestellte Fragen">
-  <h2>Häufig gestellte Fragen</h2>
-
-  <div class="faq-list">
-    {
-      faqs.map((faq) => (
-        <details class="faq-item">
-          <summary>
-            <span class="question-text">{faq.question}</span>
-            <span class="toggle-icon" aria-hidden="true">
-              +
-            </span>
-          </summary>
-          <div class="answer">
-            <p set:html={faq.answer} />
-            {faq.link && (
-              <p class="faq-link">
-                <a href={faq.link}>Mehr erfahren →</a>
-              </p>
-            )}
-          </div>
-        </details>
-      ))
-    }
-  </div>
-
-  <div class="more-questions">
-    <p>
-      Weitere Fragen? <a href="mailto:hey@shroom-mates.de"
-        >Schreib uns eine E-Mail</a
-      > oder nutze das Kontaktformular oben.
-    </p>
-  </div>
-</section>
+<div class="faq-list">
+  {
+    faqs.map((faq) => (
+      <details class="faq-item" name="faq">
+        <summary>
+          <h2 class="faq-question">{faq.question}</h2>
+          <span class="faq-toggle" aria-hidden="true">
+            <Icon name="plus" size={20} strokeWidth={2.6} class="faq-toggle__plus" />
+            <Icon name="minus" size={20} strokeWidth={2.6} class="faq-toggle__minus" />
+          </span>
+        </summary>
+        <div class="faq-answer">
+          <p set:html={faq.answer} />
+          {faq.link && (
+            <p class="faq-link">
+              <a href={faq.link}>Mehr erfahren</a>
+            </p>
+          )}
+        </div>
+      </details>
+    ))
+  }
+</div>
 
 <style>
-  .faq-section {
-    margin-top: 0;
-    padding: 3rem 2rem;
-  }
-
-  .faq-section h2 {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700;
-    text-align: center;
-    margin: 0 0 0.5rem 0;
-    color: var(--text-color);
-    font-family: "DM Mono", monospace;
-  }
-
-  .faq-section h2::after {
-    content: "";
-    display: block;
-    width: 50px;
-    height: 3px;
-    background: var(--accent);
-    margin: 0.6rem auto 2rem;
-    border-radius: 2px;
-  }
-
   .faq-list {
-    max-width: 800px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 14px;
   }
 
   .faq-item {
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 8px;
+    background: var(--color-white);
+    border: 3px solid var(--color-ink);
+    border-radius: 22px;
     overflow: hidden;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.2s ease;
   }
 
-  .faq-item:hover {
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.12);
+  .faq-item[open] {
+    background: var(--color-lavender);
+    box-shadow: 6px 6px 0 var(--color-ink);
   }
 
-  .faq-item summary {
-    padding: 1.25rem 1.5rem;
-    cursor: pointer;
+  summary {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    font-weight: 600;
-    font-size: 1.1rem;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
     list-style: none;
-    transition: background-color 0.2s ease;
+    cursor: pointer;
   }
 
-  .faq-item summary::-webkit-details-marker {
+  summary::-webkit-details-marker {
     display: none;
   }
 
-  .faq-item summary:focus-visible {
-    outline: 2px solid var(--focus-color, #000);
-    outline-offset: -2px;
+  summary:focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: -6px;
+    border-radius: 18px;
   }
 
-  .question-text {
-    flex: 1;
+  .faq-question {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.1875rem, 2.4vw, 1.375rem);
+    font-weight: 800;
+    font-variation-settings: "SOFT" 100;
+    line-height: 1.2;
+    text-wrap: pretty;
   }
 
-  .toggle-icon {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: #666;
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
+  .faq-toggle {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--color-ink);
+    border-radius: 50%;
+    background: var(--color-cream);
   }
 
-  .faq-item[open] .toggle-icon {
-    transform: rotate(45deg);
+  .faq-toggle :global(.faq-toggle__minus),
+  .faq-item[open] .faq-toggle :global(.faq-toggle__plus) {
+    display: none;
   }
 
-  .answer {
-    padding: 0 1.5rem 1.5rem;
-    border-top: 1px solid #eee;
+  .faq-item[open] .faq-toggle :global(.faq-toggle__minus) {
+    display: block;
   }
 
-  .answer p {
-    margin: 1rem 0 0;
-    line-height: 1.7;
-    color: var(--text-color, #333);
+  .faq-answer {
+    padding: 0 24px 24px;
   }
 
-  .faq-link {
-    margin-top: 0.75rem !important;
+  .faq-answer p {
+    max-width: 62ch;
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.55;
   }
 
-  .faq-link a {
-    color: var(--accent, #000);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    font-weight: 600;
+  .faq-answer p + p {
+    margin-top: 0.75rem;
   }
 
-  .faq-link a:hover {
+  .faq-answer :global(a) {
+    color: var(--color-ink);
+    font-weight: 700;
+    text-underline-offset: 3px;
+  }
+
+  .faq-answer :global(a:hover) {
     text-decoration-thickness: 2px;
   }
 
-  .faq-link a:focus-visible {
-    outline: 2px solid var(--focus-color, #000);
-    outline-offset: 2px;
-  }
-
-  .more-questions {
-    max-width: 800px;
-    margin: 2rem auto 0;
-    text-align: center;
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: 8px;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  .more-questions p {
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  .more-questions a {
-    color: var(--text-color, #000);
-    font-weight: 600;
-    text-decoration: underline;
-    transition: opacity 0.2s ease;
-  }
-
-  .more-questions a:hover {
-    opacity: 0.7;
-  }
-
-  .more-questions a:focus-visible {
-    outline: 2px solid var(--focus-color, #000);
-    outline-offset: 2px;
-  }
-
-  @media (max-width: 768px) {
-    .faq-section {
-      padding: 1.5rem;
-    }
-
-    .faq-section h2 {
-      font-size: 1.5rem;
-    }
-
-    .faq-item summary {
-      padding: 1rem 1.25rem;
-      font-size: 1rem;
-    }
-
-    .answer {
-      padding: 0 1.25rem 1.25rem;
-    }
-  }
-
   @media (max-width: 480px) {
-    .faq-section {
-      padding: 1rem;
+    summary {
+      padding: 16px 16px;
     }
 
-    .faq-item summary {
-      padding: 0.875rem 1rem;
-      font-size: 0.95rem;
-    }
-
-    .answer {
-      padding: 0 1rem 1rem;
-    }
-
-    .answer p {
-      font-size: 0.95rem;
+    .faq-answer {
+      padding: 0 16px 20px;
     }
   }
 </style>

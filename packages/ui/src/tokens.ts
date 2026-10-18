@@ -10,11 +10,21 @@ export const colors = {
   text: "#1d1d1d",
   bg: "#ffffff",
   bgAccent: "#fdfcea",
+  cream: "#fdfcea",
+  paper: "#f2eedb",
+  ink: "#1d1d1d",
+  night: "#141210",
+  lavender: "#b0b1f1",
+  pink: "#f5cbcd",
+  oliveSoft: "#d8da8a",
+  olive: "#7e8503",
+  stone: "#868174",
   focus: "#5f5f5f",
 } as const;
 
 export const fonts = {
-  body: '"Geist Sans", system-ui, sans-serif',
+  display: '"Fraunces Variable", "Fraunces", Georgia, serif',
+  body: '"Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif',
   mono: '"DM Mono", monospace',
 } as const;
 

@@ -1,20 +1,26 @@
 import { sdk } from "@lib/sdk";
 import { addToCart } from "@lib/stores/cart";
+import { basePriceLabel } from "@lib/utils/base-price";
+import { getPricesForVariant, getProductPrice } from "@lib/utils/get-product-price";
 import { isProductInStock } from "@lib/utils/is-product-in-stock";
-import clsx from "clsx";
-import { useEffect, useMemo, useState } from "react";
+import { QtyStepper } from "@modules/common/components/QtyStepper";
+import type { ProductVariant } from "../../../../types/global";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Variant = {
   id: string;
+  title?: string | null;
+  sku?: string | null;
   options:
-  | {
-    id: string;
-    option_id?: string | null;
-  }[]
-  | null;
+    | {
+        id: string;
+        option_id?: string | null;
+      }[]
+    | null;
   manage_inventory: boolean | null;
   allow_backorder: boolean | null;
   inventory_quantity?: number | null;
+  calculated_price?: ProductVariant["calculated_price"];
 };
 
 interface Props {
@@ -28,13 +34,17 @@ interface Props {
   }[];
   variants: Variant[];
   productId: string;
+  productTitle: string;
   regionId: string;
 }
+
+const MAX_QTY = 10;
 
 export const ProductActions = ({
   options,
   variants: initialVariants,
   productId,
+  productTitle,
   regionId,
 }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<
@@ -49,8 +59,13 @@ export const ProductActions = ({
     return initial;
   });
   const [isAdding, setIsAdding] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const [variants, setVariants] = useState<Variant[]>(initialVariants);
   const [isLoadingVariants, setIsLoadingVariants] = useState(true);
+  const addedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => () => clearTimeout(addedTimer.current), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,11 +75,20 @@ export const ProductActions = ({
         const { product } = await sdk.store.product.retrieve(productId, {
           region_id: regionId,
           fields:
-            "+variants.inventory_quantity,*variants.options",
+            "+variants.inventory_quantity,*variants.options,*variants.calculated_price",
         });
 
         if (!cancelled && product?.variants) {
-          setVariants(product.variants as Variant[]);
+          const fresh = product.variants as Variant[];
+          // keep the server-rendered price if the fresh response has none
+          setVariants(
+            fresh.map((v) => ({
+              ...v,
+              calculated_price:
+                v.calculated_price ??
+                initialVariants.find((i) => i.id === v.id)?.calculated_price,
+            })),
+          );
         }
       } catch (error) {
         console.error("Failed to fetch fresh variant data:", error);
@@ -80,6 +104,7 @@ export const ProductActions = ({
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId, regionId]);
 
   const selectedVariant = useMemo(() => {
@@ -99,8 +124,37 @@ export const ProductActions = ({
     );
   }, [selectedOptions, variants, options]);
 
+  const inStock = selectedVariant ? isProductInStock(selectedVariant) : false;
+
+  // Price of the selected variant (cheapest as fallback), Grundpreis (§ 4 PAngV)
+  const price = useMemo(() => {
+    const asVariants = variants as unknown as ProductVariant[];
+    return (
+      (selectedVariant
+        ? getPricesForVariant(selectedVariant as unknown as ProductVariant)
+        : null) ?? getProductPrice({ productVariants: asVariants }).cheapestPrice
+    );
+  }, [selectedVariant, variants]);
+  const basePrice = price
+    ? basePriceLabel(
+        price.calculated_price_number,
+        price.currency_code,
+        price.variant_title,
+        productTitle,
+      )
+    : null;
+
+  const maxQuantity =
+    selectedVariant?.manage_inventory &&
+    !selectedVariant.allow_backorder &&
+    typeof selectedVariant.inventory_quantity === "number" &&
+    selectedVariant.inventory_quantity > 0
+      ? Math.min(MAX_QTY, selectedVariant.inventory_quantity)
+      : MAX_QTY;
+
   const handleOptionSelect = (optionId: string, valueId: string) => {
     setSelectedOptions((prev) => ({ ...prev, [optionId]: valueId }));
+    setQuantity(1);
   };
 
   const handleAddToCart = async () => {
@@ -108,7 +162,10 @@ export const ProductActions = ({
 
     setIsAdding(true);
     try {
-      await addToCart(selectedVariant.id, 1);
+      await addToCart(selectedVariant.id, quantity, { openSidebar: false });
+      setJustAdded(true);
+      clearTimeout(addedTimer.current);
+      addedTimer.current = setTimeout(() => setJustAdded(false), 2200);
     } catch (error) {
       console.error("Failed to add item to cart:", error);
     } finally {
@@ -117,59 +174,87 @@ export const ProductActions = ({
   };
 
   const isAddToCardButtonDisabled =
-    !selectedVariant ||
-    isLoadingVariants ||
-    !isProductInStock(selectedVariant) ||
-    isAdding;
+    !selectedVariant || isLoadingVariants || !inStock || isAdding;
 
   if (options.length === 0) {
     return null;
   }
 
-  return (
-    <div className="flex flex-col gap-8">
-      {/* A single value isn't a choice (e.g. "Größe: Standard") — hide it */}
-      {options.filter((option) => (option.values?.length ?? 0) > 1).map((option) => (
-        <div key={option.id} className="flex flex-col gap-2">
-          <h2 className="text-lg font-bold">{option.title}</h2>
-          <div className="flex flex-wrap gap-2">
-            {option.values?.map((value) => (
-              <button
-                key={value.id}
-                className={clsx(
-                  "py-2 px-4 rounded-md cursor-pointer ease-in-out duration-200 min-w-20 h-10 box-border whitespace-nowrap",
-                  {
-                    "border-2 border-[var(--accent,#ff4908)] bg-[var(--bg-accent,#fdfcea)]": selectedOptions[option.id] === value.id,
-                    "bg-gray-100 hover:shadow-md": selectedOptions[option.id] !== value.id,
-                  },
-                )}
-                onClick={() => handleOptionSelect(option.id, value.id)}
-              >
-                {value.value}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
+  const buttonLabel = isAdding
+    ? "Wird hinzugefügt…"
+    : justAdded
+      ? "Liegt im Körbchen ✓"
+      : selectedVariant && !isLoadingVariants && !inStock
+        ? "Ausverkauft"
+        : "Rein ins Körbchen";
 
-      <button
-        className={clsx(
-          "text-white py-4 px-8 rounded-md cursor-pointer hover:shadow-md ease-in-out duration-200",
-          {
-            "opacity-50 cursor-not-allowed": isAddToCardButtonDisabled,
-          },
-        )}
-        style={{
-          backgroundColor: "var(--accent, #ff4908)",
-          border: "2px solid #000",
-          fontFamily: '"DM Mono", monospace',
-          fontWeight: 500,
-        }}
-        disabled={isAddToCardButtonDisabled}
-        onClick={handleAddToCart}
-      >
-        {isAdding ? "Wird hinzugefügt..." : "In den Warenkorb"}
-      </button>
+  return (
+    <div className="buy-box">
+      {price && (
+        <div className="buy-box__price">
+          <div className="buy-box__price-row">
+            {price.price_type === "sale" && (
+              <span className="buy-box__was" data-testid="original-price">
+                {price.original_price}
+              </span>
+            )}
+            <span className="buy-box__amount" data-testid="price">
+              {price.calculated_price}
+            </span>
+            <span className="buy-box__tax">
+              inkl. MwSt., zzgl. <a href="#versand">Versandkosten</a>
+            </span>
+          </div>
+          {basePrice && <p className="buy-box__base">Grundpreis: {basePrice}</p>}
+        </div>
+      )}
+
+      {/* A single value isn't a choice (e.g. "Größe: Standard") — hide it */}
+      {options
+        .filter((option) => (option.values?.length ?? 0) > 1)
+        .map((option) => (
+          <fieldset key={option.id} className="buy-box__options">
+            <legend>{option.title}</legend>
+            <div className="buy-box__pills">
+              {option.values?.map((value) => (
+                <button
+                  key={value.id}
+                  type="button"
+                  className="nav-pill"
+                  aria-pressed={selectedOptions[option.id] === value.id}
+                  onClick={() => handleOptionSelect(option.id, value.id)}
+                >
+                  {value.value}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+
+      <div className="buy-bar">
+        <QtyStepper
+          size="lg"
+          value={quantity}
+          label="Anzahl"
+          decreaseLabel="Weniger"
+          increaseLabel="Mehr"
+          disableDecrease={quantity <= 1}
+          disableIncrease={quantity >= maxQuantity}
+          onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
+          onIncrease={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+        />
+        <button
+          type="button"
+          className="btn btn--primary buy-bar__add"
+          disabled={isAddToCardButtonDisabled}
+          onClick={handleAddToCart}
+        >
+          {buttonLabel}
+        </button>
+      </div>
+      <span className="sr-only" role="status">
+        {justAdded ? `${quantity}× ${productTitle} liegt im Körbchen` : ""}
+      </span>
     </div>
   );
 };

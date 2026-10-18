@@ -3,7 +3,7 @@ import { formatAddressLines, isSameAddress } from "@lib/utils/address";
 import type { StoreOrder } from "@medusajs/types";
 import { CartTotals } from "@modules/common/components/CartTotals";
 import { LineItemRow } from "@modules/common/components/LineItemRow";
-import type { ReactNode } from "react";
+import { INSTAGRAM_URL, websiteUrl } from "@shroom-mates/ui/site";
 
 interface OrderConfirmedPageProps {
   countryCode: string;
@@ -11,22 +11,16 @@ interface OrderConfirmedPageProps {
 }
 
 const NEXT_STEPS = [
-  ["Bearbeitung", "Wir bereiten deine Artikel für den Versand vor."],
+  ["Bestätigung", "Eine Bestätigung geht per E-Mail an dich."],
+  ["Wir packen", "Wir bereiten deine Artikel für den Versand vor."],
   [
-    "Versandbenachrichtigung",
+    "Unterwegs",
     "Du erhältst eine E-Mail mit Tracking-Informationen, sobald deine Bestellung versendet wird.",
   ],
-  ["Lieferung", "Dein Paket wird an deine Lieferadresse zugestellt."],
+  ["Auspacken", "Dein Paket wird an deine Lieferadresse zugestellt."],
 ] as const;
 
-const Card = ({ title, children }: { title: string; children: ReactNode }) => (
-  <section className="order-summary-card mb-6">
-    <div className="order-summary-header">
-      <h2 className="checkout-step-title">{title}</h2>
-    </div>
-    <div className="order-summary-body">{children}</div>
-  </section>
-);
+const H2 = "m-0 mb-4 font-display text-[26px]! leading-none! font-black";
 
 /** Server-rendered: the order is loaded by the page (404 if unknown). */
 export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPageProps) => {
@@ -34,39 +28,72 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
   const paymentProviderId =
     order.payment_collections?.[0]?.payment_sessions?.[0]?.provider_id;
   const shippingMethod = order.shipping_methods?.[0];
+  const firstName = order.shipping_address?.first_name?.trim();
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-8 py-16" aria-label="Bestellbestätigung">
-      <div className="text-center mb-12">
-        <div
-          className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 text-white"
-          style={{ background: "var(--color-forest)" }}
-          aria-hidden="true"
-        >
-          <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M5 13l4 4L19 7"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+    <div aria-label="Bestellbestätigung" className="overflow-hidden">
+      <section className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-10 px-4 pb-16 pt-12 sm:px-8">
+        <div className="relative h-[300px] min-w-0 flex-[0_1_420px] sm:h-[380px]">
+          <div
+            className="dots absolute inset-[30px] rounded-full"
+            aria-hidden="true"
+          />
+          <img
+            src="/mascot.webp"
+            alt="Die Maskottchen der shroom-mates"
+            width="340"
+            height="340"
+            className="relative mx-auto mt-2.5 block w-[260px] sm:w-[340px] [filter:drop-shadow(6px_6px_0_var(--color-ink))]"
+          />
         </div>
-
-        <h1 className="page-heading mb-3">Bestellung bestätigt! 🍄</h1>
-
-        <p className="text-2xl font-mono font-semibold mb-2">#{order.display_id}</p>
-        {order.email && (
-          <p className="text-sm text-muted">
-            Eine Bestätigungs-E-Mail wurde an{" "}
-            <span className="font-medium">{order.email}</span> gesendet.
+        <div className="min-w-0 flex-[1_1_480px]">
+          <p className="eyebrow mb-3.5 text-sm!">
+            Bestellung #{order.display_id} ist eingegangen
           </p>
-        )}
-      </div>
+          <h1 className="m-0 text-[clamp(52px,7vw,104px)]! leading-[.9]! text-accent">
+            {firstName ? `Danke, ${firstName}!` : "Danke!"}
+          </h1>
+          {order.email && (
+            <p className="mt-5 max-w-[40ch] text-xl leading-normal">
+              Eine Bestätigungs-E-Mail wurde an{" "}
+              <span className="font-bold">{order.email}</span> gesendet.
+            </p>
+          )}
+        </div>
+      </section>
 
-      <>
-          <Card title="Bestellte Artikel">
+      <section className="bg-ink px-4 py-16 text-cream sm:px-8">
+        <div className="mx-auto max-w-[1280px]">
+          <h2 className="m-0 mb-8 text-[clamp(36px,4.4vw,60px)]! leading-[.95]! text-accent-light">
+            Wie es weitergeht
+          </h2>
+          <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5 p-0">
+            {NEXT_STEPS.map(([title, text], i) => (
+              <li
+                key={title}
+                className="comic-panel [box-shadow:4px_4px_0_var(--color-accent)]"
+              >
+                <div
+                  className={`comic-panel__head ${i === 0 ? "comic-panel__head--lavender" : ""}`}
+                >
+                  <span className="comic-panel__num">{String(i + 1).padStart(2, "0")}</span>
+                </div>
+                <div className="comic-panel__body">
+                  <h3 className="mb-1.5 text-2xl! font-black! [font-family:var(--font-display)]">
+                    {title}
+                  </h3>
+                  <p className="m-0 text-[15px]">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-8 px-4 pb-24 pt-16 sm:px-8">
+        <div className="min-w-0 flex-[1_1_460px] rounded-[26px] border-[3px] border-ink bg-paper p-6 shadow-card">
+          <h2 className={H2}>Deine Bestellung</h2>
+          <div className="mb-4 border-b-2 border-ink pb-2">
             {order.items?.map((item) => (
               <LineItemRow
                 key={item.id}
@@ -78,74 +105,70 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
                 currencyCode={currencyCode}
               />
             ))}
-          </Card>
+          </div>
+          <CartTotals
+            currencyCode={currencyCode}
+            itemTotal={order.item_total ?? order.subtotal}
+            shippingTotal={order.shipping_total}
+            shippingLabel={shippingMethod ? `Versand (${shippingMethod.name})` : "Versand"}
+            taxTotal={order.tax_total}
+            discountTotal={order.discount_total}
+            total={order.total}
+          />
 
-          <Card title="Bestellzusammenfassung">
-            <CartTotals
-              currencyCode={currencyCode}
-              itemTotal={order.item_total ?? order.subtotal}
-              shippingTotal={order.shipping_total}
-              shippingLabel={shippingMethod ? `Versand (${shippingMethod.name})` : "Versand"}
-              taxTotal={order.tax_total}
-              discountTotal={order.discount_total}
-              total={order.total}
-            />
-          </Card>
-
-          <Card title="Lieferung & Zahlung">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div>
-                <p className="input-label mb-1">Lieferadresse</p>
-                <address className="text-muted not-italic leading-relaxed">
-                  {formatAddressLines(order.shipping_address).map((line, i) => (
+          <div className="mt-6 grid grid-cols-1 gap-6 border-t-2 border-ink pt-5 sm:grid-cols-2">
+            <div>
+              <p className="label mb-1">Lieferadresse</p>
+              <address className="not-italic leading-relaxed">
+                {formatAddressLines(order.shipping_address).map((line, i) => (
+                  <span key={i} className="block">
+                    {line}
+                  </span>
+                ))}
+              </address>
+            </div>
+            <div>
+              <p className="label mb-1">Rechnungsadresse</p>
+              {isSameAddress(order.shipping_address, order.billing_address) ? (
+                <p>Wie Lieferadresse</p>
+              ) : (
+                <address className="not-italic leading-relaxed">
+                  {formatAddressLines(order.billing_address).map((line, i) => (
                     <span key={i} className="block">
                       {line}
                     </span>
                   ))}
                 </address>
-              </div>
-              <div>
-                <p className="input-label mb-1">Rechnungsadresse</p>
-                {isSameAddress(order.shipping_address, order.billing_address) ? (
-                  <p className="text-muted">Wie Lieferadresse</p>
-                ) : (
-                  <address className="text-muted not-italic leading-relaxed">
-                    {formatAddressLines(order.billing_address).map((line, i) => (
-                      <span key={i} className="block">
-                        {line}
-                      </span>
-                    ))}
-                  </address>
-                )}
-              </div>
-              {paymentProviderId && (
-                <div>
-                  <p className="input-label mb-1">Zahlung</p>
-                  <p className="text-muted">{formatProviderName(paymentProviderId)}</p>
-                </div>
               )}
             </div>
-          </Card>
+            {paymentProviderId && (
+              <div>
+                <p className="label mb-1">Zahlung</p>
+                <p>{formatProviderName(paymentProviderId)}</p>
+              </div>
+            )}
+          </div>
+        </div>
 
-          <Card title="Wie geht es weiter?">
-            <ol className="space-y-3 text-sm">
-              {NEXT_STEPS.map(([title, text], i) => (
-                <li key={title} className="flex gap-3">
-                  <span className="checkout-step-number">{i + 1}</span>
-                  <span className="text-muted">
-                    <strong style={{ color: "var(--text-color)" }}>{title}</strong> — {text}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </Card>
-      </>
-
-      <div className="text-center mt-10">
-        <a href={`/${countryCode}/store`} className="btn-accent inline-block">
-          Weiter einkaufen
-        </a>
-      </div>
+        <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
+          <a
+            href={websiteUrl("/growkits/")}
+            className="block rounded-[26px] border-[3px] border-ink bg-lavender p-6 text-ink no-underline shadow-[6px_6px_0_var(--color-ink)]"
+          >
+            <p className="m-0 mb-1.5 font-display text-[26px] font-black">Schon mal lesen?</p>
+            <p className="m-0">Zur Growkit-Anleitung →</p>
+          </a>
+          <a href={`/${countryCode}/store`} className="btn btn--secondary btn--block min-h-14 text-lg">
+            Weiter einkaufen
+          </a>
+          <a
+            href={INSTAGRAM_URL}
+            className="text-center text-ink underline hover:text-accent-dark"
+          >
+            Folg uns auf Instagram fürs Daily Business
+          </a>
+        </div>
+      </section>
     </div>
   );
 };

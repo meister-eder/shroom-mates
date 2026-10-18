@@ -1,6 +1,6 @@
 ---
-title: Über uns – Pilzzucht aus Leipzig-Plagwitz | shroom-mates
-description: "Emmi und Tim züchten Edelpilze in der Plagwitzer Markthalle in Leipzig und stellen Growkits und Pilztinkturen her. Für Privat und Gastronomie."
+title: Über uns – Pilzzucht aus Leipzig-Leutzsch | shroom-mates
+description: "Emmi und Tim züchten Edelpilze in der Glasfabrik in Leipzig und stellen Growkits und Pilztinkturen her. Für Privat und Gastronomie."
 heroTitle: Über uns
 heroSubtitle: Die shroom-mates aus Leipzig
 images:
@@ -11,7 +11,7 @@ images:
 
 ## Wer wir sind
 
-Wir sind Emmi und Tim – die shroom-mates. Angefangen haben wir mit ein paar Austernpilzen in der Küche. Inzwischen haben wir eine eigene Farm in der Plagwitzer Markthalle, wo wir verschiedene Edelpilze züchten.
+Wir sind Emmi und Tim – die shroom-mates. Angefangen haben wir mit ein paar Austernpilzen in der Küche. Inzwischen haben wir eine eigene Farm in der Glasfabrik, wo wir verschiedene Edelpilze züchten.
 
 Austernpilze, Pioppinos, Lion's Mane. Jede Sorte hat ihre eigenen Ansprüche, und genau das macht es spannend.
 
@@ -25,8 +25,8 @@ Jeder Pilz wird von Hand geerntet, zum richtigen Zeitpunkt. Das merkt man am Ges
 
 ## Das ist uns wichtig
 
-Bei uns könnt ihr sehen, wo und wie eure Pilze wachsen. Nur die besten schaffen es in den Verkauf. Wir arbeiten im geschlossenen Kreislauf. Alles passiert hier in Plagwitz, vom Substrat bis zur Ernte. Kurze Wege, kein Zwischenhändler.
+Bei uns könnt ihr sehen, wo und wie eure Pilze wachsen. Nur die besten schaffen es in den Verkauf. Wir arbeiten im geschlossenen Kreislauf. Alles passiert hier in Leutzsch, vom Substrat bis zur Ernte. Kurze Wege, kein Zwischenhändler.
 
 ## Wo ihr uns findet
 
-Unsere Farm steckt in der Plagwitzer Markthalle in Leipzig. [Frische Pilze](/unsere-pilze/), [Growkits](/growkits/) und [Tinkturen](/tinkturen/) gibt's direkt bei uns. Wir beliefern auch [Restaurants und Gastronomiebetriebe](/gastronomie/) in Leipzig – [schreibt uns einfach](/kontakt/).
+Unsere Farm steckt in der Glasfabrik in Leipzig. [Frische Pilze](/unsere-pilze/), [Growkits](/growkits/) und [Tinkturen](/tinkturen/) gibt's direkt bei uns. Wir beliefern auch [Restaurants und Gastronomiebetriebe](/gastronomie/) in Leipzig – [schreibt uns einfach](/kontakt/).
