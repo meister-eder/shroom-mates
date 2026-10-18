@@ -10,7 +10,8 @@ import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckoutStep } from "./CheckoutStep";
 import { OptionCard } from "./OptionCard";
-import { SumUpWidget, type SumUpResponseType } from "./SumUpWidget";
+import { OrderReview } from "./OrderReview";
+import { type SumUpCardHandle, SumUpWidget, type SumUpResponseType } from "./SumUpWidget";
 
 interface PaymentStepProps {
   cart: StoreCart;
@@ -29,6 +30,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentFailed, setPaymentFailed] = useState(false);
   const [error, setError] = useState("");
+  const [sumupCard, setSumupCard] = useState<SumUpCardHandle | null>(null);
 
   const sessions = cart.payment_collection?.payment_sessions ?? [];
   const session = sessions.find((s) => s.provider_id === selectedProviderId);
@@ -202,19 +204,15 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
           ) : (
             sumupCheckoutId &&
             !paymentFailed && (
-              <>
-                <p className="text-sm font-medium mb-3 font-mono">
-                  Zahlungsmethode auswählen
-                </p>
-                <SumUpWidget
-                  key={sumupCheckoutId}
-                  checkoutId={sumupCheckoutId}
-                  onResponse={handleSumUpResponse}
-                  onLoadError={() =>
-                    setError("Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.")
-                  }
-                />
-              </>
+              <SumUpWidget
+                key={sumupCheckoutId}
+                checkoutId={sumupCheckoutId}
+                onResponse={handleSumUpResponse}
+                onReady={setSumupCard}
+                onLoadError={() =>
+                  setError("Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.")
+                }
+              />
             )
           )}
           {isProcessing && <p className="text-sm mt-2 text-muted">Zahlung wird verarbeitet…</p>}
@@ -224,43 +222,61 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
 
       {error && <p className="input-error mb-4">{error}</p>}
 
-      {selectedProviderId && (
-        <p className="text-xs text-muted mb-4">
-          Mit deiner Bestellung akzeptierst du unsere{" "}
-          <a href={`/${countryCode}/agb`} target="_blank" className="underline">AGB</a>{" "}
-          und hast die{" "}
-          <a href={`/${countryCode}/widerruf`} target="_blank" className="underline">
-            Widerrufsbelehrung
-          </a>{" "}
-          sowie die{" "}
-          <a href={`/${countryCode}/datenschutz`} target="_blank" className="underline">
-            Datenschutzerklärung
-          </a>{" "}
-          zur Kenntnis genommen.
-        </p>
-      )}
-
       {isSumUp && paymentFailed && (
         <button
           type="button"
           onClick={() => startSession(selectedProviderId)}
           disabled={isSaving}
-          className="btn-accent w-full"
+          className="btn-outline w-full mb-6"
         >
-          Erneut versuchen
+          Neue Zahlung starten
         </button>
       )}
 
-      {/* SumUp submits through its own widget button */}
-      {!isSumUp && (
-        <div className="flex flex-col gap-3">
+      {selectedProviderId && (
+        <div className="order-final">
+          <OrderReview cart={cart} countryCode={countryCode} />
+
+          <p className="text-xs text-muted">
+            Es gelten unsere{" "}
+            <a href={`/${countryCode}/agb`} target="_blank" className="underline">AGB</a>.
+            Informationen zu deinem{" "}
+            <a href={`/${countryCode}/widerruf`} target="_blank" className="underline">Widerrufsrecht</a>{" "}
+            und zum{" "}
+            <a href={`/${countryCode}/datenschutz`} target="_blank" className="underline">Datenschutz</a>.
+            Dein Zahlungsmittel wird mit Absenden der Bestellung belastet.
+          </p>
+
+          <a
+            href={`/${countryCode}/gewaehrleistung`}
+            target="_blank"
+            className="warranty-notice"
+            aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
+          >
+            <img src="/legal/gesetzliche-gewaehrleistung.jpg" alt="" width="96" height="131" />
+            <span>
+              <strong>Gesetzliche Gewährleistung</strong>
+              <br />
+              Mindestens zwei Jahre für Waren, die in der EU verkauft werden. Mehr erfahren
+            </span>
+          </a>
+
+          {/* One binding button for every payment method (§ 312j Abs. 3 BGB).
+              For SumUp it submits the card widget, whose own button is hidden. */}
           <button
             type="button"
-            disabled={!session || isSaving || isPlacing}
-            onClick={() => completeOrder()}
+            disabled={
+              !session ||
+              isSaving ||
+              isPlacing ||
+              isProcessing ||
+              paymentFailed ||
+              (isSumUp && !sumupCard)
+            }
+            onClick={() => (isSumUp ? sumupCard?.submit() : completeOrder())}
             className="btn-accent w-full"
           >
-            {isPlacing ? "Wird verarbeitet..." : "Zahlungspflichtig bestellen"}
+            {isPlacing || isProcessing ? "Wird verarbeitet..." : "Zahlungspflichtig bestellen"}
           </button>
           <div className="flex items-center gap-2 flex-wrap">
             <span className="trust-badge">🔒 Sichere Zahlung</span>

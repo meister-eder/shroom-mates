@@ -3,6 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import { retrieveProduct } from "@lib/data/products";
 import { getRegion } from "@lib/data/regions";
 import { getProductPrice } from "@lib/utils/get-product-price";
+import { basePriceLabel } from "@lib/utils/base-price";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
@@ -56,6 +57,12 @@ const {
 const { cheapestPrice } = getProductPrice({
   productVariants: variants ?? [],
 });
+const basePrice = basePriceLabel(
+  cheapestPrice?.calculated_price_number,
+  cheapestPrice?.currency_code,
+  cheapestPrice?.variant_title,
+  title,
+);
 ---
 
 <Layout
@@ -84,7 +91,9 @@ const { cheapestPrice } = getProductPrice({
             >
               {cheapestPrice?.calculated_price}
             </p>
-            <p class="text-sm text-muted -mt-3">inkl. MwSt., zzgl. Versandkosten</p>
+            <p class="text-sm text-muted -mt-3">
+              {basePrice && <span>{basePrice} · </span>}inkl. MwSt., zzgl. Versandkosten
+            </p>
           </div>
 
           <ProductActions

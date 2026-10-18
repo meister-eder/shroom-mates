@@ -25,6 +25,7 @@ export const getPricesForVariant = (variant: ProductVariant) => {
       currencyCode: variant.calculated_price.currency_code,
     }),
     currency_code: variant.calculated_price.currency_code,
+    variant_title: variant.title,
     price_type: variant.calculated_price.calculated_price.price_list_type,
     percentage_diff: getPercentageDiff(
       variant.calculated_price.original_amount,

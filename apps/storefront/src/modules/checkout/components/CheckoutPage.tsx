@@ -94,6 +94,10 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
 
   return (
     <div className="section-inner py-8">
+      <p className="shop-terms-hint mb-4">
+        Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und weiteren
+        Zahlarten über SumUp.
+      </p>
       <nav aria-label="Checkout-Schritte" className="mb-8">
         <ol className="checkout-progress">
           {VALID_STEPS.map((s, i) => (

@@ -3,6 +3,7 @@ import { getProductPrice } from "../../../../lib/utils/get-product-price";
 import type { ProductVariant } from "../../../../types/global";
 import Thumbnail from "../thumbnail/Thumbnail.astro";
 import Price from "./Price.astro";
+import { basePriceLabel } from "../../../../lib/utils/base-price";
 
 interface Props {
   /** URL slug (product handle) */
@@ -20,6 +21,12 @@ const { handle, variants, thumbnailUrl, imageUrl, title, priority, categoryName 
 const countryCode = Astro.params.countryCode;
 
 const { cheapestPrice } = getProductPrice({ productVariants: variants });
+const basePrice = basePriceLabel(
+  cheapestPrice?.calculated_price_number,
+  cheapestPrice?.currency_code,
+  cheapestPrice?.variant_title,
+  title,
+);
 ---
 
 <a
@@ -52,6 +59,7 @@ const { cheapestPrice } = getProductPrice({ productVariants: variants });
             priceType={cheapestPrice.price_type ?? ""}
             originalPrice={cheapestPrice.original_price}
             calculatedPrice={cheapestPrice.calculated_price}
+            basePrice={basePrice}
           />
         </div>
       )

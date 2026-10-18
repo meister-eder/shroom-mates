@@ -49,6 +49,7 @@ export function footerLinks(
     { label: "Datenschutz", href: privacy.href, external: privacy.external ?? false },
     { label: "AGB", href: toShop("/de/agb"), external: external.shop },
     { label: "Widerruf", href: toShop("/de/widerruf"), external: external.shop },
+    { label: "Gewährleistung", href: toShop("/de/gewaehrleistung"), external: external.shop },
     { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, isEmail: true },
   ];
 }

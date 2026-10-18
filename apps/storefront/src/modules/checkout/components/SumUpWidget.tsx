@@ -18,7 +18,7 @@ declare global {
         showSubmitButton?: boolean;
         onLoad?: () => void;
         onResponse?: (type: SumUpResponseType, body: Record<string, unknown>) => void;
-      }): { unmount?: () => void } | void;
+      }): { unmount?: () => void; submit?: () => void } | void;
     };
   }
 }
@@ -46,10 +46,18 @@ function loadSumUpSdk(): Promise<void> {
   return sdkPromise;
 }
 
+export type SumUpCardHandle = { submit: () => void };
+
 interface SumUpWidgetProps {
   checkoutId: string;
   onResponse: (type: SumUpResponseType, body: Record<string, unknown>) => void;
   onLoadError: () => void;
+  /**
+   * Called with a handle once mounted. The widget's own "Bezahlen" button is
+   * hidden: the binding click must be our "Zahlungspflichtig bestellen"
+   * button (§ 312j BGB), which calls handle.submit().
+   */
+  onReady: (handle: SumUpCardHandle | null) => void;
 }
 
 /**
@@ -62,16 +70,17 @@ export const SumUpWidget = ({
   checkoutId,
   onResponse,
   onLoadError,
+  onReady,
 }: SumUpWidgetProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   // Keep the latest callbacks without remounting the widget.
-  const callbacks = useRef({ onResponse, onLoadError });
-  callbacks.current = { onResponse, onLoadError };
+  const callbacks = useRef({ onResponse, onLoadError, onReady });
+  callbacks.current = { onResponse, onLoadError, onReady };
 
   useEffect(() => {
     const container = containerRef.current;
     let cancelled = false;
-    let instance: { unmount?: () => void } | void;
+    let instance: { unmount?: () => void; submit?: () => void } | void;
 
     loadSumUpSdk()
       .then(() => {
@@ -81,8 +90,11 @@ export const SumUpWidget = ({
           id: SUMUP_WIDGET_ID,
           checkoutId,
           locale: "de-DE",
+          showSubmitButton: false,
           onResponse: (type, body) => callbacks.current.onResponse(type, body),
         });
+        const card = instance;
+        callbacks.current.onReady(card?.submit ? { submit: () => card.submit?.() } : null);
       })
       .catch(() => {
         if (!cancelled) callbacks.current.onLoadError();
@@ -90,6 +102,7 @@ export const SumUpWidget = ({
 
     return () => {
       cancelled = true;
+      callbacks.current.onReady(null);
       instance?.unmount?.();
       if (container) container.innerHTML = "";
     };

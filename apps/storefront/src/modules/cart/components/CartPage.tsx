@@ -203,6 +203,10 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                 <a href={`/${countryCode}/checkout`} className="btn-accent w-full mt-6">
                   Zur Kasse
                 </a>
+                <p className="shop-terms-hint">
+                  Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und
+                  weiteren Zahlarten über SumUp.
+                </p>
               </div>
             </div>
           </div>
