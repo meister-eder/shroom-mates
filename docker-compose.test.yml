@@ -50,6 +50,8 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      # Allows "Manuelle Zahlung (Test)" (orders without payment); off in production
+      ALLOW_MANUAL_PAYMENT: ${ALLOW_MANUAL_PAYMENT:-true}
       DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
       MEDUSA_BACKEND_URL: https://api.${DOMAIN}

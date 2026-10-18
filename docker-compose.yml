@@ -73,6 +73,8 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      # Set to "true" only to test without SumUp; orders then need no payment.
+      ALLOW_MANUAL_PAYMENT: ${ALLOW_MANUAL_PAYMENT:-false}
       DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
       MEDUSA_BACKEND_URL: https://api.shroom-mates.de

@@ -163,4 +163,6 @@ docker image prune -f && docker builder prune -f   # free disk space
 3. Parameterise the workflow's `COMPOSE_FILE`, `DOMAIN` and environment name
    (today they are fixed to the test setup) and deploy with `docker-compose.yml`.
 4. Run `enable-sumup.ts` against the production database and remove the manual
-   test payment provider from the region.
+   test payment provider from the region. As a safety net, `docker-compose.yml`
+   sets `ALLOW_MANUAL_PAYMENT=false`: the backend then hides "Manuelle Zahlung
+   (Test)" from the shop and refuses to complete carts paid with it.

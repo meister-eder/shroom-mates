@@ -41,7 +41,7 @@ export const WithdrawalForm = () => {
     } catch (err) {
       console.error("Withdrawal failed:", err);
       setError(
-        "Dein Widerruf konnte nicht übermittelt werden. Bitte prüfe deine Angaben oder schreib uns an hey@shroom-mates.de – auch per E-Mail ist der Widerruf wirksam.",
+        "Dein Widerruf konnte nicht übermittelt werden. Bitte prüfe deine Angaben (Bestellnummer, keine Links) oder schreib uns an hey@shroom-mates.de – auch per E-Mail ist der Widerruf wirksam.",
       );
     } finally {
       setIsSending(false);
@@ -79,7 +79,7 @@ export const WithdrawalForm = () => {
       </div>
       <div>
         <label className="input-label" htmlFor="withdraw-order">Bestellnummer *</label>
-        <input id="withdraw-order" name="order_reference" required maxLength={50} placeholder="z. B. #12" className="input-field" />
+        <input id="withdraw-order" name="order_reference" required maxLength={12} pattern="#?\s*\d{1,10}" title="Bestellnummer, z. B. #12" inputMode="numeric" placeholder="z. B. #12" className="input-field" />
         <p className="text-xs text-muted mt-1">Steht in deiner Bestellbestätigung.</p>
       </div>
       <div>

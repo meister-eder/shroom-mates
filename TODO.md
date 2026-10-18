@@ -46,7 +46,7 @@ IDs verweisen auf den Bericht.
 - [ ] M12 Website sagt „Growkits bald im Onlineshop“; Produktnamen Website vs. Shop angleichen; „Im Shop kaufen“-Links
 - [ ] M14 Tinkturen: falsches Foto bei Reishi+Cordyceps, Titel überlagert Flaschenetikett
 - [ ] L2 `/ueber-uns/` ist nirgends verlinkt — verlinken oder löschen?
-- [ ] L7 „Manuelle Zahlung (Test)“ vor Go-live aus der Region entfernen
+- [ ] L7 „Manuelle Zahlung (Test)“ vor Go-live aus der Region entfernen (in Produktion ohnehin gesperrt: `ALLOW_MANUAL_PAYMENT=false`)
 
 ## Redesign (Entscheidungen nötig)
 

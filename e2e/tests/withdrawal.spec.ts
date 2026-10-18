@@ -9,7 +9,8 @@ test.describe("Withdrawal function", () => {
     await expect(page).toHaveURL(/\/de\/vertrag-widerrufen$/);
 
     await page.fill("#withdraw-name", "E2E Test");
-    await page.fill("#withdraw-email", "e2e-withdrawal@example.com");
+    // Unique address: the backend rate-limits confirmations per recipient.
+    await page.fill("#withdraw-email", `e2e-withdrawal+${Date.now()}@example.com`);
     await page.fill("#withdraw-order", "#1");
     await page.getByRole("button", { name: "Widerruf bestätigen" }).click();
 
