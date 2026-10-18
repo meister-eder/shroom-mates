@@ -9,7 +9,7 @@
         "@medusajs/cli": "2.13.1",
         "@medusajs/framework": "2.13.1",
         "@medusajs/medusa": "2.13.1",
-        "medusa-payment-sumup": "0.2.0",
+        "medusa-payment-sumup": "0.2.1",
       },
       "devDependencies": {
         "@medusajs/test-utils": "2.13.1",
@@ -1980,7 +1980,7 @@
 
     "media-typer": ["media-typer@0.3.0", "", {}, "sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ=="],
 
-    "medusa-payment-sumup": ["medusa-payment-sumup@0.2.0", "", { "peerDependencies": { "@medusajs/framework": "^2.5.0", "@medusajs/medusa": "^2.5.0" } }, "sha512-UxybWz5bUv4uYa5k8As8Sk1GyPgJtBk/Y+t3xSF/QVP8uIUfwIXG6GTZiqeeKzjs4gspBMl5Ot66bbRayLbhag=="],
+    "medusa-payment-sumup": ["medusa-payment-sumup@0.2.1", "", { "peerDependencies": { "@medusajs/framework": "^2.5.0", "@medusajs/medusa": "^2.5.0" } }, "sha512-PjaTmV8sI3Tr2UrD2Rb2i52JvbMHAZYIaGckZd8OPqanKsmlEbkj74drre7pYWCl7ELz7voRrqa67j4LjCS7ng=="],
 
     "merge-descriptors": ["merge-descriptors@1.0.3", "", {}, "sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ=="],
 
