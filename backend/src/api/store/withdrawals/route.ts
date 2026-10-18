@@ -31,7 +31,9 @@ export async function POST(
     } = await query.graph({
       entity: "order",
       fields: ["id", "email"],
-      filters: { display_id: displayId },
+      // display_id is an integer column, but the generated query types
+      // declare its filter as string.
+      filters: { display_id: displayId } as unknown as { display_id: string },
     });
     if (order && order.email?.toLowerCase() === body.email.toLowerCase()) {
       orderId = order.id;
