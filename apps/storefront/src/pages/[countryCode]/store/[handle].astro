@@ -9,6 +9,7 @@ import { stickerColor } from "@lib/utils/product-color";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
+import Icon from "@shroom-mates/ui/Icon.astro";
 import { jsonLd } from "@shroom-mates/ui/json-ld";
 import { GROW_STEPS, SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { websiteUrl } from "@shroom-mates/ui/site";
@@ -256,22 +257,22 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 
             <ul class="check-list" role="list">
               <li>
-                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                <Icon name="check" size={22} strokeWidth={2.6} />
                 Versand in {SHIPPING.standard.time.replace("Werktage", "Werktagen")}, ab {SHIPPING.standard.price}
               </li>
               {isGrowkit && firstHarvest && idealTemp && (
                 <li>
-                  <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                  <Icon name="check" size={22} strokeWidth={2.6} />
                   Erste Ernte {firstHarvest}, ideal {idealTemp}
                 </li>
               )}
               <li>
-                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                <Icon name="check" size={22} strokeWidth={2.6} />
                 Selbst gezüchtet in der Glasfabrik Leutzsch
               </li>
               {!isGrowkit && (
                 <li>
-                  <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                  <Icon name="check" size={22} strokeWidth={2.6} />
                   Lieferung {SHIPPING.region}
                 </li>
               )}

@@ -91,7 +91,7 @@ const growkits = growkitsCollection
         </p>
         <div class="hero__actions">
           <a class="btn btn--primary hero__btn" href="#kits">{heroPrimaryButton}</a>
-          <a class="btn hero__btn hero__btn--outline" href="#anleitung">{heroSecondaryButton}</a>
+          <a class="btn btn--outline hero__btn" href="#anleitung">{heroSecondaryButton}</a>
         </div>
       </div>
       <div class="hero__media">
@@ -246,7 +246,7 @@ const growkits = growkitsCollection
         <div class="pickup__actions">
           <a class="btn btn--primary pickup__btn" href={shop("/store")}>{ctaShopButton} <Icon name="arrow-right" size={20} /></a>
           {ctaButtonText && ctaButtonLink && (
-            <a class="btn pickup__btn pickup__btn--outline" href={ctaButtonLink}>{ctaButtonText}</a>
+            <a class="btn btn--outline pickup__btn" href={ctaButtonLink}>{ctaButtonText}</a>
           )}
         </div>
       </div>
@@ -332,16 +332,6 @@ const growkits = growkitsCollection
   .hero__btn {
     padding: 16px 26px;
     font-size: 1.125rem;
-  }
-
-  .hero__btn--outline {
-    background: transparent;
-    color: var(--color-ink);
-    box-shadow: none;
-  }
-
-  .hero__btn--outline:hover {
-    background: var(--color-white);
   }
 
   .hero__media {
@@ -683,16 +673,6 @@ const growkits = growkitsCollection
   .pickup__btn {
     padding: 16px 26px;
     font-size: 1.125rem;
-  }
-
-  .pickup__btn--outline {
-    background: transparent;
-    color: var(--color-ink);
-    box-shadow: none;
-  }
-
-  .pickup__btn--outline:hover {
-    background: var(--color-white);
   }
 
   .pickup__note {

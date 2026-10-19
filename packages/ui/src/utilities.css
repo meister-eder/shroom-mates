@@ -67,13 +67,15 @@
 }
 
 /* Sekundär: 2px Outline */
-.btn--secondary {
+.btn--secondary,
+.btn--outline {
   background: transparent;
   color: var(--color-ink, #1c1a33);
   box-shadow: none;
 }
 
-.btn--secondary:hover {
+.btn--secondary:hover,
+.btn--outline:hover {
   background: var(--color-white, #fff);
   box-shadow: none;
 }
