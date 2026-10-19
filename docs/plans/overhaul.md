@@ -42,6 +42,7 @@ from any of it.
 - P5.3: browser store-api client untested against the real backend with publishable key (x-publishable-api-key) and credentials: include — test a full checkout on staging. Client JS after P5.3: React 58.3 KB, CheckoutPage 35.0 KB, total ≈111.7 KB gzip.
 - P5.5: drawer screenshots old vs new in session scratchpad (p55/); mobile filled-state drawer not compared, check by eye on staging. Drawer thumbnails now load on open (data-src).
 - P5.6: decide on branch failed/P5.6 (4c7fa5c): scroll-snap carousel works; only [mobile] shop-produkt-growkit differs (old React gallery loaded 1049w candidate after fullPage resize; new one keeps correct 524w). If OK: cherry-pick + rebaseline that one key. Note: it sets loading=eager on all gallery images.
+- P5.7: three mascot-eyes implementations remain (MatesLogo.astro, React MatesEyes.tsx for cart/checkout/order pages, vanilla lib/mates-eyes.ts for drawer/toast using /mascot.webp) — unify as separate task.
 
 ---
 
@@ -149,7 +150,7 @@ from any of it.
   Replace `ImageCarousel.tsx` with an Astro component: horizontal scroll-snap list of `<Image>`s, thumbnail buttons as anchors/buttons that scroll to the image (tiny module script), current-image indicator via IntersectionObserver, keyboard-operable, `aria-label`s in German. No React. Visual must pass.
   Commit: `perf(shop): image carousel without JS framework`
 
-- [ ] **P5.7 One mascot-eyes implementation** · deps: P5.1 · verify: visual
+- [x] **P5.7 One mascot-eyes implementation** · deps: P5.1 · verify: visual · c40e867
   The shop 404 uses the React `MatesEyes.tsx`, which duplicates the vanilla gaze logic in `packages/ui` (`MatesLogo.astro`, `scripts/gaze.ts`). Use the shared Astro component on the 404 (add a size/variant prop if needed) and delete `MatesEyes.tsx` and `public/mascot.webp` if unused. Visual must pass for `shop-404-*`.
   Commit: `refactor(shop): shared mascot eyes on 404`
 
@@ -289,3 +290,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 00:33 P5.4 DONE 2099ced — vanilla CartButton/Toast/QuickAdd; quick-add+toast+fly checked by orchestrator
 2026-10-20 00:47 P5.5 DONE cd34640 — native dialog drawer, lazy thumbnails fixed after 1 retry; catalog without React
 2026-10-20 00:57 P5.6 BLOCKED — mobile shop-produkt-growkit baseline diff (harness srcset quirk), re-baseline not allowed; parked on failed/P5.6
+2026-10-20 01:01 P5.7 DONE c40e867 — shop 404 uses MatesLogo; MatesEyes.tsx still used elsewhere

@@ -4,7 +4,7 @@ import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
 import "@styles/global.css";
 import "@styles/shop.css";
-import { MatesEyes } from "@modules/common/components/MatesEyes";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 import { WEBSITE_URL } from "@shroom-mates/ui/site";
 
 const DEFAULT_REGION = import.meta.env.DEFAULT_REGION || "de";
@@ -21,7 +21,7 @@ const DEFAULT_REGION = import.meta.env.DEFAULT_REGION || "de";
   </head>
   <body>
     <main class="not-found">
-      <MatesEyes client:load size={180} />
+      <MatesLogo alt="" width={180} loading="eager" />
       <p class="not-found__code">404</p>
       <h1 class="not-found__title">Diese Seite ist uns entwischt.</h1>
       <p>Den Link gibt es nicht (mehr). Hier geht's weiter:</p>
