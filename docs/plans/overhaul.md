@@ -79,7 +79,7 @@ from any of it.
   `.github/workflows/ci.yml`: pin bun to `1.3.10` (matches `packageManager`), lint all workspaces (`bun run --filter '*' lint`), build all, add a `test-backend-unit` step (`npm run test:unit`). Keep the integration-test job. Pin bun the same way in `deploy-staging.yml` and `deploy-server.yml` (only that change there). Validate YAML with `bunx --bun yaml-lint` or `npx -y @action-validator/cli` if available offline; otherwise careful review.
   Commit: `ci: lint all workspaces, unit tests, pinned bun`
 
-- [ ] **P2.3 Unit tests for the cart-completion guard** · deps: — · verify: backend
+- [x] **P2.3 Unit tests for the cart-completion guard** · deps: — · verify: backend · 2516bd7
   `backend/src/workflows/hooks/complete-cart-validate.ts` protects against 0 € orders and payments for a different amount, and has no tests. Pure refactor first: move the body into an exported function `validateCartForCompletion(cart, { manualAllowed })` in `backend/src/workflows/hooks/validate-cart-for-completion.ts` (same behaviour, same error types/messages); the hook calls it. Then add `backend/src/workflows/hooks/__tests__/validate-cart-for-completion.unit.spec.ts` covering: no items → INVALID_DATA; no processable sessions → passes; manual provider when not allowed → NOT_ALLOWED; two sessions → mismatch; session amount ≠ cart total → mismatch; currency mismatch → mismatch; BigNumber raw amounts equal → passes; happy path. `npm ci` in `backend/` first if `node_modules` is missing.
   Commit: `test(backend): unit tests for cart completion guard`
 
@@ -250,3 +250,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:29 P1.4 DONE f339c6a — rewrite to /404 (verified 404 status), German error copy
 2026-10-19 23:40 P2.1 DONE 42d5a1b — root biome, astro check; checkout only reformatted; visual PASS
 2026-10-19 23:41 P2.2 DONE 2e4a8c1 — CI lints/builds all, backend unit tests, bun 1.3.10; YAML parses
+2026-10-19 23:43 P2.3 DONE 2516bd7 — guard extracted, 8 unit tests green
