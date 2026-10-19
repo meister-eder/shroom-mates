@@ -1,6 +1,20 @@
 import { sdk } from "@lib/sdk";
 
+const LIST_TTL_MS = 5 * 60 * 1000;
+const listCache = new Map<
+  string,
+  { at: number; products: Awaited<ReturnType<typeof fetchProducts>> }
+>();
+
 export const listProducts = async (regionId: string) => {
+  const hit = listCache.get(regionId);
+  if (hit && Date.now() - hit.at < LIST_TTL_MS) return hit.products;
+  const products = await fetchProducts(regionId);
+  listCache.set(regionId, { at: Date.now(), products });
+  return products;
+};
+
+const fetchProducts = async (regionId: string) => {
   try {
     const { products } = await sdk.store.product.list({
       region_id: regionId,

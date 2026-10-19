@@ -36,6 +36,7 @@ from any of it.
 - P2.2: deploy-server.yml installs backend deps with bun install instead of npm ci (out of scope, review).
 - P3.1: packages/ui/src/legal/agb.md must be updated by hand when shipping prices change. 'Lieferung nur innerhalb Deutschlands' in OrderSummary.tsx/CartPage.tsx still hardcoded.
 - P3.5: enter metadata erste_ernte + temperatur for live growkit products in Medusa Admin (line hidden until then). Seed: austernseitlinge-growkit got White-Pearl values (no Rosenseitling seed product).
+- P4.1: storefront site falls back to localhost:4321 unless PUBLIC_SITE_URL is set (only docker-compose.test.yml sets it) — canonical/JSON-LD URLs; P7.3 hardcodes site, check afterwards.
 
 ---
 
@@ -109,7 +110,7 @@ from any of it.
 
 ## P4 Shop SEO
 
-- [ ] **P4.1 Product structured data, breadcrumbs, caching** · deps: P1.4 · verify: quick
+- [x] **P4.1 Product structured data, breadcrumbs, caching** · deps: P1.4 · verify: quick · 06ca9d6
   On the product page emit `Product` JSON-LD with `name`, `description`, absolute `image` URLs, `sku` (variant SKU if present), `brand` (shroom-mates), and `offers` (one `Offer` per variant or an `AggregateOffer`): `price` from `calculated_price.calculated_amount` (decimal with dot), `priceCurrency` EUR, `availability` InStock/OutOfStock from `inventory_quantity` (treat missing as InStock), `url` canonical, `itemCondition` NewCondition, `shippingDetails` (DE, standard rate from `SHIPPING`) and `hasMerchantReturnPolicy` (DE, 14 days, `MerchantReturnFiniteReturnWindow`, by mail). Add `BreadcrumbList` matching the visible crumbs. Use a shared `jsonLd()` helper (copy or move the one from P1.2 into `packages/ui/src/json-ld.ts`). Catalog page: `ItemList` of product URLs. Add `Cache-Control: public, max-age=60, stale-while-revalidate=600` to catalog and product responses (`Astro.response.headers`). Cache `listProducts(region)` in memory for 5 minutes in `src/lib/data/products.ts` (the related-products block fetches the whole catalogue on every request). Verify the JSON-LD by building and fetching a product page from the built server against the mock (`node dist/server/entry.mjs` + `curl`), and check that the JSON parses.
   Commit: `feat(shop): product structured data and response caching`
 
@@ -264,3 +265,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:51 P3.3 DONE bf9e7e3 — guide as frontmatter, parser and fallback removed
 2026-10-19 23:54 P3.4 DONE d64fa29 — about sections as string[] frontmatter, parser removed
 2026-10-19 23:57 P3.5 DONE 579e1ba — growkit line from metadata, GROW_STEPS in shop-facts; includes user's P7.7 Umami plan edit
+2026-10-19 23:59 P4.1 DONE 06ca9d6 — Product/Breadcrumb/ItemList JSON-LD, Cache-Control, 5-min product cache

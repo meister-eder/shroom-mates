@@ -93,6 +93,7 @@ const regionId = region?.id || null;
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     {image && <meta name="twitter:image" content={image} />}
+    <slot name="head" />
   </head>
   <body>
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>

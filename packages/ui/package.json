@@ -14,6 +14,7 @@
     "./fonts": "./src/fonts.ts",
     "./site": "./src/site.ts",
     "./shop-facts": "./src/shop-facts.ts",
+    "./json-ld": "./src/json-ld.ts",
     "./gaze": "./src/scripts/gaze.ts",
     "./tokens": "./src/tokens.ts",
     "./LayoutScripts.astro": "./src/LayoutScripts.astro",

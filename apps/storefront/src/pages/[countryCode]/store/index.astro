@@ -4,6 +4,7 @@ import { getRegion } from "@lib/data/regions";
 import { getRegionParams } from "@lib/params/region-params";
 import { loadCatalog } from "@modules/store/catalog";
 import StoreCatalog from "@modules/store/components/StoreCatalog.astro";
+import { jsonLd } from "@shroom-mates/ui/json-ld";
 
 export const getStaticPaths = getRegionParams;
 
@@ -17,6 +18,26 @@ if (!region) {
 
 const catalog = await loadCatalog(region.id);
 const activeCategory = Astro.url.searchParams.get("kategorie") ?? "";
+
+if (!catalog.error) {
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=60, stale-while-revalidate=600",
+  );
+}
+
+const itemList = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: catalog.products.map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    url: new URL(
+      `/${countryCode}/store/${p.handle}`,
+      Astro.site ?? Astro.url.origin,
+    ).href,
+  })),
+};
 ---
 
 <Layout
@@ -25,6 +46,7 @@ const activeCategory = Astro.url.searchParams.get("kategorie") ?? "";
   description="Entdecke unser Sortiment an Growkits und Pilztinkturen aus Leipzig."
   image={catalog.products[0]?.thumbnail ?? undefined}
 >
+  <script slot="head" type="application/ld+json" set:html={jsonLd(itemList)} />
   <StoreCatalog
     {...catalog}
     basePath={`/${countryCode}/store`}

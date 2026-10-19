@@ -9,6 +9,7 @@ import { stickerColor } from "@lib/utils/product-color";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
+import { jsonLd } from "@shroom-mates/ui/json-ld";
 import { GROW_STEPS, SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { websiteUrl } from "@shroom-mates/ui/site";
 
@@ -109,6 +110,90 @@ const firstHarvest =
 const idealTemp = typeof meta.temperatur === "string" ? meta.temperatur : "";
 const showVariety = !!varietyName && varietyName !== title;
 
+const origin = Astro.site ?? Astro.url.origin;
+const abs = (u: string) => new URL(u, origin).href;
+const productUrl = abs(`/${countryCode}/store/${product?.handle ?? handle}`);
+
+let structuredData: unknown[] = [];
+if (product) {
+  Astro.response.headers.set(
+    "Cache-Control",
+    "public, max-age=60, stale-while-revalidate=600",
+  );
+  const imageUrls = (images ?? []).map((i) => abs(i.url));
+  const shippingRate = Number.parseFloat(
+    SHIPPING.standard.price.replace(",", "."),
+  ).toFixed(2);
+  const offers = (variants ?? [])
+    .filter((v) => v.calculated_price?.calculated_amount != null)
+    .map((v) => ({
+      "@type": "Offer",
+      ...(v.sku ? { sku: v.sku } : {}),
+      url: productUrl,
+      price: Number(v.calculated_price!.calculated_amount).toFixed(2),
+      priceCurrency: "EUR",
+      availability:
+        v.inventory_quantity == null || v.inventory_quantity > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: shippingRate,
+          currency: "EUR",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "DE",
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "DE",
+        returnPolicyCategory:
+          "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+      },
+    }));
+  const sku = (variants ?? []).find((v) => v.sku)?.sku;
+  structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: title,
+      ...(description ? { description } : {}),
+      ...(imageUrls.length ? { image: imageUrls } : {}),
+      ...(sku ? { sku } : {}),
+      brand: { "@type": "Brand", name: "shroom-mates" },
+      ...(offers.length ? { offers } : {}),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { name: "Shop", url: abs(`/${countryCode}/store`) },
+        ...(category
+          ? [
+              {
+                name: category.name,
+                url: abs(`/${countryCode}/store?kategorie=${category.handle}`),
+              },
+            ]
+          : []),
+        { name: title, url: productUrl },
+      ].map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+  ];
+}
+
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 ---
 
@@ -120,6 +205,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
   image={images?.[0]?.url}
   type="product"
 >
+  {structuredData.map((d) => <script slot="head" type="application/ld+json" set:html={jsonLd(d)} />)}
   {error && <p class="error-banner" role="alert">Das Produkt konnte gerade nicht geladen werden. Bitte versuch es gleich noch einmal.</p>}
   {
     product && (
