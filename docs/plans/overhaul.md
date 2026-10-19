@@ -37,6 +37,7 @@ from any of it.
 - P3.1: packages/ui/src/legal/agb.md must be updated by hand when shipping prices change. 'Lieferung nur innerhalb Deutschlands' in OrderSummary.tsx/CartPage.tsx still hardcoded.
 - P3.5: enter metadata erste_ernte + temperatur for live growkit products in Medusa Admin (line hidden until then). Seed: austernseitlinge-growkit got White-Pearl values (no Rosenseitling seed product).
 - P4.1: storefront site falls back to localhost:4321 unless PUBLIC_SITE_URL is set (only docker-compose.test.yml sets it) — canonical/JSON-LD URLs; P7.3 hardcodes site, check afterwards.
+- P5.1: view-transition fade now 0.3s for both apps (website had 0.6s). Unused cleanup return in hamburger.ts setupHamburgerMenu.
 
 ---
 
@@ -120,7 +121,7 @@ from any of it.
 
 ## P5 Front-end diet (performance, maintainability)
 
-- [ ] **P5.1 CSS view transitions instead of ClientRouter** · deps: P1.3 · verify: visual
+- [x] **P5.1 CSS view transitions instead of ClientRouter** · deps: P1.3 · verify: visual · 42412ca
   Remove `<ClientRouter />` from both layouts and use `@view-transition { navigation: auto; }` in `packages/ui/src/base.css` (inside `prefers-reduced-motion: no-preference`). Delete the fallback-transition script and its CSS in `apps/website/src/layouts/Layout.astro`. Simplify every script that listens to `astro:page-load`/`astro:after-swap`/`DOMContentLoaded` (grep all apps + packages/ui) to plain module code that runs once (module scripts run after parse). The cart state no longer survives navigations in memory: make `initCart()` render the header count instantly from a `sessionStorage` snapshot (`cart_snapshot`: `{ id, count }`) and then refresh from the API. Check the React islands still hydrate on every page and the toast/fly-to-cart still work (start the mock + built storefront and click through with Playwright or curl as appropriate).
   Commit: `perf(ui): native view transitions, drop ClientRouter`
 
@@ -235,9 +236,20 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Follow-ups for humans: change the Umami default password on first login; create the website and set `PUBLIC_UMAMI_WEBSITE_ID` on staging and production; set up the funnel; legal review of the new privacy text together with P7.6.
   Commit: `feat(analytics): self-hosted cookieless Umami with shop events`
 
+- [ ] **P7.8 Live preview in Sveltia CMS with the real page design** · deps: P7.5 · verify: visual
+  Decided by the user on 2026-10-20: stay with Sveltia (git-based, no extra server), but editors get a live preview that looks exactly like the real page. Approach: Sveltia's preview pane posts the entry being edited to an SSR endpoint of the web app, which renders the real Astro page component with that data; the pane shows the HTML in a sandboxed iframe. No duplicated preview markup.
+  - **Pages take data as props.** For every CMS-driven page (landing, unsere-pilze, growkits, tinkturen, gastronomie, ueber-uns, faq; check `content.config.ts` for the full list) move the page body into `src/components/pages/<Name>Page.astro` that receives the entry data (and any related collection, e.g. growkits, mushrooms) as props. The page file in `src/pages/` only loads content and renders the component. Screenshot-identical (verify: visual).
+  - **Render endpoint** `src/pages/vorschau/render.ts` (`prerender = false`): `POST` JSON `{ collection, file, data, related? }`, renders the matching `<Name>Page` inside the real Layout with the Astro Container API (`astro/container`; check the Astro 6 docs for the current export name and how to register the renderers/integrations it needs). Validate `data` with the same zod schema as the collection (errors → 422 with a German message listing the fields). Images: field values that resolve to an existing asset (same lookup the content layer uses, e.g. `import.meta.glob` over the content folders) render through `astro:assets`; anything else (new upload not saved yet) renders a neutral placeholder box with the alt text and "Neues Bild – erscheint nach dem Speichern". Strip all `<script>` tags from the output and add `<base href="/">`.
+  - **Security:** only accept `Content-Type: application/json` **and** a custom header `X-Preview: 1` (forces a CORS preflight, so other sites can't post to it); reject everything else with 400. Response headers: `Content-Security-Policy: sandbox; default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'`, `X-Robots-Tag: noindex`, `Cache-Control: no-store`. Max body 256 KB. `robots.txt` disallows `/vorschau/`.
+  - **Sveltia side:** `public/admin/preview.js` (module file; the admin CSP is `script-src 'self'`) loaded in `public/admin/index.html` after the CMS bundle. It registers a preview template per collection/file with `CMS.registerPreviewTemplate` (check the Sveltia preview-templates API docs at sveltiacms.app for the exact component signature, props such as `entry` and `getAsset`, and how to create elements without JSX). The template renders one `<iframe sandbox="allow-same-origin">` (no `allow-scripts`) and, debounced 400 ms after each change, posts the entry data to `/vorschau/render` and sets `iframe.srcdoc`. Shows a small German status line ("Vorschau wird aktualisiert …" / error text from 422). Mobile/desktop width toggle above the iframe (390 / 1280 px, scaled to fit). Update the admin CSP in Caddy (`frame-src 'self' blob: about:` or whatever srcdoc needs; check) only as far as needed.
+  - **Tests:** `e2e/smoke/preview.spec.ts`: posting the current growkits-page data with a changed `heroHeadline` returns HTML containing the new headline and the real page structure (e.g. the kits section); without `X-Preview` → 400; invalid data → 422; response carries the sandbox CSP; output contains no `<script>`. Normal visual must stay identical.
+  - **Docs:** one line in `CLAUDE.md` (Aufbau: "Seiten-Markup in `components/pages/*`, Seiten laden nur Daten; CMS-Vorschau über `/vorschau/render`") and the same rule in `.claude/rules/website.md`.
+  Follow-up for humans: try the preview in `/admin/` for each page type (can't be automated: Sveltia login).
+  Commit: `feat(cms): live preview with the real page design`
+
 ## P8 Finish, staging, land
 
-- [ ] **P8.1 Full verification and report** · deps: P7.7 · verify: all
+- [ ] **P8.1 Full verification and report** · deps: P7.7, P7.8 · verify: all
   Run `scripts/verify.sh all`. Build both a clean install (`rm -rf node_modules apps/*/node_modules && bun install --frozen-lockfile`) and the production build. Measure: JS and CSS gzip per page type (home, growkits, catalog, product, cart, checkout) before (from the review: website ≈17 KB JS, shop ≈90 KB JS, shop CSS 16 KB) vs. after. Write `docs/plans/overhaul-report.md`: what changed per phase, numbers, deviations, blocked tasks with reasons, every manual follow-up from the Log. Commit it.
   Commit: `docs(plan): overhaul report`
 
@@ -267,3 +279,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:57 P3.5 DONE 579e1ba — growkit line from metadata, GROW_STEPS in shop-facts; includes user's P7.7 Umami plan edit
 2026-10-19 23:59 P4.1 DONE 06ca9d6 — Product/Breadcrumb/ItemList JSON-LD, Cache-Control, 5-min product cache
 2026-10-20 00:00 P4.2 DONE 7a608e4 — SSR sitemap.xml + robots.txt (verified against mock), noindex widerrufen
+2026-10-20 00:12 P5.1 DONE 42412ca — native view transitions; cart count survives nav (orchestrator Playwright check)
