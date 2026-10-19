@@ -111,6 +111,11 @@ const aboutUsPage = defineCollection({
 			heroName: z.string(),
 			heroEmmiAlt: z.string(),
 			heroTimAlt: z.string(),
+			// Textabschnitte: je Eintrag ein Absatz, HTML (z. B. Links) erlaubt
+			whoWeAre: z.array(z.string()),
+			howWeWork: z.array(z.string()),
+			valuesIntro: z.array(z.string()),
+			whereText: z.array(z.string()),
 			timeline: z.object({
 				title: z.string(),
 				items: z.array(

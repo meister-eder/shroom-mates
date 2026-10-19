@@ -114,6 +114,10 @@ collections:
           - { name: heroName, label: Hauptzeile, widget: string }
           - { name: heroEmmiAlt, label: Foto Emmi Alt-Text, widget: string }
           - { name: heroTimAlt, label: Foto Tim Alt-Text, widget: string }
+          - { name: whoWeAre, label: Wer wir sind, widget: list, field: { name: text, label: Absatz, widget: text }, hint: "Ein Eintrag pro Absatz. Der erste Absatz steht groß im Kopfbereich, die übrigen unter „Wer wir sind“. HTML (z.B. Links) ist erlaubt." }
+          - { name: howWeWork, label: Wie wir arbeiten, widget: list, field: { name: text, label: Absatz, widget: text }, hint: "Ein Eintrag pro Absatz. HTML (z.B. Links) ist erlaubt." }
+          - { name: valuesIntro, label: Das ist uns wichtig (Einleitung), widget: list, field: { name: text, label: Absatz, widget: text }, hint: "Ein Eintrag pro Absatz. HTML (z.B. Links) ist erlaubt." }
+          - { name: whereText, label: Wo ihr uns findet (Text), widget: list, field: { name: text, label: Absatz, widget: text }, hint: "Ein Eintrag pro Absatz. HTML (z.B. Links) ist erlaubt." }
           - name: timeline
             label: Zeitleiste
             widget: object
@@ -144,14 +148,13 @@ collections:
             label: Abschnitt „Wo ihr uns findet“
             widget: object
             collapsed: true
-            hint: Der Text darunter steht im Inhalt (Abschnitt „## Wo ihr uns findet“)
+            hint: Der Text darunter steht im Feld „Wo ihr uns findet (Text)“
             fields:
               - { name: title, label: Überschrift, widget: string }
               - { name: address, label: Adresse, widget: string }
               - { name: routeButton, label: Button Route, widget: string }
               - { name: visitButton, label: Button Besuch, widget: string }
               - { name: imageAlt, label: Foto Alt-Text, widget: string }
-          - { name: body, label: Inhalt, widget: markdown, hint: 'Die vier Abschnittsüberschriften (## Wer wir sind, ## Wie wir arbeiten, ## Das ist uns wichtig, ## Wo ihr uns findet) bestimmen die Platzierung und dürfen nicht umbenannt werden. Erlaubt: Absätze und Links.' }
 
       - name: growkits-page
         label: Growkits-Seite

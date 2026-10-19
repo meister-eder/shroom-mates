@@ -23,33 +23,11 @@ const {
 	timeline,
 	values,
 	where,
+	whoWeAre,
+	howWeWork,
+	valuesIntro,
+	whereText,
 } = aboutUsEntry.data;
-
-// Der Markdown-Text bleibt die Quelle (CMS). Abschnitte werden anhand der
-// „## “-Überschriften getrennt, damit sie im Layout einzeln platziert werden
-// können. Unterstützt wird nur, was der Text nutzt: Absätze und [Link](/pfad).
-const escapeHtml = (text: string) =>
-	text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const inline = (text: string) =>
-	escapeHtml(text).replace(
-		/\[([^\]]+)\]\(([^)\s]+)\)/g,
-		(_m, label: string, href: string) => `<a href="${href}">${label}</a>`,
-	);
-
-const sections = new Map<string, string[]>();
-for (const block of (aboutUsEntry.body ?? "").split(/^## /m).slice(1)) {
-	const [heading, ...rest] = block.split("\n");
-	sections.set(
-		heading.trim(),
-		rest
-			.join("\n")
-			.split(/\n{2,}/)
-			.map((paragraph) => paragraph.trim())
-			.filter(Boolean)
-			.map(inline),
-	);
-}
-const section = (name: string) => sections.get(name) ?? [];
 
 const mapsLink =
 	"https://www.google.com/maps/search/?api=1&query=Franz-Flemming-Stra%C3%9Fe+25+Leipzig";
@@ -61,7 +39,7 @@ const mapsLink =
       <div class="about-hero__copy">
         <h1 class="eyebrow about-hero__eyebrow">{heroTitle} – {heroSubtitle}</h1>
         <p class="about-hero__title">{heroName}</p>
-        <div class="about-hero__lead lead" set:html={(section("Wer wir sind")[0] ?? "")} />
+        <div class="about-hero__lead lead" set:html={(whoWeAre[0] ?? "")} />
       </div>
       <div class="about-hero__photos">
         <div class="dots" aria-hidden="true"></div>
@@ -119,17 +97,17 @@ const mapsLink =
     <section class="container work" aria-labelledby="work-heading">
       <div class="work__col">
         <h2 id="work-heading" class="work__heading">Wer wir sind</h2>
-        {section("Wer wir sind").slice(1).map((p) => <p set:html={p} />)}
+        {whoWeAre.slice(1).map((p) => <p set:html={p} />)}
       </div>
       <div class="work__col">
         <h2 class="work__heading">Wie wir arbeiten</h2>
-        {section("Wie wir arbeiten").map((p) => <p set:html={p} />)}
+        {howWeWork.map((p) => <p set:html={p} />)}
       </div>
     </section>
 
     <section class="container values" aria-labelledby="values-heading">
       <h2 id="values-heading" class="eyebrow values__eyebrow">Das ist uns wichtig</h2>
-      {section("Das ist uns wichtig").map((p) => <p class="values__intro" set:html={p} />)}
+      {valuesIntro.map((p) => <p class="values__intro" set:html={p} />)}
       <ol class="values__list" role="list">
         {
           values.map((v, i) => (
@@ -158,7 +136,7 @@ const mapsLink =
           <p class="eyebrow">Wo ihr uns findet</p>
           <h2 id="where-heading">{where.title}</h2>
           <address class="where__address">{where.address}</address>
-          {section("Wo ihr uns findet").map((p) => <p class="where__text" set:html={p} />)}
+          {whereText.map((p) => <p class="where__text" set:html={p} />)}
           <div class="where__actions">
             <a class="btn btn--primary where__btn" href={mapsLink} target="_blank" rel="noopener noreferrer">
               <Icon name="map-pin" size={20} /> {where.routeButton}
