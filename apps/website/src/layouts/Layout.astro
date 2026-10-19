@@ -7,6 +7,7 @@ import Footer from "@shroom-mates/ui/Footer.astro";
 import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
 import type { NavKey } from "@shroom-mates/ui/site";
+import { colors } from "@shroom-mates/ui/tokens";
 import WaveRoller from "@shroom-mates/ui/WaveRoller.astro";
 import { jsonLd } from "../utils/json-ld";
 
@@ -211,7 +212,7 @@ const breadcrumbSchema = {
       )
     }
     <meta name="author" content="shroom-mates - Emmelie Kunz & Tim Eder" />
-    <meta name="theme-color" content="#e9eaff" />
+    <meta name="theme-color" content={colors.bg} />
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />

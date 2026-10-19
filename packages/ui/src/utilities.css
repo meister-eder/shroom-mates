@@ -381,7 +381,8 @@
 /* ===== Rasterpunkte (Deko hinter Maskottchen/Hero-Bildern) ===== */
 
 .dots {
-  background: radial-gradient(#ff4908 1.6px, transparent 1.7px) 0 0 / 14px 14px;
+  background:
+    radial-gradient(var(--orange) 1.6px, transparent 1.7px) 0 0 / 14px 14px;
 }
 
 /* ===== Eyebrow / Label (DM Mono, Großbuchstaben) ===== */

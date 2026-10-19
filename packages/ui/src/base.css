@@ -28,11 +28,8 @@
   --color-lavender: var(--periwinkle);
   --color-pink: var(--pink);
   --color-olive-soft: var(--butter);
-  --color-olive: #7e8503;
-  --color-indigo: var(--indigo);
   --color-stone: var(--stone);
   --color-green: var(--green);
-  --color-mushroom-brown: var(--mushroom-brown);
   --color-muted: var(--text-muted);
 
   --font-body: var(--font-sans);
@@ -46,7 +43,6 @@
 
   /* Legacy-Aliase */
   --accent: var(--color-accent);
-  --accent-light: var(--color-accent-light);
   --accent-dark: var(--color-accent-dark);
   --color-forest: #2d5a27;
   --color-forest-light: #e8f0e7;
@@ -55,16 +51,12 @@
   --text-color: var(--color-ink);
   --bg-color: var(--color-cream);
   --bg-accent: var(--color-cream);
-  --bg-warm: var(--color-paper);
-  --border-color: var(--color-ink);
   --border-subtle: #b9bbe6;
-  --focus-color: var(--color-ink);
 
   /* Layout */
   --section-gap: var(--section-y);
   --content-max-width: var(--container);
   --scrollbar-width: 0px;
-  --duration: 0.2s;
 }
 
 @media (max-width: 768px) {

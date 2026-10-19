@@ -45,6 +45,7 @@ from any of it.
 - P5.7: three mascot-eyes implementations remain (MatesLogo.astro, React MatesEyes.tsx for cart/checkout/order pages, vanilla lib/mates-eyes.ts for drawer/toast using /mascot.webp) — unify as separate task.
 - P5.8c: billing-address h3 has no bottom margin (Tailwind mb-4 never applied before either) — design check.
 - P5.8d: storefront global.css re-imports tokens.css after base.css (keeps --gutter 32px on mobile as baseline expects) — design decision. CSS 17.5 KB → 15.0 KB gzip.
+- P5.9 (design, DESIGN.md Rückweg): hex values without exact token left in code: #b9bbe6, #ff7a45, #bfc1ea, #fff0eb, #c0392b, #b0aca5, #555, #2f2c57, #000, #fff8d6, #ffe66d, #ffc9a8, #15132b, #ebc477c5, #fdfcea, #5c5a50; plus SVG presentation-attribute hex values.
 
 ---
 
@@ -172,7 +173,7 @@ from any of it.
   Grep must show no Tailwind utilities left. Remove `tailwindcss`, `@tailwindcss/vite` (package.json, astro.config), `@import "tailwindcss"`, and `packages/ui/src/theme.css` (its aliases already live in `base.css`; move any alias only defined in theme.css into base.css). Update `DESIGN.md` mapping and `.claude/rules/ui.md` mentions of theme.css/Tailwind names. Report CSS bundle size before/after (gzip).
   Commit: `chore(shop): remove Tailwind`
 
-- [ ] **P5.9 Token hygiene** · deps: P5.8d · verify: visual
+- [x] **P5.9 Token hygiene** · deps: P5.8d · verify: visual · 5974dbc
   In `packages/ui/src/base.css` delete aliases with zero usages (grep each: e.g. `--color-forest*`, `--color-earth*`, `--bg-warm`, …). Replace hardcoded hex colours in `.astro`/`.css` of both apps and packages/ui with the token that has exactly the same value (`#fff` → `var(--white)` etc.). Where no token matches exactly, leave it and list it in the report (design decision for the humans, see DESIGN.md "Rückweg"). Replace the hardcoded `theme-color` in the website layout with the `--bg` value. Visual must pass.
   Commit: `refactor(ui): tokens instead of hex values, drop unused aliases`
 
@@ -297,3 +298,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 01:04 P5.8b DONE no-op — scope already semantic classes (worker + orchestrator grep), no commit needed
 2026-10-20 01:13 P5.8c DONE f96f6d7 — checkout/cart/order plain CSS; logic identical ignoring className
 2026-10-20 01:21 P5.8d DONE 3a845ee — Tailwind removed, mini preflight layer, .sr-only in ui base.css
+2026-10-20 01:25 P5.9 DONE 5974dbc — 8 unused aliases removed, exact-match hex → tokens, theme-color from tokens
