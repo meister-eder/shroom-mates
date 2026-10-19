@@ -293,9 +293,11 @@ const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0]
 </style>
 
 <script>
-  // Pupils of the drawn crowd follow the pointer (mouse and touch). Without a
-  // pointer nearby the mates glance around on their own; faces blink now and
-  // then. Reduced motion: pupils stay where they are drawn.
+  // Pupils of the drawn crowd follow the mouse. On phones (no hover) they look
+  // at the last tap, follow the tilt of the phone (where the browser allows it
+  // without a permission prompt) and watch the page scroll by. Otherwise the
+  // mates glance around on their own; faces blink now and then.
+  // Reduced motion: pupils stay where they are drawn.
   function init() {
     const wrap = document.querySelector<HTMLElement>("[data-footer-eyes]");
     if (!wrap || wrap.dataset.ready) return;
@@ -323,6 +325,10 @@ const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0]
     let px = 0;
     let py = 0;
     let lastMove = -1e9;
+    // gaze direction (-1..1) from tilt or scrolling, used when no pointer is near
+    let tilt: { x: number; y: number; at: number } | null = null;
+    let scroll = { y: 0, at: -1e9 };
+    let lastScrollY = scrollY;
     let glance = { x: 0, y: -1, until: 0 };
     let blinkFace = "";
     let blinkStart = 0;
@@ -334,7 +340,10 @@ const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0]
       frame = 0;
       const rect = svg.getBoundingClientRect();
       const k = rect.width / 1200;
-      const idle = now - lastMove > 2500;
+      const pointing = now - lastMove < 2500;
+      const tilted = !pointing && tilt !== null && now - tilt.at < 1500;
+      const scrolled = !pointing && !tilted && now - scroll.at < 900;
+      const idle = !pointing && !tilted && !scrolled;
       if (idle && now > glance.until) {
         const a = Math.random() * Math.PI * 2;
         glance = { x: Math.cos(a), y: Math.sin(a) * 0.6, until: now + 900 + Math.random() * 1800 };
@@ -348,7 +357,13 @@ const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0]
       for (const e of eyes) {
         let tx: number;
         let ty: number;
-        if (idle) {
+        if (tilted) {
+          tx = tilt!.x * e.reach;
+          ty = tilt!.y * e.reach;
+        } else if (scrolled) {
+          tx = 0;
+          ty = scroll.y * e.reach;
+        } else if (idle) {
           tx = glance.x * e.reach;
           ty = glance.y * e.reach;
         } else {
@@ -370,7 +385,7 @@ const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0]
           `translate(${(e.x + e.cx).toFixed(2)} ${(e.y + e.cy).toFixed(2)}) scale(1 ${e.blink.toFixed(2)}) translate(${-e.cx} ${-e.cy})`,
         );
       }
-      if (visible && (moving || idle || now - blinkStart < 200)) frame = requestAnimationFrame(tick);
+      if (visible && (moving || !pointing || now - blinkStart < 200)) frame = requestAnimationFrame(tick);
     };
     const kick = () => {
       if (!frame && visible) frame = requestAnimationFrame(tick);
@@ -390,6 +405,27 @@ const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0]
       },
       { passive: true },
     );
+    // Scrolling down moves the page up: the mates look up after it (and down
+    // when scrolling back)
+    addEventListener(
+      "scroll",
+      () => {
+        const dy = scrollY - lastScrollY;
+        lastScrollY = scrollY;
+        if (!dy) return;
+        scroll = { y: Math.max(-1, Math.min(1, -dy / 12)), at: performance.now() };
+        kick();
+      },
+      { passive: true },
+    );
+    // Tilt (Android and others without a permission prompt; iOS needs one, skipped)
+    addEventListener("deviceorientation", (ev) => {
+      if (ev.gamma === null || ev.beta === null) return;
+      const x = Math.max(-1, Math.min(1, ev.gamma / 25));
+      const y = Math.max(-1, Math.min(1, (ev.beta - 45) / 25));
+      tilt = { x, y, at: performance.now() };
+      kick();
+    });
     addEventListener(
       "pointerdown",
       (ev) => {

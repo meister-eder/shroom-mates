@@ -1,3 +1,4 @@
+import { flyToCart } from "@lib/fly-to-cart";
 import { addToCart } from "@lib/stores/cart";
 import { showAddedToast, showErrorToast } from "@lib/stores/toast";
 import { Icon } from "@modules/common/components/Icon";
@@ -16,11 +17,13 @@ interface QuickAddProps {
 export const QuickAdd = ({ variantId, title }: QuickAddProps) => {
   const [busy, setBusy] = useState(false);
 
-  const add = async () => {
+  const add = async (ev: React.MouseEvent<HTMLButtonElement>) => {
     if (busy) return;
+    const button = ev.currentTarget;
     setBusy(true);
     try {
       await addToCart(variantId, 1, { openSidebar: false });
+      flyToCart(button);
       showAddedToast(title);
     } catch {
       showErrorToast("Lade die Seite neu und versuch es nochmal.");

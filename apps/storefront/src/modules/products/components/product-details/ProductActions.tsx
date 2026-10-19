@@ -1,4 +1,5 @@
 import { sdk } from "@lib/sdk";
+import { flyToCart } from "@lib/fly-to-cart";
 import { addToCart } from "@lib/stores/cart";
 import { showErrorToast } from "@lib/stores/toast";
 import { basePriceLabel } from "@lib/utils/base-price";
@@ -67,6 +68,7 @@ export const ProductActions = ({
   const [variants, setVariants] = useState<Variant[]>(initialVariants);
   const [isLoadingVariants, setIsLoadingVariants] = useState(true);
   const addedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const addButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => () => clearTimeout(addedTimer.current), []);
 
@@ -166,6 +168,7 @@ export const ProductActions = ({
     setIsAdding(true);
     try {
       await addToCart(selectedVariant.id, quantity, { openSidebar: false });
+      flyToCart(addButton.current);
       setJustAdded(true);
       clearTimeout(addedTimer.current);
       addedTimer.current = setTimeout(() => setJustAdded(false), 2200);
@@ -259,6 +262,7 @@ export const ProductActions = ({
         />
         <button
           type="button"
+          ref={addButton}
           className="btn btn--primary buy-bar__add"
           disabled={isAddToCardButtonDisabled}
           onClick={handleAddToCart}
