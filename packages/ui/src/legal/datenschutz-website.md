@@ -46,4 +46,4 @@ https://www.datenschutz.sachsen.de
 
 ## 8. Online-Shop
 
-Für unseren Online-Shop unter shop.shroom-mates.de gilt eine [eigene Datenschutzerklärung](https://shop.shroom-mates.de/de/datenschutz).
+Für unseren Online-Shop unter shop.shroom-mates.de gilt eine [eigene Datenschutzerklärung](https://shop.shroom-mates.de/datenschutz/).

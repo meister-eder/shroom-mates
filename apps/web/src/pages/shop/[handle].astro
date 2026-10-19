@@ -14,13 +14,13 @@ import { jsonLd } from "@shroom-mates/ui/json-ld";
 import { GROW_STEPS, SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { websiteUrl } from "@shroom-mates/ui/site";
 
-const { countryCode, handle } = Astro.params;
+const { handle } = Astro.params;
 
-if (!countryCode || !handle) {
+if (!handle) {
   return Astro.rewrite("/404");
 }
 
-const region = await getRegion(countryCode);
+const region = await getRegion();
 
 if (!region) {
   return Astro.rewrite("/404");
@@ -42,7 +42,7 @@ if (product === null) {
 
 // Old links used the product ID; send them to the readable URL.
 if (product && handle !== product.handle) {
-  return Astro.redirect(`/${countryCode}/store/${product.handle}`, 301);
+  return Astro.redirect(`/shop/${product.handle}/`, 301);
 }
 
 const {
@@ -113,7 +113,7 @@ const showVariety = !!varietyName && varietyName !== title;
 
 const origin = Astro.site ?? Astro.url.origin;
 const abs = (u: string) => new URL(u, origin).href;
-const productUrl = abs(`/${countryCode}/store/${product?.handle ?? handle}`);
+const productUrl = abs(`/shop/${product?.handle ?? handle}/`);
 
 let structuredData: unknown[] = [];
 if (product) {
@@ -175,12 +175,12 @@ if (product) {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { name: "Shop", url: abs(`/${countryCode}/store`) },
+        { name: "Shop", url: abs("/shop/") },
         ...(category
           ? [
               {
                 name: category.name,
-                url: abs(`/${countryCode}/store?kategorie=${category.handle}`),
+                url: abs(`/shop/?kategorie=${category.handle}`),
               },
             ]
           : []),
@@ -212,11 +212,11 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
     product && (
       <>
         <nav class="crumbs" aria-label="Brotkrumen">
-          <a href={`/${countryCode}/store`}>Shop</a>
+          <a href="/shop/">Shop</a>
           {category && (
             <>
               <span aria-hidden="true">›</span>
-              <a href={`/${countryCode}/store?kategorie=${category.handle}`}>
+              <a href={`/shop/?kategorie=${category.handle}`}>
                 {category.name}
               </a>
             </>
@@ -311,7 +311,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
                   Standard {SHIPPING.standard.price} ({SHIPPING.standard.time}), Express {SHIPPING.express.price} ({SHIPPING.express.time}).
                   Lieferung nur {SHIPPING.region}. Alle Preise
                   inkl. MwSt. Infos zum Widerruf findest du in der{" "}
-                  <a href={`/${countryCode}/widerruf`}>Widerrufsbelehrung</a>.
+                  <a href="/widerruf/">Widerrufsbelehrung</a>.
                 </p>
               </details>
             </div>
@@ -364,7 +364,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
                       <span class="pair-card__img sticker-card__placeholder" aria-hidden="true" />
                     )}
                     <span>
-                      <a href={`/${countryCode}/store/${p.handle}`} class="pair-card__title">
+                      <a href={`/shop/${p.handle}/`} class="pair-card__title">
                         {p.title}
                       </a>
                       {price && <span class="pair-card__price">{price.calculated_price}</span>}

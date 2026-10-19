@@ -7,7 +7,6 @@ import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { INSTAGRAM_URL } from "@shroom-mates/ui/site";
 
 interface OrderConfirmedPageProps {
-  countryCode: string;
   order: StoreOrder;
 }
 
@@ -35,10 +34,7 @@ const NEXT_STEPS = [
 ] as const;
 
 /** Server-rendered: the order is loaded by the page (404 if unknown). */
-export const OrderConfirmedPage = ({
-  countryCode,
-  order,
-}: OrderConfirmedPageProps) => {
+export const OrderConfirmedPage = ({ order }: OrderConfirmedPageProps) => {
   const currencyCode = order.currency_code ?? "eur";
   const paymentProviderId =
     order.payment_collections?.[0]?.payment_sessions?.[0]?.provider_id;
@@ -161,7 +157,7 @@ export const OrderConfirmedPage = ({
         </div>
 
         <div className="order-aside">
-          <a href={`/${countryCode}/store`} className="order-back">
+          <a href="/shop/" className="order-back">
             Zurück zum Shop
           </a>
           <a href={INSTAGRAM_URL} className="order-insta">

@@ -38,7 +38,6 @@ const {
   categoryName,
   badge,
 } = Astro.props;
-const countryCode = Astro.params.countryCode;
 
 const { cheapestPrice } = getProductPrice({ productVariants: variants });
 const basePrice = basePriceLabel(
@@ -81,7 +80,7 @@ const badgeText = cheapestPrice?.price_type === "sale" ? "Sale" : badge;
   <div class="product-tile__body">
     <h2 class="product-tile__title">
       <a
-        href={`/${countryCode}/store/${handle}`}
+        href={`/shop/${handle}/`}
         class="product-card"
         aria-label={`${title}${cheapestPrice ? (hasChoice ? " — ab " : " — ") + cheapestPrice.calculated_price : ""}${categoryName ? `, ${categoryName}` : ""}`}
       >

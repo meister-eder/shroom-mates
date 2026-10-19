@@ -10,7 +10,7 @@ import { test as base, expect, type Page } from "@playwright/test";
 export const BASE = "http://localhost:8000";
 export const BACKEND = "http://localhost:9000";
 
-const DE = "/de";
+const SHOP = "/shop";
 
 export class CheckoutFlow {
   constructor(public page: Page) {}
@@ -18,16 +18,16 @@ export class CheckoutFlow {
   // ── Navigation ──────────────────────────────────────────────────────────
 
   async goToStore() {
-    await this.page.goto(`${DE}/store`);
+    await this.page.goto(`${SHOP}/`);
     await this.page.waitForSelector("a.product-card", { timeout: 10_000 });
   }
 
   async goToCart() {
-    await this.page.goto(`${DE}/cart`);
+    await this.page.goto(`${SHOP}/cart/`);
   }
 
   async goToCheckout(step?: "address" | "delivery" | "payment") {
-    const url = step ? `${DE}/checkout?step=${step}` : `${DE}/checkout`;
+    const url = step ? `${SHOP}/checkout/?step=${step}` : `${SHOP}/checkout/`;
     await this.page.goto(url);
   }
 
@@ -38,7 +38,7 @@ export class CheckoutFlow {
     const firstCard = this.page.locator("a.product-card").first();
     await firstCard.waitFor({ state: "visible" });
     await firstCard.click();
-    await this.page.waitForURL(/\/store\/\w+/);
+    await this.page.waitForURL(/\/shop\/\w+/);
   }
 
   /**

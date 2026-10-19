@@ -6,10 +6,10 @@ export const GET: APIRoute = ({ site, url }) => {
   const origin = site ?? url.origin;
   const body = `User-agent: *
 Allow: /
-Disallow: /*/cart
-Disallow: /*/checkout
-Disallow: /*/order/
-Disallow: /*/vertrag-widerrufen
+Disallow: /shop/cart/
+Disallow: /shop/checkout/
+Disallow: /shop/order/
+Disallow: /vertrag-widerrufen/
 
 Sitemap: ${new URL("/sitemap.xml", origin).href}
 `;

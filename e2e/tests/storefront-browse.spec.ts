@@ -15,7 +15,7 @@ test.describe("Storefront — Pages & Navigation", () => {
   });
 
   test("homepage loads with hero content", async ({ page }) => {
-    await page.goto("/de");
+    await page.goto("/shop/");
 
     // Page should have a title
     await expect(page).toHaveTitle(/Shroom/);
@@ -26,13 +26,13 @@ test.describe("Storefront — Pages & Navigation", () => {
   });
 
   test("homepage → store navigation works", async ({ page }) => {
-    await page.goto("/de");
+    await page.goto("/shop/");
 
     // Find a link to the store
-    const storeLink = page.locator('a[href*="/store"]').first();
+    const storeLink = page.locator('a[href*="/shop/"]').first();
     if (await storeLink.isVisible()) {
       await storeLink.click();
-      await page.waitForURL(/\/store/);
+      await page.waitForURL(/\/shop\//);
 
       // Should have product cards
       await expect(page.locator("a.product-card").first()).toBeVisible({
@@ -59,7 +59,7 @@ test.describe("Storefront — Pages & Navigation", () => {
   });
 
   test("footer has legal links", async ({ page }) => {
-    await page.goto("/de");
+    await page.goto("/shop/");
 
     // Scroll to footer
     const footer = page.locator("footer").first();
@@ -88,7 +88,7 @@ test.describe("Storefront — Mobile Responsiveness", () => {
   test.use({ viewport: { width: 375, height: 812 } }); // iPhone X
 
   test("store page renders on mobile viewport", async ({ page }) => {
-    await page.goto("/de/store");
+    await page.goto("/shop/");
 
     // Product grid should be visible even on mobile
     await expect(page.locator("a.product-card").first()).toBeVisible({
@@ -134,7 +134,7 @@ test.describe("Storefront — Accessibility Basics", () => {
   });
 
   test("store page has proper heading hierarchy", async ({ page }) => {
-    await page.goto("/de/store");
+    await page.goto("/shop/");
 
     // Should have at least one h1
     // querySelectorAll doesn't pierce shadow DOM, so the Astro dev

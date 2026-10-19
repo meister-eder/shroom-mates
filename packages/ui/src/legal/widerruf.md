@@ -6,7 +6,7 @@ Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ih
 
 Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (shroom-mates GbR, Markranstädter Straße 8, 04229 Leipzig, Telefon: <mark class="legal-open">offen: Telefonnummer</mark>, E-Mail: hey@shroom-mates.de) mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.
 
-Sie können Ihr Widerrufsrecht auch online unter https://shop.shroom-mates.de/de/vertrag-widerrufen ausüben. Wenn Sie diese Online-Funktion nutzen, übermitteln wir Ihnen auf einem dauerhaften Datenträger (z. B. durch eine E-Mail) unverzüglich eine Eingangsbestätigung mit Informationen zum Inhalt der Widerrufserklärung sowie dem Datum und der Uhrzeit ihres Eingangs.
+Sie können Ihr Widerrufsrecht auch online unter https://shop.shroom-mates.de/vertrag-widerrufen/ ausüben. Wenn Sie diese Online-Funktion nutzen, übermitteln wir Ihnen auf einem dauerhaften Datenträger (z. B. durch eine E-Mail) unverzüglich eine Eingangsbestätigung mit Informationen zum Inhalt der Widerrufserklärung sowie dem Datum und der Uhrzeit ihres Eingangs.
 
 Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.
 

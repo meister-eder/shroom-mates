@@ -9,7 +9,7 @@ import { PaymentStep } from "./PaymentStep";
 import { ShippingAddressStep } from "./ShippingAddressStep";
 
 interface CheckoutPageProps {
-  countryCode: string;
+  defaultCountry: string;
   countries: RegionCountry[];
 }
 
@@ -41,7 +41,10 @@ function validateStep(
   return step;
 }
 
-export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
+export const CheckoutPage = ({
+  defaultCountry,
+  countries,
+}: CheckoutPageProps) => {
   const cart = useStore($cart);
   const isCartLoading = useStore($isCartLoading);
   const [, setSearch] = useState(() =>
@@ -79,7 +82,7 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
           Die Mates langweilen sich. Füge Produkte hinzu, bevor du zur Kasse
           gehst.
         </p>
-        <a href={`/${countryCode}/store`} className="btn btn--primary">
+        <a href="/shop/" className="btn btn--primary">
           Zum Sortiment
         </a>
       </div>
@@ -129,7 +132,7 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
           <ShippingAddressStep
             cart={cart}
             countries={countries}
-            countryCode={countryCode}
+            defaultCountry={defaultCountry}
             mode={step === "address" ? "edit" : "read"}
             onContinue={() => goToStep("delivery")}
             onEdit={() => goToStep("address")}
@@ -150,7 +153,6 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
 
           <PaymentStep
             cart={cart}
-            countryCode={countryCode}
             mode={step === "payment" ? "edit" : "inactive"}
           />
         </div>

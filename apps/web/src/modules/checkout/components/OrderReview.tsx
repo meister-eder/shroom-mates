@@ -5,14 +5,13 @@ import { SummaryLine } from "./SummaryLine";
 
 interface OrderReviewProps {
   cart: StoreCart;
-  countryCode: string;
 }
 
 /**
  * Overview directly above the order button (§ 312j Abs. 2 BGB): products,
  * shipping, total incl. VAT and the delivery address, each changeable.
  */
-export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
+export const OrderReview = ({ cart }: OrderReviewProps) => {
   const currencyCode = cart.currency_code || "EUR";
   const shipping = cart.shipping_methods?.[0];
 
@@ -48,7 +47,7 @@ export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
         <span>
           Lieferung an: {formatAddressLines(cart.shipping_address).join(", ")}
         </span>
-        <a href={`/${countryCode}/checkout?step=address`}>Ändern</a>
+        <a href="/shop/checkout/?step=address">Ändern</a>
       </div>
     </section>
   );

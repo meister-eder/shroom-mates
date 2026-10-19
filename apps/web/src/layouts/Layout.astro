@@ -43,13 +43,7 @@ const canonicalUrl = new URL(
   Astro.site ?? Astro.url.origin,
 );
 
-const { countryCode } = Astro.params;
-
-if (!countryCode) {
-  return Astro.rewrite("/404");
-}
-
-const region = await getRegion(countryCode);
+const region = await getRegion();
 const regionId = region?.id || null;
 ---
 
@@ -97,7 +91,7 @@ const regionId = region?.id || null;
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
     <div class="site-wrapper">
-      <Header countryCode={countryCode} regionId={regionId} active={active} />
+      <Header regionId={regionId} active={active} />
       <main
         id="main-content"
         class:list={["site-main", "with-nav-spacing", { "site-main--wide": wide }]}
@@ -105,8 +99,8 @@ const regionId = region?.id || null;
       >
         <slot />
       </main>
-      <Footer countryCode={countryCode} />
-      <CartSidebar countryCode={countryCode} />
+      <Footer />
+      <CartSidebar />
       <AddedToast />
     </div>
 

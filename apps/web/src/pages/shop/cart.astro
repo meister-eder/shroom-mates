@@ -1,15 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import { getRegionParams } from "@lib/params/region-params";
 import { CartPage } from "@modules/cart/components/CartPage";
-
-export const getStaticPaths = getRegionParams;
-
-const { countryCode } = Astro.params;
-
-if (!countryCode) {
-  return Astro.rewrite("/404");
-}
 ---
 
 <Layout
@@ -19,7 +10,7 @@ if (!countryCode) {
   wide
 >
   <!-- Client-only: rendered from the browser's cart -->
-  <CartPage client:only="react" countryCode={countryCode}>
+  <CartPage client:only="react">
     <p slot="fallback" class="page-note">Pilzkorb wird geladen…</p>
   </CartPage>
 </Layout>

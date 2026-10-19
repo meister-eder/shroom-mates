@@ -6,9 +6,9 @@ test.describe("Withdrawal function", () => {
   test("footer button leads to the form; submission is confirmed", async ({
     page,
   }) => {
-    await page.goto("/de/store");
+    await page.goto("/shop/");
     await page.getByRole("link", { name: "Vertrag widerrufen" }).click();
-    await expect(page).toHaveURL(/\/de\/vertrag-widerrufen$/);
+    await expect(page).toHaveURL(/\/vertrag-widerrufen\/$/);
 
     await page.fill("#withdraw-name", "E2E Test");
     // Unique address: the backend rate-limits confirmations per recipient.
@@ -27,7 +27,7 @@ test.describe("Withdrawal function", () => {
   });
 
   test("only name, email and order number are required", async ({ page }) => {
-    await page.goto("/de/vertrag-widerrufen");
+    await page.goto("/vertrag-widerrufen/");
     for (const id of ["#withdraw-name", "#withdraw-email", "#withdraw-order"]) {
       await expect(page.locator(id)).toHaveAttribute("required", "");
     }

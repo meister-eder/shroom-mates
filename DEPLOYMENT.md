@@ -42,7 +42,7 @@ The workflow:
 3. writes `SUMUP_API_KEY` / `SUMUP_MERCHANT_CODE` from the `netcup-test`
    environment secrets into the server `.env` (only if **both** are set),
 4. rebuilds the `medusa` and `web` images on the server and restarts the stack,
-5. smoke-tests `api…/health`, `shop…/de/store` and the website.
+5. smoke-tests `api…/health`, `shop…/shop/` and the website.
 
 Pushes that only touch `apps/website/` take a fast path that just syncs the static build.
 
@@ -86,12 +86,12 @@ SUMUP_MERCHANT_CODE=…      # managed by the workflow (see above)
 
 All URLs (`MEDUSA_BACKEND_URL`, CORS, `SUMUP_MEDUSA_URL`, `SUMUP_REDIRECT_URL`)
 are derived from `DOMAIN` in the compose file, so the SumUp redirect always
-points at `https://shop.<domain>/de/checkout/complete`.
+points at `https://shop.<domain>/shop/checkout/complete`.
 
 ## SumUp
 
 - The backend uses the `medusa-payment-sumup` plugin (pinned in `backend/package.json`).
-  The storefront sends a per-country `redirect_url`; the plugin only accepts it when
+  The storefront sends a `redirect_url` (`<origin>/shop/checkout/complete`); the plugin only accepts it when
   its host matches `SUMUP_REDIRECT_URL`'s host or is listed in `SUMUP_REDIRECT_ALLOWED_HOSTS`.
 - Use a **SumUp sandbox merchant** for the test server — no real money moves and
   SumUp's test cards work.

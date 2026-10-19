@@ -61,7 +61,7 @@ Soweit nicht anders angegeben, beginnt die Lieferfrist am Tag nach Vertragsschlu
 
 ## § 6 Widerrufsrecht
 
-Verbrauchern steht ein gesetzliches Widerrufsrecht zu. Einzelheiten ergeben sich aus unserer [Widerrufsbelehrung](/de/widerruf). Sie können Ihren Vertrag auch über die Schaltfläche „[Vertrag widerrufen](/de/vertrag-widerrufen)“ in unserem Shop online widerrufen.
+Verbrauchern steht ein gesetzliches Widerrufsrecht zu. Einzelheiten ergeben sich aus unserer [Widerrufsbelehrung](/widerruf/). Sie können Ihren Vertrag auch über die Schaltfläche „[Vertrag widerrufen](/vertrag-widerrufen/)“ in unserem Shop online widerrufen.
 
 ## § 7 Gewährleistung
 

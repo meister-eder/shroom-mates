@@ -3,12 +3,6 @@ export const prerender = false;
 
 import Layout from "@layouts/Layout.astro";
 import { CheckoutCompletePage } from "@modules/checkout/components/CheckoutCompletePage";
-
-const { countryCode } = Astro.params;
-
-if (!countryCode) {
-  return Astro.rewrite("/404");
-}
 ---
 
 <Layout
@@ -17,8 +11,5 @@ if (!countryCode) {
     noindex
     wide
 >
-    <CheckoutCompletePage
-        client:load
-        countryCode={countryCode}
-    />
+    <CheckoutCompletePage client:load />
 </Layout>

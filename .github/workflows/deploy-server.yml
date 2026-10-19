@@ -285,7 +285,7 @@ jobs:
             echo "✗ $1 not reachable"; return 1
           }
           check "https://api.$DOMAIN/health"
-          check "https://shop.$DOMAIN/de/store"
+          check "https://shop.$DOMAIN/shop/"
           check "https://shroom-mates.$DOMAIN"
 
       - name: Cleanup SSH key

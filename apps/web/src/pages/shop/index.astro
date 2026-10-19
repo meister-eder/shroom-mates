@@ -1,16 +1,11 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { getRegion } from "@lib/data/regions";
-import { getRegionParams } from "@lib/params/region-params";
 import { loadCatalog } from "@modules/store/catalog";
 import StoreCatalog from "@modules/store/components/StoreCatalog.astro";
 import { jsonLd } from "@shroom-mates/ui/json-ld";
 
-export const getStaticPaths = getRegionParams;
-
-const { countryCode } = Astro.params;
-
-const region = await getRegion(countryCode);
+const region = await getRegion();
 
 if (!region) {
   return Astro.rewrite("/404");
@@ -32,10 +27,7 @@ const itemList = {
   itemListElement: catalog.products.map((p, i) => ({
     "@type": "ListItem",
     position: i + 1,
-    url: new URL(
-      `/${countryCode}/store/${p.handle}`,
-      Astro.site ?? Astro.url.origin,
-    ).href,
+    url: new URL(`/shop/${p.handle}/`, Astro.site ?? Astro.url.origin).href,
   })),
 };
 ---
@@ -49,7 +41,7 @@ const itemList = {
   <script slot="head" type="application/ld+json" set:html={jsonLd(itemList)} />
   <StoreCatalog
     {...catalog}
-    basePath={`/${countryCode}/store`}
+    basePath="/shop/"
     activeCategory={activeCategory}
   />
 </Layout>

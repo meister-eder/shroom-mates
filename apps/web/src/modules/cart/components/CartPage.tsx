@@ -10,11 +10,7 @@ import { QtyStepper } from "@modules/common/components/QtyStepper";
 import { useStore } from "@nanostores/react";
 import { useState } from "react";
 
-interface CartPageProps {
-  countryCode: string;
-}
-
-export const CartPage = ({ countryCode }: CartPageProps) => {
+export const CartPage = () => {
   const cart = useStore($cart);
   const isCartLoading = useStore($isCartLoading);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -47,7 +43,7 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
           <MatesEyes size={180} alt="" className="shop-eyes" />
           <h1 className="shop-h1 shop-h1--sm">Hier wächst noch nichts.</h1>
           <p>Die Mates langweilen sich.</p>
-          <a href={`/${countryCode}/store`} className="btn btn--primary">
+          <a href="/shop/" className="btn btn--primary">
             Zum Sortiment
           </a>
         </div>
@@ -174,12 +170,12 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                 inkl. MwSt. · Versand wird im nächsten Schritt berechnet
               </p>
               <a
-                href={`/${countryCode}/checkout`}
+                href="/shop/checkout/"
                 className="btn btn--primary btn--block cartpage-checkout"
               >
                 Zur Kasse
               </a>
-              <a href={`/${countryCode}/store`} className="cartpage-continue">
+              <a href="/shop/" className="cartpage-continue">
                 Weiter stöbern
               </a>
               <p className="shop-meta">

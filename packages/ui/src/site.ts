@@ -52,25 +52,22 @@ export const ADDRESS = {
 } as const;
 
 /**
- * Link builders for one app. `shop("/store")` -> "/de/store" inside the shop,
- * "https://shop…/de/store" on the website; `website("/faq/")` is the reverse.
+ * Link builders for one app. `shop("/shop/")` -> "/shop/" inside the shop,
+ * "https://shop…/shop/" on the website; `website("/faq/")` is the reverse.
  */
-export function linkBuilders(app: AppId, countryCode = "de") {
+export function linkBuilders(app: AppId) {
   const website = (path = "/") => (app === "website" ? path : websiteUrl(path));
-  const shop = (path = "/") =>
-    app === "shop"
-      ? `/${countryCode}${path === "/" ? "" : path}`
-      : shopUrl(`/${countryCode}${path === "/" ? "" : path}`);
-  return { website, shop, home: app === "website" ? "/" : `/${countryCode}` };
+  const shop = (path = "/") => (app === "shop" ? path : shopUrl(path));
+  return { website, shop, home: app === "website" ? "/" : "/shop/" };
 }
 
 /** Main navigation in display order (Kontakt last). */
-export function mainNav(app: AppId, countryCode = "de"): NavItem[] {
-  const { website, shop } = linkBuilders(app, countryCode);
+export function mainNav(app: AppId): NavItem[] {
+  const { website, shop } = linkBuilders(app);
   const w = app !== "website";
   const s = app !== "shop";
   return [
-    { key: "shop", label: "Shop", href: shop("/store"), external: s },
+    { key: "shop", label: "Shop", href: shop("/shop/"), external: s },
     {
       key: "pilze",
       label: "Unsere Pilze",
@@ -119,31 +116,30 @@ export interface FooterColumn {
 /** Footer link columns. `legalExtended` adds AGB / Widerruf / Gewährleistung (default: shop only). */
 export function footerColumns(
   app: AppId,
-  countryCode = "de",
   legalExtended = app === "shop",
 ): FooterColumn[] {
-  const { website, shop } = linkBuilders(app, countryCode);
+  const { website, shop } = linkBuilders(app);
   const w = app !== "website";
   const s = app !== "shop";
   const legal: FooterColumn["links"] = [
     { label: "Impressum", href: website("/impressum/"), external: w },
     {
       label: "Datenschutz",
-      href: app === "shop" ? shop("/datenschutz") : "/datenschutz/",
+      href: app === "shop" ? shop("/datenschutz/") : "/datenschutz/",
     },
   ];
   if (legalExtended) {
     legal.push(
-      { label: "AGB", href: shop("/agb"), external: s },
-      { label: "Widerruf", href: shop("/widerruf"), external: s },
-      { label: "Gewährleistung", href: shop("/gewaehrleistung"), external: s },
+      { label: "AGB", href: shop("/agb/"), external: s },
+      { label: "Widerruf", href: shop("/widerruf/"), external: s },
+      { label: "Gewährleistung", href: shop("/gewaehrleistung/"), external: s },
     );
   }
   return [
     {
       title: "Seiten",
       links: [
-        { label: "Shop", href: shop("/store"), external: s },
+        { label: "Shop", href: shop("/shop/"), external: s },
         { label: "Unsere Pilze", href: website("/unsere-pilze/"), external: w },
         { label: "Growkits", href: website("/growkits/"), external: w },
         { label: "Tinkturen", href: website("/tinkturen/"), external: w },

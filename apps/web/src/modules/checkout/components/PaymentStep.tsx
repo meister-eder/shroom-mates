@@ -21,14 +21,13 @@ import {
 
 interface PaymentStepProps {
   cart: StoreCart;
-  countryCode: string;
   mode: "edit" | "inactive";
 }
 
 const ORDER_FAILED =
   "Bestellung konnte nicht aufgegeben werden. Bitte versuche es erneut.";
 
-export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
+export const PaymentStep = ({ cart, mode }: PaymentStepProps) => {
   const [paymentProviders, setPaymentProviders] = useState<
     StorePaymentProvider[]
   >([]);
@@ -80,28 +79,25 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
     fetchProviders();
   }, [mode, cart.region_id]);
 
-  const startSession = useCallback(
-    async (providerId: string) => {
-      setIsSaving(true);
-      setPaymentFailed(false);
-      setError("");
-      try {
-        await initPaymentSession(providerId, {
-          redirectUrl: `${window.location.origin}/${countryCode}/checkout/complete`,
-        });
-        return true;
-      } catch (err) {
-        console.error("Failed to initialize payment session:", err);
-        setError(
-          "Zahlungsmethode konnte nicht gesetzt werden. Bitte versuche es erneut.",
-        );
-        return false;
-      } finally {
-        setIsSaving(false);
-      }
-    },
-    [countryCode],
-  );
+  const startSession = useCallback(async (providerId: string) => {
+    setIsSaving(true);
+    setPaymentFailed(false);
+    setError("");
+    try {
+      await initPaymentSession(providerId, {
+        redirectUrl: `${window.location.origin}/shop/checkout/complete`,
+      });
+      return true;
+    } catch (err) {
+      console.error("Failed to initialize payment session:", err);
+      setError(
+        "Zahlungsmethode konnte nicht gesetzt werden. Bitte versuche es erneut.",
+      );
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  }, []);
 
   const handleProviderChange = async (providerId: string) => {
     if (isSaving) return;
@@ -129,7 +125,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
     try {
       const result = await placeOrder(cart.id, { pendingPaymentRetries });
       if (result.type === "order") {
-        goToOrderConfirmation(countryCode, result.order);
+        goToOrderConfirmation(result.order);
         return; // keep the "placing" state while navigating away
       }
       setError(
@@ -273,29 +269,32 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
       >
         {selectedProviderId && (
           <div className="review-grid">
-            <OrderReview cart={cart} countryCode={countryCode} />
+            <OrderReview cart={cart} />
 
             <p className="review-legal">
               Es gelten unsere{" "}
               <a
-                href={`/${countryCode}/agb`}
+                href="/agb/"
                 target="_blank"
+                rel="noopener"
                 className="shop-link"
               >
                 AGB
               </a>
               . Informationen zu deinem{" "}
               <a
-                href={`/${countryCode}/widerruf`}
+                href="/widerruf/"
                 target="_blank"
+                rel="noopener"
                 className="shop-link"
               >
                 Widerrufsrecht
               </a>{" "}
               und zum{" "}
               <a
-                href={`/${countryCode}/datenschutz`}
+                href="/datenschutz/"
                 target="_blank"
+                rel="noopener"
                 className="shop-link"
               >
                 Datenschutz
@@ -304,8 +303,9 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             </p>
 
             <a
-              href={`/${countryCode}/gewaehrleistung`}
+              href="/gewaehrleistung/"
               target="_blank"
+              rel="noopener"
               className="warranty-link"
               aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
             >

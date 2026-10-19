@@ -6,12 +6,11 @@ import { SHIPPING } from "@shroom-mates/ui/shop-facts";
 import CartButton from "./CartButton.astro";
 
 interface Props {
-  countryCode: string;
   regionId: string | null;
   active?: "shop" | "none";
 }
 
-const { countryCode, regionId, active = "shop" } = Astro.props;
+const { regionId, active = "shop" } = Astro.props;
 
 const info = [
   `Versand in ${SHIPPING.standard.time.replace("Werktage", "Werktagen")}`,
@@ -22,7 +21,6 @@ const info = [
 
 <SiteHeader
   app="shop"
-  countryCode={countryCode}
   active={active === "shop" ? "shop" : undefined}
   info={info}
   infoCompact={`Selbst gezüchtet in Leipzig ✦ Versand ab ${SHIPPING.standard.price}`}

@@ -1,28 +1,14 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import { listRegions } from "@lib/data/regions";
-import { getRegionParams } from "@lib/params/region-params";
+import { getRegion } from "@lib/data/regions";
 import { countryName } from "@lib/utils/address";
 import type { RegionCountry } from "@modules/checkout/components/AddressFields";
 import { CheckoutPage } from "@modules/checkout/components/CheckoutPage";
 
-export const getStaticPaths = getRegionParams;
-
-const { countryCode } = Astro.params;
-
-if (!countryCode) {
-  return Astro.rewrite("/404");
-}
-
 let countries: RegionCountry[] = [];
 
 try {
-  const regions = await listRegions();
-  const region = regions.find((r) =>
-    r.countries?.some(
-      (c) => c.iso_2?.toLowerCase() === countryCode.toLowerCase(),
-    ),
-  );
+  const region = await getRegion();
 
   if (region?.countries) {
     countries = region.countries
@@ -39,11 +25,16 @@ try {
 } catch (err) {
   console.error("Failed to fetch region countries for checkout:", err);
 }
+
+// Preselected shipping country: Germany if sold, otherwise the first country
+const defaultCountry = countries.some((c) => c.iso_2 === "de")
+  ? "de"
+  : (countries[0]?.iso_2 ?? "de");
 ---
 
 <Layout title="Kasse" description="Schließe deine Bestellung ab." noindex wide>
   <!-- Client-only: the checkout depends entirely on the browser's cart -->
-  <CheckoutPage client:only="react" countryCode={countryCode} countries={countries}>
+  <CheckoutPage client:only="react" defaultCountry={defaultCountry} countries={countries}>
     <p slot="fallback" class="checkout-loading">Kasse wird geladen…</p>
   </CheckoutPage>
 </Layout>

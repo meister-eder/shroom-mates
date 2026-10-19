@@ -7,7 +7,7 @@
  * full-screen overlay on ink with large Fraunces links.
  *
  * Usage (website):  <SiteHeader app="website" active="growkits" ticker={[...]} />
- * Usage (shop):     <SiteHeader app="shop" countryCode={cc} active="shop" info={[...]}>
+ * Usage (shop):     <SiteHeader app="shop" active="shop" info={[...]}>
  *                     <CartButton slot="cart" ... />
  *                   </SiteHeader>
  *
@@ -36,8 +36,6 @@ export interface NavLink {
 interface Props {
   /** Which app renders the header (default "website") */
   app?: AppId;
-  /** Shop only: country code for relative shop URLs (default "de") */
-  countryCode?: string;
   /** Current section; the pill gets aria-current="page" */
   active?: NavKey;
   /** Marquee line above the header (website) */
@@ -59,7 +57,6 @@ interface Props {
 
 const {
   app = "website",
-  countryCode = "de",
   active,
   ticker,
   info,
@@ -80,14 +77,14 @@ if (legacyLinks) {
     ...(shopHref ? [{ key: "shop", label: "Shop", href: shopHref }] : []),
   ];
 } else {
-  items = mainNav(app, countryCode);
+  items = mainNav(app);
   // Shop nav (ShopHeader mockup): no Growkits/Tinkturen; Kontakt only in the mobile menu
   if (app === "shop")
     items = items.filter((i) => i.key !== "growkits" && i.key !== "tinkturen");
 }
 const isShop = app === "shop";
 
-const home = homeHref ?? linkBuilders(app, countryCode).home;
+const home = homeHref ?? linkBuilders(app).home;
 const hasCart = Astro.slots.has("cart") || Astro.slots.has("end");
 // Without a cart, Kontakt is the orange call-to-action pill
 const kontaktAccent = !hasCart;

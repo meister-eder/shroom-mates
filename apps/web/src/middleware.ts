@@ -1,158 +1,59 @@
 import { defineMiddleware } from "astro:middleware";
-import type { HttpTypes } from "@medusajs/types";
-import { sdk } from "./lib/sdk";
 
-const MEDUSA_BACKEND_URL = import.meta.env.PUBLIC_MEDUSA_BACKEND_URL;
-const DEFAULT_REGION = import.meta.env.DEFAULT_REGION;
-
-const regionMapCache = {
-  regionMap: new Map<string, HttpTypes.StoreRegion>(),
-  regionMapUpdated: Date.now(),
-};
-
-function isStaticOrInternalPath(pathname: string) {
-  // Astro/Vite internal and image optimization routes
-  if (
-    pathname === "/_astro" ||
-    pathname.startsWith("/_astro/") ||
-    pathname === "/_image" ||
-    pathname.startsWith("/_image") ||
-    pathname.startsWith("/@") || // e.g. /@vite, /@id, /@fs (dev)
-    pathname.startsWith("/__") // e.g. /__vite_ping (dev)
-  ) {
-    return true;
-  }
-
-  // The 404 page (also the target of Astro.rewrite("/404")) has no country
-  if (pathname === "/404") {
-    return true;
-  }
-
-  // Common site root static files
-  if (
-    pathname === "/favicon.ico" ||
-    pathname === "/robots.txt" ||
-    pathname === "/sitemap.xml" ||
-    pathname === "/manifest.webmanifest"
-  ) {
-    return true;
-  }
-
-  // Any file with an extension (images, css, js, fonts, etc.)
-  const lastSegment = pathname.split("/").pop() ?? "";
-  return lastSegment.includes(".") && lastSegment !== ".well-known";
-}
+const LEGACY_PAGES = new Set([
+  "agb",
+  "widerruf",
+  "gewaehrleistung",
+  "vertrag-widerrufen",
+  "datenschutz",
+]);
 
 /**
- * Fetches regions from Medusa and caches them in a map.
- * @returns A map of country codes to regions.
+ * Maps an old `/de/...` URL (country prefix) to its new path, or undefined if
+ * the path is not a legacy URL. Query strings are appended by the caller.
  */
-async function getRegionMap() {
-  const { regionMap, regionMapUpdated } = regionMapCache;
+export function legacyTarget(pathname: string): string | undefined {
+  const parts = pathname.split("/").filter(Boolean);
+  if (parts[0] !== "de") return undefined;
+  const [, a, b, ...rest] = parts;
 
-  if (!MEDUSA_BACKEND_URL) {
-    throw new Error(
-      "src/middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a PUBLIC_MEDUSA_BACKEND_URL environment variable?",
-    );
+  if (!a) return "/shop/";
+  if (a === "store") {
+    if (!b) return "/shop/";
+    return rest.length ? undefined : `/shop/${b}/`;
   }
-
-  const isCacheValid =
-    regionMap.keys().next().value &&
-    regionMapUpdated > Date.now() - 3600 * 1000; // 1 hour
-
-  if (!isCacheValid) {
-    try {
-      const { regions } = await sdk.store.region.list();
-
-      if (!regions?.length) {
-        throw new Error(
-          "No regions found. Please set up regions in your Medusa Admin.",
-        );
-      }
-
-      regions.forEach((region: HttpTypes.StoreRegion) => {
-        region.countries?.forEach((country) => {
-          regionMapCache.regionMap.set(country.iso_2 ?? "", region);
-        });
-      });
-
-      regionMapCache.regionMapUpdated = Date.now();
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to fetch regions from Medusa.");
-    }
+  if (a === "cart" && !b) return "/shop/cart/";
+  if (a === "checkout") {
+    if (!b) return "/shop/checkout/";
+    return b === "complete" && !rest.length
+      ? "/shop/checkout/complete/"
+      : undefined;
   }
-
-  return regionMapCache.regionMap;
-}
-
-/**
- * Gets the country code from the URL pathname.
- * @param pathname
- * @returns The country code.
- */
-async function getCountryCode(pathname: string) {
-  let countryCode: string | undefined;
-
-  const urlCountryCode = pathname.split("/")[1]?.toLowerCase();
-
-  const regionMap = await getRegionMap();
-
-  if (urlCountryCode && regionMap.has(urlCountryCode)) {
-    countryCode = urlCountryCode;
-  } else if (regionMap.has(DEFAULT_REGION)) {
-    countryCode = DEFAULT_REGION;
-  } else if (regionMap.keys().next().value) {
-    countryCode = regionMap.keys().next().value;
-  }
-
-  return countryCode;
+  if (a === "order" && b && !rest.length) return `/shop/order/${b}/`;
+  if (LEGACY_PAGES.has(a) && !b) return `/${a}/`;
+  return undefined;
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Never redirect non-page requests (assets, dev internals, etc.)
-  if (isStaticOrInternalPath(context.url.pathname)) {
-    return next();
-  }
-
-  // Only redirect navigations; avoid changing semantics for form submits, etc.
   const method = context.request.method.toUpperCase();
   if (method !== "GET" && method !== "HEAD") {
     return next();
   }
 
-  const pathname = context.url.pathname;
-  const search = context.url.search;
+  const { pathname, search } = context.url;
 
-  let countryCode: string | undefined;
-  try {
-    countryCode = await getCountryCode(pathname);
-  } catch (err) {
-    // Region lookup failed (Medusa down, no regions, etc.) — continue without redirect
-    console.warn(
-      "Region lookup failed, continuing without country redirect:",
-      err,
-    );
+  // The old shop host served its catalog at "/" (via /de). Temporary until the
+  // marketing home page moves into this app.
+  if (pathname === "/") {
+    return context.redirect(`/shop/${search}`, 302);
   }
 
-  if (countryCode) {
-    const urlHasCountryCode =
-      pathname.split("/")[1] === countryCode ||
-      pathname.split("/")[1].includes(`${countryCode}/`);
-
-    if (!urlHasCountryCode) {
-      const redirectPath = pathname === "/" ? "" : pathname;
-      const queryString = search || "";
-      // Relative on purpose: behind the reverse proxy context.url.origin is
-      // the internal address (http://localhost:4321), not the public host.
-      return context.redirect(
-        `/${countryCode}${redirectPath}${queryString}`,
-        307,
-      );
-    }
+  const target = legacyTarget(pathname);
+  if (target) {
+    // Relative on purpose: behind the reverse proxy context.url.origin is the
+    // internal address, not the public host.
+    return context.redirect(`${target}${search}`, 301);
   }
 
-  const response = await next();
-  // Security headers are handled by Caddy in production
-  return response;
+  return next();
 });

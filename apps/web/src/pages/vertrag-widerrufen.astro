@@ -1,9 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { WithdrawalForm } from "@modules/withdrawal/components/WithdrawalForm";
-
-const { countryCode } = Astro.params;
-if (!countryCode) return Astro.rewrite("/404");
 ---
 
 <Layout title="Vertrag widerrufen" description="Widerrufe deine Bestellung online." noindex>
@@ -13,7 +10,7 @@ if (!countryCode) return Astro.rewrite("/404");
       Hier kannst du deinen Kaufvertrag innerhalb der Widerrufsfrist online widerrufen.
       Eine Begründung ist nicht nötig. Nach dem Absenden bekommst du sofort eine
       Eingangsbestätigung per E-Mail. Details zu Fristen und Rücksendung findest du
-      in der <a href={`/${countryCode}/widerruf`}>Widerrufsbelehrung</a>.
+      in der <a href="/widerruf/">Widerrufsbelehrung</a>.
     </p>
     <WithdrawalForm client:load />
   </section>

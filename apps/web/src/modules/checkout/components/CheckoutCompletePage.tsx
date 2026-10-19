@@ -3,10 +3,6 @@ import { getCheckoutCartId, placeOrder } from "@lib/stores/cart";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { type ReactNode, useEffect, useState } from "react";
 
-interface CheckoutCompletePageProps {
-  countryCode: string;
-}
-
 type State =
   | { kind: "completing" }
   | { kind: "pending" }
@@ -18,9 +14,7 @@ type State =
  * methods). Completes the cart the payment was started for; Medusa returns the
  * existing order if the payment webhook already completed it.
  */
-export const CheckoutCompletePage = ({
-  countryCode,
-}: CheckoutCompletePageProps) => {
+export const CheckoutCompletePage = () => {
   const [state, setState] = useState<State>({ kind: "completing" });
   const [attempt, setAttempt] = useState(0);
 
@@ -40,7 +34,7 @@ export const CheckoutCompletePage = ({
       .then((result) => {
         if (cancelled) return;
         if (result.type === "order") {
-          goToOrderConfirmation(countryCode, result.order);
+          goToOrderConfirmation(result.order);
         } else if (result.type === "pending") {
           setState({ kind: "pending" });
         } else {
@@ -66,7 +60,7 @@ export const CheckoutCompletePage = ({
     return () => {
       cancelled = true;
     };
-  }, [attempt, countryCode]);
+  }, [attempt]);
 
   if (state.kind === "completing") {
     return (
@@ -103,7 +97,7 @@ export const CheckoutCompletePage = ({
           Falls deine Zahlung erfolgreich war, erhältst du eine Bestätigung per
           E-Mail.
         </p>
-        <a href={`/${countryCode}/store`} className="btn btn--primary">
+        <a href="/shop/" className="btn btn--primary">
           Weiter einkaufen
         </a>
       </Shell>
@@ -113,10 +107,7 @@ export const CheckoutCompletePage = ({
   return (
     <Shell title="Zahlung konnte nicht verarbeitet werden">
       <p className="shop-notice-text">{state.message}</p>
-      <a
-        href={`/${countryCode}/checkout?step=payment`}
-        className="btn btn--primary"
-      >
+      <a href="/shop/checkout/?step=payment" className="btn btn--primary">
         Zurück zur Kasse
       </a>
     </Shell>

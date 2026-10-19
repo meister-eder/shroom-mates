@@ -71,7 +71,7 @@ const growkits = growkitsCollection
 		intro: entry.data.intro,
 		tips: entry.data.tips,
 		use: entry.data.usage,
-		shopHref: shop(`/store/${entry.data.shopHandle}`),
+		shopHref: shop(`/shop/${entry.data.shopHandle}/`),
 		slug: entry.id,
 	}))
 	.sort((a, b) => a.order - b.order);
@@ -244,7 +244,7 @@ const growkits = growkitsCollection
         <h2 class="pickup__title">{ctaTitle}</h2>
         <p>{ctaText}</p>
         <div class="pickup__actions">
-          <a class="btn btn--primary pickup__btn" href={shop("/store")}>{ctaShopButton} <Icon name="arrow-right" size={20} /></a>
+          <a class="btn btn--primary pickup__btn" href={shop("/shop/")}>{ctaShopButton} <Icon name="arrow-right" size={20} /></a>
           {ctaButtonText && ctaButtonLink && (
             <a class="btn btn--outline pickup__btn" href={ctaButtonLink}>{ctaButtonText}</a>
           )}

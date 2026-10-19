@@ -1,17 +1,11 @@
 ---
 // Shared footer in shop mode (legal links incl. AGB / Widerruf / Gewährleistung)
 import SharedFooter from "@shroom-mates/ui/Footer.astro";
-
-interface Props {
-  countryCode: string;
-}
-
-const { countryCode } = Astro.props;
 ---
 
-<SharedFooter app="shop" countryCode={countryCode}>
+<SharedFooter app="shop">
   <!-- § 356a BGB: withdrawal function, prominently placed on every page -->
-  <a slot="actions" href={`/${countryCode}/vertrag-widerrufen`}>
+  <a slot="actions" href="/vertrag-widerrufen/">
     Vertrag widerrufen
   </a>
 </SharedFooter>

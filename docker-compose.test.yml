@@ -67,7 +67,7 @@ services:
       # Derived from DOMAIN so they can't drift from the real hosts (the
       # web's per-country redirect_url must be on the shop host).
       SUMUP_MEDUSA_URL: https://api.${DOMAIN}
-      SUMUP_REDIRECT_URL: https://shop.${DOMAIN}/de/checkout/complete
+      SUMUP_REDIRECT_URL: https://shop.${DOMAIN}/shop/checkout/complete
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
       # Transactional email via Resend (mails are only logged without a key)
       RESEND_API_KEY: ${RESEND_API_KEY:-}

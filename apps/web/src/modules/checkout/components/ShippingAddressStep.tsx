@@ -136,7 +136,7 @@ function mapAddress(
 interface ShippingAddressStepProps {
   cart: StoreCart | null;
   countries: RegionCountry[];
-  countryCode: string;
+  defaultCountry: string;
   mode: "edit" | "read";
   onContinue?: () => void;
   onEdit?: () => void;
@@ -173,7 +173,7 @@ const ReadOnlyView = ({
 export const ShippingAddressStep = ({
   cart,
   countries,
-  countryCode,
+  defaultCountry,
   mode,
   onContinue,
   onEdit,
@@ -193,7 +193,7 @@ export const ShippingAddressStep = ({
       email: "",
       phone: "",
       billingSameAsShipping: true,
-      shipping: { ...EMPTY_ADDRESS, country: countryCode },
+      shipping: { ...EMPTY_ADDRESS, country: defaultCountry },
       billing: { ...EMPTY_ADDRESS },
     },
   });

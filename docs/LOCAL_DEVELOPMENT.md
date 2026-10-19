@@ -92,7 +92,7 @@ Add these to `backend/.env`:
 ```env
 SUMUP_API_KEY=sup_sk_your_sandbox_key_here
 SUMUP_MERCHANT_CODE=MXXXXXX
-SUMUP_REDIRECT_URL=http://localhost:8000/de/checkout/complete
+SUMUP_REDIRECT_URL=http://localhost:8000/shop/checkout/complete
 ```
 
 Restart the backend after changing `.env`.

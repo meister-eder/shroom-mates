@@ -1,12 +1,6 @@
 ---
 import Icon from "@shroom-mates/ui/Icon.astro";
 import { SHIPPING } from "@shroom-mates/ui/shop-facts";
-
-interface Props {
-  countryCode: string;
-}
-
-const { countryCode } = Astro.props;
 ---
 
 <dialog class="cart-drawer" aria-label="Pilzkorb" data-cart-drawer>
@@ -27,7 +21,7 @@ const { countryCode } = Astro.props;
     <span class="cart-empty__mascot" data-mascot="180"></span>
     <p class="cart-empty__title">Hier wächst noch nichts.</p>
     <p class="cart-empty__text">Die Mates langweilen sich.</p>
-    <a href={`/${countryCode}/store`} class="btn btn--primary" data-cart-close>
+    <a href="/shop/" class="btn btn--primary" data-cart-close>
       Zum Sortiment
     </a>
   </div>
@@ -43,13 +37,13 @@ const { countryCode } = Astro.props;
       inkl. MwSt. · Versand ab {SHIPPING.standard.price} im nächsten Schritt
     </p>
     <a
-      href={`/${countryCode}/checkout`}
+      href="/shop/checkout/"
       class="btn btn--primary btn--block btn--lg"
       data-cart-close
     >
       Zur Kasse
     </a>
-    <a href={`/${countryCode}/store`} class="cart-drawer__more" data-cart-close>
+    <a href="/shop/" class="cart-drawer__more" data-cart-close>
       Weiter stöbern
     </a>
   </div>

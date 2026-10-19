@@ -189,7 +189,7 @@ test.describe("Checkout — Additional Robustness", () => {
   test("navigate to non-existent page returns 404 or redirects", async ({
     page,
   }) => {
-    const resp = await page.goto("http://localhost:8000/de/nonexistent-page");
+    const resp = await page.goto("http://localhost:8000/shop/nonexistent-page");
     // Should either 404 or redirect
     expect(
       resp?.status() === 404 ||
@@ -227,7 +227,7 @@ test.describe("Checkout — Additional Robustness", () => {
   });
 
   test("legal pages load correctly", async ({ page }) => {
-    const legalPages = ["/de/agb", "/de/datenschutz", "/de/widerruf"];
+    const legalPages = ["/agb/", "/datenschutz/", "/widerruf/"];
 
     for (const path of legalPages) {
       await page.goto(path);

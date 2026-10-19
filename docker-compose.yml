@@ -86,7 +86,7 @@ services:
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
       SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-https://api.shroom-mates.de}
-      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-https://shop.shroom-mates.de/de/checkout/complete}
+      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-https://shop.shroom-mates.de/shop/checkout/complete}
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
       # Transactional email via Resend (mails are only logged without a key)
       RESEND_API_KEY: ${RESEND_API_KEY:-}

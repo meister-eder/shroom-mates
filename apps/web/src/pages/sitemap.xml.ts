@@ -1,5 +1,5 @@
 import { listProducts } from "@lib/data/products";
-import { listRegions } from "@lib/data/regions";
+import { getRegion } from "@lib/data/regions";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
@@ -11,21 +11,14 @@ export const GET: APIRoute = async ({ site, url }) => {
   const origin = site ?? url.origin;
   const abs = (path: string) => new URL(path, origin).href;
 
-  const regions = await listRegions();
-  const region =
-    regions.find((r) => r.countries?.some((c) => c.iso_2 === "de")) ??
-    regions[0];
+  const region = await getRegion();
   if (!region) return new Response("No region", { status: 503 });
-  const cc =
-    region.countries?.find((c) => c.iso_2 === "de")?.iso_2 ??
-    region.countries?.[0]?.iso_2 ??
-    "de";
 
   const products = await listProducts(region.id);
   const entries: { loc: string; lastmod?: string }[] = [
-    { loc: abs(`/${cc}/store/`) },
+    { loc: abs("/shop/") },
     ...products.map((p) => ({
-      loc: abs(`/${cc}/store/${p.handle}/`),
+      loc: abs(`/shop/${p.handle}/`),
       lastmod: p.updated_at ? new Date(p.updated_at).toISOString() : undefined,
     })),
   ];
