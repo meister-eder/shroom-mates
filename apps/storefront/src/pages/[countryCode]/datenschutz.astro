@@ -4,7 +4,7 @@ import LegalPage from "@shroom-mates/ui/LegalPage.astro";
 import { Content } from "@shroom-mates/ui/legal/datenschutz-shop.md";
 
 const { countryCode } = Astro.params;
-if (!countryCode) return Astro.redirect("/not-found");
+if (!countryCode) return Astro.rewrite("/404");
 ---
 
 <Layout title="Datenschutzerklärung" description="Datenschutzerklärung für den Online-Shop von shroom-mates">

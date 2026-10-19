@@ -3,7 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import { WithdrawalForm } from "@modules/withdrawal/components/WithdrawalForm";
 
 const { countryCode } = Astro.params;
-if (!countryCode) return Astro.redirect("/not-found");
+if (!countryCode) return Astro.rewrite("/404");
 ---
 
 <Layout title="Vertrag widerrufen" description="Widerrufe deine Bestellung online.">

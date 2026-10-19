@@ -47,7 +47,7 @@ const canonicalUrl = new URL(
 const { countryCode } = Astro.params;
 
 if (!countryCode) {
-  return Astro.redirect("/not-found");
+  return Astro.rewrite("/404");
 }
 
 const region = await getRegion(countryCode);

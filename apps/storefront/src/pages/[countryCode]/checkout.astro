@@ -11,7 +11,7 @@ export const getStaticPaths = getRegionParams;
 const { countryCode } = Astro.params;
 
 if (!countryCode) {
-  return Astro.redirect("/not-found");
+  return Astro.rewrite("/404");
 }
 
 let countries: RegionCountry[] = [];

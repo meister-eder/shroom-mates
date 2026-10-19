@@ -63,7 +63,7 @@ from any of it.
   - Images in `apps/website/src/assets/images/`: `1000017806.jpg`, `1000018331.jpg`, `black pearl.jpg`, `black_pearl.jpg`, `pioppino-1.jpg`, `pioppino2.jpg`, `rosenseitling_seite.jpg`, `shroom-mates-drawing.png`, `white_pearl.jpg`, `white_pearl_rotate.mov`.
   Commit: `chore(repo): remove dead components, helpers and unused images`
 
-- [ ] **P1.4 Real 404s and friendly errors in the shop** · deps: — · verify: quick
+- [x] **P1.4 Real 404s and friendly errors in the shop** · deps: — · verify: quick · f339c6a
   `Astro.redirect("/not-found")` in `apps/storefront/src/layouts/Layout.astro` and `pages/[countryCode]/store/[handle].astro` targets a route that doesn't exist: use `return Astro.rewrite("/404")`. On the product page, replace `{error.message}` in the error banner with German copy ("Das Produkt konnte gerade nicht geladen werden. Bitte versuch es gleich noch einmal.") and keep logging the error server-side. Same pattern anywhere else a raw `error.message` reaches the page (grep `error.message` in `src/pages` and `.astro` files; React checkout components are out of scope).
   Commit: `fix(shop): proper 404s, no raw error messages`
 
@@ -235,3 +235,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:26 P1.1 DONE 4d81baa — html font-size 106.25%; visual unchanged
 2026-10-19 23:27 P1.2 DONE ab82bed — dead meta/schemas removed, jsonLd helper, og size tags dropped
 2026-10-19 23:28 P1.3 DONE 872e2de — dead components, helpers, 10 images removed
+2026-10-19 23:29 P1.4 DONE f339c6a — rewrite to /404 (verified 404 status), German error copy

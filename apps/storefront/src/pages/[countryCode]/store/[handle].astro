@@ -14,13 +14,13 @@ import ProductAttributes from "@modules/products/components/product-details/Prod
 const { countryCode, handle } = Astro.params;
 
 if (!countryCode || !handle) {
-  return Astro.redirect("/not-found");
+  return Astro.rewrite("/404");
 }
 
 const region = await getRegion(countryCode);
 
 if (!region) {
-  return Astro.redirect("/not-found");
+  return Astro.rewrite("/404");
 }
 
 let product: Awaited<ReturnType<typeof retrieveProduct>> | undefined;
@@ -126,7 +126,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
   image={images?.[0]?.url}
   type="product"
 >
-  {error && <p class="error-banner" role="alert">{error.message}</p>}
+  {error && <p class="error-banner" role="alert">Das Produkt konnte gerade nicht geladen werden. Bitte versuch es gleich noch einmal.</p>}
   {
     product && (
       <>

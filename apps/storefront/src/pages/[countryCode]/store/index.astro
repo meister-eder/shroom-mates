@@ -12,7 +12,7 @@ const { countryCode } = Astro.params;
 const region = await getRegion(countryCode);
 
 if (!region) {
-  return Astro.redirect("/not-found");
+  return Astro.rewrite("/404");
 }
 
 const catalog = await loadCatalog(region.id);
