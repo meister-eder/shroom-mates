@@ -38,6 +38,7 @@ from any of it.
 - P3.5: enter metadata erste_ernte + temperatur for live growkit products in Medusa Admin (line hidden until then). Seed: austernseitlinge-growkit got White-Pearl values (no Rosenseitling seed product).
 - P4.1: storefront site falls back to localhost:4321 unless PUBLIC_SITE_URL is set (only docker-compose.test.yml sets it) — canonical/JSON-LD URLs; P7.3 hardcodes site, check afterwards.
 - P5.1: view-transition fade now 0.3s for both apps (website had 0.6s). Unused cleanup return in hamburger.ts setupHamburgerMenu.
+- P5.2: scroll-padding-top 5rem (85px) < mobile header height (~103px): anchor sections' top padding slightly under the header (headings visible). Header line-heights set to whole px (.ticker 21/17px, .header-info 21px). Unused --spacing-navbar* in theme.css (goes with P5.8d).
 
 ---
 
@@ -121,11 +122,11 @@ from any of it.
 
 ## P5 Front-end diet (performance, maintainability)
 
-- [x] **P5.1 CSS view transitions instead of ClientRouter** · deps: P1.3 · verify: visual · 42412ca
+- [x] **P5.1 CSS view transitions instead of ClientRouter** · deps: P1.3 · verify: visual · f91aed9
   Remove `<ClientRouter />` from both layouts and use `@view-transition { navigation: auto; }` in `packages/ui/src/base.css` (inside `prefers-reduced-motion: no-preference`). Delete the fallback-transition script and its CSS in `apps/website/src/layouts/Layout.astro`. Simplify every script that listens to `astro:page-load`/`astro:after-swap`/`DOMContentLoaded` (grep all apps + packages/ui) to plain module code that runs once (module scripts run after parse). The cart state no longer survives navigations in memory: make `initCart()` render the header count instantly from a `sessionStorage` snapshot (`cart_snapshot`: `{ id, count }`) and then refresh from the API. Check the React islands still hydrate on every page and the toast/fly-to-cart still work (start the mock + built storefront and click through with Playwright or curl as appropriate).
   Commit: `perf(ui): native view transitions, drop ClientRouter`
 
-- [ ] **P5.2 Sticky header without JS-measured offsets** · deps: P5.1 · verify: visual
+- [x] **P5.2 Sticky header without JS-measured offsets** · deps: P5.1 · verify: visual · a0d5b07
   `LayoutScripts.astro` measures the fixed header with a ResizeObserver and writes `--navbar-height`; pages pad themselves with it. Switch the header to `position: sticky; top: 0` and remove the padding/margin offsets that only compensate for the fixed header (`.with-nav-spacing`, page-level `padding-top: var(--navbar-height)`, etc.). `html`/`body` `overflow-x: hidden` breaks sticky: use `overflow-x: clip`. Keep the `scrolled` class (shrinking header) but it must not shift content (header height change must not move the page; if it would, keep a fixed-height wrapper). Remove the height-sync code and the now-unused `--navbar-height*` variables. Full-page screenshots must stay identical; also check the mobile menu (hamburger) still overlays correctly and anchors (`#kits`, `#anleitung`) aren't hidden under the header (`scroll-margin-top`).
   Commit: `refactor(ui): sticky header, no measured offsets`
 
@@ -279,4 +280,5 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:57 P3.5 DONE 579e1ba — growkit line from metadata, GROW_STEPS in shop-facts; includes user's P7.7 Umami plan edit
 2026-10-19 23:59 P4.1 DONE 06ca9d6 — Product/Breadcrumb/ItemList JSON-LD, Cache-Control, 5-min product cache
 2026-10-20 00:00 P4.2 DONE 7a608e4 — SSR sitemap.xml + robots.txt (verified against mock), noindex widerrufen
-2026-10-20 00:12 P5.1 DONE 42412ca — native view transitions; cart count survives nav (orchestrator Playwright check)
+2026-10-20 00:12 P5.1 DONE f91aed9 — native view transitions; cart count survives nav (orchestrator Playwright check)
+2026-10-20 00:23 P5.2 DONE a0d5b07 — sticky header; menu + anchors checked by orchestrator (Playwright)

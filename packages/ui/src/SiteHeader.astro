@@ -200,10 +200,8 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
 
 <style>
   .site-header {
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
-    width: 100%;
     z-index: 1000;
     background: var(--color-bg);
   }
@@ -223,6 +221,10 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
     font-size: 0.8125rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .header-info:not(.header-info--compact) {
+    line-height: 21px; /* whole px keeps the sticky header height integral */
   }
 
   .header-info--compact {

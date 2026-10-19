@@ -59,11 +59,9 @@
   --border-subtle: #b9bbe6;
   --focus-color: var(--color-ink);
 
-  /* Layout (navbar heights are synced to the real header by LayoutScripts) */
+  /* Layout */
   --section-gap: var(--section-y);
   --content-max-width: var(--container);
-  --navbar-height: 7.5rem;
-  --navbar-height-mobile: 4.5rem;
   --scrollbar-width: 0px;
   --duration: 0.2s;
 }
@@ -84,7 +82,8 @@ html {
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  scroll-padding-top: 8rem; /* sticky header */
+  overflow-x: clip; /* hidden would break position: sticky */
   font-family: var(--font-body);
   font-size: 106.25%;
   line-height: 1.55;
@@ -97,7 +96,7 @@ body {
   min-height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
   font-family: var(--font-body);
   background: var(--color-bg);
   color: var(--color-ink);
@@ -250,18 +249,22 @@ a {
   padding: 1rem;
 }
 
-/* Content pushed below the fixed header */
+/* Content column (the header is sticky, no offset needed) */
 .site-main.with-nav-spacing {
   max-width: var(--content-max-width);
   margin: 0 auto;
-  margin-top: var(--navbar-height);
   padding-top: 1.5rem;
 }
 
 @media (max-width: 768px) {
   .site-main.with-nav-spacing {
-    margin-top: var(--navbar-height-mobile);
     padding-top: 1rem;
+  }
+}
+
+@media (max-width: 1240px) {
+  html {
+    scroll-padding-top: 5rem;
   }
 }
 

@@ -488,6 +488,7 @@
   color: var(--color-cream, #fffdf5);
   font-family: var(--font-mono, "DM Mono", monospace);
   font-size: 0.8125rem;
+  line-height: 21px; /* whole px keeps the sticky header height integral */
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -516,6 +517,7 @@
 @media (max-width: 768px) {
   .ticker {
     font-size: 11px;
+    line-height: 17px;
   }
 
   .ticker__track {

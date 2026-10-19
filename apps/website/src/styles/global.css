@@ -2,11 +2,6 @@
    Tokens, Typografie, Buttons, Sektionen, Karten und Reveal-Klassen kommen aus
    @shroom-mates/ui (base.css / utilities.css). */
 
-:root {
-	--navbar-height-scrolled: 5.5rem;
-	--navbar-height-mobile-scrolled: 3.5rem;
-}
-
 /* ===== Hilfsklassen für Unterseiten ===== */
 
 /* Zentrierter Container innerhalb einer .section */

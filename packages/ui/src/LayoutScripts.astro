@@ -2,7 +2,6 @@
 /**
  * Page-chrome behaviour shared by both apps:
  *  - --scrollbar-width for full-bleed layouts
- *  - --navbar-height / --navbar-height-mobile synced to the fixed header
  *  - `scrolled` class on the header (shrinking navbar). Set
  *    data-shrink="desktop" on the <header> to disable it on mobile.
  *
@@ -19,14 +18,6 @@
   function setScrollbarWidth() {
     const width = window.innerWidth - document.documentElement.clientWidth;
     document.documentElement.style.setProperty("--scrollbar-width", `${width}px`);
-  }
-
-  function syncNavbarHeight() {
-    const header = getHeader();
-    if (!header) return;
-    const h = `${header.offsetHeight}px`;
-    document.documentElement.style.setProperty("--navbar-height", h);
-    document.documentElement.style.setProperty("--navbar-height-mobile", h);
   }
 
   function updateScrolled() {
@@ -47,9 +38,6 @@
     });
   }
 
-  // ResizeObserver fires after layout, including header CSS transitions.
-  const headerObserver = new ResizeObserver(syncNavbarHeight);
-
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener(
     "resize",
@@ -60,8 +48,6 @@
     { passive: true },
   );
 
-  const header = getHeader();
-  if (header) headerObserver.observe(header);
   setScrollbarWidth();
   updateScrolled();
 </script>
