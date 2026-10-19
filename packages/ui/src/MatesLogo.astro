@@ -162,6 +162,8 @@ const r = (n: number) => Math.round(n * 100) / 100;
 </style>
 
 <script>
+	import { gazePoint, onGaze, type Gaze } from "./scripts/gaze";
+
 	type Eye = {
 		pupil: SVGGElement;
 		cx: number;
@@ -179,7 +181,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
 
 	const instances = new Set<Instance>();
 	const reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
-	let pointer: { x: number; y: number } | null = null;
+	let gaze: Gaze = null;
 	let raf = 0;
 	let listening = false;
 
@@ -200,6 +202,13 @@ const r = (n: number) => Math.round(n * 100) / 100;
 			const rect = inst.svg.getBoundingClientRect();
 			if (rect.width === 0) continue;
 			const k = rect.width / 1024;
+			// mouse/tap point, or tilt/scroll direction as a point beside the logo
+			const pointer = gazePoint(
+				gaze,
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
+				Math.max(200, rect.width * 2),
+			);
 			for (const eye of inst.eyes) {
 				let target = eye.theta0;
 				if (pointer && !reduceMq.matches) {
@@ -231,33 +240,14 @@ const r = (n: number) => Math.round(n * 100) / 100;
 		if (moving) schedule();
 	}
 
-	function onPointerMove(e: PointerEvent) {
-		if (e.pointerType === "touch") {
-			if (pointer) {
-				pointer = null;
-				schedule();
-			}
-			return;
-		}
-		pointer = { x: e.clientX, y: e.clientY };
-		schedule();
-	}
-
-	function onPointerGone() {
-		pointer = null;
-		schedule();
-	}
-
-	function onMouseOut(e: MouseEvent) {
-		if (!e.relatedTarget) onPointerGone();
-	}
-
+	// Mouse, tap, tilt or scroll (see scripts/gaze.ts); null = resting gaze
 	function listen() {
 		if (listening) return;
 		listening = true;
-		window.addEventListener("pointermove", onPointerMove, { passive: true });
-		document.documentElement.addEventListener("mouseout", onMouseOut);
-		window.addEventListener("blur", onPointerGone);
+		onGaze((g) => {
+			gaze = g;
+			schedule();
+		});
 	}
 
 	function blink(inst: Instance, mascot: Element, i: number) {

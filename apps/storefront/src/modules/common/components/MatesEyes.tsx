@@ -1,7 +1,10 @@
+import { gazePoint, onGaze } from "@shroom-mates/ui/gaze";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Maskottchen mit Augen, die dem Mauszeiger folgen (und ab und zu blinzeln).
+ * Maskottchen mit Augen, die dem Mauszeiger folgen (und ab und zu blinzeln);
+ * auf dem Handy schauen sie auf den letzten Tipp, folgen der Neigung oder dem
+ * Scrollen (siehe @shroom-mates/ui/gaze).
  * Das Bild liegt als /mascot.webp vor, die vier Augen sind eine SVG-Ebene im
  * 1200er-Raster darüber (Geometrie aus dem Design-Mockup). Ohne Zeiger oder bei
  * prefers-reduced-motion: Ruheblick (leicht nach unten), kein Blinzeln.
@@ -28,27 +31,25 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
   useEffect(() => {
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let frame = 0;
-    const onMove = (e: PointerEvent) => {
-      if (frame) return;
+    const unsubscribe = onGaze((gaze) => {
+      if (frame) cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         frame = 0;
         const r = box.current?.getBoundingClientRect();
         if (!r) return;
+        const p = gazePoint(gaze, r.left + r.width / 2, r.top + r.height / 2, Math.max(200, r.width));
+        if (!p) return setLook({ x: 600, y: 900 });
         const k = 1200 / r.width;
-        setLook({ x: (e.clientX - r.left) * k, y: (e.clientY - r.top) * k });
+        setLook({ x: (p.x - r.left) * k, y: (p.y - r.top) * k });
       });
-    };
-    const onLeave = () => setLook({ x: 600, y: 900 });
-    addEventListener("pointermove", onMove, { passive: true });
-    document.documentElement.addEventListener("pointerleave", onLeave);
+    });
     let t: number;
     const iv = window.setInterval(() => {
       setBlink(true);
       t = window.setTimeout(() => setBlink(false), 140);
     }, 3800);
     return () => {
-      removeEventListener("pointermove", onMove);
-      document.documentElement.removeEventListener("pointerleave", onLeave);
+      unsubscribe();
       if (frame) cancelAnimationFrame(frame);
       clearInterval(iv);
       clearTimeout(t);
