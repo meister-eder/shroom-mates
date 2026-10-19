@@ -41,6 +41,7 @@ from any of it.
 - P5.2: scroll-padding-top 5rem (85px) < mobile header height (~103px): anchor sections' top padding slightly under the header (headings visible). Header line-heights set to whole px (.ticker 21/17px, .header-info 21px). Unused --spacing-navbar* in theme.css (goes with P5.8d).
 - P5.3: browser store-api client untested against the real backend with publishable key (x-publishable-api-key) and credentials: include — test a full checkout on staging. Client JS after P5.3: React 58.3 KB, CheckoutPage 35.0 KB, total ≈111.7 KB gzip.
 - P5.5: drawer screenshots old vs new in session scratchpad (p55/); mobile filled-state drawer not compared, check by eye on staging. Drawer thumbnails now load on open (data-src).
+- P5.6: decide on branch failed/P5.6 (4c7fa5c): scroll-snap carousel works; only [mobile] shop-produkt-growkit differs (old React gallery loaded 1049w candidate after fullPage resize; new one keeps correct 524w). If OK: cherry-pick + rebaseline that one key. Note: it sets loading=eager on all gallery images.
 
 ---
 
@@ -144,7 +145,7 @@ from any of it.
   Rewrite `CartSidebar.tsx` as an Astro component using a native `<dialog>` (modal, `showModal()`, Escape closes, focus returns to the cart button, inert background handled by the browser), rendering line items from the cart store via a `<template>`. Same look, German copy, quantity stepper and remove buttons with accessible names. After this, React must only load on routes that still need it (checkout, cart page, order, withdrawal form, product options if still React); check with the built bundle that catalog pages no longer load `client.*.js`. Smoke + visual must pass (drawer open state isn't in the baseline: compare it by eye against a screenshot of the old drawer, which you take first and attach the path to in your report).
   Commit: `perf(shop): cart drawer as native dialog`
 
-- [ ] **P5.6 Product image carousel with CSS scroll-snap** · deps: P5.1 · verify: visual
+- [!] **P5.6 Product image carousel with CSS scroll-snap** · deps: P5.1 · verify: visual
   Replace `ImageCarousel.tsx` with an Astro component: horizontal scroll-snap list of `<Image>`s, thumbnail buttons as anchors/buttons that scroll to the image (tiny module script), current-image indicator via IntersectionObserver, keyboard-operable, `aria-label`s in German. No React. Visual must pass.
   Commit: `perf(shop): image carousel without JS framework`
 
@@ -287,3 +288,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 00:29 P5.3 DONE cea6617 — smoke test + thin store-api client; SDK out of client bundle
 2026-10-20 00:33 P5.4 DONE 2099ced — vanilla CartButton/Toast/QuickAdd; quick-add+toast+fly checked by orchestrator
 2026-10-20 00:47 P5.5 DONE cd34640 — native dialog drawer, lazy thumbnails fixed after 1 retry; catalog without React
+2026-10-20 00:57 P5.6 BLOCKED — mobile shop-produkt-growkit baseline diff (harness srcset quirk), re-baseline not allowed; parked on failed/P5.6
