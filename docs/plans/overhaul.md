@@ -90,7 +90,7 @@ from any of it.
   Shipping prices/durations appear hardcoded in `modules/layout/components/Header.astro`, `CartSidebar.tsx`, `modules/store/components/StoreCatalog.astro`, `pages/[countryCode]/store/[handle].astro` (twice). Create `packages/ui/src/shop-facts.ts` (exported as `@shroom-mates/ui/shop-facts`) with `SHIPPING = { standard: { price: "4,95 €", time: "3–5 Werktage" }, express: { price: "9,95 €", time: "1–2 Werktage" }, region: "innerhalb Deutschlands" }` and use it everywhere; rendered text must stay byte-identical. Leave `packages/ui/src/legal/agb.md` as is but add a follow-up note that it must be updated by hand when prices change.
   Commit: `refactor(shop): shipping facts from one module`
 
-- [ ] **P3.2 Growkit data as CMS fields, no Markdown parsing** · deps: P1.2 · verify: visual
+- [x] **P3.2 Growkit data as CMS fields, no Markdown parsing** · deps: P1.2 · verify: visual · 9f6600b
   `apps/website/src/pages/growkits.astro` hardcodes `kitMeta` (tone, shop handle, level, temp, pins, sort) and regex-parses each growkit's Markdown body ("Spezielle Tipps", "Verwendung", intro). Move all of it into frontmatter of `src/content/growkits/*.md`: `order` (existing), `tone` (`pink|lavender|olive-soft`), `shopHandle`, `level`, `temperature`, `firstPins`, `intro`, `tips: string[]`, `usage` (string, may contain the same inline HTML as today). Copy texts verbatim from the current bodies; bodies become empty or are removed. Update the zod schema in `src/content.config.ts` and the Sveltia config `public/admin/config.yml` (list widgets for `tips`, select for `tone`). Delete `kitMeta`, `inlineMd`, `paragraphs` and the section parsing. Keep `set:html` only where the CMS field is documented as HTML. Rendered page must be visually identical.
   Commit: `refactor(website): growkit data as CMS fields`
 
@@ -253,3 +253,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:41 P2.2 DONE 2e4a8c1 — CI lints/builds all, backend unit tests, bun 1.3.10; YAML parses
 2026-10-19 23:43 P2.3 DONE 2516bd7 — guard extracted, 8 unit tests green
 2026-10-19 23:45 P3.1 DONE c373202 — SHIPPING in @shroom-mates/ui/shop-facts, 4 call sites; visual PASS
+2026-10-19 23:48 P3.2 DONE 9f6600b — growkit frontmatter fields; inlineMd/paragraphs kept for guide (P3.3)

@@ -180,6 +180,17 @@ const growkits = defineCollection({
 			image: image(),
 			imageAlt: z.string(),
 			order: z.number(),
+			tone: z.enum(["pink", "lavender", "olive-soft"]),
+			// Handle des Shop-Produkts (Link „Zum Shop“)
+			shopHandle: z.string(),
+			level: z.string(),
+			temperature: z.string(),
+			firstPins: z.string(),
+			intro: z.string(),
+			// Enthält einfaches HTML (<strong>, <em>)
+			tips: z.array(z.string()),
+			// Enthält einfaches HTML (<strong>, <em>)
+			usage: z.string(),
 		}),
 });
 

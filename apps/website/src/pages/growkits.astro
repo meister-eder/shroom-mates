@@ -87,76 +87,25 @@ const placeholders = [
 	"var(--color-olive-soft)",
 ];
 
-// Kartonfarbe, Shop-Produkt und Kurzdaten je Growkit (Schlüssel = Dateiname).
-// Kurzdaten (Einstufung, Temperatur, Pins) stehen nicht im CMS.
-const kitMeta: Record<
-	string,
-	{
-		sort: number;
-		tone: "lavender" | "pink" | "olive-soft";
-		handle: string;
-		level: string;
-		temp: string;
-		pins: string;
-	}
-> = {
-	rosenseitling: {
-		sort: 1,
-		tone: "pink",
-		handle: "austernseitlinge-growkit",
-		level: "Perfekt für Anfänger",
-		temp: "bis 28 °C",
-		pins: "2–4 Tage",
-	},
-	"lions-mane": {
-		sort: 2,
-		tone: "lavender",
-		handle: "lions-mane-growkit",
-		level: "Braucht etwas Geduld",
-		temp: "16–20 °C",
-		pins: "bis 3 Wochen",
-	},
-	"white-pearl": {
-		sort: 3,
-		tone: "olive-soft",
-		handle: "austernseitlinge-growkit",
-		level: "Sehr unkompliziert",
-		temp: "12–24 °C",
-		pins: "3–10 Tage",
-	},
-};
-
 const growkitsCollection = await getCollection("growkits");
 const growkits = growkitsCollection
-	.map((entry) => {
-		const m = kitMeta[entry.id];
-		// Markdown: "## Besonderheiten…", Einleitung, "### Spezielle Tipps" (Liste), "### Verwendung"
-		const [head, ...sections] = (entry.body ?? "").split(/^###\s+/m);
-		const section = (name: RegExp) => {
-			const part = sections.find((s) => name.test(s));
-			return part ? part.split("\n").slice(1).join("\n") : "";
-		};
-		return {
-			title: entry.data.title,
-			name: entry.data.title.replace(/\s*Growkit$/i, ""),
-			image: entry.data.image,
-			imageAlt: entry.data.imageAlt,
-			tone: m?.tone ?? "paper",
-			sort: m?.sort ?? 99 + entry.data.order,
-			level: m?.level,
-			temp: m?.temp,
-			pins: m?.pins,
-			intro: paragraphs(head.replace(/^##\s+.+$/m, ""))[0] ?? "",
-			tips: section(/^Spezielle Tipps/i)
-				.split("\n")
-				.filter((l) => /^\s*[*-]\s+/.test(l))
-				.map((l) => inlineMd(l.replace(/^\s*[*-]\s+/, "").trim())),
-			use: paragraphs(section(/^Verwendung/i)),
-			shopHref: m ? shop(`/store/${m.handle}`) : shop("/store"),
-			slug: entry.id,
-		};
-	})
-	.sort((a, b) => a.sort - b.sort);
+	.map((entry) => ({
+		title: entry.data.title,
+		name: entry.data.title.replace(/\s*Growkit$/i, ""),
+		image: entry.data.image,
+		imageAlt: entry.data.imageAlt,
+		tone: entry.data.tone,
+		order: entry.data.order,
+		level: entry.data.level,
+		temp: entry.data.temperature,
+		pins: entry.data.firstPins,
+		intro: entry.data.intro,
+		tips: entry.data.tips,
+		use: entry.data.usage,
+		shopHref: shop(`/store/${entry.data.shopHandle}`),
+		slug: entry.id,
+	}))
+	.sort((a, b) => a.order - b.order);
 ---
 
 <Layout title={title} description={description} ogImage={heroImage?.src} isLandingPage={true} active="growkits">
@@ -259,11 +208,11 @@ const growkits = growkitsCollection
                         </dd>
                       </div>
                     )}
-                    {growkit.use.length > 0 && (
+                    {growkit.use && (
                       <div class="kit-fact kit-fact--wide">
                         <dt>In der Küche</dt>
                         <dd class="kit-fact__text">
-                          {growkit.use.map((p) => <p set:html={p} />)}
+                          <p set:html={growkit.use} />
                         </dd>
                       </div>
                     )}

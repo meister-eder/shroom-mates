@@ -378,4 +378,11 @@ collections:
       - { name: image, label: Growkit-Bild, widget: image, choose_url: false, accept: "image/*" }
       - { name: imageAlt, label: Bild Alt-Text, widget: string, hint: Beschreibender Alt-Text (Barrierefreiheit) }
       - { name: order, label: Sortierung, widget: number, value_type: int, min: 1, default: 1, hint: "Reihenfolge auf der Seite (1, 2, 3, ...)" }
-      - { name: body, label: Beschreibung, widget: markdown }
+      - { name: tone, label: Kartonfarbe, widget: select, options: [{ label: Rosa, value: pink }, { label: Lavendel, value: lavender }, { label: Oliv, value: olive-soft }], default: pink }
+      - { name: shopHandle, label: Shop-Produkt (Handle), widget: string, hint: 'Handle des Produkts im Shop, z.B. "lions-mane-growkit"' }
+      - { name: level, label: Einstufung, widget: string, hint: 'z.B. "Perfekt für Anfänger"' }
+      - { name: temperature, label: Temperatur, widget: string, hint: 'z.B. "16–20 °C"' }
+      - { name: firstPins, label: Erste Pins, widget: string, hint: 'z.B. "2–4 Tage"' }
+      - { name: intro, label: Einleitung, widget: text, hint: 'HTML erlaubt: <strong> und <em>' }
+      - { name: tips, label: Spezielle Tipps, widget: list, field: { name: tip, label: Tipp, widget: string }, hint: 'Ein Tipp pro Eintrag. HTML erlaubt: <strong> und <em>' }
+      - { name: usage, label: Verwendung (In der Küche), widget: text, hint: 'HTML erlaubt: <strong> und <em>' }
