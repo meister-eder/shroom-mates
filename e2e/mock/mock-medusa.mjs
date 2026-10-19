@@ -135,6 +135,8 @@ const PRODUCTS = [
     description:
       "Pinke Rosenseitlinge zum Selbstziehen: Box öffnen, wässern, Fruchtkörper ernten. Wächst bei Zimmertemperatur und ist in rund zwei Wochen erntereif.",
     metadata: {
+      erste_ernte: "nach 2–4 Tagen",
+      temperatur: "bis 28 °C",
       latin_name: "Pleurotus djamor",
       inhalt: "Fertig durchwachsener Substratblock in Anzuchtbox",
       pflege:
@@ -152,6 +154,8 @@ const PRODUCTS = [
     description:
       "Igelstachelbart zum Selbstziehen. Wächst als weißer Pom-Pom und schmeckt nussig-mild, ähnlich wie Krabbenfleisch.",
     metadata: {
+      erste_ernte: "nach bis zu 3 Wochen",
+      temperatur: "16–20 °C",
       latin_name: "Hericium erinaceus",
       inhalt: "Fertig durchwachsener Substratblock in Anzuchtbox",
       pflege: "Feucht und kühl halten, nicht direkt anbrausen.",
@@ -168,6 +172,8 @@ const PRODUCTS = [
     description:
       "Weißer Austernseitling in perlmuttfarbenen Büscheln. Der Klassiker für den Einstieg: robust, ertragreich und schnell.",
     metadata: {
+      erste_ernte: "nach 3–10 Tagen",
+      temperatur: "12–24 °C",
       latin_name: "Pleurotus ostreatus",
       inhalt: "Fertig durchwachsener Substratblock in Anzuchtbox",
       pflege: "Täglich sprühen, für frische Luft sorgen.",

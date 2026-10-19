@@ -641,6 +641,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       handle: "lions-mane-growkit",
       description:
         "Züchte deinen eigenen Lion's Mane zu Hause! Unser Growkit enthält fertig beimpftes Substrat und ist bereit zur Ernte — auch für Anfänger geeignet. Erwarte 1–2 Ernten à 150–300 g.",
+      metadata: { erste_ernte: "nach bis zu 3 Wochen", temperatur: "16–20 °C" },
       category_ids: [getCategoryId("growkits")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,
@@ -663,6 +664,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       handle: "austernseitlinge-growkit",
       description:
         "Züchte deine eigenen Austernpilze! Dieses Growkit mit vorbereitetem Substrat eignet sich perfekt als Einstieg in die Heimzucht. Mehrere Ernten möglich.",
+      metadata: { erste_ernte: "nach 3–10 Tagen", temperatur: "12–24 °C" },
       category_ids: [getCategoryId("growkits")!],
       status: ProductStatus.PUBLISHED,
       shipping_profile_id: shippingProfile.id,

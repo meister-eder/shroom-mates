@@ -9,7 +9,7 @@ import { stickerColor } from "@lib/utils/product-color";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
-import { SHIPPING } from "@shroom-mates/ui/shop-facts";
+import { GROW_STEPS, SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { websiteUrl } from "@shroom-mates/ui/site";
 
 const { countryCode, handle } = Astro.params;
@@ -104,22 +104,10 @@ const varietyName = (title ?? "")
   .replace(/\b(growkit|tinktur|\d+\s?ml)\b/gi, "")
   .replace(/\s+/g, " ")
   .trim();
+const firstHarvest =
+  typeof meta.erste_ernte === "string" ? meta.erste_ernte : "";
+const idealTemp = typeof meta.temperatur === "string" ? meta.temperatur : "";
 const showVariety = !!varietyName && varietyName !== title;
-
-const growSteps = [
-  {
-    title: "Auspacken",
-    text: "Kreuz in die Folie schneiden, an einen hellen Ort ohne direkte Sonne stellen.",
-  },
-  {
-    title: "Feucht halten",
-    text: "2–3 × täglich besprühen: feucht, nicht nass.",
-  },
-  {
-    title: "Ernten",
-    text: "Vorsichtig abdrehen, kurz bevor die Hüte komplett aufschirmen.",
-  },
-];
 
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 ---
@@ -185,10 +173,10 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
                 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
                 Versand in {SHIPPING.standard.time.replace("Werktage", "Werktagen")}, ab {SHIPPING.standard.price}
               </li>
-              {isGrowkit && (
+              {isGrowkit && firstHarvest && idealTemp && (
                 <li>
                   <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
-                  Erste Ernte nach bis zu 3 Wochen, ideal 16–20 °C
+                  Erste Ernte {firstHarvest}, ideal {idealTemp}
                 </li>
               )}
               <li>
@@ -248,7 +236,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
             <div class="how-band__inner">
               <h2 id="how-title" class="how-band__title">So einfach geht's</h2>
               <ol class="how-band__steps" role="list">
-                {growSteps.map((step, i) => (
+                {GROW_STEPS.map((step, i) => (
                   <li class="how-card">
                     <p class="how-card__num">{String(i + 1).padStart(2, "0")}</p>
                     <h3>{step.title}</h3>
