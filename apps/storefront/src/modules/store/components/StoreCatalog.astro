@@ -3,6 +3,7 @@
 // grid, price note, news band (desktop) or fresh-mushroom link card (mobile).
 import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import { SHIPPING } from "@shroom-mates/ui/shop-facts";
 import type { Catalog } from "../catalog";
 import FreshLink from "./FreshLink.astro";
 import NewsBand from "./NewsBand.astro";
@@ -110,8 +111,8 @@ const badgeFor = (product: (typeof products)[number]) => {
   }
 
   <p class="price-note">
-    Alle Preise inkl. MwSt., zzgl. Versandkosten (Standard 4,95 €, Express 9,95
-    €). Lieferzeit 3–5 Werktage, Lieferung nur innerhalb Deutschlands.
+    Alle Preise inkl. MwSt., zzgl. Versandkosten (Standard {SHIPPING.standard.price}, Express {SHIPPING.express.price}).
+    Lieferzeit {SHIPPING.standard.time}, Lieferung nur {SHIPPING.region}.
   </p>
   <div class="fresh-link-wrap">
     <FreshLink />

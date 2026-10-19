@@ -9,6 +9,7 @@ import { stickerColor } from "@lib/utils/product-color";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
+import { SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { websiteUrl } from "@shroom-mates/ui/site";
 
 const { countryCode, handle } = Astro.params;
@@ -182,7 +183,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
             <ul class="check-list" role="list">
               <li>
                 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
-                Versand in 3–5 Werktagen, ab 4,95 €
+                Versand in {SHIPPING.standard.time.replace("Werktage", "Werktagen")}, ab {SHIPPING.standard.price}
               </li>
               {isGrowkit && (
                 <li>
@@ -197,7 +198,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
               {!isGrowkit && (
                 <li>
                   <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
-                  Lieferung innerhalb Deutschlands
+                  Lieferung {SHIPPING.region}
                 </li>
               )}
             </ul>
@@ -232,8 +233,8 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
               <details class="acc" id="versand" open={!contents && !care && !hasAttributes}>
                 <summary>Versand &amp; Rückgabe</summary>
                 <p>
-                  Standard 4,95 € (3–5 Werktage), Express 9,95 € (1–2
-                  Werktage). Lieferung nur innerhalb Deutschlands. Alle Preise
+                  Standard {SHIPPING.standard.price} ({SHIPPING.standard.time}), Express {SHIPPING.express.price} ({SHIPPING.express.time}).
+                  Lieferung nur {SHIPPING.region}. Alle Preise
                   inkl. MwSt. Infos zum Widerruf findest du in der{" "}
                   <a href={`/${countryCode}/widerruf`}>Widerrufsbelehrung</a>.
                 </p>

@@ -34,6 +34,7 @@ from any of it.
 - P1.3: stale comment 'SvgHeading reads SVGs from ./public' in apps/storefront/Dockerfile (~l.45); COPY public stays needed.
 - P2.1: 107 Biome warnings remain (non-null assertions, any, !important) — possible cleanup task. Never put comments in biome.json (breaks excludes silently).
 - P2.2: deploy-server.yml installs backend deps with bun install instead of npm ci (out of scope, review).
+- P3.1: packages/ui/src/legal/agb.md must be updated by hand when shipping prices change. 'Lieferung nur innerhalb Deutschlands' in OrderSummary.tsx/CartPage.tsx still hardcoded.
 
 ---
 
@@ -85,7 +86,7 @@ from any of it.
 
 ## P3 One source of truth for content
 
-- [ ] **P3.1 Shop facts in one module** · deps: P1.3 · verify: visual
+- [x] **P3.1 Shop facts in one module** · deps: P1.3 · verify: visual · c373202
   Shipping prices/durations appear hardcoded in `modules/layout/components/Header.astro`, `CartSidebar.tsx`, `modules/store/components/StoreCatalog.astro`, `pages/[countryCode]/store/[handle].astro` (twice). Create `packages/ui/src/shop-facts.ts` (exported as `@shroom-mates/ui/shop-facts`) with `SHIPPING = { standard: { price: "4,95 €", time: "3–5 Werktage" }, express: { price: "9,95 €", time: "1–2 Werktage" }, region: "innerhalb Deutschlands" }` and use it everywhere; rendered text must stay byte-identical. Leave `packages/ui/src/legal/agb.md` as is but add a follow-up note that it must be updated by hand when prices change.
   Commit: `refactor(shop): shipping facts from one module`
 
@@ -251,3 +252,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:40 P2.1 DONE 42d5a1b — root biome, astro check; checkout only reformatted; visual PASS
 2026-10-19 23:41 P2.2 DONE 2e4a8c1 — CI lints/builds all, backend unit tests, bun 1.3.10; YAML parses
 2026-10-19 23:43 P2.3 DONE 2516bd7 — guard extracted, 8 unit tests green
+2026-10-19 23:45 P3.1 DONE c373202 — SHIPPING in @shroom-mates/ui/shop-facts, 4 call sites; visual PASS

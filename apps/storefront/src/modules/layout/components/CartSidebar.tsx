@@ -12,6 +12,7 @@ import { Icon } from "@modules/common/components/Icon";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { QtyStepper } from "@modules/common/components/QtyStepper";
 import { useStore } from "@nanostores/react";
+import { SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { useEffect, useRef, useState } from "react";
 
 interface CartSidebarProps {
@@ -264,7 +265,8 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                 </span>
               </div>
               <p className="cart-drawer__note">
-                inkl. MwSt. · Versand ab 4,95 € im nächsten Schritt
+                inkl. MwSt. · Versand ab {SHIPPING.standard.price} im nächsten
+                Schritt
               </p>
               <a
                 href={`/${countryCode}/checkout`}

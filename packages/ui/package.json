@@ -13,6 +13,7 @@
     "./base.css": "./src/base.css",
     "./fonts": "./src/fonts.ts",
     "./site": "./src/site.ts",
+    "./shop-facts": "./src/shop-facts.ts",
     "./gaze": "./src/scripts/gaze.ts",
     "./tokens": "./src/tokens.ts",
     "./LayoutScripts.astro": "./src/LayoutScripts.astro",

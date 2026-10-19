@@ -2,6 +2,7 @@
 // Same header as the website (shared SiteHeader): the Pilzkorb pill sits
 // right next to "Kontakt". Info line instead of the website's ticker.
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
+import { SHIPPING } from "@shroom-mates/ui/shop-facts";
 import { CartButton } from "./CartButton";
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
 const { countryCode, regionId, active = "shop" } = Astro.props;
 
 const info = [
-  "Versand in 3–5 Werktagen",
+  `Versand in ${SHIPPING.standard.time.replace("Werktage", "Werktagen")}`,
   "Selbst gezüchtet in Leipzig",
   "Sicher bezahlen mit SumUp",
 ];
@@ -24,7 +25,7 @@ const info = [
   countryCode={countryCode}
   active={active === "shop" ? "shop" : undefined}
   info={info}
-  infoCompact="Selbst gezüchtet in Leipzig ✦ Versand ab 4,95 €"
+  infoCompact={`Selbst gezüchtet in Leipzig ✦ Versand ab ${SHIPPING.standard.price}`}
 >
   <CartButton slot="cart" client:load regionId={regionId} />
 </SiteHeader>
