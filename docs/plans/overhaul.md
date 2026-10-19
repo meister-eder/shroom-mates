@@ -186,7 +186,7 @@ from any of it.
 
 Research summary (2026-10-19): § 25 TDDDG requires consent for storing/reading on the device unless strictly necessary for a service the user explicitly requested. The cart id in localStorage, the checkout cart id, a stored consent choice and the SumUp widget during checkout fall under that exception; the Google map is already click-to-load. So no cookie banner is needed as long as nothing non-essential is added. Analytics or embedded third-party content without a click would change that.
 
-- [ ] **P6.1 Automated privacy guard** · deps: P5.3 · verify: visual
+- [x] **P6.1 Automated privacy guard** · deps: P5.3 · verify: visual · 36b5ced
   Add `e2e/smoke/privacy.spec.ts` (runs in the smoke config): for every route in `e2e/visual/routes.ts` (desktop only) record all requests and assert that no request leaves the site's own origins + the Medusa mock before any user interaction; after load assert `document.cookie` is empty and `localStorage`/`sessionStorage` keys are within an allowlist (`cart_id`, `checkout_cart_id`, `cart_snapshot`, and the map-consent key if one exists). Then click the map's load button on Kontakt and assert Google requests only start after the click. Allowlist constants live in one place with a comment linking § 25 Abs. 2 Nr. 2 TDDDG. Must pass on the current code; if it doesn't, report what violates it (don't "fix" by widening the allowlist).
   Commit: `test(e2e): privacy guard for storage and third-party requests`
 
@@ -301,3 +301,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 01:21 P5.8d DONE 3a845ee — Tailwind removed, mini preflight layer, .sr-only in ui base.css
 2026-10-20 01:25 P5.9 DONE 5974dbc — 8 unused aliases removed, exact-match hex → tokens, theme-color from tokens
 2026-10-20 01:28 P5.10 DONE a1c541c — shared .btn--outline + check icon; step card not unified (not identical)
+2026-10-20 01:31 P6.1 DONE 36b5ced — privacy guard: 18 routes + map click, no violations
