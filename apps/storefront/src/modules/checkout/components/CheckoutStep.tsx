@@ -37,7 +37,7 @@ export const CheckoutStep = ({
       className={`flex items-center justify-between gap-4 px-[22px] py-[18px] ${HEAD[state]}`}
     >
       <h2 className="m-0 flex items-center gap-3 font-display text-[26px]! leading-none! font-black">
-        <span className="comic-panel__num text-sm" aria-hidden="true">
+        <span className="font-mono text-sm font-medium" aria-hidden="true">
           {String(number).padStart(2, "0")}
         </span>
         {title}
@@ -47,14 +47,15 @@ export const CheckoutStep = ({
           type="button"
           onClick={onEdit}
           aria-label={`Ändern: ${title}`}
-          className="min-h-11 cursor-pointer border-0 bg-transparent px-1 font-body text-base font-semibold underline hover:text-accent-dark"
+          className="min-h-11 cursor-pointer border-0 bg-transparent px-1 font-body text-base text-ink underline hover:text-accent-dark"
         >
           Ändern
         </button>
       )}
     </div>
-    {state !== "inactive" && children && (
-      <div className="px-[22px] py-[22px]">{children}</div>
+    {state === "active" && children && <div className="p-[22px]">{children}</div>}
+    {state === "done" && children && (
+      <div className="px-[22px] pb-[18px] pt-3.5 text-base">{children}</div>
     )}
   </section>
 );

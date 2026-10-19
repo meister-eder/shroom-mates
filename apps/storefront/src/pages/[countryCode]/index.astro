@@ -1,64 +1,28 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { getRegion } from "@lib/data/regions";
-import { listProducts } from "@lib/data/products";
-import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
-import StoreHero from "@modules/store/components/StoreHero.astro";
-import FreshLink from "@modules/store/components/FreshLink.astro";
+import { loadCatalog } from "@modules/store/catalog";
+import StoreCatalog from "@modules/store/components/StoreCatalog.astro";
 
 const { countryCode } = Astro.params;
 
 const region = await getRegion(countryCode);
+if (!region) {
+  return Astro.redirect("/not-found");
+}
 
-const allProducts = region ? await listProducts(region.id).catch(() => []) : [];
-
-// Fresh mushrooms are not sold in the shop; growkits and tinctures first
-const products = allProducts.filter(
-  (p) => !p.categories?.some((c) => c.handle === "frische-pilze"),
-);
-const ORDER = ["growkits", "tinkturen"];
-const rank = (p: (typeof products)[number]) => {
-  const i = ORDER.indexOf(p.categories?.[0]?.handle ?? "");
-  return i === -1 ? ORDER.length : i;
-};
-const featured = [...products].sort((a, b) => rank(a) - rank(b)).slice(0, 3);
-const ogImage = featured[0]?.thumbnail ?? undefined;
+const catalog = await loadCatalog(region.id);
+const activeCategory = Astro.url.searchParams.get("kategorie") ?? "";
 ---
 
 <Layout
+  wide
   description="Growkits und Pilztinkturen aus Leipzig — direkt vom Erzeuger online bestellen."
-  image={ogImage}
+  image={catalog.products[0]?.thumbnail ?? undefined}
 >
-  <StoreHero />
-
-  {
-    featured.length > 0 && (
-      <section class="store-section" aria-labelledby="featured-heading">
-        <h2 id="featured-heading" class="store-section__title">
-          Aus unserem Sortiment
-        </h2>
-
-        <ul class="product-grid" role="list">
-          {featured.map((product, index) => (
-            <ProductPreview
-              handle={product.handle}
-              variants={product.variants ?? []}
-              thumbnailUrl={product.thumbnail ?? undefined}
-              imageUrl={product.images?.[0]?.url}
-              title={product.title}
-              priority={index === 0}
-              categoryName={product.categories?.[0]?.name}
-            />
-          ))}
-        </ul>
-        <p class="store-section__more">
-          <a href={`/${countryCode}/store`} class="btn btn--secondary">
-            Alle Produkte ansehen
-          </a>
-        </p>
-
-        <FreshLink />
-      </section>
-    )
-  }
+  <StoreCatalog
+    {...catalog}
+    basePath={`/${countryCode}`}
+    activeCategory={activeCategory}
+  />
 </Layout>

@@ -1,0 +1,112 @@
+---
+// Shop start / catalog (Version B): headline, category chips + note, product
+// grid, price note, news band (desktop) or fresh-mushroom link card (mobile).
+import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
+import type { Catalog } from "../catalog";
+import StoreHero from "./StoreHero.astro";
+import NewsBand from "./NewsBand.astro";
+import FreshLink from "./FreshLink.astro";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+
+interface Props extends Catalog {
+  /** Path the chips link to, e.g. "/de/store" */
+  basePath: string;
+  activeCategory?: string;
+}
+
+const { products, categories, error, basePath, activeCategory = "" } = Astro.props;
+
+const filtered = activeCategory
+  ? products.filter((p) => p.categories?.some((c) => c.handle === activeCategory))
+  : products;
+
+const badgeFor = (product: (typeof products)[number]) => {
+  const b = (product.metadata as Record<string, unknown> | null | undefined)?.badge;
+  return typeof b === "string" && b.trim() ? b.trim() : undefined;
+};
+---
+
+<section class="store-hero">
+  <StoreHero />
+  <div class="store-bar">
+    {
+      categories.length > 0 && (
+        <nav class="chips" aria-label="Kategorie filtern">
+          <a
+            href={basePath}
+            class="chip"
+            aria-current={!activeCategory ? "page" : undefined}
+          >
+            Alles
+          </a>
+          {categories.map(([handle, { name }]) => (
+            <a
+              href={`${basePath}?kategorie=${handle}`}
+              class="chip"
+              aria-current={activeCategory === handle ? "page" : undefined}
+            >
+              {name}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+    <p class="store-bar__note">Selbst gezüchtet in der Glasfabrik Leutzsch</p>
+  </div>
+</section>
+
+<section class="store-section">
+  {
+    error && (
+      <p class="error-banner" role="alert">
+        Produkte konnten nicht geladen werden. Bitte versuche es später erneut.
+      </p>
+    )
+  }
+
+  {
+    !error && filtered.length === 0 && (
+      <div class="empty-state" role="status">
+        <MatesLogo alt="" width={140} />
+        <p class="empty-state__title">Hier wächst noch nichts.</p>
+        <p>Keine Produkte in dieser Kategorie.</p>
+        <a href={basePath} class="btn btn--primary">
+          Alles anzeigen
+        </a>
+      </div>
+    )
+  }
+
+  {
+    filtered.length > 0 && (
+      <ul
+        class="product-grid"
+        role="list"
+        aria-label={`${filtered.length} Produkt${filtered.length === 1 ? "" : "e"}`}
+      >
+        {filtered.map((product, index) => (
+          <ProductPreview
+            handle={product.handle}
+            variants={product.variants ?? []}
+            thumbnailUrl={product.thumbnail ?? undefined}
+            imageUrl={product.images?.[0]?.url}
+            title={product.title}
+            priority={index < 4}
+            categoryName={product.categories?.[0]?.name}
+            badge={badgeFor(product)}
+          />
+        ))}
+      </ul>
+    )
+  }
+
+  <p class="price-note">
+    Alle Preise inkl. MwSt., zzgl. Versandkosten (Standard 4,95 €, Express 9,95
+    €). Lieferzeit 3–5 Werktage, Lieferung nur innerhalb Deutschlands.
+  </p>
+  <div class="fresh-link-wrap">
+    <FreshLink />
+  </div>
+</section>
+
+<NewsBand />

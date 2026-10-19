@@ -1,5 +1,6 @@
 import { openCartSidebar } from "@lib/stores/cart";
 import { $toast, hideToast } from "@lib/stores/toast";
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { useStore } from "@nanostores/react";
 import { useEffect } from "react";
 
@@ -17,19 +18,13 @@ export const AddedToast = () => {
     <div className="toast-region" role="status" aria-live="polite">
       {toast && (
         <div className={`toast${toast.kind === "error" ? " toast--error" : ""}`} key={toast.id}>
-          <img
-            src="/mascot.webp"
-            alt=""
-            aria-hidden="true"
-            width={56}
-            height={56}
-            className="toast__mascot"
-          />
+          <MatesEyes size={56} className="toast__mascot" />
           <p className="toast__text">
             {toast.kind === "added" ? (
               <>
-                <strong>Liegt im Körbchen ✓</strong>
-                <span>{toast.title}</span>
+                <strong>
+                  <span className="toast__name">{toast.title} </span>liegt im Körbchen!
+                </strong>
               </>
             ) : (
               <>

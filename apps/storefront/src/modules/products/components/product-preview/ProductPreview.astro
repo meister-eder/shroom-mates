@@ -24,9 +24,11 @@ interface Props {
   title: string;
   priority?: boolean;
   categoryName?: string;
+  /** Sticker text ("Beliebt", "Neu"); a sale price shows "Sale" instead */
+  badge?: string;
 }
 
-const { handle, variants, thumbnailUrl, imageUrl, title, priority, categoryName } =
+const { handle, variants, thumbnailUrl, imageUrl, title, priority, categoryName, badge } =
   Astro.props;
 const countryCode = Astro.params.countryCode;
 
@@ -56,22 +58,16 @@ const variantTitles = variants
   .map((v) => v.title)
   .filter((t): t is string => !!t && t !== "Standard");
 const metaLine = variantTitles.join(" · ");
+const badgeText = cheapestPrice?.price_type === "sale" ? "Sale" : badge;
 ---
 
-<li class={`sticker-card sticker-card--${color} product-tile`}>
+<li class="product-tile" style={`--tile-bg: var(--color-${color})`}>
   <div class="product-tile__media">
     <Thumbnail
       imageUrl={thumbnailUrl || imageUrl}
       title={title}
       priority={priority}
     />
-    {
-      categoryName && (
-        <span class="product-tile__cat" aria-hidden="true">
-          {categoryName}
-        </span>
-      )
-    }
   </div>
 
   <div class="product-tile__body">
@@ -85,6 +81,16 @@ const metaLine = variantTitles.join(" · ");
       </a>
     </h2>
     {
+      (metaLine || basePrice) && (
+        <p class="product-tile__meta">
+          {metaLine}
+          {metaLine && basePrice && " · "}
+          {basePrice}
+        </p>
+      )
+    }
+    <div class="product-tile__buy">
+    {
       cheapestPrice && (
         <div class="product-tile__price">
           {hasChoice && <span class="product-tile__from">ab </span>}
@@ -97,20 +103,32 @@ const metaLine = variantTitles.join(" · ");
       )
     }
     {
-      (metaLine || basePrice) && (
-        <p class="product-tile__meta">
-          {metaLine}
-          {metaLine && basePrice && " · "}
-          {basePrice}
-        </p>
-      )
-    }
-    {
-      canQuickAdd && onlyVariant && (
+      canQuickAdd && onlyVariant ? (
         <div class="product-tile__action">
           <QuickAdd client:visible variantId={onlyVariant.id} title={title} />
         </div>
+      ) : (
+        hasChoice && (
+          <div class="product-tile__action" aria-hidden="true">
+            <span class="quick-add quick-add--choose">
+              <span class="quick-add__label">Auswählen</span>
+              <svg class="quick-add__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6" /></svg>
+            </span>
+          </div>
+        )
       )
     }
+    </div>
   </div>
+
+  {
+    badgeText && (
+      <span class="product-tile__badge" aria-hidden="true">
+        <svg viewBox="0 0 100 100" width="92" height="92">
+          <path d="M50 2l6.6 8.2 9.9-3.6 2.6 10.2 10.5.6-1.2 10.5 9.6 4.4-5 9.3 7 7.9-8.4 6.4 3.4 10-10.3 2.3-.2 10.6-10.4-1.6-4.2 9.7-9-5.5-8.2 6.7-6.6-8.2-9.9 3.6-2.6-10.2-10.5-.6 1.2-10.5-9.6-4.4 5-9.3-7-7.9 8.4-6.4-3.4-10 10.3-2.3.2-10.6 10.4 1.6 4.2-9.7 9 5.5z" fill="#36e27b" />
+        </svg>
+        <span>{badgeText}</span>
+      </span>
+    )
+  }
 </li>

@@ -2,8 +2,8 @@ import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { formatProviderName } from "@lib/checkout/payment-providers";
 import { formatAddressLines, isSameAddress } from "@lib/utils/address";
 import type { StoreOrder } from "@medusajs/types";
-import { CartTotals } from "@modules/common/components/CartTotals";
-import { LineItemRow } from "@modules/common/components/LineItemRow";
+import { OrderTotals } from "@modules/checkout/components/OrderTotals";
+import { convertToLocale } from "@lib/utils/money";
 import { INSTAGRAM_URL } from "@shroom-mates/ui/site";
 
 interface OrderConfirmedPageProps {
@@ -24,16 +24,13 @@ const WaveEdge = ({ flip = false }: { flip?: boolean }) => (
 );
 
 const NEXT_STEPS = [
-  ["Bestätigung", "Eine Bestätigung geht per E-Mail an dich."],
-  ["Wir packen", "Wir bereiten deine Artikel für den Versand vor."],
-  [
-    "Unterwegs",
-    "Du erhältst eine E-Mail mit Tracking-Informationen, sobald deine Bestellung versendet wird.",
-  ],
-  ["Auspacken", "Dein Paket wird an deine Lieferadresse zugestellt."],
+  ["Bestätigung", "Per Mail, mit Rechnung und Widerrufsbelehrung."],
+  ["Wir packen", "Von Hand, in der Glasfabrik Leutzsch."],
+  ["Unterwegs", "DHL-Sendungsnummer kommt per Mail."],
+  ["Auspacken", "Growkit bald aufschneiden und loslegen."],
 ] as const;
 
-const H2 = "m-0 mb-4 font-display text-[26px]! leading-none! font-black";
+const H2 = "m-0 mb-4! font-display text-[26px]! leading-[1.1]! font-black";
 
 /** Server-rendered: the order is loaded by the page (404 if unknown). */
 export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPageProps) => {
@@ -45,34 +42,32 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
 
   return (
     <div aria-label="Bestellbestätigung" className="overflow-hidden">
-      <section className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-10 px-4 pb-16 pt-12 sm:px-8">
-        <div className="relative h-[300px] min-w-0 flex-[0_1_420px] sm:h-[380px]">
+      <section className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-10 px-4 pb-[72px] pt-12 sm:px-8">
+        <div className="relative h-[380px] min-w-0 flex-[0_1_420px]">
           <MatesEyes
             size={340}
-            alt="Die Maskottchen der shroom-mates"
-            className="mx-auto mt-2.5 max-w-full [filter:drop-shadow(6px_6px_0_var(--color-ink))]"
+            alt="Die beiden Maskottchen schauen dir hinterher"
+            className="mx-auto mt-2.5"
           />
         </div>
         <div className="min-w-0 flex-[1_1_480px]">
-          <p className="eyebrow mb-3.5 text-sm!">
+          <p className="m-0 mb-3.5 font-mono text-sm uppercase tracking-[.12em] text-accent-dark">
             Bestellung #{order.display_id} ist eingegangen
           </p>
           <h1 className="m-0 text-[clamp(52px,7vw,104px)]! leading-[.9]! text-accent">
             {firstName ? `Danke, ${firstName}!` : "Danke!"}
           </h1>
-          {order.email && (
-            <p className="mt-5 max-w-[40ch] text-xl leading-normal">
-              Eine Bestätigungs-E-Mail wurde an{" "}
-              <span className="font-bold">{order.email}</span> gesendet.
-            </p>
-          )}
+          <p className="mb-0 mt-5 max-w-[40ch] text-xl leading-normal">
+            Die Mates packen schon.
+            {order.email && <> Eine Bestätigung ist unterwegs an {order.email}.</>}
+          </p>
         </div>
       </section>
 
       <WaveEdge />
       <section className="bg-ink px-4 py-[72px] text-cream sm:px-8">
         <div className="mx-auto max-w-[1280px]">
-          <h2 className="m-0 mb-8 text-[clamp(36px,4.4vw,60px)]! leading-[.95]! text-accent-light">
+          <h2 className="m-0 mb-8! text-[clamp(36px,4.4vw,60px)]! leading-[.95]! text-accent-light">
             Wie es jetzt weitergeht
           </h2>
           <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[18px] p-0">
@@ -87,7 +82,7 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
                   {String(i + 1).padStart(2, "0")}
                   {i === 0 ? " · jetzt" : ""}
                 </p>
-                <h3 className="mb-1.5 text-2xl! font-extrabold! [font-family:var(--font-display)]">
+                <h3 className="m-0 mb-1.5 font-display text-2xl! font-extrabold! leading-[1.2]!">
                   {title}
                 </h3>
                 <p className="m-0 text-[15px]">{text}</p>
@@ -98,27 +93,34 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
       </section>
       <WaveEdge flip />
 
-      <section className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-8 px-4 pb-24 pt-16 sm:px-8">
+      <section className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-8 px-4 pb-24 pt-[72px] sm:px-8">
         <div className="min-w-0 flex-[1_1_460px] rounded-none border-2 border-accent bg-paper p-6">
           <h2 className={H2}>Deine Bestellung</h2>
-          <div className="mb-4 border-b-2 border-ink pb-2">
+          <div className="flex flex-col">
             {order.items?.map((item) => (
-              <LineItemRow
+              <div
                 key={item.id}
-                title={item.title}
-                subtitle={item.variant_title}
-                thumbnail={item.thumbnail}
-                quantity={item.quantity ?? 1}
-                unitPrice={item.unit_price ?? 0}
-                currencyCode={currencyCode}
-              />
+                className="flex justify-between gap-4 border-b border-[#b9bbe6] py-2"
+              >
+                <span>
+                  {item.quantity ?? 1} × {item.title}
+                  {item.variant_title && item.variant_title !== "Standard" && ` (${item.variant_title})`}
+                </span>
+                <span className="font-mono">
+                  {convertToLocale({
+                    amount: (item.unit_price ?? 0) * (item.quantity ?? 1),
+                    currencyCode,
+                  })}
+                </span>
+              </div>
             ))}
           </div>
-          <CartTotals
+          <OrderTotals
+            variant="receipt"
             currencyCode={currencyCode}
             itemTotal={order.item_total ?? order.subtotal}
             shippingTotal={order.shipping_total}
-            shippingLabel={shippingMethod ? `Versand (${shippingMethod.name})` : "Versand"}
+            shippingLabel={shippingMethod ? `Versand ${shippingMethod.name}` : "Versand"}
             taxTotal={order.tax_total}
             discountTotal={order.discount_total}
             total={order.total}
@@ -159,12 +161,15 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
         </div>
 
         <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
-          <a href={`/${countryCode}/store`} className="btn btn--secondary btn--block min-h-14 text-lg">
+          <a
+            href={`/${countryCode}/store`}
+            className="flex h-14 items-center justify-center rounded-pill border-2 border-ink text-lg font-bold text-ink! no-underline hover:bg-white"
+          >
             Zurück zum Shop
           </a>
           <a
             href={INSTAGRAM_URL}
-            className="text-center text-ink underline hover:text-accent-dark"
+            className="text-center text-ink! underline hover:text-accent-dark!"
           >
             Folg uns auf Instagram fürs Daily Business
           </a>

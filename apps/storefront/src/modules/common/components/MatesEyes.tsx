@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
  * Maskottchen mit Augen, die dem Mauszeiger folgen (und ab und zu blinzeln).
  * Das Bild liegt als /mascot.webp vor, die vier Augen sind eine SVG-Ebene im
  * 1200er-Raster darüber (Geometrie aus dem Design-Mockup). Ohne Zeiger oder bei
- * prefers-reduced-motion: Blick geradeaus, kein Blinzeln.
+ * prefers-reduced-motion: Ruheblick (leicht nach unten), kein Blinzeln.
  */
 const EYES: [number, number, number, number][] = [
   [414, 462, 27, 45],
@@ -21,7 +21,8 @@ interface Props {
 
 export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
   const box = useRef<HTMLDivElement>(null);
-  const [look, setLook] = useState<{ x: number; y: number } | null>(null);
+  // Ruhestellung wie im Mockup: Blick leicht nach unten (600/900 im 1200er-Raster).
+  const [look, setLook] = useState<{ x: number; y: number }>({ x: 600, y: 900 });
   const [blink, setBlink] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,9 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
         setLook({ x: (e.clientX - r.left) * k, y: (e.clientY - r.top) * k });
       });
     };
+    const onLeave = () => setLook({ x: 600, y: 900 });
     addEventListener("pointermove", onMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", onLeave);
     let t: number;
     const iv = window.setInterval(() => {
       setBlink(true);
@@ -45,6 +48,8 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
     }, 3800);
     return () => {
       removeEventListener("pointermove", onMove);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
+      if (frame) cancelAnimationFrame(frame);
       clearInterval(iv);
       clearTimeout(t);
     };
@@ -54,7 +59,7 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
     <div
       ref={box}
       className={className}
-      style={{ position: "relative", width: size, height: size }}
+      style={{ position: "relative", width: size, maxWidth: "100%", aspectRatio: "1 / 1" }}
     >
       <img
         src="/mascot.webp"
@@ -71,8 +76,8 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
         {EYES.map(([cx, cy, rx, ry]) => {
           const prx = rx * 0.6;
           const pry = ry * 0.6;
-          const tx = look?.x ?? cx;
-          const ty = look?.y ?? cy;
+          const tx = look.x;
+          const ty = look.y;
           const dx = tx - cx;
           const dy = ty - cy;
           const d = Math.hypot(dx, dy) || 1;

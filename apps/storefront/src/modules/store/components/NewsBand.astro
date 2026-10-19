@@ -128,7 +128,7 @@ const news = [
   }
 
   .news {
-    padding: 40px var(--page-gutter, 32px);
+    padding: 40px var(--gutter, 32px);
     background: var(--color-paper);
   }
 
@@ -194,9 +194,10 @@ const news = [
     text-underline-offset: 4px;
   }
 
-  @media (max-width: 768px) {
-    .news-roll {
-      transform-origin: center;
+  /* phones get the fresh-mushroom link card instead (see mobile mockup) */
+  @media (max-width: 640px) {
+    .news-wrap {
+      display: none;
     }
   }
 

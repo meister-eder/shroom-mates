@@ -6,7 +6,6 @@ import {
 } from "@lib/stores/cart";
 import { useStore } from "@nanostores/react";
 import { useHydrated } from "@lib/hooks/use-hydrated";
-import { Icon } from "@modules/common/components/Icon";
 import { useEffect } from "react";
 
 interface CartButtonProps {
@@ -35,7 +34,22 @@ export const CartButton = ({ regionId }: CartButtonProps) => {
       aria-label={`Pilzkorb, ${cartItemCount} Artikel`}
       aria-haspopup="dialog"
     >
-      <Icon name="cart" size={20} />
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M7 10a5 5 0 0 1 10 0" />
+        <path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2Z" />
+        <path d="M9 13.5v4M12 13.5v4M15 13.5v4" />
+      </svg>
       <span className="cart-pill__label" aria-hidden="true">
         Pilzkorb
       </span>

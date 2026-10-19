@@ -85,7 +85,7 @@ const mapsLink =
       </div>
     </section>
 
-    <section class="section section--night timeline" aria-labelledby="timeline-heading">
+    <section class="section section--night section--no-border timeline" aria-labelledby="timeline-heading">
       <div class="container">
         <h2 id="timeline-heading">{timeline.title}</h2>
         <ol class="timeline__grid" role="list">
@@ -160,10 +160,10 @@ const mapsLink =
           <address class="where__address">{where.address}</address>
           {section("Wo ihr uns findet").map((p) => <p class="where__text" set:html={p} />)}
           <div class="where__actions">
-            <a class="btn btn--primary" href={mapsLink} target="_blank" rel="noopener noreferrer">
+            <a class="btn btn--primary where__btn" href={mapsLink} target="_blank" rel="noopener noreferrer">
               <Icon name="map-pin" size={20} /> {where.routeButton}
             </a>
-            <a class="btn btn--secondary" href="/kontakt/">{where.visitButton}</a>
+            <a class="btn btn--secondary where__btn" href="/kontakt/">{where.visitButton}</a>
           </div>
         </div>
         <div class="arch-frame where__photo">
@@ -212,7 +212,7 @@ const mapsLink =
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(44px, 8vw, 120px);
+    font-size: clamp(48px, 8vw, 120px);
     line-height: 0.9;
     color: var(--color-accent);
     text-wrap: balance;
@@ -221,13 +221,15 @@ const mapsLink =
   .about-hero__lead {
     max-width: 40ch;
     margin: 24px 0 0;
+    font-size: 1.3125rem;
+    line-height: 1.5;
   }
 
   .about-hero__photos {
     position: relative;
     flex: 1 1 420px;
     min-width: 0;
-    padding: 24px 24px 44px;
+    padding: 24px;
   }
 
   .about-hero__photos .dots {
@@ -252,13 +254,19 @@ const mapsLink =
   .about-hero__photos :global(.about-hero__tim) {
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: -20px;
     width: 46%;
     height: auto;
     filter: drop-shadow(6px 6px 0 var(--color-ink));
   }
 
   /* ── Zeitleiste ─────────────────────────────────── */
+  .timeline {
+    padding: 88px 0;
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
   .timeline h2 {
     margin-bottom: 48px;
     color: var(--color-accent-light);
@@ -349,6 +357,7 @@ const mapsLink =
   .values__eyebrow {
     margin-bottom: 20px;
     font-size: 0.9375rem;
+    font-weight: 500;
   }
 
   .values__intro {
@@ -387,10 +396,12 @@ const mapsLink =
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(40px, 6vw, 88px);
+    font-size: clamp(48px, 6vw, 88px);
     line-height: 0.9;
     color: var(--color-accent);
-    overflow-wrap: anywhere;
+    hyphens: manual;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .values__text {
@@ -448,6 +459,23 @@ const mapsLink =
     font-weight: 700;
   }
 
+  .where {
+    padding: 88px 0;
+  }
+
+  .where__btn {
+    padding: 16px 26px;
+    font-size: 1.125rem;
+  }
+
+  .where__btn.btn--secondary {
+    box-shadow: none;
+  }
+
+  .where__btn.btn--secondary:hover {
+    background: var(--color-white);
+  }
+
   .where__actions {
     display: flex;
     flex-wrap: wrap;
@@ -456,10 +484,11 @@ const mapsLink =
   }
 
   .where__photo {
-    flex: 1 1 400px;
+    flex: 1 1 460px;
     min-width: 0;
     height: 380px;
-    border-radius: 200px 200px 0 0;
+    border-radius: 0;
+    box-shadow: 8px 8px 0 var(--color-ink);
   }
 
   @media (max-width: 900px) {
@@ -479,7 +508,7 @@ const mapsLink =
     }
 
     .about-hero__photos {
-      padding: 16px 12px 36px;
+      padding: 16px 12px 28px;
     }
 
     .about-hero__photos :global(.about-hero__emmi) {
@@ -507,6 +536,12 @@ const mapsLink =
 
     .where__photo {
       height: 320px;
+      box-shadow: 6px 6px 0 var(--color-ink);
+    }
+
+    .timeline,
+    .where {
+      padding: 56px 0;
     }
   }
 

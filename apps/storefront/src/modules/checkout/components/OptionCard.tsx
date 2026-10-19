@@ -25,7 +25,7 @@ export const OptionCard = ({
       checked ? "bg-cream shadow-[4px_4px_0_var(--color-accent)]" : "bg-white"
     } ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
   >
-    <span className="flex items-center gap-4 text-lg font-bold">
+    <span className="flex min-w-0 items-center gap-4 text-lg font-bold">
       <input
         type="radio"
         name={name}
@@ -33,7 +33,7 @@ export const OptionCard = ({
         checked={checked}
         disabled={disabled}
         onChange={() => onSelect(value)}
-        className="h-[22px] w-[22px] shrink-0 accent-ink"
+        className="m-0 h-[22px] w-[22px] shrink-0 cursor-[inherit] appearance-none rounded-full border-2 border-accent bg-white checked:bg-ink"
       />
       {children}
     </span>

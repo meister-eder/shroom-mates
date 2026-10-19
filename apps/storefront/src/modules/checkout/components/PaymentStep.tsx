@@ -184,7 +184,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         )}
 
         {!isLoading && paymentProviders.length > 0 && (
-          <div className="mb-6 flex flex-col gap-3">
+          <div className="mb-3.5 flex flex-col gap-3">
             {paymentProviders.map((provider) => (
               <OptionCard
                 key={provider.id}
@@ -206,7 +206,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         )}
 
         {isSumUp && (
-          <div className="rounded-none border-2 border-dashed border-ink bg-white p-4 sm:p-5">
+          <div className="rounded-none border-2 border-dashed border-ink bg-cream p-5 sm:p-7">
             {isSaving || (!sumupCheckoutId && !error) ? (
               <p className="text-muted">Zahlung wird initialisiert...</p>
             ) : (
@@ -264,7 +264,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             <a
               href={`/${countryCode}/gewaehrleistung`}
               target="_blank"
-              className="flex items-center gap-4 rounded-none border-2 border-ink bg-white p-3 text-[14px] leading-snug text-ink no-underline [&:hover_strong]:underline"
+              className="flex items-center gap-4 rounded-none border-2 border-ink bg-cream p-3 text-[14px] leading-snug text-ink! no-underline [&:hover_strong]:underline"
               aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
             >
               <img
@@ -296,7 +296,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
                 (isSumUp && !sumupCard)
               }
               onClick={() => (isSumUp ? sumupCard?.submit() : completeOrder())}
-              className="btn btn--accent btn--block min-h-[62px] border-[3px] text-xl font-extrabold shadow-[5px_5px_0_var(--color-ink)]"
+              className="btn btn--primary btn--block min-h-[62px] text-xl font-extrabold shadow-none!"
             >
               {isPlacing || isProcessing
                 ? "Wird verarbeitet..."

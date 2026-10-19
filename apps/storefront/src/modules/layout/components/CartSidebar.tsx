@@ -9,6 +9,7 @@ import { convertToLocale } from "@lib/utils/money";
 import { stickerColor, stickerColorVar } from "@lib/utils/product-color";
 import { useStore } from "@nanostores/react";
 import { useHydrated } from "@lib/hooks/use-hydrated";
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { Icon } from "@modules/common/components/Icon";
 import { QtyStepper } from "@modules/common/components/QtyStepper";
 import { useEffect, useRef, useState } from "react";
@@ -115,14 +116,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
         inert={!isOpen}
       >
         <div className="cart-drawer__head">
-          <img
-            src="/mascot.webp"
-            alt=""
-            aria-hidden="true"
-            width={54}
-            height={54}
-            className="cart-drawer__mascot"
-          />
+          <MatesEyes size={54} className="cart-drawer__mascot" />
           <h2 className="cart-drawer__title">Dein Pilzkorb</h2>
           <button
             type="button"
@@ -130,20 +124,13 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
             className="round-btn"
             aria-label="Pilzkorb schließen"
           >
-            <Icon name="close" size={20} strokeWidth={2.6} />
+            <Icon name="close" size={14} strokeWidth={2.6} />
           </button>
         </div>
 
         {isEmpty ? (
           <div className="cart-empty">
-            <img
-              src="/mascot.webp"
-              alt=""
-              aria-hidden="true"
-              width={180}
-              height={180}
-              className="cart-empty__mascot"
-            />
+            <MatesEyes size={180} className="cart-empty__mascot" />
             <p className="cart-empty__title">Hier wächst noch nichts.</p>
             <p className="cart-empty__text">Die Mates langweilen sich.</p>
             <a

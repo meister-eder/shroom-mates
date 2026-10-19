@@ -20,30 +20,13 @@ const { imageUrl, title, priority = false } = Astro.props;
       height={600}
       alt={title}
       widths={[300, 450, 600]}
-      sizes="(max-width: 640px) 46vw, (max-width: 1024px) 48vw, 300px"
+      sizes="(max-width: 640px) 46vw, (max-width: 1024px) 48vw, 320px"
       format="webp"
       quality={80}
       loading={priority ? "eager" : "lazy"}
       fetchpriority={priority ? "high" : "auto"}
     />
   ) : (
-    <div class="sticker-card__placeholder product-tile__img" role="img" aria-label={title}>
-      <svg
-        class="product-tile__placeholder-icon"
-        width="56"
-        height="56"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path d="M3 12a9 7 0 0 1 18 0z" />
-        <path d="M9.5 12v6.5a2.5 2.5 0 0 0 5 0V12" />
-      </svg>
-    </div>
+    <div class="product-tile__img product-tile__placeholder" role="img" aria-label={title}></div>
   )
 }

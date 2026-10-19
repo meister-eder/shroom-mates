@@ -261,7 +261,7 @@ const r = (n: number) => Math.round(n * 100) / 100;
 	}
 
 	function blink(inst: Instance, mascot: Element, i: number) {
-		const delay = 4000 + Math.random() * 4000;
+		const delay = 3000 + Math.random() * 1600;
 		inst.timers[i] = window.setTimeout(() => {
 			if (!inst.root.isConnected) return destroy(inst);
 			if (!reduceMq.matches && !document.hidden) {

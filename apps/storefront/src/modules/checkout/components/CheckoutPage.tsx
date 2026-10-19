@@ -1,5 +1,6 @@
 import { $cart, $isCartLoading } from "@lib/stores/cart";
 import { useStore } from "@nanostores/react";
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { useEffect, useState } from "react";
 import { type RegionCountry } from "./AddressFields";
 import { DeliveryStep } from "./DeliveryStep";
@@ -73,21 +74,16 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
   if (!cart || !cart.items?.length) {
     return (
       <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
-        <img
-          src="/mascot.webp"
-          alt=""
-          width="160"
-          height="160"
-          className="mb-6 h-40 w-40 object-contain"
-        />
-        <h1 className="mb-4 text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">
+        <MatesEyes size={180} alt="" className="mb-5 max-w-full" />
+        <h1 className="mb-4! text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">
           Dein Pilzkorb ist leer
         </h1>
-        <p className="mb-8 text-lg">
-          Hier wächst noch nichts. Füge Produkte hinzu, bevor du zur Kasse gehst.
+        <p className="mb-1.5 font-display text-[30px] font-black leading-tight [font-variation-settings:'SOFT'_100,'WONK'_1]">
+          Hier wächst noch nichts.
         </p>
-        <a href={`/${countryCode}/store`} className="btn btn--accent">
-          Weiter einkaufen
+        <p className="mb-5">Die Mates langweilen sich. Füge Produkte hinzu, bevor du zur Kasse gehst.</p>
+        <a href={`/${countryCode}/store`} className="btn btn--primary min-h-[50px] px-[22px]">
+          Zum Sortiment
         </a>
       </div>
     );
@@ -97,8 +93,8 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-8 sm:px-8">
-      <h1 className="mb-6 text-[clamp(44px,5vw,72px)]! leading-[.92]! text-accent">Kasse</h1>
-      <nav aria-label="Checkout-Schritte" className="mb-4">
+      <h1 className="mb-6! text-[clamp(44px,5vw,72px)]! leading-[.92]! text-accent">Kasse</h1>
+      <nav aria-label="Checkout-Schritte">
         <ol className="m-0 grid list-none grid-cols-2 gap-2 p-0 sm:grid-cols-4">
           {RAIL.map((label, i) => {
             const isDone = i < currentIdx;
@@ -107,7 +103,7 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
               <li
                 key={label}
                 aria-current={isCurrent ? "step" : undefined}
-                className={`flex items-center gap-2.5 rounded-pill border-2 border-ink px-3.5 py-2.5 text-[15px] font-bold ${
+                className={`flex items-center gap-2.5 rounded-pill border-2 border-ink px-3.5 py-2.5 text-[15px] font-bold leading-tight ${
                   isCurrent
                     ? "bg-ink text-cream"
                     : isDone
@@ -115,7 +111,7 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
                       : "bg-transparent text-ink"
                 }`}
               >
-                <span className="font-mono text-[13px] font-normal" aria-hidden="true">
+                <span className="font-mono text-[13px] font-medium" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {label}
@@ -125,13 +121,9 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
           })}
         </ol>
       </nav>
-      <p className="mb-8 max-w-prose text-[15px]">
-        Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und weiteren
-        Zahlarten über SumUp.
-      </p>
 
-      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
-        <div className="flex min-w-0 flex-col gap-4">
+      <div className="mt-7 flex flex-wrap items-start gap-8 lg:gap-10">
+        <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-4">
           <ShippingAddressStep
             cart={cart}
             countries={countries}

@@ -1,5 +1,6 @@
 ---
 // Link card instead of a "fresh mushrooms" category: they are not sold here.
+// Shown on phones only (the desktop start page has the news band instead).
 import { Image } from "astro:assets";
 import { websiteUrl } from "@shroom-mates/ui/site";
 import lionsMane from "@assets/lions-mane-makro.webp";
@@ -9,12 +10,15 @@ import lionsMane from "@assets/lions-mane-makro.webp";
   <Image
     src={lionsMane}
     alt=""
-    width={144}
-    height={144}
+    width={112}
+    height={112}
     class="fresh-link__img"
     format="webp"
     loading="lazy"
   />
   <span class="fresh-link__title">Lieber frische Pilze?</span>
-  <span class="fresh-link__cta">Zu unseren Sorten <span aria-hidden="true">→</span></span>
+  <span class="fresh-link__cta">
+    <span class="sr-only">Zu unseren Sorten</span>
+    <span aria-hidden="true">→</span>
+  </span>
 </a>

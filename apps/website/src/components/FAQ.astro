@@ -34,8 +34,8 @@ const faqSchema = {
 
 <div class="faq-list">
   {
-    faqs.map((faq) => (
-      <details class="faq-item" name="faq">
+    faqs.map((faq, i) => (
+      <details class="faq-item" name="faq" open={i === 0}>
         <summary>
           <h2 class="faq-question">{faq.question}</h2>
           <span class="faq-toggle" aria-hidden="true">

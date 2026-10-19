@@ -1,7 +1,6 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import Icon from "@shroom-mates/ui/Icon.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 import MyceliumScroll from "@shroom-mates/ui/MyceliumScroll.astro";
 import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
@@ -54,11 +53,11 @@ const productColors = ["pink", "lavender", "olive-soft"];
   <MyceliumScroll />
   <div class="landing">
     <section class="hero container">
+      <p class="eyebrow hero__eyebrow">{heroEyebrow}</p>
+      <h1 class="hero__title">{heroBefore.trim()}<br /><span class="nowrap">shroom&#8209;mates</span>{heroAfter}</h1>
+    </section>
+    <section class="container hero-body">
       <div class="hero__copy">
-        <h1>
-          <span class="eyebrow hero__eyebrow">{heroEyebrow}</span>
-          <span class="hero__title">{heroBefore.trim()}<br /><span class="nowrap">shroom&#8209;mates</span>{heroAfter}</span>
-        </h1>
         <p class="lead hero__lead">{teaserText}</p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="/unsere-pilze/">{heroPrimaryButton}</a>
@@ -145,7 +144,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
           <h2 id="gastro-heading">{gastro.title}</h2>
           <p class="gastro__text">{gastro.text}</p>
           <a class="btn btn--primary" href="/gastronomie/">
-            {gastro.buttonText} <Icon name="arrow-right" size={20} />
+            {gastro.buttonText}
           </a>
         </div>
         <Image
@@ -172,68 +171,71 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   /* ── Hero ───────────────────────────────────────── */
-  /* Headline über die volle Breite, darunter Text links und Maskottchen rechts */
+  .landing :global(.btn) {
+    padding: 16px 26px;
+    font-size: 1.125rem;
+  }
+
   .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas:
-      "title title"
-      "lead mascot"
-      "actions mascot";
-    grid-template-rows: auto auto 1fr;
-    column-gap: 40px;
     padding-top: 32px;
-    padding-bottom: 80px;
-  }
-
-  .hero__copy {
-    display: contents;
-  }
-
-  .hero h1 {
-    grid-area: title;
-    letter-spacing: -0.02em;
+    padding-bottom: 0;
   }
 
   .hero__eyebrow {
-    display: block;
     margin-bottom: 18px;
     font-size: 0.875rem;
-    letter-spacing: 0.12em;
     line-height: 1.4;
   }
 
   .hero__title {
-    display: block;
     color: var(--color-accent);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+    padding-bottom: 80px;
+  }
+
+  .hero__copy {
+    flex: 1 1 420px;
+    min-width: 0;
   }
 
   .hero__lead {
-    grid-area: lead;
-    align-self: end;
     max-width: 34ch;
     margin: 28px 0 0;
     font-size: 1.3125rem;
   }
 
   .hero__actions {
-    grid-area: actions;
-    align-self: start;
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     margin-top: 32px;
   }
 
+  .hero__actions :global(.btn--secondary) {
+    box-shadow: none;
+  }
+
+  .hero__actions :global(.btn--secondary:hover) {
+    box-shadow: none;
+  }
+
   .hero__mascot {
-    grid-area: mascot;
+    flex: 1 1 440px;
+    min-width: 0;
     position: relative;
     min-height: 520px;
   }
 
   .hero__mascot .dots {
     position: absolute;
-    inset: 40px 0 20px 40px;
+    inset: 40px 0 20px 60px;
     border-radius: 50%;
     opacity: 0.9;
   }
@@ -242,7 +244,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
     position: relative;
     display: block;
     width: 100%;
-    max-width: 480px;
+    max-width: 540px;
     margin: 0 auto;
     filter: drop-shadow(6px 6px 0 var(--color-ink));
   }
@@ -252,11 +254,22 @@ const productColors = ["pink", "lavender", "olive-soft"];
     top: 0;
     left: 0;
     max-width: 230px;
-    box-shadow: 4px 4px 0 var(--color-ink);
+    padding: 14px 18px;
     font-size: 1.0625rem;
   }
 
   /* ── Comic-Ablauf ───────────────────────────────── */
+  .steps {
+    padding: 88px var(--gutter);
+    border-top: 0;
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
+  .steps__inner {
+    padding-inline: 0;
+  }
+
   .steps__inner > h2 {
     color: var(--color-accent-light);
     margin-bottom: 12px;
@@ -332,6 +345,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   .product {
+    gap: 0;
     padding: 18px;
     text-decoration: none;
     color: var(--color-ink);
@@ -342,8 +356,20 @@ const productColors = ["pink", "lavender", "olive-soft"];
     box-sizing: border-box;
   }
 
+  .product:nth-child(1) {
+    --sticker-rot: -2deg;
+  }
+
+  .product:nth-child(2) {
+    --sticker-rot: 1.5deg;
+  }
+
+  .product:nth-child(3) {
+    --sticker-rot: -1deg;
+  }
+
   .product__title {
-    margin: 6px 4px 0;
+    margin: 18px 4px 4px;
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "SOFT" 100;
@@ -361,7 +387,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
 
   /* ── Gastro-Teaser ──────────────────────────────── */
   .gastro {
-    padding-top: 0;
+    padding-top: 96px;
     padding-bottom: 96px;
   }
 
@@ -379,7 +405,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   .gastro__copy {
-    flex: 1 1 360px;
+    flex: 1 1 460px;
     min-width: 0;
   }
 
@@ -410,25 +436,25 @@ const productColors = ["pink", "lavender", "olive-soft"];
     transform: rotate(3deg);
   }
 
-  .gastro .btn--primary {
-    box-shadow: 4px 4px 0 var(--color-cream);
+  .gastro :global(.btn--primary),
+  .gastro :global(.btn--primary:hover) {
+    box-shadow: none;
   }
 
   /* ── Responsive ─────────────────────────────────── */
   @media (max-width: 900px) {
-    .hero {
-      grid-template-columns: minmax(0, 1fr);
-      grid-template-areas:
-        "title"
-        "lead"
-        "actions"
-        "mascot";
+    .hero-body {
       padding-bottom: 56px;
     }
 
     .hero__mascot {
+      flex-basis: 100%;
       min-height: 0;
       padding-top: 56px;
+    }
+
+    .hero__mascot .dots {
+      inset: 96px 0 20px 40px;
     }
 
     .hero__bubble {
@@ -437,6 +463,10 @@ const productColors = ["pink", "lavender", "olive-soft"];
   }
 
   @media (max-width: 768px) {
+    .steps {
+      padding-block: 56px;
+    }
+
     .products {
       padding-top: 56px;
       padding-bottom: 64px;

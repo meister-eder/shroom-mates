@@ -1,18 +1,11 @@
 ---
-// Shop hero (style "Snack News"): giant headline, lead underneath.
+// Giant "shroom shop" headline (Version B)
 
 interface Props {
   title?: string;
-  lead?: string;
 }
 
-const {
-  title = "shroom shop",
-  lead = "Growkits & Tinkturen aus unserer Farm in der Glasfabrik Leutzsch.",
-} = Astro.props;
+const { title = "shroom shop" } = Astro.props;
 ---
 
-<section class="store-hero" aria-labelledby="store-hero-title">
-  <h1 id="store-hero-title" class="store-hero__title">{title}</h1>
-  <p class="store-hero__lead">{lead}</p>
-</section>
+<h1 class="store-hero__title">{title}</h1>

@@ -1,12 +1,9 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { getRegion } from "@lib/data/regions";
-import { listProducts } from "@lib/data/products";
 import { getRegionParams } from "@lib/params/region-params";
-import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
-import StoreHero from "@modules/store/components/StoreHero.astro";
-import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
-import NewsBand from "@modules/store/components/NewsBand.astro";
+import { loadCatalog } from "@modules/store/catalog";
+import StoreCatalog from "@modules/store/components/StoreCatalog.astro";
 
 export const getStaticPaths = getRegionParams;
 
@@ -18,140 +15,19 @@ if (!region) {
   return Astro.redirect("/not-found");
 }
 
-let products: Awaited<ReturnType<typeof listProducts>> = [];
-let error: Error | undefined;
-
-try {
-  products = await listProducts(region.id);
-} catch (e) {
-  error = e instanceof Error ? e : new Error("Unknown error");
-  console.error(error);
-}
-
-// Fresh mushrooms are not sold in the shop (link card to the website instead)
-const HIDDEN_CATEGORIES = ["frische-pilze"];
-products = products.filter(
-  (p) => !p.categories?.some((c) => HIDDEN_CATEGORIES.includes(c.handle ?? "")),
-);
-
-// Growkits and tinctures in that order, everything else after
-const ORDER = ["growkits", "tinkturen"];
-const rank = (p: (typeof products)[number]) => {
-  const i = ORDER.indexOf(p.categories?.[0]?.handle ?? "");
-  return i === -1 ? ORDER.length : i;
-};
-products = [...products].sort((a, b) => rank(a) - rank(b));
-
-// Category chips with counts: [handle, name, count]
-const categoryMap = new Map<string, { name: string; count: number }>();
-for (const product of products) {
-  for (const cat of product.categories ?? []) {
-    if (!cat.handle || !cat.name) continue;
-    const entry = categoryMap.get(cat.handle) ?? { name: cat.name, count: 0 };
-    entry.count += 1;
-    categoryMap.set(cat.handle, entry);
-  }
-}
-const categories = Array.from(categoryMap.entries()).sort(
-  ([a], [b]) =>
-    (ORDER.indexOf(a) === -1 ? 99 : ORDER.indexOf(a)) -
-    (ORDER.indexOf(b) === -1 ? 99 : ORDER.indexOf(b)),
-);
-
-// Active category filter from URL
+const catalog = await loadCatalog(region.id);
 const activeCategory = Astro.url.searchParams.get("kategorie") ?? "";
-
-const filteredProducts = activeCategory
-  ? products.filter((p) =>
-      p.categories?.some((c) => c.handle === activeCategory),
-    )
-  : products;
-
-const getCategory = (product: (typeof products)[number]) =>
-  product.categories?.[0]?.name;
 ---
 
 <Layout
+  wide
   title="Unser Sortiment"
   description="Entdecke unser Sortiment an Growkits und Pilztinkturen aus Leipzig."
-  image={products[0]?.thumbnail ?? undefined}
+  image={catalog.products[0]?.thumbnail ?? undefined}
 >
-  <StoreHero />
-
-  <div class="store-section">
-    {
-      categories.length > 0 && (
-        <nav class="chips" aria-label="Produktkategorien filtern">
-          <a
-            href={`/${countryCode}/store`}
-            class={`chip category-pill${!activeCategory ? " active" : ""}`}
-            aria-current={!activeCategory ? "page" : undefined}
-          >
-            Alles <span class="chip__n">{products.length}</span>
-          </a>
-          {categories.map(([handle, { name, count }]) => (
-            <a
-              href={`/${countryCode}/store?kategorie=${handle}`}
-              class={`chip category-pill${activeCategory === handle ? " active" : ""}`}
-              aria-current={activeCategory === handle ? "page" : undefined}
-            >
-              {name} <span class="chip__n">{count}</span>
-            </a>
-          ))}
-        </nav>
-      )
-    }
-
-    {
-      error && (
-        <p class="error-banner" role="alert">
-          Produkte konnten nicht geladen werden. Bitte versuche es später
-          erneut.
-        </p>
-      )
-    }
-
-    {
-      !error && filteredProducts.length === 0 && (
-        <div class="empty-state" role="status">
-          <MatesLogo alt="" width={140} />
-          <p class="empty-state__title">Hier wächst noch nichts.</p>
-          <p>Keine Produkte in dieser Kategorie.</p>
-          <a href={`/${countryCode}/store`} class="btn btn--primary">
-            Alles anzeigen
-          </a>
-        </div>
-      )
-    }
-
-    {
-      filteredProducts.length > 0 && (
-        <ul
-          class="product-grid"
-          role="list"
-          aria-label={`${filteredProducts.length} Produkt${filteredProducts.length === 1 ? "" : "e"}`}
-        >
-          {filteredProducts.map((product, index) => (
-            <ProductPreview
-              handle={product.handle}
-              variants={product.variants ?? []}
-              thumbnailUrl={product.thumbnail ?? undefined}
-              imageUrl={product.images?.[0]?.url}
-              title={product.title}
-              priority={index < 4}
-              categoryName={getCategory(product)}
-            />
-          ))}
-        </ul>
-      )
-    }
-
-    <p class="price-note">
-      Alle Preise inkl. MwSt., zzgl. Versandkosten (Standard 4,95 €, Express
-      9,95 €). Lieferzeit 3–5 Werktage, Lieferung nur innerhalb Deutschlands.
-    </p>
-
-  </div>
-
-  <NewsBand />
+  <StoreCatalog
+    {...catalog}
+    basePath={`/${countryCode}/store`}
+    activeCategory={activeCategory}
+  />
 </Layout>

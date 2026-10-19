@@ -6,7 +6,7 @@ export const listProducts = async (regionId: string) => {
       region_id: regionId,
       // categories feed the filter chips on /store; inventory disables quick-add
       fields:
-        "*variants.calculated_price,+variants.inventory_quantity,*categories",
+        "*variants.calculated_price,+variants.inventory_quantity,*categories,+metadata",
     });
     return products;
   } catch (error) {

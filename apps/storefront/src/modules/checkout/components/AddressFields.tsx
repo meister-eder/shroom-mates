@@ -31,6 +31,10 @@ export const ERROR_CLASS =
   "input-error field__error text-accent-dark! [&::before]:bg-accent-dark!";
 const ERROR = ERROR_CLASS;
 
+/** Feld wie im Mockup: fette Label, 2px Tinte, eckig, Creme, 14px Innenabstand. */
+export const FIELD =
+  "field gap-1.5 text-base leading-[1.2] [&_input]:p-3.5 [&_select]:p-3.5 [&_input]:text-base [&_select]:text-base [&_input]:bg-cream! [&_select]:bg-cream! [&_input]:leading-[1.2] [&_select]:leading-[1.2]";
+
 interface AddressFieldsProps {
   prefix: "shipping" | "billing";
   register: UseFormRegister<CheckoutFormValues>;
@@ -51,7 +55,7 @@ export const AddressFields = ({
     <div className="space-y-4">
       {/* Row 1: First name / Last name */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="field">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-firstName`}>Vorname *</label>
           <input
             id={`${prefix}-firstName`}
@@ -62,7 +66,7 @@ export const AddressFields = ({
           />
           {errors.firstName && <p className={ERROR}>{errors.firstName.message}</p>}
         </div>
-        <div className="field">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-lastName`}>Nachname *</label>
           <input
             id={`${prefix}-lastName`}
@@ -75,9 +79,9 @@ export const AddressFields = ({
         </div>
       </div>
 
-      {/* Row 2: Address / Company */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="field">
+      {/* Row 2: Address */}
+      <div className="grid grid-cols-1 gap-4">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-address`}>Straße und Hausnummer *</label>
           <input
             id={`${prefix}-address`}
@@ -88,31 +92,23 @@ export const AddressFields = ({
           />
           {errors.address && <p className={ERROR}>{errors.address.message}</p>}
         </div>
-        <div className="field">
-          <label htmlFor={`${prefix}-company`}>Firma <span className="font-normal text-sm">(optional)</span></label>
-          <input
-            id={`${prefix}-company`}
-            type="text"
-            autoComplete="organization"
-            {...register(f("company"))}
-          />
-        </div>
       </div>
 
       {/* Row 3: Postal code / City */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="field">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-postalCode`}>PLZ *</label>
           <input
             id={`${prefix}-postalCode`}
             type="text"
+            inputMode="numeric"
             autoComplete="postal-code"
             {...register(f("postalCode"))}
             aria-invalid={errors.postalCode ? true : undefined}
           />
           {errors.postalCode && <p className={ERROR}>{errors.postalCode.message}</p>}
         </div>
-        <div className="field">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-city`}>Stadt *</label>
           <input
             id={`${prefix}-city`}
@@ -127,7 +123,7 @@ export const AddressFields = ({
 
       {/* Row 4: Country / State */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="field">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-country`}>Land *</label>
           <select
             id={`${prefix}-country`}
@@ -144,13 +140,26 @@ export const AddressFields = ({
           </select>
           {errors.country && <p className={ERROR}>{errors.country.message}</p>}
         </div>
-        <div className="field">
+        <div className={FIELD}>
           <label htmlFor={`${prefix}-province`}>Bundesland <span className="font-normal text-sm">(optional)</span></label>
           <input
             id={`${prefix}-province`}
             type="text"
             autoComplete="address-level1"
             {...register(f("province"))}
+          />
+        </div>
+      </div>
+
+      {/* Row 5: Company */}
+      <div className="grid grid-cols-1 gap-4">
+        <div className={FIELD}>
+          <label htmlFor={`${prefix}-company`}>Firma <span className="font-normal text-sm">(optional)</span></label>
+          <input
+            id={`${prefix}-company`}
+            type="text"
+            autoComplete="organization"
+            {...register(f("company"))}
           />
         </div>
       </div>

@@ -8,6 +8,7 @@ import { z } from "zod";
 import {
   AddressFields,
   ERROR_CLASS,
+  FIELD,
   type AddressValues,
   type CheckoutFormValues,
   type RegionCountry,
@@ -131,17 +132,6 @@ interface ShippingAddressStepProps {
   onEdit?: () => void;
 }
 
-const AddressBlock = ({ label, lines }: { label: string; lines: string[] }) => (
-  <div>
-    <p className="label mb-1">{label}</p>
-    {lines.map((line, i) => (
-      <p key={i}>
-        {line}
-      </p>
-    ))}
-  </div>
-);
-
 const ReadOnlyView = ({
   cart,
   onEdit,
@@ -150,21 +140,18 @@ const ReadOnlyView = ({
   onEdit?: () => void;
 }) => {
   const isBillingSame = isSameAddress(cart.shipping_address, cart.billing_address);
+  const summary = [...formatAddressLines(cart.shipping_address), cart.email]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <CheckoutStep number={1} title="Lieferadresse" state="done" onEdit={onEdit}>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-        <AddressBlock label="Lieferadresse" lines={formatAddressLines(cart.shipping_address)} />
-        <AddressBlock label="Kontakt" lines={cart.email ? [cart.email] : []} />
-        <AddressBlock
-          label="Rechnungsadresse"
-          lines={
-            isBillingSame
-              ? ["Rechnungs- und Lieferadresse sind identisch."]
-              : formatAddressLines(cart.billing_address)
-          }
-        />
-      </div>
+    <CheckoutStep number={1} title="Adresse" state="done" onEdit={onEdit}>
+      <p className="m-0">{summary}</p>
+      {!isBillingSame && (
+        <p className="m-0 mt-1 text-[15px]">
+          Rechnungsadresse: {formatAddressLines(cart.billing_address).join(" · ")}
+        </p>
+      )}
     </CheckoutStep>
   );
 };
@@ -264,7 +251,7 @@ export const ShippingAddressStep = ({
   }
 
   return (
-    <CheckoutStep number={1} title="Lieferadresse" state="active">
+    <CheckoutStep number={1} title="Adresse" state="active">
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="space-y-4">
           <AddressFields
@@ -274,20 +261,10 @@ export const ShippingAddressStep = ({
             countries={countries}
           />
 
-          {/* Billing same as shipping */}
-          <label className="flex items-center gap-3 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              {...register("billingSameAsShipping")}
-              className="w-[22px] h-[22px] accent-ink"
-            />
-            <span>Rechnungsadresse entspricht der Lieferadresse</span>
-          </label>
-
           {/* Email / Phone */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="field">
-              <label htmlFor="checkout-email">E-Mail *</label>
+          <div className="grid grid-cols-1 gap-4">
+            <div className={FIELD}>
+              <label htmlFor="checkout-email">E-Mail * <span className="text-sm font-normal">für die Bestellbestätigung</span></label>
               <input
                 id="checkout-email"
                 type="email"
@@ -297,7 +274,7 @@ export const ShippingAddressStep = ({
               />
               {errors.email && <p className={ERROR_CLASS}>{errors.email.message}</p>}
             </div>
-            <div className="field">
+            <div className={`${FIELD} sm:max-w-[calc(50%-8px)]`}>
               <label htmlFor="checkout-phone">Telefon <span className="font-normal text-sm">(optional)</span></label>
               <input
                 id="checkout-phone"
@@ -310,9 +287,19 @@ export const ShippingAddressStep = ({
             </div>
           </div>
 
+          {/* Billing same as shipping */}
+          <label className="flex cursor-pointer select-none items-center gap-2.5 text-base">
+            <input
+              type="checkbox"
+              {...register("billingSameAsShipping")}
+              className="h-[22px] w-[22px] shrink-0 accent-ink"
+            />
+            <span>Rechnungsadresse entspricht der Lieferadresse</span>
+          </label>
+
           {/* Billing address section */}
           {!billingSameAsShipping && (
-            <div className="pt-5 border-t-2 border-ink">
+            <div className="border-t-2 border-ink pt-5">
               <h3 className="mb-4 text-xl! font-black!">Rechnungsadresse</h3>
               <AddressFields
                 prefix="billing"

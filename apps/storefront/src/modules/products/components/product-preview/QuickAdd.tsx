@@ -37,7 +37,7 @@ export const QuickAdd = ({ variantId, title }: QuickAddProps) => {
       disabled={busy}
       aria-label={`${title} rein ins Körbchen`}
     >
-      <Icon name="plus" size={18} strokeWidth={2.8} />
+      <Icon name="plus" size={16} strokeWidth={3} />
       <span className="quick-add__label">Rein ins Körbchen</span>
     </button>
   );

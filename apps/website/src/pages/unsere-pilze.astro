@@ -3,7 +3,6 @@ import { Image } from "astro:assets";
 import { getCollection, getEntry, render } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import { linkBuilders } from "@shroom-mates/ui/site";
-import bunteWelt from "../assets/images/fotos/bunte-pilze-oben.jpg";
 import rosaLamellen from "../assets/images/fotos/rosa-lamellen.jpg";
 import ProductCard from "../components/ProductCard.astro";
 import Layout from "../layouts/Layout.astro";
@@ -19,7 +18,6 @@ const {
 	heroEyebrow,
 	heroTitle,
 	heroLead,
-	heroImageAlt,
 	freshTag,
 	growkitLabel,
 	emptyText,
@@ -34,18 +32,24 @@ const GROWKIT_AUSTERN = shop("/store/austernseitlinge-growkit");
 const meta: Record<
 	string,
 	{
-		tone: "lavender" | "pink" | "olive-soft" | "stone" | "paper";
+		tone: "lavender" | "pink" | "olive-soft" | "mist" | "white";
+		tilt: number;
 		kit?: string;
 	}
 > = {
-	"rosa-austernpilze": { tone: "pink", kit: GROWKIT_AUSTERN },
+	"rosa-austernpilze": { tone: "pink", tilt: -1.5, kit: GROWKIT_AUSTERN },
 	"2025-11-17-lions-mane": {
 		tone: "lavender",
+		tilt: 1,
 		kit: shop("/store/lions-mane-growkit"),
 	},
-	"2025-11-17-white-pearl": { tone: "olive-soft", kit: GROWKIT_AUSTERN },
-	"2025-11-17-pioppino": { tone: "paper" },
-	"2025-11-17-black-pearl": { tone: "stone" },
+	"2025-11-17-white-pearl": {
+		tone: "olive-soft",
+		tilt: -1,
+		kit: GROWKIT_AUSTERN,
+	},
+	"2025-11-17-pioppino": { tone: "white", tilt: 1.5 },
+	"2025-11-17-black-pearl": { tone: "mist", tilt: -1 },
 };
 
 const mushroomsCollection = await getCollection("mushrooms");
@@ -59,7 +63,8 @@ const mushrooms = await Promise.all(
 				title: entry.data.title,
 				image: entry.data.image,
 				imageAlt: entry.data.imageAlt,
-				tone: m?.tone ?? "paper",
+				tone: m?.tone ?? "white",
+				tilt: m?.tilt ?? 0,
 				latin: entry.data.latinName,
 				badge: entry.data.badge,
 				kit: m?.kit,
@@ -96,8 +101,8 @@ const productSchemas = mushrooms.map((mushroom) => ({
     ))
   }
 
-  <div class="page">
-    <section class="hero container">
+  <div class="page" data-sorten>
+    <section class="hero">
       <div class="hero__copy">
         <h1>
           <span class="eyebrow hero__eyebrow">{heroEyebrow}</span>
@@ -105,44 +110,38 @@ const productSchemas = mushrooms.map((mushroom) => ({
         </h1>
         <p class="lead hero__lead">{heroLead}</p>
       </div>
-      <div class="hero__media">
-        <div class="dots" aria-hidden="true"></div>
-        <div class="arch-frame hero__arch">
-          <Image
-            src={bunteWelt}
-            alt={heroImageAlt}
-            widths={[320, 480, 640, 840]}
-            sizes="(max-width: 768px) 80vw, 420px"
-            loading="eager"
-            format="webp"
-          />
-        </div>
+      <div class="filter" role="group" aria-label="Sorten filtern">
+        <button type="button" class="filter__chip" aria-pressed="true" data-filter="all">Alle Sorten</button>
+        <button type="button" class="filter__chip" aria-pressed="false" data-filter="kit">Als Growkit</button>
       </div>
     </section>
 
-    <section class="container sorten" aria-label="Pilzsorten">
+    <section class="sorten" aria-label="Pilzsorten">
       <div class="sorten__grid">
         {
           mushrooms.map((mushroom) => (
-            <ProductCard
-              title={mushroom.title}
-              image={mushroom.image}
-              imageAlt={mushroom.imageAlt}
-              tone={mushroom.tone}
-              subtitle={mushroom.latin}
-              badge={mushroom.badge}
-              id={mushroom.slug}
-            >
-              <mushroom.Content />
-              <Fragment slot="actions">
-                <span class="tag">{freshTag}</span>
-                {mushroom.kit && (
-                  <a class="tag" href={mushroom.kit}>
-                    {growkitLabel} <Icon name="arrow-right" size={16} />
-                  </a>
-                )}
-              </Fragment>
-            </ProductCard>
+            <div class="sorten__item" data-kit={mushroom.kit ? "true" : "false"}>
+              <ProductCard
+                title={mushroom.title}
+                image={mushroom.image}
+                imageAlt={mushroom.imageAlt}
+                tone={mushroom.tone}
+                tilt={mushroom.tilt}
+                subtitle={mushroom.latin}
+                badge={mushroom.badge}
+                id={mushroom.slug}
+              >
+                <mushroom.Content />
+                <Fragment slot="actions">
+                  <span class="tag">{freshTag}</span>
+                  {mushroom.kit && (
+                    <a class="tag" href={mushroom.kit}>
+                      {growkitLabel} <Icon name="arrow-right" size={16} />
+                    </a>
+                  )}
+                </Fragment>
+              </ProductCard>
+            </div>
           ))
         }
       </div>
@@ -164,16 +163,16 @@ const productSchemas = mushrooms.map((mushroom) => ({
         loading="lazy"
         format="webp"
       />
-      <div class="container band__inner">
-        <p class="speech-bubble band__bubble">{bandText}</p>
+      <div class="band__inner">
+        <p class="band__bubble">{bandText}</p>
       </div>
     </section>
 
-    <section class="container ctas" aria-label="Pilze bekommen">
+    <section class="ctas" aria-label="Pilze bekommen">
       {
         ctas.map((cta, i) => (
           <a class={`cta ${i === 0 ? "cta--accent" : "cta--white"}`} href={cta.link}>
-            <span class={i === 0 ? "label" : "label cta__label"}>{cta.label}</span>
+            <span class={i === 0 ? "label cta__label cta__label--ink" : "label cta__label"}>{cta.label}</span>
             <h2 class="cta__title">{cta.title} <Icon name="arrow-right" size={32} strokeWidth={3} /></h2>
             <p>{cta.text}</p>
           </a>
@@ -183,6 +182,28 @@ const productSchemas = mushrooms.map((mushroom) => ({
   </div>
 </Layout>
 
+<script>
+  // Sortenfilter: "Alle Sorten" / "Als Growkit"
+  function initFilter() {
+    const root = document.querySelector<HTMLElement>("[data-sorten]");
+    if (!root) return;
+    const chips = root.querySelectorAll<HTMLButtonElement>("[data-filter]");
+    const items = root.querySelectorAll<HTMLElement>(".sorten__item");
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const kitOnly = chip.dataset.filter === "kit";
+        chips.forEach((c) =>
+          c.setAttribute("aria-pressed", c === chip ? "true" : "false"),
+        );
+        items.forEach((item) => {
+          item.hidden = kitOnly && item.dataset.kit !== "true";
+        });
+      });
+    });
+  }
+  document.addEventListener("astro:page-load", initFilter);
+</script>
+
 <style>
   .page {
     padding-top: var(--navbar-height);
@@ -191,12 +212,19 @@ const productSchemas = mushrooms.map((mushroom) => ({
 
   /* ── Hero ───────────────────────────────────────── */
   .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 40px;
-    padding-top: 32px;
-    padding-bottom: 64px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+    padding: 40px var(--gutter) 56px;
+  }
+
+  .hero__copy {
+    flex: 1 1 560px;
+    min-width: 0;
   }
 
   .hero__eyebrow {
@@ -219,36 +247,64 @@ const productSchemas = mushrooms.map((mushroom) => ({
     margin: 24px 0 0;
   }
 
-  .hero__media {
-    position: relative;
-    padding: 24px;
+  /* Filter-Chips: aktiv = Tinte, sonst Outline */
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
-  .hero__media .dots {
-    position: absolute;
-    inset: 30px 0 0 50px;
-    border-radius: 50%;
+  .filter__chip {
+    min-height: 44px;
+    padding: 12px 18px;
+    border: 2px solid var(--color-ink);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
   }
 
-  .hero__arch {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
-    height: 480px;
-    margin: 0 auto;
-    box-shadow: var(--shadow-teaser);
+  .filter__chip:hover {
+    background: var(--color-white);
+  }
+
+  .filter__chip[aria-pressed="true"] {
+    background: var(--color-ink);
+    color: var(--color-cream);
   }
 
   /* ── Sorten ─────────────────────────────────────── */
   .sorten {
-    padding-bottom: 112px;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+    padding: 0 var(--gutter) 112px;
   }
 
   .sorten__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
     gap: 48px 36px;
     align-items: stretch;
+  }
+
+  .sorten__item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .sorten__item[hidden] {
+    display: none;
+  }
+
+  .sorten__item > :global(.product-card) {
+    flex: 1;
   }
 
   .no-content {
@@ -262,10 +318,9 @@ const productSchemas = mushrooms.map((mushroom) => ({
     position: relative;
     display: flex;
     align-items: flex-end;
-    min-height: 520px;
-    padding: 48px 0;
+    min-height: 560px;
+    padding: 48px var(--gutter);
     background: var(--color-ink);
-    border-block: 3px solid var(--color-ink);
     overflow: hidden;
   }
 
@@ -275,22 +330,31 @@ const productSchemas = mushrooms.map((mushroom) => ({
     width: 100%;
     height: 100%;
     object-fit: cover;
+    opacity: 0.75;
   }
 
   .band__inner {
     position: relative;
+    width: 100%;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
   }
 
   .band__bubble {
+    display: inline-block;
     max-width: 22ch;
+    margin: 0;
     padding: 22px 28px;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    border-radius: 0;
     box-shadow: 6px 6px 0 var(--color-accent);
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(1.75rem, 3.6vw, 3rem);
+    font-size: clamp(1.875rem, 3.6vw, 3rem);
     line-height: 1;
-    rotate: -2deg;
   }
 
   /* ── Weiter-Karten ──────────────────────────────── */
@@ -298,8 +362,9 @@ const productSchemas = mushrooms.map((mushroom) => ({
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: 32px;
-    padding-top: 96px;
-    padding-bottom: 96px;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+    padding: 96px var(--gutter);
   }
 
   .cta {
@@ -308,13 +373,17 @@ const productSchemas = mushrooms.map((mushroom) => ({
     color: var(--color-ink);
     text-decoration: none;
     border: 3px solid var(--color-ink);
-    border-radius: var(--radius-card);
+    border-radius: 0;
     box-shadow: var(--shadow-card);
-    transition: transform 0.2s ease;
+    transition:
+      transform 0.2s var(--ease-smooth, ease),
+      box-shadow 0.2s var(--ease-smooth, ease);
   }
 
   .cta:hover {
-    transform: translateY(-4px);
+    color: var(--color-ink);
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0 var(--color-ink);
   }
 
   .cta--accent {
@@ -325,18 +394,24 @@ const productSchemas = mushrooms.map((mushroom) => ({
     background: #fff;
   }
 
-  .cta__label {
-    color: var(--color-accent-dark);
-  }
-
   .cta .label {
     display: block;
     margin-bottom: 10px;
   }
 
+  .cta__label {
+    color: var(--color-accent-dark);
+  }
+
+  .cta .cta__label--ink {
+    color: var(--color-ink);
+  }
+
   .cta__title {
     margin: 0 0 12px;
-    font-size: clamp(1.9rem, 3vw, 2.5rem);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: 2.5rem;
     line-height: 1;
   }
 
@@ -350,18 +425,11 @@ const productSchemas = mushrooms.map((mushroom) => ({
   }
 
   /* ── Responsive ─────────────────────────────────── */
-  @media (max-width: 900px) {
-    .hero {
-      grid-template-columns: minmax(0, 1fr);
-      padding-bottom: 48px;
-    }
-
-    .hero__arch {
-      height: 380px;
-    }
-  }
-
   @media (max-width: 768px) {
+    .hero {
+      padding-bottom: 40px;
+    }
+
     .sorten {
       padding-bottom: 64px;
     }
@@ -371,21 +439,20 @@ const productSchemas = mushrooms.map((mushroom) => ({
     }
 
     .ctas {
-      padding-top: 56px;
-      padding-bottom: 56px;
+      padding-block: 56px;
     }
 
     .cta {
       padding: 24px 20px;
       box-shadow: 6px 6px 0 var(--color-ink);
     }
+
+    .cta__title {
+      font-size: 2rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .band__bubble {
-      rotate: none;
-    }
-
     .cta:hover {
       transform: none;
     }

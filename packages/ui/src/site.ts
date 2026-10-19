@@ -150,7 +150,7 @@ export function footerColumns(
   }
   return [
     {
-      title: "Sortiment",
+      title: "Seiten",
       links: [
         { label: "Shop", href: shop("/store"), external: s },
         { label: "Unsere Pilze", href: website("/unsere-pilze/"), external: w },
@@ -164,9 +164,8 @@ export function footerColumns(
       links: [
         { label: "Über uns", href: website("/ueber-uns/"), external: w },
         { label: "FAQ", href: website("/faq/"), external: w },
-        { label: "Kontakt", href: website("/kontakt/"), external: w },
+        ...legal,
       ],
     },
-    { title: "Rechtliches", links: legal },
   ];
 }

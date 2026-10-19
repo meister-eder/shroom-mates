@@ -7,7 +7,7 @@ import type { ImageMetadata } from "astro";
  * Bild mit weißem Rand, Name, Inhalt (Default-Slot) und optional Aktionen
  * (Slot "actions"). Rotation/Hover kommen aus .sticker-card (utilities.css).
  */
-type Tone = "lavender" | "pink" | "olive-soft" | "stone" | "paper";
+type Tone = "lavender" | "pink" | "olive-soft" | "stone" | "paper" | "mist" | "white";
 
 interface Props {
 	title: string;
@@ -20,6 +20,8 @@ interface Props {
 	/** Kleine Pille auf dem Bild, z. B. „Nur im Sommer“ */
 	badge?: string;
 	id?: string;
+	/** Neigung der Karte in Grad (Entwurf: abwechselnd -1.5 / 1 / -1 / 1.5) */
+	tilt?: number;
 	sizes?: string;
 }
 
@@ -32,13 +34,18 @@ const {
 	subtitle,
 	badge,
 	id,
+	tilt,
 	sizes = "(max-width: 768px) 90vw, 420px",
 } = Astro.props;
 
 const HeadingTag = `h${headingLevel}` as "h2" | "h3";
 ---
 
-<article class={`sticker-card sticker-card--${tone} product-card`} id={id}>
+<article
+	class={`sticker-card sticker-card--${tone} product-card`}
+	id={id}
+	style={tilt !== undefined ? `--sticker-rot: ${tilt}deg` : undefined}
+>
 	<div class="product-card__media">
 		<Image
 			src={image}
@@ -71,6 +78,16 @@ const HeadingTag = `h${headingLevel}` as "h2" | "h3";
 	.product-card {
 		gap: 0.5rem;
 		min-width: 0;
+		padding: 18px;
+	}
+
+	/* Zusätzliche Kartonfarben aus dem Entwurf */
+	.product-card.sticker-card--mist {
+		--sticker-bg: #b9bbe6;
+	}
+
+	.product-card.sticker-card--white {
+		--sticker-bg: #fff;
 	}
 
 	.product-card__media {
@@ -78,7 +95,7 @@ const HeadingTag = `h${headingLevel}` as "h2" | "h3";
 	}
 
 	.product-card :global(.product-card__img) {
-		height: 300px;
+		height: 320px;
 		box-sizing: border-box;
 	}
 
@@ -100,7 +117,7 @@ const HeadingTag = `h${headingLevel}` as "h2" | "h3";
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		padding: 6px 6px 4px;
+		padding: 6px 4px 4px;
 	}
 
 	/* Steingrau: Text auf Creme-Fläche für ausreichend Kontrast */
@@ -113,16 +130,16 @@ const HeadingTag = `h${headingLevel}` as "h2" | "h3";
 	}
 
 	.product-card__title {
-		margin: 4px 0 0;
+		margin: 10px 0 0;
 		font-family: var(--font-display);
 		font-weight: 900;
 		font-variation-settings: "SOFT" 100;
-		font-size: clamp(1.9rem, 2.6vw, 2.25rem);
+		font-size: 2.25rem;
 		line-height: 1;
 	}
 
 	.product-card__subtitle {
-		margin: 6px 0 0;
+		margin: 2px 0 0;
 		font-family: var(--font-mono);
 		font-size: 0.8125rem;
 		font-style: italic;
@@ -224,8 +241,16 @@ const HeadingTag = `h${headingLevel}` as "h2" | "h3";
 	}
 
 	@media (max-width: 768px) {
+		.product-card {
+			padding: 12px;
+		}
+
 		.product-card :global(.product-card__img) {
 			height: 240px;
+		}
+
+		.product-card__title {
+			font-size: 2rem;
 		}
 	}
 </style>

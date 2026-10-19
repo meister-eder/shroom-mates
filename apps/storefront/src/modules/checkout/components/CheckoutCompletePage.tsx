@@ -1,5 +1,6 @@
 import { goToOrderConfirmation } from "@lib/checkout/order-handoff";
 import { getCheckoutCartId, placeOrder } from "@lib/stores/cart";
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { useEffect, useState, type ReactNode } from "react";
 
 interface CheckoutCompletePageProps {
@@ -76,7 +77,7 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
           Das dauert länger als üblich. Du erhältst eine Bestätigungs-E-Mail, sobald deine
           Bestellung eingegangen ist.
         </p>
-        <button type="button" className="btn btn--accent" onClick={() => setAttempt((a) => a + 1)}>
+        <button type="button" className="btn btn--primary" onClick={() => setAttempt((a) => a + 1)}>
           Erneut prüfen
         </button>
       </Shell>
@@ -89,7 +90,7 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
         <p className="mb-8 text-lg">
           Falls deine Zahlung erfolgreich war, erhältst du eine Bestätigung per E-Mail.
         </p>
-        <a href={`/${countryCode}/store`} className="btn btn--accent">
+        <a href={`/${countryCode}/store`} className="btn btn--primary">
           Weiter einkaufen
         </a>
       </Shell>
@@ -99,7 +100,7 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
   return (
     <Shell title="Zahlung konnte nicht verarbeitet werden">
       <p className="mb-8 text-lg">{state.message}</p>
-      <a href={`/${countryCode}/checkout?step=payment`} className="btn btn--accent">
+      <a href={`/${countryCode}/checkout?step=payment`} className="btn btn--primary">
         Zurück zur Kasse
       </a>
     </Shell>
@@ -108,8 +109,8 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
 
 const Shell = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
-    <img src="/mascot.webp" alt="" width="160" height="160" className="mb-6 h-40 w-40 object-contain" />
-    <h1 className="mb-4 text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">{title}</h1>
+    <MatesEyes size={160} alt="" className="mb-6 max-w-full" />
+    <h1 className="mb-4! text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">{title}</h1>
     {children}
   </div>
 );

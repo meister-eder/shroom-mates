@@ -53,8 +53,8 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
       class="footer-drawing"
       src={drawing}
       alt="Gezeichnete Menge kleiner Pilzfiguren mit Gesichtern"
-      widths={[640, 1180, 1536]}
-      sizes="(min-width: 1260px) 1180px, 100vw"
+      widths={[640, 1180, 1536, 2200]}
+      sizes="100vw"
       format="webp"
       loading="lazy"
     />
@@ -76,6 +76,25 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
     </p>
 
     <nav class="footer-cols" aria-label="Footer">
+      <div class="footer-col">
+        <p class="footer-col__title">Besuch</p>
+        <address>
+          {ADDRESS.name}<br />
+          {ADDRESS.street}<br />
+          {ADDRESS.city.replace(/^\d+\s+/, "")}
+        </address>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col__title">Kontakt</p>
+        <ul role="list">
+          <li><a class="footer-link--ul" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+          <li>
+            <a class="footer-link--ul" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              Instagram<span class="sr-only"> (öffnet in neuem Tab)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
       {
         columns.map((col) => (
           <div class="footer-col">
@@ -86,7 +105,7 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
                   <a href={l.href}>{l.label}</a>
                 </li>
               ))}
-              {col.title === "Rechtliches" && Astro.slots.has("actions") && (
+              {col.title === "Mehr" && Astro.slots.has("actions") && (
                 <li class="footer-actions">
                   <slot name="actions" />
                 </li>
@@ -95,22 +114,6 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
           </div>
         ))
       }
-      <div class="footer-col">
-        <p class="footer-col__title">Kontakt</p>
-        <address>
-          {ADDRESS.name}<br />
-          {ADDRESS.street}<br />
-          {ADDRESS.city}
-        </address>
-        <ul role="list">
-          <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
-          <li>
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-              Instagram<span class="sr-only"> (öffnet in neuem Tab)</span>
-            </a>
-          </li>
-        </ul>
-      </div>
     </nav>
   </div>
 
@@ -132,7 +135,7 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
   .site-footer {
     width: 100%;
     margin-top: auto;
-    padding: 0 var(--gutter) 40px;
+    padding: 0 0 40px;
     overflow: hidden;
     background: var(--color-bg);
     color: var(--color-ink);
@@ -141,8 +144,7 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
   .footer-drawing-wrap {
     position: relative;
     width: 100%;
-    max-width: 1160px;
-    margin: 0 auto;
+    border-bottom: 2px solid var(--color-accent);
   }
 
   .site-footer :global(.footer-drawing) {
@@ -166,8 +168,7 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
     gap: 40px;
     max-width: var(--container);
     margin: 0 auto;
-    padding-top: 48px;
-    border-top: 2px solid var(--color-accent);
+    padding: 48px var(--gutter) 0;
   }
 
   .footer-claim {
@@ -194,9 +195,9 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
     margin: 0 auto;
     text-align: center;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 32px 16px;
-    font-size: 16px;
+    font-size: clamp(14px, 3.8vw, 16px);
     line-height: 1.8;
   }
 
@@ -231,6 +232,11 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
     overflow-wrap: anywhere;
   }
 
+  .footer-col a.footer-link--ul {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
   .footer-col a:hover {
     color: var(--color-accent-dark);
     text-decoration: underline;
@@ -253,6 +259,7 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
   .footer-credit {
     max-width: var(--container);
     margin: 48px auto 0;
+    padding-inline: var(--gutter);
     text-align: center;
     font-family: var(--font-mono);
     font-size: 13px;
@@ -303,7 +310,7 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
         const dx = px - (rect.left + e.cx * k);
         const dy = py - (rect.top + e.cy * k);
         const d = Math.hypot(dx, dy) || 1;
-        const reach = Math.min(1, d / 160) * (e.r * 0.7);
+        const reach = Math.min(1, d / 60) * (e.r * 0.8);
         e.pupil.setAttribute("transform", `translate(${((dx / d) * reach).toFixed(2)} ${((dy / d) * reach).toFixed(2)})`);
       }
     };

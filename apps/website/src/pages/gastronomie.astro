@@ -27,8 +27,6 @@ const {
 	vorteile,
 	ctaTitle,
 	ctaText,
-	ctaButtonText,
-	ctaButtonLink,
 	ctaEmail,
 } = gastroPageEntry.data;
 
@@ -65,7 +63,7 @@ const gastroSchema = {
     <section class="gastro-hero">
       <div class="container gastro-hero__inner">
         <div class="gastro-hero__copy">
-          <h1 class="eyebrow eyebrow--on-dark gastro-hero__eyebrow">{heroEyebrow}</h1>
+          <h1 class="eyebrow gastro-hero__eyebrow">{heroEyebrow}</h1>
           <p class="gastro-hero__title">{heroTitle}</p>
           {heroSubtitle && <p class="gastro-hero__lead">{heroSubtitle}</p>}
           <a class="btn btn--accent gastro-hero__cta" href="#anfrage">{heroButton}</a>
@@ -124,7 +122,7 @@ const gastroSchema = {
       </ul>
     </section>
 
-    <section class="section section--night vorteile" aria-labelledby="vorteile-heading">
+    <section class="section section--night section--no-border vorteile" aria-labelledby="vorteile-heading">
       <div class="container vorteile__inner">
         <h2 id="vorteile-heading">{vorteileTitle}</h2>
         <ul class="vorteile__list" role="list">
@@ -142,10 +140,9 @@ const gastroSchema = {
 
     <section id="anfrage" class="container gastro-cta" aria-labelledby="cta-heading">
       <div class="gastro-cta__box">
-        <h2 id="cta-heading">{ctaTitle}</h2>
-        <p class="lead">{ctaText}</p>
-        <div class="gastro-cta__actions">
-          <a href={ctaButtonLink} class="btn btn--primary">{ctaButtonText}</a>
+        <div class="gastro-cta__copy">
+          <h2 id="cta-heading">{ctaTitle}</h2>
+          <p class="lead">{ctaText}</p>
           {
             ctaEmail && (
               <a class="gastro-cta__mail" href={`mailto:${ctaEmail}`}>
@@ -154,8 +151,35 @@ const gastroSchema = {
             )
           }
         </div>
+        <form method="POST" id="form" class="gastro-form">
+          <input type="hidden" name="access_key" value="d69f2b91-fe55-4258-97a9-6bb53285b5e2" />
+          <input type="hidden" name="subject" value="Gastronomie-Anfrage über shroom-mates.de" />
+          <input type="hidden" name="topic" value="Gastronomie" />
+          <div class="field">
+            <label for="g-name">Name</label>
+            <input id="g-name" type="text" name="name" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="g-betrieb">Betrieb</label>
+            <input id="g-betrieb" type="text" name="betrieb" autocomplete="organization" />
+          </div>
+          <div class="field gastro-form__wide">
+            <label for="g-mail">E-Mail</label>
+            <input id="g-mail" type="email" name="email" autocomplete="email" required />
+          </div>
+          <div class="field gastro-form__wide">
+            <label for="g-bedarf">Was brauchst du?</label>
+            <textarea id="g-bedarf" name="message" rows="3" placeholder="Sorten, Menge, Rhythmus" required></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary gastro-form__submit">Anfrage senden</button>
+          <div id="result" class="gastro-form__result gastro-form__wide" role="status" aria-live="polite"></div>
+        </form>
       </div>
     </section>
+
+    <script>
+      import "../scripts/contact-form.ts";
+    </script>
   </div>
 </Layout>
 
@@ -168,10 +192,9 @@ const gastroSchema = {
   /* ── Hero (dunkles Band) ────────────────────────── */
   .gastro-hero {
     margin-top: 0;
-    padding: 64px 0 72px;
+    padding: 80px 0;
     background: var(--color-night);
     color: var(--color-paper);
-    border-bottom: 3px solid var(--color-ink);
   }
 
   .gastro-hero__inner {
@@ -182,7 +205,7 @@ const gastroSchema = {
   }
 
   .gastro-hero__copy {
-    flex: 1 1 480px;
+    flex: 1 1 540px;
     min-width: 0;
   }
 
@@ -190,6 +213,7 @@ const gastroSchema = {
     margin-bottom: 18px;
     font-size: 0.875rem;
     line-height: 1.5;
+    color: #ff7a45;
   }
 
   .gastro-hero__title {
@@ -197,7 +221,7 @@ const gastroSchema = {
     font-family: var(--font-display);
     font-weight: 900;
     font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(44px, 7.4vw, 112px);
+    font-size: clamp(48px, 7.4vw, 112px);
     line-height: 0.9;
     color: var(--color-accent);
     text-wrap: balance;
@@ -213,11 +237,18 @@ const gastroSchema = {
 
   .gastro-hero__cta {
     margin-top: 32px;
+    padding: 16px 26px;
+    border: 0;
+    font-size: 1.125rem;
     box-shadow: 4px 4px 0 var(--color-paper);
   }
 
+  .gastro-hero__cta:hover {
+    box-shadow: 2px 2px 0 var(--color-paper);
+  }
+
   .gastro-hero__photos {
-    flex: 1 1 340px;
+    flex: 1 1 400px;
     min-width: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -301,6 +332,12 @@ const gastroSchema = {
   }
 
   /* ── Vorteile (dunkles Band) ────────────────────── */
+  .vorteile {
+    padding: 88px 0;
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
   .vorteile__inner > h2 {
     margin-bottom: 40px;
     color: var(--color-accent-light);
@@ -339,6 +376,9 @@ const gastroSchema = {
   }
 
   .gastro-cta__box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
     padding: 48px;
     background: var(--color-accent);
     color: var(--color-ink);
@@ -347,26 +387,20 @@ const gastroSchema = {
     box-shadow: var(--shadow-teaser);
   }
 
+  .gastro-cta__copy {
+    flex: 1 1 320px;
+    min-width: 0;
+  }
+
   .gastro-cta__box h2 {
-    max-width: 14ch;
     margin-bottom: 16px;
     font-size: clamp(40px, 5vw, 64px);
   }
 
   .gastro-cta__box .lead {
     max-width: 44ch;
-    margin: 0 0 28px;
-  }
-
-  .gastro-cta__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px 28px;
-  }
-
-  .gastro-cta__box .btn--primary {
-    box-shadow: 4px 4px 0 var(--color-cream);
+    margin: 0 0 16px;
+    font-size: 1.1875rem;
   }
 
   .gastro-cta__mail {
@@ -374,6 +408,50 @@ const gastroSchema = {
     font-size: 1.1875rem;
     font-weight: 700;
     overflow-wrap: anywhere;
+  }
+
+  .gastro-cta__mail:hover {
+    color: var(--color-cream);
+  }
+
+  .gastro-form {
+    flex: 1 1 420px;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-content: start;
+  }
+
+  .gastro-form__wide {
+    grid-column: 1 / -1;
+  }
+
+  .gastro-form .field input,
+  .gastro-form .field textarea {
+    padding: 14px 16px;
+    font-size: 1.0625rem;
+  }
+
+  .gastro-form__submit {
+    grid-column: 1 / -1;
+    justify-self: start;
+    padding: 16px 28px;
+    border: 0;
+    font-size: 1.125rem;
+    box-shadow: none;
+  }
+
+  .gastro-form__submit:hover {
+    background: var(--color-night);
+  }
+
+  .gastro-form__result {
+    font-weight: 600;
+  }
+
+  .gastro-form__result:empty {
+    display: none;
   }
 
   @media (max-width: 900px) {
@@ -407,9 +485,21 @@ const gastroSchema = {
     }
 
     .gastro-cta__box {
+      gap: 32px;
       padding: 28px 20px;
-      border-radius: 0;
       box-shadow: 6px 6px 0 var(--color-ink);
+    }
+
+    .vorteile {
+      padding: 56px 0;
+    }
+
+    .gastro-form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .gastro-form__submit {
+      justify-self: stretch;
     }
   }
 </style>

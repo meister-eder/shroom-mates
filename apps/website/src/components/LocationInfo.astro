@@ -11,7 +11,7 @@ const mapsEmbedUrl =
 const mapsLinkUrl = "https://www.google.com/maps/search/?api=1&query=Franz-Flemming-Stra%C3%9Fe+25,+04179+Leipzig";
 ---
 
-<section class="location-info" aria-label="Unser Standort">
+<section class="section section--paper location-info" aria-label="Unser Standort">
   <div class="container location-content">
     <h2 class="location-title">Unser Standort</h2>
     <div class="market-info">
@@ -80,9 +80,7 @@ const mapsLinkUrl = "https://www.google.com/maps/search/?api=1&query=Franz-Flemm
 
 <style>
   .location-info {
-    padding: 80px 0 96px;
-    background: var(--color-paper);
-    border-top: 3px solid var(--color-ink);
+    padding: 88px 0;
   }
 
   .location-content {
@@ -113,7 +111,7 @@ const mapsLinkUrl = "https://www.google.com/maps/search/?api=1&query=Franz-Flemm
     background: var(--color-white);
     border: 3px solid var(--color-ink);
     border-radius: 0;
-    box-shadow: var(--shadow-btn);
+    box-shadow: 6px 6px 0 var(--color-ink);
   }
 
   .market-card h3 {
@@ -149,7 +147,7 @@ const mapsLinkUrl = "https://www.google.com/maps/search/?api=1&query=Franz-Flemm
     background: var(--color-cream);
     border: 3px solid var(--color-ink);
     border-radius: 0;
-    box-shadow: var(--shadow-card);
+    box-shadow: 8px 8px 0 var(--color-ink);
   }
 
   .map-container :global(iframe) {
@@ -201,7 +199,7 @@ const mapsLinkUrl = "https://www.google.com/maps/search/?api=1&query=Franz-Flemm
 
   @media (max-width: 768px) {
     .location-info {
-      padding: 56px 0 64px;
+      padding: 56px 0;
     }
 
     .map-container,

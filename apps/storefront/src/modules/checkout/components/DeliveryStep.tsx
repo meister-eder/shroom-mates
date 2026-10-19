@@ -86,12 +86,9 @@ export const DeliveryStep = ({
     return (
       <CheckoutStep number={2} title="Lieferung" state="done" onEdit={onEdit}>
         {method && (
-          <div>
-            <p className="label mb-1">Versandart</p>
-            <p>
-              {method.name} — {formatPrice(method.amount)}
-            </p>
-          </div>
+          <p className="m-0">
+            {method.name} · {formatPrice(method.amount)}
+          </p>
         )}
       </CheckoutStep>
     );
@@ -100,7 +97,7 @@ export const DeliveryStep = ({
   return (
     <CheckoutStep number={2} title="Lieferung" state="active">
       {isLoading && (
-        <p className="mb-4 text-muted">Versandoptionen werden geladen...</p>
+        <p className="mb-3 text-muted">Versandoptionen werden geladen...</p>
       )}
 
       {!isLoading && shippingOptions.length === 0 && !error && (
@@ -110,7 +107,7 @@ export const DeliveryStep = ({
       )}
 
       {!isLoading && shippingOptions.length > 0 && (
-        <div className="mb-6 flex flex-col gap-3">
+        <div className="mb-3 flex flex-col gap-3">
           {shippingOptions.map((option) => (
             <OptionCard
               key={option.id}
