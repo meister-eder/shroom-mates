@@ -114,7 +114,7 @@ from any of it.
   On the product page emit `Product` JSON-LD with `name`, `description`, absolute `image` URLs, `sku` (variant SKU if present), `brand` (shroom-mates), and `offers` (one `Offer` per variant or an `AggregateOffer`): `price` from `calculated_price.calculated_amount` (decimal with dot), `priceCurrency` EUR, `availability` InStock/OutOfStock from `inventory_quantity` (treat missing as InStock), `url` canonical, `itemCondition` NewCondition, `shippingDetails` (DE, standard rate from `SHIPPING`) and `hasMerchantReturnPolicy` (DE, 14 days, `MerchantReturnFiniteReturnWindow`, by mail). Add `BreadcrumbList` matching the visible crumbs. Use a shared `jsonLd()` helper (copy or move the one from P1.2 into `packages/ui/src/json-ld.ts`). Catalog page: `ItemList` of product URLs. Add `Cache-Control: public, max-age=60, stale-while-revalidate=600` to catalog and product responses (`Astro.response.headers`). Cache `listProducts(region)` in memory for 5 minutes in `src/lib/data/products.ts` (the related-products block fetches the whole catalogue on every request). Verify the JSON-LD by building and fetching a product page from the built server against the mock (`node dist/server/entry.mjs` + `curl`), and check that the JSON parses.
   Commit: `feat(shop): product structured data and response caching`
 
-- [ ] **P4.2 Shop sitemap and robots** · deps: P4.1 · verify: quick
+- [x] **P4.2 Shop sitemap and robots** · deps: P4.1 · verify: quick · 7a608e4
   Add `src/pages/sitemap.xml.ts` (SSR endpoint) listing the catalog and all product URLs with `lastmod` from `updated_at`, and `public/robots.txt` (allow all; disallow cart, checkout, order, vertrag-widerrufen; `Sitemap:` absolute URL from `Astro.site`). Add `<meta name="robots" content="noindex">` where it's missing on non-indexable pages (check order, vertrag-widerrufen). `isStaticOrInternalPath` in the middleware must let `/sitemap.xml` and `/robots.txt` through (it already lists them; verify).
   Commit: `feat(shop): sitemap and robots.txt`
 
@@ -266,3 +266,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:54 P3.4 DONE d64fa29 — about sections as string[] frontmatter, parser removed
 2026-10-19 23:57 P3.5 DONE 579e1ba — growkit line from metadata, GROW_STEPS in shop-facts; includes user's P7.7 Umami plan edit
 2026-10-19 23:59 P4.1 DONE 06ca9d6 — Product/Breadcrumb/ItemList JSON-LD, Cache-Control, 5-min product cache
+2026-10-20 00:00 P4.2 DONE 7a608e4 — SSR sitemap.xml + robots.txt (verified against mock), noindex widerrufen
