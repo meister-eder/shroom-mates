@@ -4,9 +4,10 @@
 #
 #   scripts/verify.sh            # = quick
 #   scripts/verify.sh quick      # lint + build aller Workspaces (apps/*, packages/*)
-#   scripts/verify.sh visual     # quick + Screenshot-Vergleich gegen Baseline (e2e/visual)
+#   scripts/verify.sh visual     # quick + smoke + Screenshot-Vergleich gegen Baseline (e2e/visual)
+#   scripts/verify.sh smoke      # quick + Pilzkorb-Smoke-Test gegen den Mock (e2e/smoke)
 #   scripts/verify.sh backend    # Medusa-Unit-Tests (npm ci bei Bedarf)
-#   scripts/verify.sh all        # quick + visual + backend
+#   scripts/verify.sh all        # quick + smoke + visual + backend
 #   scripts/verify.sh baseline   # Screenshot-Baseline neu erzeugen (nur bewusst!)
 set -uo pipefail
 
@@ -57,6 +58,12 @@ visual() {
 	npx playwright test -c visual/playwright.config.ts
 }
 
+smoke() {
+	cd e2e || return 1
+	[ -d node_modules ] || bun install || return 1
+	npx playwright test -c smoke/playwright.config.ts
+}
+
 baseline() {
 	cd e2e || return 1
 	[ -d node_modules ] || bun install || return 1
@@ -68,9 +75,15 @@ quick)
 	step lint lint_all
 	step build build_all
 	;;
+smoke)
+	step lint lint_all
+	step build build_all
+	[ $FAILED -eq 0 ] && step smoke smoke
+	;;
 visual)
 	step lint lint_all
 	step build build_all
+	[ $FAILED -eq 0 ] && step smoke smoke
 	[ $FAILED -eq 0 ] && step visual visual
 	;;
 backend)
@@ -79,6 +92,7 @@ backend)
 all)
 	step lint lint_all
 	step build build_all
+	[ $FAILED -eq 0 ] && step smoke smoke
 	[ $FAILED -eq 0 ] && step visual visual
 	step backend backend_tests
 	;;
@@ -87,7 +101,7 @@ baseline)
 	[ $FAILED -eq 0 ] && step baseline baseline
 	;;
 *)
-	echo "Unbekannter Modus: $MODE (quick|visual|backend|all|baseline)"
+	echo "Unbekannter Modus: $MODE (quick|smoke|visual|backend|all|baseline)"
 	exit 2
 	;;
 esac

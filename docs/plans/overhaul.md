@@ -39,6 +39,7 @@ from any of it.
 - P4.1: storefront site falls back to localhost:4321 unless PUBLIC_SITE_URL is set (only docker-compose.test.yml sets it) — canonical/JSON-LD URLs; P7.3 hardcodes site, check afterwards.
 - P5.1: view-transition fade now 0.3s for both apps (website had 0.6s). Unused cleanup return in hamburger.ts setupHamburgerMenu.
 - P5.2: scroll-padding-top 5rem (85px) < mobile header height (~103px): anchor sections' top padding slightly under the header (headings visible). Header line-heights set to whole px (.ticker 21/17px, .header-info 21px). Unused --spacing-navbar* in theme.css (goes with P5.8d).
+- P5.3: browser store-api client untested against the real backend with publishable key (x-publishable-api-key) and credentials: include — test a full checkout on staging. Client JS after P5.3: React 58.3 KB, CheckoutPage 35.0 KB, total ≈111.7 KB gzip.
 
 ---
 
@@ -130,7 +131,7 @@ from any of it.
   `LayoutScripts.astro` measures the fixed header with a ResizeObserver and writes `--navbar-height`; pages pad themselves with it. Switch the header to `position: sticky; top: 0` and remove the padding/margin offsets that only compensate for the fixed header (`.with-nav-spacing`, page-level `padding-top: var(--navbar-height)`, etc.). `html`/`body` `overflow-x: hidden` breaks sticky: use `overflow-x: clip`. Keep the `scrolled` class (shrinking header) but it must not shift content (header height change must not move the page; if it would, keep a fixed-height wrapper). Remove the height-sync code and the now-unused `--navbar-height*` variables. Full-page screenshots must stay identical; also check the mobile menu (hamburger) still overlays correctly and anchors (`#kits`, `#anleitung`) aren't hidden under the header (`scroll-margin-top`).
   Commit: `refactor(ui): sticky header, no measured offsets`
 
-- [ ] **P5.3 Cart smoke test and a thin Store API client** · deps: P5.1 · verify: visual
+- [x] **P5.3 Cart smoke test and a thin Store API client** · deps: P5.1 · verify: visual · cea6617
   First write `e2e/smoke/cart.spec.ts` + `e2e/smoke/playwright.config.ts` (reuse the server setup of `e2e/visual/playwright.config.ts`; export it from a shared module instead of copying). Flow against the mock: catalog → product → add to cart → header count = 1 → drawer opens with the item → change quantity → cart page shows it → checkout page renders the address form. Make it pass on the current code and add a `smoke` mode to `scripts/verify.sh` (and include it in `visual` and `all`). Then replace client-side use of `@medusajs/js-sdk` in `src/lib/stores/cart.ts` (and any other browser-side import) with `src/lib/store-api.ts`: a small typed `fetch` wrapper (base URL, publishable key header, JSON, errors with `status`) covering exactly the calls in use. Server-side code (`src/lib/data`, middleware) keeps the SDK. Exported function signatures of the cart store stay identical; payment functions keep their behaviour (rule 5). Smoke + visual must pass; report the new client bundle sizes (`find dist/client -name '*.js'` gzip sizes).
   Commit: `perf(shop): thin store API client in the browser, cart smoke test`
 
@@ -282,3 +283,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 00:00 P4.2 DONE 7a608e4 — SSR sitemap.xml + robots.txt (verified against mock), noindex widerrufen
 2026-10-20 00:12 P5.1 DONE f91aed9 — native view transitions; cart count survives nav (orchestrator Playwright check)
 2026-10-20 00:23 P5.2 DONE a0d5b07 — sticky header; menu + anchors checked by orchestrator (Playwright)
+2026-10-20 00:29 P5.3 DONE cea6617 — smoke test + thin store-api client; SDK out of client bundle

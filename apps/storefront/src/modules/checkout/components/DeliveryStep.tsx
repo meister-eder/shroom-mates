@@ -1,4 +1,4 @@
-import { sdk } from "@lib/sdk";
+import { storeApi } from "@lib/store-api";
 import { addShippingMethod } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
 import type {
@@ -43,8 +43,9 @@ export const DeliveryStep = ({
       setIsLoading(true);
       setError("");
       try {
-        const { shipping_options } =
-          await sdk.store.fulfillment.listCartOptions({ cart_id: cart.id });
+        const { shipping_options } = await storeApi.fulfillment.listCartOptions(
+          { cart_id: cart.id },
+        );
         setShippingOptions(shipping_options);
 
         // Pre-select if cart already has a shipping method

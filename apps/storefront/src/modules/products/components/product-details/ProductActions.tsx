@@ -1,5 +1,5 @@
 import { flyToCart } from "@lib/fly-to-cart";
-import { sdk } from "@lib/sdk";
+import { storeApi } from "@lib/store-api";
 import { addToCart } from "@lib/stores/cart";
 import { showErrorToast } from "@lib/stores/toast";
 import { basePriceLabel } from "@lib/utils/base-price";
@@ -81,7 +81,7 @@ export const ProductActions = ({
 
     async function fetchFreshVariants() {
       try {
-        const { product } = await sdk.store.product.retrieve(productId, {
+        const { product } = await storeApi.product.retrieve(productId, {
           region_id: regionId,
           fields:
             "+variants.inventory_quantity,*variants.options,*variants.calculated_price",

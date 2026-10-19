@@ -1,4 +1,4 @@
-import { sdk } from "@lib/sdk";
+import { storeApi } from "@lib/store-api";
 import { useState } from "react";
 
 type Received = { id: string; received_at: string };
@@ -33,10 +33,7 @@ export const WithdrawalForm = () => {
     setIsSending(true);
     setError("");
     try {
-      const { withdrawal } = await sdk.client.fetch<{ withdrawal: Received }>(
-        "/store/withdrawals",
-        { method: "POST", body },
-      );
+      const { withdrawal } = await storeApi.withdrawals.create<Received>(body);
       setReceived(withdrawal);
     } catch (err) {
       console.error("Withdrawal failed:", err);

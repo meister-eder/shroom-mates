@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { mockWebServers } from "../servers";
 
 /**
  * Screenshot-Vergleich (Regressionsschutz für Umbauten ohne Design-Änderung).
@@ -6,27 +7,9 @@ import { defineConfig, devices } from "@playwright/test";
  * beide Apps gebaut sein (`scripts/verify.sh visual` erledigt das).
  * Baseline: `scripts/verify.sh baseline` (liegt lokal, nicht im Repo).
  *
- * Die Server-Befehle stehen in VISUAL_SERVERS (unten), damit ein Umbau der
+ * Die Server-Befehle stehen in ../servers.ts, damit ein Umbau der
  * App-Struktur nur diese Stelle und routes.ts ändern muss.
  */
-const MOCK_PORT = 9010;
-
-const VISUAL_SERVERS = [
-  {
-    command: `PORT=${MOCK_PORT} node ../mock/mock-medusa.mjs`,
-    port: MOCK_PORT,
-  },
-  {
-    command: "cd ../../apps/website && bun run astro preview --port 4400",
-    port: 4400,
-  },
-  {
-    command:
-      "cd ../../apps/storefront && HOST=127.0.0.1 PORT=8000 node dist/server/entry.mjs",
-    port: 8000,
-  },
-];
-
 export default defineConfig({
   testDir: ".",
   snapshotPathTemplate: "{testDir}/__screenshots__/{arg}{ext}",
@@ -61,10 +44,5 @@ export default defineConfig({
       },
     },
   ],
-  webServer: VISUAL_SERVERS.map((s) => ({
-    ...s,
-    reuseExistingServer: false,
-    timeout: 60_000,
-    env: { PUBLIC_MEDUSA_BACKEND_URL: `http://localhost:${MOCK_PORT}` },
-  })),
+  webServer: mockWebServers,
 });

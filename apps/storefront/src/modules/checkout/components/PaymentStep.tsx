@@ -4,7 +4,7 @@ import {
   isSumUpProvider,
   isTestProvider,
 } from "@lib/checkout/payment-providers";
-import { sdk } from "@lib/sdk";
+import { storeApi } from "@lib/store-api";
 import { initPaymentSession, placeOrder } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
 import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
@@ -58,7 +58,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
       setError("");
       try {
         const { payment_providers } =
-          await sdk.store.payment.listPaymentProviders({
+          await storeApi.payment.listPaymentProviders({
             region_id: cart.region_id!,
           });
         setPaymentProviders(payment_providers);

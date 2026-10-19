@@ -1,4 +1,4 @@
-import { sdk } from "@lib/sdk";
+import { storeApi } from "@lib/store-api";
 import type { StoreCart, StoreOrder } from "@medusajs/types";
 import { atom, computed } from "nanostores";
 
@@ -165,7 +165,7 @@ async function loadCart(): Promise<void> {
     if (existingCartId) {
       // Try to retrieve existing cart
       try {
-        const { cart } = await sdk.store.cart.retrieve(existingCartId, {
+        const { cart } = await storeApi.cart.retrieve(existingCartId, {
           fields: CART_FIELDS,
         });
         // A cart completed by the payment webhook can't be reused.
@@ -185,7 +185,7 @@ async function loadCart(): Promise<void> {
     }
 
     // Create new cart
-    const { cart } = await sdk.store.cart.create(
+    const { cart } = await storeApi.cart.create(
       {
         region_id: regionId,
       },
@@ -221,7 +221,7 @@ export async function addToCart(
     }
 
     // Add line item
-    const { cart: updatedCart } = await sdk.store.cart.createLineItem(
+    const { cart: updatedCart } = await storeApi.cart.createLineItem(
       cart.id,
       {
         variant_id: variantId,
@@ -251,12 +251,12 @@ export async function removeFromCart(lineItemId: string): Promise<void> {
       throw new Error("Cart not initialized");
     }
 
-    await sdk.store.cart.deleteLineItem(cart.id, lineItemId, {
+    await storeApi.cart.deleteLineItem(cart.id, lineItemId, {
       fields: CART_FIELDS,
     });
 
     // Retrieve updated cart (deleteLineItem returns parent but it might be undefined)
-    const { cart: updatedCart } = await sdk.store.cart.retrieve(cart.id, {
+    const { cart: updatedCart } = await storeApi.cart.retrieve(cart.id, {
       fields: CART_FIELDS,
     });
 
@@ -286,7 +286,7 @@ export async function updateLineItemQuantity(
       return;
     }
 
-    const { cart: updatedCart } = await sdk.store.cart.updateLineItem(
+    const { cart: updatedCart } = await storeApi.cart.updateLineItem(
       cart.id,
       lineItemId,
       {
@@ -336,7 +336,7 @@ export async function addShippingMethod(
     throw new Error("Cart not initialized");
   }
 
-  const { cart: updatedCart } = await sdk.store.cart.addShippingMethod(
+  const { cart: updatedCart } = await storeApi.cart.addShippingMethod(
     cart.id,
     { option_id: shippingOptionId },
     {
@@ -369,7 +369,7 @@ export async function initPaymentSession(
   if (addr?.first_name) customerData.first_name = addr.first_name;
   if (addr?.last_name) customerData.last_name = addr.last_name;
 
-  await sdk.store.payment.initiatePaymentSession(cart, {
+  await storeApi.payment.initiatePaymentSession(cart, {
     provider_id: providerId,
     data: {
       ...(description && { description }),
@@ -382,7 +382,7 @@ export async function initPaymentSession(
 
   localStorage.setItem(CHECKOUT_CART_ID_KEY, cart.id);
 
-  const { cart: updatedCart } = await sdk.store.cart.retrieve(cart.id, {
+  const { cart: updatedCart } = await storeApi.cart.retrieve(cart.id, {
     fields: CART_FIELDS,
   });
 
@@ -421,7 +421,7 @@ export async function placeOrder(
 
   for (;;) {
     try {
-      const result = await sdk.store.cart.complete(cartId);
+      const result = await storeApi.cart.complete(cartId);
 
       if (result.type === "order") {
         localStorage.removeItem(CHECKOUT_CART_ID_KEY);
@@ -477,7 +477,7 @@ export async function updateCartAddress(data: {
     throw new Error("Cart not initialized");
   }
 
-  const { cart: updatedCart } = await sdk.store.cart.update(cart.id, data, {
+  const { cart: updatedCart } = await storeApi.cart.update(cart.id, data, {
     fields: CART_FIELDS,
   });
 
