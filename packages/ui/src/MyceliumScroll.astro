@@ -249,10 +249,8 @@
       if (!frame && !document.hidden) frame = requestAnimationFrame(tick);
     };
 
-    // client-side navigation (ClientRouter) swaps the page: tear down
     const ac = new AbortController();
     const { signal } = ac;
-    document.addEventListener("astro:before-swap", () => ac.abort(), { once: true });
 
     const start = () => {
       if (signal.aborted) return;
@@ -293,7 +291,5 @@
     else setTimeout(start, 300);
   }
 
-  document.addEventListener("astro:page-load", init);
-  if (document.readyState !== "loading") init();
-  else document.addEventListener("DOMContentLoaded", init);
+  init();
 </script>

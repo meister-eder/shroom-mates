@@ -6,8 +6,7 @@
  *  - `scrolled` class on the header (shrinking navbar). Set
  *    data-shrink="desktop" on the <header> to disable it on mobile.
  *
- * Listeners are registered once per full page load and re-bound on
- * `astro:page-load`, so view-transition navigations don't stack them up.
+ * Module code: runs once per page load (navigations are full documents).
  */
 ---
 
@@ -61,15 +60,8 @@
     { passive: true },
   );
 
-  function onPageLoad() {
-    headerObserver.disconnect();
-    const header = getHeader();
-    if (header) headerObserver.observe(header);
-    setScrollbarWidth();
-    updateScrolled();
-  }
-
-  // Without <ClientRouter /> astro:page-load never fires, so also run now.
-  onPageLoad();
-  document.addEventListener("astro:page-load", onPageLoad);
+  const header = getHeader();
+  if (header) headerObserver.observe(header);
+  setScrollbarWidth();
+  updateScrolled();
 </script>

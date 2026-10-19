@@ -7,41 +7,6 @@
 	--navbar-height-mobile-scrolled: 3.5rem;
 }
 
-/* ===== Global View Transitions ===== */
-@view-transition {
-	navigation: auto;
-}
-
-/* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-::view-transition-old(root) {
-	animation: fade-out 0.6s ease-in-out;
-}
-
-/* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-::view-transition-new(root) {
-	animation: fade-in 0.6s ease-in-out;
-}
-
-@keyframes fade-out {
-	from {
-		opacity: 1;
-	}
-
-	to {
-		opacity: 0;
-	}
-}
-
-@keyframes fade-in {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
-}
-
 /* ===== Hilfsklassen für Unterseiten ===== */
 
 /* Zentrierter Container innerhalb einer .section */

@@ -10,7 +10,6 @@ import Header from "@modules/layout/components/Header.astro";
 import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
 import "@styles/global.css";
 import "@styles/shop.css";
-import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -57,7 +56,6 @@ const regionId = region?.id || null;
 <!doctype html>
 <html lang="de">
   <head>
-    <ClientRouter />
     <link
       rel="preload"
       as="font"

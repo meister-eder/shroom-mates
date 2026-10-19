@@ -207,6 +207,35 @@ a {
   }
 }
 
+/* Native page transitions (cross-document); no JS router needed. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
+  ::view-transition-old(root) {
+    animation: vt-fade-out 0.3s ease-in-out both;
+  }
+
+  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
+  ::view-transition-new(root) {
+    animation: vt-fade-in 0.3s ease-in-out both;
+  }
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 /* ── Page layout ───────────────────────────────────────────────────── */
 .site-wrapper {
   display: flex;

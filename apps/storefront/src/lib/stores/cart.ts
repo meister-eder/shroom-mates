@@ -17,11 +17,63 @@ export const $isCartSidebarOpen = atom<boolean>(false);
 // Current region ID atom (set server-side, used client-side)
 export const $regionId = atom<string | null>(null);
 
-// Computed cart item count
-export const $cartItemCount = computed($cart, (cart) => {
-  if (!cart?.items) return 0;
-  return cart.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
-});
+// Header count shown before the cart request returns (full-page navigations
+// drop the in-memory cart): { id, count } mirrored to sessionStorage.
+const CART_SNAPSHOT_KEY = "cart_snapshot";
+
+function readSnapshot(): { id: string; count: number } | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(CART_SNAPSHOT_KEY);
+    const snap = raw ? JSON.parse(raw) : null;
+    if (
+      snap &&
+      typeof snap.id === "string" &&
+      typeof snap.count === "number" &&
+      snap.id === localStorage.getItem("cart_id")
+    ) {
+      return snap;
+    }
+  } catch {
+    // unreadable snapshot: ignore
+  }
+  return null;
+}
+
+const $cartSnapshot = atom<{ id: string; count: number } | null>(
+  readSnapshot(),
+);
+
+// Computed cart item count (snapshot until the cart has loaded)
+export const $cartItemCount = computed(
+  [$cart, $cartSnapshot],
+  (cart, snapshot) => {
+    if (!cart) return snapshot?.count ?? 0;
+    if (!cart.items) return 0;
+    return cart.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  },
+);
+
+if (typeof window !== "undefined") {
+  $cart.listen((cart) => {
+    try {
+      if (!cart) {
+        sessionStorage.removeItem(CART_SNAPSHOT_KEY);
+        return;
+      }
+      const count = (cart.items ?? []).reduce(
+        (sum, item) => sum + (item.quantity || 0),
+        0,
+      );
+      sessionStorage.setItem(
+        CART_SNAPSHOT_KEY,
+        JSON.stringify({ id: cart.id, count }),
+      );
+    } catch {
+      // storage unavailable: the snapshot is only an optimisation
+    }
+  });
+}
 
 // Cart ID storage key
 const CART_ID_KEY = "cart_id";

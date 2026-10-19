@@ -357,7 +357,5 @@ const r = (n: number) => Math.round(n * 100) / 100;
 		if (instances.size) listen();
 	}
 
-	document.addEventListener("astro:page-load", init);
-	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-	else init();
+	init();
 </script>

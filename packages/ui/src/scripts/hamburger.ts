@@ -8,8 +8,6 @@
  * - page scroll is locked (html.menu-locked)
  * - closes on link click and when the viewport grows to desktop
  */
-let cleanupFn: (() => void) | null = null;
-
 const DESKTOP = "(min-width: 1241px)" /* keep in sync with SiteHeader.astro */;
 const LABEL_OPEN = "Navigationsmenü öffnen";
 const LABEL_CLOSE = "Navigationsmenü schließen";
@@ -91,24 +89,4 @@ function setupHamburgerMenu(): (() => void) | null {
   };
 }
 
-document.addEventListener("astro:before-preparation", () => {
-  if (cleanupFn) {
-    cleanupFn();
-    cleanupFn = null;
-  }
-});
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    cleanupFn = setupHamburgerMenu();
-  });
-} else {
-  cleanupFn = setupHamburgerMenu();
-}
-
-document.addEventListener("astro:page-load", () => {
-  if (cleanupFn) {
-    cleanupFn();
-  }
-  cleanupFn = setupHamburgerMenu();
-});
+setupHamburgerMenu();

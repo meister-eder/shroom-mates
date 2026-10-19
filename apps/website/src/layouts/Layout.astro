@@ -2,7 +2,6 @@
 import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
 import "@shroom-mates/ui/utilities.css";
-import { ClientRouter } from "astro:transitions";
 import frauncesUrl from "@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2?url";
 import Footer from "@shroom-mates/ui/Footer.astro";
 import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
@@ -140,7 +139,6 @@ const breadcrumbSchema = {
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <ClientRouter />
     <link
       rel="preload"
       as="font"
@@ -239,29 +237,6 @@ const breadcrumbSchema = {
       <WaveRoller />
 
       <script>
-        // Fallback transitions for browsers without View Transitions API
-        const hasViewTransitions = document.startViewTransition !== undefined;
-        if (!hasViewTransitions) {
-          document.addEventListener("astro:before-preparation", () => {
-            const main = document.querySelector(".site-main");
-            if (main) {
-              main.classList.add("astro-transitioning");
-            }
-          });
-
-          document.addEventListener("astro:after-swap", () => {
-            const main = document.querySelector(".site-main");
-            if (main) {
-              // Small delay to ensure smooth transition
-              setTimeout(() => {
-                main.classList.remove("astro-transitioning");
-              }, 50);
-            }
-          });
-        }
-      </script>
-
-      <script>
         // Scroll-triggered reveal animations using IntersectionObserver
         function setupRevealAnimations() {
           const prefersReducedMotion = window.matchMedia(
@@ -292,22 +267,10 @@ const breadcrumbSchema = {
         }
 
         setupRevealAnimations();
-        document.addEventListener("astro:after-swap", setupRevealAnimations);
       </script>
 
       <style is:global>
         @import url("../styles/global.css");
-
-        /* Fallback transitions for browsers without View Transitions API */
-        @media (prefers-reduced-motion: no-preference) {
-          .site-main {
-            transition: opacity 0.2s ease-in-out;
-          }
-
-          .site-main.astro-transitioning {
-            opacity: 0.8;
-          }
-        }
 
         /* Landing page renders full-bleed without the header offset */
         .site-main:not(.with-nav-spacing) {
