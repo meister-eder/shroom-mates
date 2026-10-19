@@ -24,7 +24,7 @@
       "runtimeExecutable": "sh",
       "runtimeArgs": [
         "-c",
-        "PORT=9010 node docs/redesign/version-b/dev/mock-medusa.mjs"
+        "PORT=9010 node e2e/mock/mock-medusa.mjs"
       ],
       "port": 9010,
       "autoPort": false

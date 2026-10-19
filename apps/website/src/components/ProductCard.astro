@@ -7,7 +7,14 @@ import type { ImageMetadata } from "astro";
  * Bild mit weißem Rand, Name, Inhalt (Default-Slot) und optional Aktionen
  * (Slot "actions"). Rotation/Hover kommen aus .sticker-card (utilities.css).
  */
-type Tone = "lavender" | "pink" | "olive-soft" | "stone" | "paper" | "mist" | "white";
+type Tone =
+	| "lavender"
+	| "pink"
+	| "olive-soft"
+	| "stone"
+	| "paper"
+	| "mist"
+	| "white";
 
 interface Props {
 	title: string;

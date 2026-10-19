@@ -7,7 +7,9 @@ const ERROR_MESSAGE =
 if (form && result) {
 	// Themen-Chips: echte <button aria-pressed>, genau ein Thema (oder keins).
 	// Der Wert landet im versteckten Feld „topic“ und geht mit ab.
-	const topicInput = form.querySelector<HTMLInputElement>('input[name="topic"]');
+	const topicInput = form.querySelector<HTMLInputElement>(
+		'input[name="topic"]',
+	);
 	const chips = Array.from(
 		form.querySelectorAll<HTMLButtonElement>("[data-topic]"),
 	);

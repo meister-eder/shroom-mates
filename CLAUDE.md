@@ -26,7 +26,26 @@ cd backend && npm run test:unit                     # bzw. test:integration:http
 cd e2e && bun run test                              # Playwright
 ```
 
-Für Shop-UI ohne Backend: Dev-Server `medusa-mock` und `storefront-dev` aus `.claude/launch.json`.
+Für Shop-UI ohne Backend: Dev-Server `medusa-mock` und `storefront-dev` aus `.claude/launch.json` (Mock: `e2e/mock/mock-medusa.mjs`).
+
+Prüfen mit einem Befehl (knappe PASS/FAIL-Ausgabe, volle Logs in `.verify-logs/`):
+
+```bash
+scripts/verify.sh            # lint + build aller Workspaces
+scripts/verify.sh visual     # + Screenshot-Vergleich gegen lokale Baseline (e2e/visual)
+scripts/verify.sh backend    # Medusa-Unit-Tests
+scripts/verify.sh all
+```
+
+Baseline (`scripts/verify.sh baseline`) nur auf einem bewusst abgenommenen Stand neu erzeugen.
+
+## Autonome Plan-Läufe
+
+Pläne mit Checkboxen liegen in `docs/plans/`. Abarbeiten mit dem Skill `run-plan` (ein Orchestrator, nacheinander je ein `plan-worker`-Subagent auf Sonnet). Der Plan ist der Zustand; nichts davon im Gespräch duplizieren.
+
+## Compact instructions
+
+Bei Kompaktierung behalten: aktueller Plan-Pfad und Task-ID, offene Fehler (nur FAIL-Zeilen), Entscheidungen, die noch nicht im Plan-Log stehen. Verwerfen: Worker-Berichte erledigter Tasks, Build-/Test-Ausgaben, gelesene Dateiinhalte.
 
 ## Konventionen
 
