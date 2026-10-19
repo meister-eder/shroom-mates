@@ -25,9 +25,9 @@ interface Props {
 const { name, size = 24, strokeWidth = 2.4, label, class: className } = Astro.props;
 
 const shapes: Record<IconName, string> = {
-  cart: '<path d="M3 5h3l2.2 10.2a1.5 1.5 0 0 0 1.5 1.2h7.6a1.5 1.5 0 0 0 1.5-1.1L21 8H7"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>',
-  basket:
-    '<path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2z"/><path d="M8 10l3-6M16 10l-3-6"/>',
+  // Pilzkorb: Korb mit Henkel, Körper und drei Streben (kein Einkaufswagen)
+  cart: '<path d="M7 10a5 5 0 0 1 10 0"/><path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2Z"/><path d="M9 13.5v4M12 13.5v4M15 13.5v4"/>',
+  basket: '<path d="M7 10a5 5 0 0 1 10 0"/><path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2Z"/><path d="M9 13.5v4M12 13.5v4M15 13.5v4"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   close: '<path d="M5 5l14 14M19 5L5 19"/>',
   "arrow-right": '<path d="M4 12h16M14 6l6 6-6 6"/>',

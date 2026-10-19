@@ -1,0 +1,92 @@
+/* ===================================================================
+   Shroom-Mates Design Tokens (Quelle: Design System "Version B",
+   project/tokens.json). Namen und Werte 1:1 aus tokens.json.
+   Von base.css und theme.css importiert; die bisherigen Namen
+   (--color-accent, --color-paper, --color-lavender, ...) sind dort
+   Aliase auf diese Tokens.
+   Einzige Abweichung: --font-display nennt zusätzlich "Fraunces Variable",
+   weil die Schrift selbst gehostet über Fontsource geladen wird.
+   =================================================================== */
+:root {
+  /* ── Farbe ─────────────────────────────────────────────────────── */
+  --bg: #e9eaff;
+  --cream: #fffdf5;
+  --white: #ffffff;
+  --lilac-deep: #d7d9fc;
+  --ink: #1c1a33;
+  --night: #13122a;
+  --orange: #ff4908;
+  --orange-dark: #bf2300;
+  --orange-soft: #ff9c7e;
+  --periwinkle: #9fa2f7;
+  --pink: #ffc4d2;
+  --butter: #f2ec8a;
+  --indigo: #3d41b8;
+  --stone: #7c7da6;
+  --text-muted: #55557a;
+  --green: #36e27b;
+  --mushroom-brown: #7d4d2c;
+
+  /* ── Schrift ───────────────────────────────────────────────────── */
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
+  --font-sans: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+
+  --display-xl-size: 104px;
+  --display-xl-line: 0.9;
+  --display-xl-weight: 900;
+  --display-xl-tracking: -0.02em;
+  --display-l-size: 72px;
+  --display-l-line: 0.95;
+  --display-l-weight: 900;
+  --h2-size: 44px;
+  --h2-line: 1;
+  --h2-weight: 900;
+  --h3-size: 30px;
+  --h3-line: 1.05;
+  --h3-weight: 900;
+  --lead-size: 21px;
+  --lead-line: 1.5;
+  --lead-weight: 400;
+  --body-size: 17px;
+  --body-line: 1.55;
+  --body-weight: 400;
+  --small-size: 15px;
+  --small-line: 1.5;
+  --small-weight: 400;
+  --button-size: 18px;
+  --button-line: 1.2;
+  --button-weight: 700;
+  --product-title-size: 19px;
+  --product-title-line: 1.15;
+  --product-title-weight: 800;
+  --product-title-tracking: 0.01em;
+  --eyebrow-size: 14px;
+  --eyebrow-line: 1.4;
+  --eyebrow-weight: 400;
+  --eyebrow-tracking: 0.12em;
+  --label-size: 13px;
+  --label-line: 1.6;
+  --label-weight: 400;
+
+  /* ── Abstand ───────────────────────────────────────────────────── */
+  --container: 1280px;
+  --gutter: 32px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --space-6: 72px;
+  --section-y: 96px;
+
+  /* ── Radien ────────────────────────────────────────────────────── */
+  --radius-none: 0px;
+  --radius-pill: 999px;
+  --radius-arch: 200px;
+
+  /* ── Schatten ──────────────────────────────────────────────────── */
+  --shadow-hard: 8px 8px 0 #1c1a33;
+  --shadow-hard-sm: 4px 4px 0 #1c1a33;
+  --shadow-button: 4px 4px 0 #ff4908;
+}

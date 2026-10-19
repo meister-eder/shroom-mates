@@ -238,7 +238,6 @@ const gastroSchema = {
   .gastro-hero__cta {
     margin-top: 32px;
     padding: 16px 26px;
-    border: 0;
     font-size: 1.125rem;
     box-shadow: 4px 4px 0 var(--color-paper);
   }
@@ -380,9 +379,9 @@ const gastroSchema = {
     flex-wrap: wrap;
     gap: 48px;
     padding: 48px;
-    background: var(--color-accent);
+    background: var(--color-cream);
     color: var(--color-ink);
-    border: 3px solid var(--color-ink);
+    border: 3px solid var(--color-accent);
     border-radius: 0;
     box-shadow: var(--shadow-teaser);
   }
@@ -394,6 +393,7 @@ const gastroSchema = {
 
   .gastro-cta__box h2 {
     margin-bottom: 16px;
+    color: var(--color-accent);
     font-size: clamp(40px, 5vw, 64px);
   }
 
@@ -411,7 +411,7 @@ const gastroSchema = {
   }
 
   .gastro-cta__mail:hover {
-    color: var(--color-cream);
+    color: var(--color-accent-dark);
   }
 
   .gastro-form {

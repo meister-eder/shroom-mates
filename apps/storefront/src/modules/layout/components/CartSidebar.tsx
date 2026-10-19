@@ -166,7 +166,6 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                         width={84}
                         height={84}
                         className="cart-line__thumb"
-                        style={{ borderColor: color }}
                         loading="lazy"
                         decoding="async"
                         draggable={false}
@@ -174,7 +173,7 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                     ) : (
                       <div
                         className="cart-line__thumb"
-                        style={{ borderColor: color, background: color }}
+                        style={{ background: color }}
                         aria-hidden="true"
                       />
                     )}

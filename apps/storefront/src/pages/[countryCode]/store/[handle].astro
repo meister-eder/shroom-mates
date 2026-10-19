@@ -179,14 +179,22 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
                 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
                 Versand in 3–5 Werktagen, ab 4,95 €
               </li>
+              {isGrowkit && (
+                <li>
+                  <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                  Erste Ernte nach bis zu 3 Wochen, ideal 16–20 °C
+                </li>
+              )}
               <li>
                 <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
                 Selbst gezüchtet in der Glasfabrik Leutzsch
               </li>
-              <li>
-                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
-                Lieferung innerhalb Deutschlands
-              </li>
+              {!isGrowkit && (
+                <li>
+                  <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                  Lieferung innerhalb Deutschlands
+                </li>
+              )}
             </ul>
 
             <div class="accordion">

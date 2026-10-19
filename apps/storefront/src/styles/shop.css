@@ -6,7 +6,7 @@
    =================================================================== */
 
 :root {
-  --ink-muted: #5a554a;
+  --ink-muted: var(--text-muted);
   --page-gutter: max(0px, calc(var(--gutter) - 1rem));
 }
 
@@ -233,7 +233,7 @@
   position: fixed;
   inset: 0;
   z-index: 1100;
-  background: rgba(20, 18, 16, 0.45);
+  background: rgba(19, 18, 42, 0.45);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -1210,7 +1210,7 @@ a.chip[aria-current="page"] {
 }
 
 .gallery__thumb[aria-pressed="true"] {
-  box-shadow: 4px 4px 0 var(--color-accent);
+  box-shadow: var(--shadow-button);
 }
 
 .gallery__pager {
@@ -1254,7 +1254,7 @@ a.chip[aria-current="page"] {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(20, 18, 16, 0.8);
+  background: rgba(19, 18, 42, 0.8);
 }
 
 .gallery__lightbox img {
@@ -1734,7 +1734,7 @@ a.chip[aria-current="page"] {
 .pair-card--more,
 .pair-card--more:nth-child(even) {
   background: var(--color-white);
-  border-style: dashed;
+  border: 3px dashed var(--color-ink);
   box-shadow: none;
   transform: none;
 }

@@ -34,14 +34,15 @@
 }
 
 .btn-accent {
-  background: var(--color-accent);
-  color: var(--color-ink);
-  box-shadow: var(--shadow-btn);
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border-color: var(--color-accent);
+  box-shadow: none;
 }
 
 .btn-accent:hover {
+  background: var(--color-night);
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--color-ink);
 }
 
 .btn-accent:disabled,
@@ -125,7 +126,7 @@
   border: 2px solid var(--color-ink);
   border-radius: 0;
   background: #fff;
-  font-family: "Geist Sans", system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--text-color);
   transition:

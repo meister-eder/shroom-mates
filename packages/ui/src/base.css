@@ -3,44 +3,45 @@
    (tokens, background, layout wrapper, accessibility helpers).
    =================================================================== */
 
-/* Tokens — spiegeln theme.css (@theme), damit die Website ohne Tailwind
-   dieselben Werte hat. Alte Namen (--accent, --text-color, …) bleiben. */
+@import "./tokens.css";
+
+/* Aliase — die Werte stehen in tokens.css (Design System). Die bisherigen
+   Namen (--color-accent, --accent, --text-color, …) zeigen darauf, damit
+   Website und Storefront ohne Tailwind dieselben Namen lesen können
+   (Spiegel der Zuordnung in theme.css). */
 :root {
   /* Flächen */
-  --color-bg: #e9eaff;
-  --color-cream: #fffdf5;
-  --color-paper: #d7d9fc;
-  --color-ink: #1c1a33;
-  --color-night: #13122a;
-  --color-white: #ffffff;
+  --color-bg: var(--bg);
+  --color-cream: var(--cream);
+  --color-paper: var(--lilac-deep);
+  --color-ink: var(--ink);
+  --color-night: var(--night);
+  --color-white: var(--white);
 
-  /* Akzent: Orange nur groß (>= 24px bold) oder mit Tinte darauf;
+  /* Akzent: Orange nur Linien und Headlines ab 24px;
      kleiner orange Text = --color-accent-dark */
-  --color-accent: #ff4908;
-  --color-accent-dark: #bf2300;
-  --color-accent-light: #ff9c7e;
+  --color-accent: var(--orange);
+  --color-accent-dark: var(--orange-dark);
+  --color-accent-light: var(--orange-soft);
 
   /* Produktfarben (Growkit-Kartons) */
-  --color-lavender: #9fa2f7;
-  --color-pink: #ffc4d2;
-  --color-olive-soft: #f2ec8a;
+  --color-lavender: var(--periwinkle);
+  --color-pink: var(--pink);
+  --color-olive-soft: var(--butter);
   --color-olive: #7e8503;
-  --color-indigo: #3d41b8;
-  --color-stone: #7c7da6;
-  --color-green: #36e27b;
-  --color-muted: #55557a;
+  --color-indigo: var(--indigo);
+  --color-stone: var(--stone);
+  --color-green: var(--green);
+  --color-mushroom-brown: var(--mushroom-brown);
+  --color-muted: var(--text-muted);
 
-  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
-  --font-body: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
-  --font-mono: "DM Mono", ui-monospace, monospace;
+  --font-body: var(--font-sans);
 
-  --radius-card: 0;
-  --radius-img: 0;
-  --radius-arch: 200px 200px 0 0;
-  --radius-pill: 999px;
-  --shadow-btn: 4px 4px 0 var(--color-ink);
-  --shadow-card: 8px 8px 0 var(--color-ink);
-  --shadow-teaser: 10px 10px 0 var(--color-ink);
+  --radius-card: var(--radius-none);
+  --radius-img: var(--radius-none);
+  --shadow-btn: var(--shadow-hard-sm);
+  --shadow-card: var(--shadow-hard);
+  --shadow-teaser: 10px 10px 0 var(--ink);
 
   /* Legacy-Aliase */
   --accent: var(--color-accent);
@@ -51,7 +52,6 @@
   --color-earth: #8b6914;
   --color-earth-light: #f5edd6;
   --text-color: var(--color-ink);
-  --text-muted: var(--color-muted);
   --bg-color: var(--color-cream);
   --bg-accent: var(--color-cream);
   --bg-warm: var(--color-paper);
@@ -60,10 +60,8 @@
   --focus-color: var(--color-ink);
 
   /* Layout (navbar heights are synced to the real header by LayoutScripts) */
-  --container: 1280px;
-  --gutter: 32px;
-  --section-gap: 92px;
-  --content-max-width: 1280px;
+  --section-gap: var(--section-y);
+  --content-max-width: var(--container);
   --navbar-height: 7.5rem;
   --navbar-height-mobile: 4.5rem;
   --scrollbar-width: 0px;
@@ -131,10 +129,10 @@ h2 {
 }
 
 h3 {
-  font-family: var(--font-body);
-  font-size: clamp(26px, 2.6vw, 34px);
-  font-weight: 800;
-  line-height: 1.1;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.6vw, var(--h3-size));
+  font-weight: var(--h3-weight);
+  line-height: var(--h3-line);
   margin: 0;
 }
 

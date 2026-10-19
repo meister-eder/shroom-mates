@@ -1,6 +1,7 @@
 /**
  * Shroom-Mates Design Tokens (TypeScript)
  * Use in JS/TS contexts where CSS custom properties aren't available.
+ * Werte entsprechen tokens.css (Design System Version B); bitte dort zuerst ändern.
  */
 
 export const colors = {
@@ -21,13 +22,15 @@ export const colors = {
   indigo: "#3d41b8",
   stone: "#7c7da6",
   green: "#36e27b",
+  mushroomBrown: "#7d4d2c",
+  muted: "#55557a",
   focus: "#5f5f5f",
 } as const;
 
 export const fonts = {
   display: '"Fraunces Variable", "Fraunces", Georgia, serif',
   body: '"Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif',
-  mono: '"DM Mono", monospace',
+  mono: '"DM Mono", ui-monospace, monospace',
 } as const;
 
 export const navbar = {
