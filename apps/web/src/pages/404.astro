@@ -1,32 +1,76 @@
 ---
-// Standalone: works even when the region lookup (Layout) is unavailable.
-import "@shroom-mates/ui/fonts";
-import "@shroom-mates/ui/base.css";
-import "@styles/global.css";
-import "@styles/shop.css";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
-import { WEBSITE_URL } from "@shroom-mates/ui/site";
+import Layout from "../layouts/SiteLayout.astro";
 ---
 
-<!doctype html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="robots" content="noindex" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Seite nicht gefunden | Shroom-Mates Shop</title>
-  </head>
-  <body>
-    <main class="not-found">
-      <MatesLogo alt="" width={180} loading="eager" />
-      <p class="not-found__code">404</p>
-      <h1 class="not-found__title">Diese Seite ist uns entwischt.</h1>
-      <p>Den Link gibt es nicht (mehr). Hier geht's weiter:</p>
-      <div class="not-found__actions">
-        <a href="/shop/" class="btn btn--primary">Zum Sortiment</a>
-        <a href={WEBSITE_URL} class="btn btn--secondary">Zur Website</a>
-      </div>
-    </main>
-  </body>
-</html>
+<Layout
+  title="Seite nicht gefunden | shroom-mates"
+  description="Diese Seite gibt es nicht (mehr)."
+  noindex
+>
+  <section class="not-found">
+    <div class="not-found__mascot">
+      <div class="dots" aria-hidden="true"></div>
+      <MatesLogo
+        class="not-found__logo"
+        alt="Die shroom-mates-Maskottchen"
+        width={260}
+        sizes="(max-width: 480px) 60vw, 260px"
+      />
+    </div>
+    <p class="eyebrow">404</p>
+    <h1>Diese Seite ist uns entwischt.</h1>
+    <p class="lead">Vielleicht wächst sie gerade noch.</p>
+    <div class="not-found__actions">
+      <a class="btn btn--primary" href="/">Zur Startseite</a>
+      <a class="btn btn--secondary" href="/unsere-pilze/">Unsere Pilze</a>
+      <a class="btn btn--secondary" href="/kontakt/">Kontakt</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 1rem 0 4rem;
+    text-align: center;
+  }
+
+  .not-found__mascot {
+    position: relative;
+    width: min(260px, 60vw);
+    margin: 0 auto 1.5rem;
+  }
+
+  .not-found__mascot .dots {
+    position: absolute;
+    inset: 12% -12% 0;
+    border-radius: 50%;
+  }
+
+  .not-found__mascot :global(.not-found__logo) {
+    position: relative;
+    display: block;
+    width: 100%;
+    filter: drop-shadow(5px 5px 0 var(--color-ink));
+  }
+
+  h1 {
+    margin: 0.5rem 0 1rem;
+    font-size: clamp(36px, 7vw, 64px);
+    line-height: 0.95;
+    color: var(--color-accent);
+  }
+
+  .lead {
+    margin: 0 0 2rem;
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+  }
+</style>

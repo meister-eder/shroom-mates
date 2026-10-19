@@ -1,7 +1,7 @@
 /**
  * Thin typed fetch wrapper for the Medusa Store API, used in the browser
  * instead of @medusajs/js-sdk (keeps the SDK out of the client bundle).
- * Server-side code (lib/data, middleware) keeps using the SDK in lib/sdk.ts.
+ * Server-side code (lib/data) keeps using the SDK in lib/sdk.ts.
  * Covers exactly the calls the client islands make.
  */
 import type {

@@ -1,0 +1,21 @@
+---
+title: "Frische Pilze kaufen in Leipzig – Edelpilze von shroom-mates"
+description: "Frische Edelpilze direkt vom Züchter in Leipzig-Leutzsch: Rosenseitling, Pioppino, Lion's Mane, White Pearl & mehr. Für Privat und Gastronomie, nachhaltig angebaut mit regionalen Bio-Rohstoffen."
+heroEyebrow: "Frische Pilze kaufen in Leipzig"
+heroTitle: "Unsere Pilze"
+heroLead: "Wir probieren gerne Neues aus. Jede Sorte hat ihre eigenen Ansprüche, und genau das macht es spannend. Das Sortiment wechselt mit der Jahreszeit."
+heroImageAlt: "Austernpilze in Gelb, Rosa und Weiß mit Lion's Mane"
+freshTag: "Frisch"
+growkitLabel: "Als Growkit im Shop"
+emptyText: "Derzeit sind keine Pilzsorten verfügbar. Bitte schau später wieder vorbei."
+bandText: "Von Hand geerntet, zum richtigen Zeitpunkt."
+ctas:
+  - label: "Für Küchen"
+    title: "Regelmäßig beliefert werden"
+    text: "Mengen und Sorten stimmen wir mit dir ab."
+    link: "/gastronomie/"
+  - label: "Für zu Hause"
+    title: "Pilze reservieren"
+    text: "Schreib uns, was du brauchst. Abholen in der Glasfabrik."
+    link: "/kontakt/"
+---

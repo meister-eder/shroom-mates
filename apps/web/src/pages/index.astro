@@ -1,0 +1,511 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import MyceliumScroll from "@shroom-mates/ui/MyceliumScroll.astro";
+import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
+import Layout from "../layouts/SiteLayout.astro";
+
+const landingPageEntries = await getCollection("landing-page");
+const landingPageContent = landingPageEntries[0];
+
+if (!landingPageContent) {
+  throw new Error("Landing page content not found");
+}
+
+const {
+  title,
+  heroImage,
+  heroTitle,
+  heroEyebrow,
+  heroPrimaryButton,
+  heroSecondaryButton,
+  heroMascotAlt,
+  heroBubble,
+  teaserText,
+  steps,
+  products,
+  gastro,
+} = landingPageContent.data;
+
+// H1 „Hi, wir sind die / shroom‑mates!“: fester Umbruch vor dem Namen,
+// Name nowrap mit geschütztem Bindestrich (U+2011)
+const [heroBefore, ...heroRest] = heroTitle.split("shroom-mates");
+const heroAfter = heroRest.join("shroom-mates");
+
+// Platzhalterfarbe je Schritt, falls kein Bild gesetzt ist; Kartonfarbe je Produkt
+const placeholders = [
+  "var(--color-pink)",
+  "var(--color-lavender)",
+  "var(--color-pink)",
+  "var(--color-olive-soft)",
+];
+const productColors = ["pink", "lavender", "olive-soft"];
+---
+
+<Layout
+  title={title}
+  description={teaserText}
+  ogImage={heroImage.src}
+  isLandingPage={true}
+  active="home"
+>
+  <MyceliumScroll />
+  <div class="landing">
+    <section class="hero container">
+      <p class="eyebrow hero__eyebrow">{heroEyebrow}</p>
+      <h1 class="hero__title">{heroBefore.trim()}<br /><span class="nowrap">shroom&#8209;mates</span>{heroAfter}</h1>
+    </section>
+    <section class="container hero-body">
+      <div class="hero__copy">
+        <p class="lead hero__lead">{teaserText}</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="/unsere-pilze/">{heroPrimaryButton}</a>
+          <a class="btn btn--secondary" href="/growkits/">{heroSecondaryButton}</a>
+        </div>
+      </div>
+      <div class="hero__mascot">
+        <div class="dots" aria-hidden="true"></div>
+        <MatesLogo
+          class="hero__logo"
+          alt={heroMascotAlt}
+          width={540}
+          sizes="(max-width: 768px) 80vw, 540px"
+          loading="eager"
+        />
+        <p class="speech-bubble hero__bubble">
+          {heroBubble}
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--night steps" aria-labelledby="steps-heading">
+      <div class="container steps__inner">
+        <h2 id="steps-heading">{steps.title}</h2>
+        <p class="steps__intro">{steps.intro}</p>
+        <ol class="steps__grid" role="list">
+          {
+            steps.items.map((step, i) => (
+              <li class="comic-panel">
+                {step.image ? (
+                  <Image
+                    src={step.image}
+                    alt={step.imageAlt ?? ""}
+                    class="comic-panel__img steps__img"
+                    widths={[320, 480, 640]}
+                    sizes="(max-width: 768px) 90vw, 300px"
+                    format="webp"
+                  />
+                ) : (
+                  <div
+                    class="comic-panel__img steps__img steps__placeholder"
+                    style={`--ph: ${placeholders[i % placeholders.length]}`}
+                    aria-hidden="true"
+                  />
+                )}
+                <div class="comic-panel__body">
+                  <p class="steps__num">{String(i + 1).padStart(2, "0")}</p>
+                  <h3 class="steps__title">{step.title}</h3>
+                  <p set:html={step.text} />
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="container products" aria-labelledby="products-heading">
+      <h2 id="products-heading" class="text-accent">{products.title}</h2>
+      <div class="products__grid">
+        {
+          products.items.map((p, i) => (
+            <a href={p.link} class={`sticker-card sticker-card--${productColors[i % productColors.length]} product`}>
+              <Image
+                src={p.image}
+                alt={p.imageAlt}
+                class="product__img"
+                widths={[320, 480, 640, 800]}
+                sizes="(max-width: 768px) 90vw, 380px"
+                format="webp"
+              />
+              <h3 class="product__title">{p.title}</h3>
+              <p class="product__text">{p.text}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="container gastro" aria-labelledby="gastro-heading">
+      <div class="gastro__box">
+        <div class="gastro__copy">
+          <p class="label">{gastro.label}</p>
+          <h2 id="gastro-heading">{gastro.title}</h2>
+          <p class="gastro__text">{gastro.text}</p>
+          <a class="btn btn--primary" href="/gastronomie/">
+            {gastro.buttonText}
+          </a>
+        </div>
+        <Image
+          src={schneidebrett}
+          alt={gastro.imageAlt}
+          class="gastro__img"
+          widths={[320, 480, 640]}
+          sizes="(max-width: 768px) 80vw, 320px"
+          format="webp"
+        />
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .landing {
+    overflow-x: clip;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  /* ── Hero ───────────────────────────────────────── */
+  .landing :global(.btn) {
+    padding: 16px 26px;
+    font-size: 1.125rem;
+  }
+
+  .hero {
+    padding-top: 32px;
+    padding-bottom: 0;
+  }
+
+  .hero__eyebrow {
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .hero__title {
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+    padding-bottom: 80px;
+  }
+
+  .hero__copy {
+    flex: 1 1 420px;
+    min-width: 0;
+  }
+
+  .hero__lead {
+    max-width: 34ch;
+    margin: 28px 0 0;
+    font-size: 1.3125rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 32px;
+  }
+
+  .hero__actions :global(.btn--secondary) {
+    box-shadow: none;
+  }
+
+  .hero__actions :global(.btn--secondary:hover) {
+    box-shadow: none;
+  }
+
+  .hero__mascot {
+    flex: 1 1 440px;
+    min-width: 0;
+    position: relative;
+    min-height: 520px;
+  }
+
+  .hero__mascot .dots {
+    position: absolute;
+    inset: 40px 0 20px 60px;
+    border-radius: 50%;
+    opacity: 0.9;
+  }
+
+  .hero__mascot :global(.hero__logo) {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+    filter: drop-shadow(6px 6px 0 var(--color-ink));
+  }
+
+  .hero__bubble {
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 230px;
+    padding: 14px 18px;
+    font-size: 1.0625rem;
+  }
+
+  /* ── Comic-Ablauf ───────────────────────────────── */
+  .steps {
+    padding: 88px var(--gutter);
+    border-top: 0;
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
+  .steps__inner {
+    padding-inline: 0;
+  }
+
+  .steps__inner > h2 {
+    color: var(--color-accent-light);
+    margin-bottom: 12px;
+  }
+
+  .steps__intro {
+    max-width: 52ch;
+    margin: 0 0 40px;
+    font-size: 1.1875rem;
+    color: var(--lilac-deep);
+  }
+
+  .steps__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps__grid > .comic-panel {
+    border: 0;
+    border-radius: 0;
+    background: var(--color-cream);
+    box-shadow: none;
+  }
+
+  .steps__num {
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-accent-dark);
+  }
+
+  .steps__grid :global(.steps__img) {
+    height: 220px;
+  }
+
+  .steps__placeholder {
+    background:
+      radial-gradient(rgba(29, 29, 29, 0.13) 1.4px, transparent 1.5px) 0 0 / 12px 12px,
+      var(--ph);
+  }
+
+  .steps__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.625rem;
+  }
+
+  .comic-panel__body p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* ── Produkte ───────────────────────────────────── */
+  .products {
+    padding-top: 96px;
+    padding-bottom: 112px;
+  }
+
+  .products > h2 {
+    margin-bottom: 48px;
+  }
+
+  .products__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+    gap: 36px;
+  }
+
+  .product {
+    gap: 0;
+    padding: 18px;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+
+  .product :global(.product__img) {
+    height: 300px;
+    box-sizing: border-box;
+  }
+
+  .product:nth-child(1) {
+    --sticker-rot: -2deg;
+  }
+
+  .product:nth-child(2) {
+    --sticker-rot: 1.5deg;
+  }
+
+  .product:nth-child(3) {
+    --sticker-rot: -1deg;
+  }
+
+  .product__title {
+    margin: 18px 4px 4px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: clamp(1.9rem, 2.6vw, 2.125rem);
+  }
+
+  .product__text {
+    margin: 0 4px 6px;
+    font-size: 1rem;
+  }
+
+  .product:nth-child(2) {
+    translate: 0 18px;
+  }
+
+  /* ── Gastro-Teaser ──────────────────────────────── */
+  .gastro {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  .gastro__box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+    padding: 48px;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border: 3px solid var(--color-accent);
+    border-radius: 0;
+    box-shadow: var(--shadow-teaser);
+  }
+
+  .gastro__copy {
+    flex: 1 1 460px;
+    min-width: 0;
+  }
+
+  .gastro__copy .label {
+    margin-bottom: 12px;
+  }
+
+  .gastro__copy h2 {
+    margin-bottom: 16px;
+    color: var(--color-accent);
+    font-size: clamp(36px, 4.4vw, 64px);
+  }
+
+  .gastro__text {
+    max-width: 44ch;
+    margin: 0 0 28px;
+    font-size: 1.1875rem;
+    line-height: 1.5;
+  }
+
+  .gastro__box :global(.gastro__img) {
+    flex: 0 1 320px;
+    min-width: 0;
+    width: 320px;
+    height: 360px;
+    object-fit: cover;
+    border: 3px solid var(--color-ink);
+    border-radius: 0;
+    transform: rotate(3deg);
+  }
+
+  .gastro :global(.btn--primary),
+  .gastro :global(.btn--primary:hover) {
+    box-shadow: none;
+  }
+
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 900px) {
+    .hero-body {
+      padding-bottom: 56px;
+    }
+
+    .hero__mascot {
+      flex-basis: 100%;
+      min-height: 0;
+      padding-top: 56px;
+    }
+
+    .hero__mascot .dots {
+      inset: 96px 0 20px 40px;
+    }
+
+    .hero__bubble {
+      max-width: 200px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .steps {
+      padding-block: 56px;
+    }
+
+    .products {
+      padding-top: 56px;
+      padding-bottom: 64px;
+    }
+
+    .products__grid {
+      gap: 28px;
+    }
+
+    .product:nth-child(2) {
+      translate: none;
+    }
+
+    .product :global(.product__img) {
+      height: 240px;
+    }
+
+    .gastro {
+      padding-bottom: 56px;
+    }
+
+    .gastro__box {
+      padding: 28px 20px;
+      border-radius: 0;
+      box-shadow: 6px 6px 0 var(--color-ink);
+    }
+
+    .gastro__box :global(.gastro__img) {
+      width: 100%;
+      flex-basis: 100%;
+      height: 260px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product:nth-child(2),
+    .gastro__box :global(.gastro__img) {
+      translate: none;
+      transform: none;
+    }
+  }
+</style>

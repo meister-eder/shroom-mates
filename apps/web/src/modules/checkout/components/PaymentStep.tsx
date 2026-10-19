@@ -85,7 +85,7 @@ export const PaymentStep = ({ cart, mode }: PaymentStepProps) => {
     setError("");
     try {
       await initPaymentSession(providerId, {
-        redirectUrl: `${window.location.origin}/shop/checkout/complete`,
+        redirectUrl: `${window.location.origin}/shop/checkout/complete/`,
       });
       return true;
     } catch (err) {

@@ -1,0 +1,34 @@
+---
+export const prerender = false;
+Astro.response.status = 404;
+// Standalone: works even when the region lookup (Layout) is unavailable.
+import "@shroom-mates/ui/fonts";
+import "@shroom-mates/ui/base.css";
+import "@styles/global.css";
+import "@styles/shop.css";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import { WEBSITE_URL } from "@shroom-mates/ui/site";
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Seite nicht gefunden | Shroom-Mates Shop</title>
+  </head>
+  <body>
+    <main class="not-found">
+      <MatesLogo alt="" width={180} loading="eager" />
+      <p class="not-found__code">404</p>
+      <h1 class="not-found__title">Diese Seite ist uns entwischt.</h1>
+      <p>Den Link gibt es nicht (mehr). Hier geht's weiter:</p>
+      <div class="not-found__actions">
+        <a href="/shop/" class="btn btn--primary">Zum Sortiment</a>
+        <a href={WEBSITE_URL} class="btn btn--secondary">Zur Website</a>
+      </div>
+    </main>
+  </body>
+</html>

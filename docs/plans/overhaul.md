@@ -49,6 +49,7 @@ from any of it.
 - P5.10 (design): step cards comic-panel / step / how-card differ visibly (image height, borders, shadows, type) — unify only after a design decision.
 - P7.1: compose service renamed storefront → web: next deploy leaves an orphan storefront container (docker compose up --remove-orphans); adjust branch protection if it checks old CI job/step names.
 - P7.2: set SumUp redirect to https://shroom-mates.de/shop/checkout/complete in SumUp dashboard (if configured) and server backend .env (old /de/ path 301s). Not redirected: /de/<unknown>, other country prefixes.
+- P7.3: website build.assets 'assets' + manualChunks not carried over (assets now under /_astro/) — Caddy immutable caching for /_astro/* covers it.
 
 ---
 
@@ -215,7 +216,7 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Move `src/pages/[countryCode]/**` to the new paths in the table above (shop routes under `src/pages/shop/`, legal pages at the root). Replace `countryCode` params/props everywhere: region = `DEFAULT_REGION` env or the only/first region, resolved once and cached with a 1-hour TTL in `src/lib/data/regions.ts` (single cache; delete the duplicate in the middleware). Middleware: no redirects except the legacy `/de/...` → new URL map (301, query preserved, including `/de/checkout/complete`). `data.redirect_url` for SumUp becomes `<origin>/shop/checkout/complete` (update `.claude/rules/storefront.md`/`web.md` and `docker-compose*.yml` `SUMUP_REDIRECT_URL` defaults; the old path keeps working via the redirect). Update `e2e/visual/routes.ts` URLs (keys unchanged) and all e2e specs. Visual + smoke must pass.
   Commit: `refactor(web): single region, no country prefix in URLs`
 
-- [ ] **P7.3 Bring the website into the web app** · deps: P7.2 · verify: visual
+- [x] **P7.3 Bring the website into the web app** · deps: P7.2 · verify: visual · 0934437
   Switch `apps/web` to `output: "static"` with the node adapter; every SSR page gets `export const prerender = false` (shop, cart, checkout, order, sitemap endpoint, anything reading cookies/Medusa per request). Move from `apps/website`: `src/pages/*` (prerendered), `src/content/**` + `src/content.config.ts`, `src/components/**`, `src/assets/**`, `src/scripts/**`, `src/styles/global.css`, `public/**` (favicons, robots, manifest, `admin/`), `scripts/copy-cms.mjs` (+ `predev`/`prebuild` hooks), integrations (`@astrojs/mdx`, `@astrojs/sitemap` for the static pages, with the shop sitemap from P4.2 added to the sitemap index). Merge `robots.txt` (one file, both sitemaps, disallow `/admin/`, cart/checkout/order). Sveltia `public/admin/config.yml`: update content/media paths to `apps/web/...`. Config: `site: "https://shroom-mates.de"`, `trailingSlash: "always"`, image settings from the website config, website redirects (minus `/shop`). Keep `apps/website` untouched for now (deleted in P7.5). Visual: update `routes.ts` so web keys point at the web app (one server now) and `VISUAL_SERVERS` in the playwright config; all keys must still match their baselines.
   Commit: `feat(web): marketing pages as prerendered routes of the web app`
 
@@ -306,3 +307,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 01:31 P6.1 DONE 36b5ced — privacy guard: 18 routes + map click, no violations
 2026-10-20 01:34 P7.1 DONE 2ad6a73 — apps/web, service web; leftovers only prose comments
 2026-10-20 01:40 P7.2 DONE 94a3a1d — single region, /shop/ URLs, legacy 301s verified with query
+2026-10-20 01:47 P7.3 DONE 0934437 — website pages prerendered in apps/web; legacy redirects via /de/[...path] route

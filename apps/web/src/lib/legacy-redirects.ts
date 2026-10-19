@@ -1,5 +1,3 @@
-import { defineMiddleware } from "astro:middleware";
-
 const LEGACY_PAGES = new Set([
   "agb",
   "widerruf",
@@ -33,27 +31,3 @@ export function legacyTarget(pathname: string): string | undefined {
   if (LEGACY_PAGES.has(a) && !b) return `/${a}/`;
   return undefined;
 }
-
-export const onRequest = defineMiddleware(async (context, next) => {
-  const method = context.request.method.toUpperCase();
-  if (method !== "GET" && method !== "HEAD") {
-    return next();
-  }
-
-  const { pathname, search } = context.url;
-
-  // The old shop host served its catalog at "/" (via /de). Temporary until the
-  // marketing home page moves into this app.
-  if (pathname === "/") {
-    return context.redirect(`/shop/${search}`, 302);
-  }
-
-  const target = legacyTarget(pathname);
-  if (target) {
-    // Relative on purpose: behind the reverse proxy context.url.origin is the
-    // internal address, not the public host.
-    return context.redirect(`${target}${search}`, 301);
-  }
-
-  return next();
-});

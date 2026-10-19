@@ -9,7 +9,7 @@ const { orderId } = Astro.params;
 
 const order = orderId ? await retrieveOrder(orderId) : null;
 if (!order) {
-  return Astro.rewrite("/404");
+  return Astro.rewrite("/shop/not-found/");
 }
 ---
 

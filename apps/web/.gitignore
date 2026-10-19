@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 # yarn
 .yarn/install-state.gz
+
+# Sveltia CMS bundle (copied by scripts/copy-cms.mjs)
+public/admin/sveltia-cms.js
+public/admin/chunks/

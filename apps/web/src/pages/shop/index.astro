@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Layout from "@layouts/Layout.astro";
 import { getRegion } from "@lib/data/regions";
 import { loadCatalog } from "@modules/store/catalog";
@@ -8,7 +10,7 @@ import { jsonLd } from "@shroom-mates/ui/json-ld";
 const region = await getRegion();
 
 if (!region) {
-  return Astro.rewrite("/404");
+  return Astro.rewrite("/shop/not-found/");
 }
 
 const catalog = await loadCatalog(region.id);

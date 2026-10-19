@@ -3,8 +3,8 @@ import { mockWebServers } from "../servers";
 
 /**
  * Screenshot-Vergleich (Regressionsschutz für Umbauten ohne Design-Änderung).
- * Startet Medusa-Mock, Website-Preview und Shop-Server selbst; vorher müssen
- * beide Apps gebaut sein (`scripts/verify.sh visual` erledigt das).
+ * Startet Medusa-Mock und den Web-Server selbst; vorher muss
+ * die App gebaut sein (`scripts/verify.sh visual` erledigt das).
  * Baseline: `scripts/verify.sh baseline` (liegt lokal, nicht im Repo).
  *
  * Die Server-Befehle stehen in ../servers.ts, damit ein Umbau der

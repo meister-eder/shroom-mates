@@ -6,9 +6,7 @@
  * `cart: true` legt vorher über den Medusa-Mock einen Pilzkorb mit einem
  * Artikel an (für Pilzkorb- und Kassen-Seite).
  */
-export const WEBSITE =
-  process.env.VISUAL_WEBSITE_URL ?? "http://localhost:4400";
-export const SHOP = process.env.VISUAL_SHOP_URL ?? "http://localhost:8000";
+export const WEB = process.env.VISUAL_WEB_URL ?? "http://localhost:8000";
 export const MOCK = process.env.VISUAL_MOCK_URL ?? "http://localhost:9010";
 
 export interface VisualRoute {
@@ -18,25 +16,25 @@ export interface VisualRoute {
 }
 
 export const routes: VisualRoute[] = [
-  { key: "web-home", url: `${WEBSITE}/` },
-  { key: "web-pilze", url: `${WEBSITE}/unsere-pilze/` },
-  { key: "web-growkits", url: `${WEBSITE}/growkits/` },
-  { key: "web-tinkturen", url: `${WEBSITE}/tinkturen/` },
-  { key: "web-gastronomie", url: `${WEBSITE}/gastronomie/` },
-  { key: "web-ueber-uns", url: `${WEBSITE}/ueber-uns/` },
-  { key: "web-faq", url: `${WEBSITE}/faq/` },
-  { key: "web-kontakt", url: `${WEBSITE}/kontakt/` },
-  { key: "web-impressum", url: `${WEBSITE}/impressum/` },
-  { key: "web-404", url: `${WEBSITE}/gibt-es-nicht/` },
-  { key: "shop-katalog", url: `${SHOP}/shop/` },
+  { key: "web-home", url: `${WEB}/` },
+  { key: "web-pilze", url: `${WEB}/unsere-pilze/` },
+  { key: "web-growkits", url: `${WEB}/growkits/` },
+  { key: "web-tinkturen", url: `${WEB}/tinkturen/` },
+  { key: "web-gastronomie", url: `${WEB}/gastronomie/` },
+  { key: "web-ueber-uns", url: `${WEB}/ueber-uns/` },
+  { key: "web-faq", url: `${WEB}/faq/` },
+  { key: "web-kontakt", url: `${WEB}/kontakt/` },
+  { key: "web-impressum", url: `${WEB}/impressum/` },
+  { key: "web-404", url: `${WEB}/gibt-es-nicht/` },
+  { key: "shop-katalog", url: `${WEB}/shop/` },
   {
     key: "shop-produkt-growkit",
-    url: `${SHOP}/shop/rosenseitling-growkit/`,
+    url: `${WEB}/shop/rosenseitling-growkit/`,
   },
-  { key: "shop-produkt-tinktur", url: `${SHOP}/shop/lions-mane-tinktur/` },
-  { key: "shop-pilzkorb", url: `${SHOP}/shop/cart/`, cart: true },
-  { key: "shop-kasse", url: `${SHOP}/shop/checkout/`, cart: true },
-  { key: "shop-agb", url: `${SHOP}/agb/` },
-  { key: "shop-widerrufen", url: `${SHOP}/vertrag-widerrufen/` },
-  { key: "shop-404", url: `${SHOP}/shop/gibt-es-nicht/` },
+  { key: "shop-produkt-tinktur", url: `${WEB}/shop/lions-mane-tinktur/` },
+  { key: "shop-pilzkorb", url: `${WEB}/shop/cart/`, cart: true },
+  { key: "shop-kasse", url: `${WEB}/shop/checkout/`, cart: true },
+  { key: "shop-agb", url: `${WEB}/agb/` },
+  { key: "shop-widerrufen", url: `${WEB}/vertrag-widerrufen/` },
+  { key: "shop-404", url: `${WEB}/shop/gibt-es-nicht/` },
 ];

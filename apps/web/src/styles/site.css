@@ -1,0 +1,26 @@
+/* Website-spezifische Ergänzungen.
+   Tokens, Typografie, Buttons, Sektionen, Karten und Reveal-Klassen kommen aus
+   @shroom-mates/ui (base.css / utilities.css). */
+
+/* ===== Hilfsklassen für Unterseiten ===== */
+
+/* Zentrierter Container innerhalb einer .section */
+.section-container {
+  max-width: var(--container, 1280px);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.card--light {
+  background: var(--color-paper);
+}

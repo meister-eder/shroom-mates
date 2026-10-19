@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { type APIRequestContext, expect, test } from "@playwright/test";
 
 const SHOP = process.env.VISUAL_SHOP_URL ?? "http://localhost:8000";
 
@@ -22,10 +22,31 @@ const cases: [string, string][] = [
   ["/de", "/shop/"],
 ];
 
+// Without a trailing slash the Node adapter first adds one (301), then the
+// legacy route maps to the new path (301): follow the chain by hand.
+async function followRedirects(
+  request: APIRequestContext,
+  start: string,
+): Promise<string> {
+  let current = new URL(start, SHOP);
+  for (let hop = 0; hop < 4; hop++) {
+    const res = await request.get(current.href, { maxRedirects: 0 });
+    if (res.status() !== 301) return `${current.pathname}${current.search}`;
+    current = new URL(res.headers().location, current);
+  }
+  throw new Error(`Too many redirects for ${start}`);
+}
+
 for (const [from, to] of cases) {
   test(`legacy ${from} -> ${to}`, async ({ request }) => {
-    const res = await request.get(`${SHOP}${from}`, { maxRedirects: 0 });
-    expect(res.status()).toBe(301);
-    expect(res.headers().location).toBe(to);
+    expect(await followRedirects(request, from)).toBe(to);
   });
 }
+
+test("Pfade ohne Slash bekommen einen Slash, Query bleibt", async ({
+  request,
+}) => {
+  expect(await followRedirects(request, "/shop/checkout/complete?x=1")).toBe(
+    "/shop/checkout/complete/?x=1",
+  );
+});

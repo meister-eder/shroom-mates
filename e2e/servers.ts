@@ -1,6 +1,6 @@
 /**
  * Gemeinsamer Server-Aufbau für die Mock-Läufe (visual, smoke): Medusa-Mock,
- * Website-Preview und Shop-Server. Beide Apps müssen vorher gebaut sein
+ * Web-App (Node-Server, liefert statische Seiten und Shop). Die App muss vorher gebaut sein
  * (`scripts/verify.sh` erledigt das). Bei einem Umbau der App-Struktur nur
  * diese Stelle (und visual/routes.ts) anpassen.
  */
@@ -10,10 +10,6 @@ export const MOCK_SERVERS = [
   {
     command: `PORT=${MOCK_PORT} node ../mock/mock-medusa.mjs`,
     port: MOCK_PORT,
-  },
-  {
-    command: "cd ../../apps/website && bun run astro preview --port 4400",
-    port: 4400,
   },
   {
     command:

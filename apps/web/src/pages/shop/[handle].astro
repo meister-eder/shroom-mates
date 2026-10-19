@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import { Image } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import { listProducts, retrieveProduct } from "@lib/data/products";
@@ -17,13 +19,13 @@ import { websiteUrl } from "@shroom-mates/ui/site";
 const { handle } = Astro.params;
 
 if (!handle) {
-  return Astro.rewrite("/404");
+  return Astro.rewrite("/shop/not-found/");
 }
 
 const region = await getRegion();
 
 if (!region) {
-  return Astro.rewrite("/404");
+  return Astro.rewrite("/shop/not-found/");
 }
 
 let product: Awaited<ReturnType<typeof retrieveProduct>> | undefined;
@@ -37,7 +39,7 @@ try {
 }
 
 if (product === null) {
-  return Astro.rewrite("/404");
+  return Astro.rewrite("/shop/not-found/");
 }
 
 // Old links used the product ID; send them to the readable URL.

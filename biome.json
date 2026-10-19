@@ -20,7 +20,10 @@
 			"!**/__screenshots__/**",
 			"!apps/website/public/site.webmanifest",
 			"!apps/website/public/admin/sveltia-cms.js",
-			"!apps/website/public/admin/chunks"
+			"!apps/website/public/admin/chunks",
+			"!apps/web/public/site.webmanifest",
+			"!apps/web/public/admin/sveltia-cms.js",
+			"!apps/web/public/admin/chunks"
 		]
 	},
 	"formatter": {

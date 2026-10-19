@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { MOCK, routes, SHOP, WEBSITE } from "../visual/routes";
+import { MOCK, routes, WEB } from "../visual/routes";
 
 /**
  * Datenschutz-Wächter: Die Seite bleibt bannerfrei, solange nichts Nicht-
@@ -10,13 +10,14 @@ import { MOCK, routes, SHOP, WEBSITE } from "../visual/routes";
  */
 const ALLOWED_STORAGE_KEYS = ["cart_id", "checkout_cart_id", "cart_snapshot"];
 // Die Karte hat keinen gespeicherten Einwilligungsschlüssel (Klick lädt nur für diese Ansicht).
-const ALLOWED_ORIGINS = [WEBSITE, SHOP, MOCK].map((u) => new URL(u).origin);
+const ALLOWED_ORIGINS = [WEB, MOCK].map((u) => new URL(u).origin);
 
 const isOwn = (url: string) => {
   if (/^(data|blob|about):/.test(url)) return true;
   return ALLOWED_ORIGINS.includes(new URL(url).origin);
 };
-const isGoogle = (url: string) => /(^|\.)google\.com$|gstatic\.com|googleapis\.com/.test(new URL(url).hostname);
+const isGoogle = (url: string) =>
+  /(^|\.)google\.com$|gstatic\.com|googleapis\.com/.test(new URL(url).hostname);
 
 for (const route of routes) {
   test(`Datenschutz: ${route.key}`, async ({ page }) => {
@@ -25,7 +26,10 @@ for (const route of routes) {
     await page.goto(route.url, { waitUntil: "load" });
     await page.waitForLoadState("networkidle");
 
-    expect(urls.filter((u) => !isOwn(u)), "Fremde Anfragen vor Interaktion").toEqual([]);
+    expect(
+      urls.filter((u) => !isOwn(u)),
+      "Fremde Anfragen vor Interaktion",
+    ).toEqual([]);
     expect(await page.evaluate(() => document.cookie)).toBe("");
     const storage = await page.evaluate(() => ({
       local: Object.keys(localStorage),
@@ -40,7 +44,7 @@ for (const route of routes) {
 test("Datenschutz: Google-Karte erst nach Klick", async ({ page }) => {
   const urls: string[] = [];
   page.on("request", (r) => urls.push(r.url()));
-  await page.goto(`${WEBSITE}/kontakt/`, { waitUntil: "load" });
+  await page.goto(`${WEB}/kontakt/`, { waitUntil: "load" });
   await page.waitForLoadState("networkidle");
   expect(urls.filter(isGoogle)).toEqual([]);
 
