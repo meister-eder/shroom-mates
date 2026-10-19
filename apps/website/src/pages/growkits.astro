@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { getCollection, getEntry, render } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import { linkBuilders } from "@shroom-mates/ui/site";
 import rosenseitlingBueschel from "../assets/images/fotos/rosenseitling-bueschel.jpg";
@@ -13,7 +13,6 @@ const growkitsPageEntry = await getEntry("growkits-page", "content");
 if (!growkitsPageEntry) {
 	throw new Error("Growkits page content not found");
 }
-const { Content: PageContent } = await render(growkitsPageEntry);
 
 const {
 	title,
@@ -29,6 +28,7 @@ const {
 	kitDetailsLabel,
 	kitShopButton,
 	guideHarvestImageAlt,
+	guide,
 	ctaTitle,
 	ctaText,
 	ctaShopButton,
@@ -38,43 +38,12 @@ const {
 	shippingText,
 } = growkitsPageEntry.data;
 
-// Anleitung für die Comic-Panels aus dem Markdown lesen:
-// "## Überschrift", Einleitung, dann "### 1\. Titel" + Text je Schritt.
-// Klappt das nicht (Struktur im CMS geändert), rendern wir den Text unverändert.
-const escapeHtml = (s: string) =>
-	s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const inlineMd = (s: string) =>
-	escapeHtml(s)
-		.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-		.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, "<em>$1</em>");
-const paragraphs = (s: string) =>
-	s
-		.split(/\n\s*\n/)
-		.map((p) => p.trim())
-		.filter(Boolean)
-		.map(inlineMd);
-
-const [introPart, ...stepParts] = (growkitsPageEntry.body ?? "").split(
-	/^###\s+/m,
-);
-const guideHeading =
-	introPart.match(/^##\s+(.+)$/m)?.[1]?.trim() ?? "So funktioniert's";
-const guideIntro = paragraphs(introPart.replace(/^##\s+.+$/m, ""));
-const steps = stepParts.map((part) => {
-	const [first, ...rest] = part.split("\n");
-	return {
-		title: first.replace(/^\d+\\?\.\s*/, "").trim(),
-		text: paragraphs(rest.join("\n")),
-	};
-});
+const { title: guideHeading, intro: guideIntro, steps } = guide;
 
 // Foto je Schritt (sonst Platzhalter in Kartonfarbe mit Rasterpunkten)
-const stepImage = (stepTitle: string) =>
-	/^Ernten/i.test(stepTitle)
-		? {
-				image: rosenseitlingBueschel,
-				alt: guideHarvestImageAlt,
-			}
+const stepImage = (photo: boolean) =>
+	photo
+		? { image: rosenseitlingBueschel, alt: guideHarvestImageAlt }
 		: undefined;
 // Farben der Platzhalter je Schritt (wie im Entwurf: Rosa, Lavendel, Butter …)
 const placeholders = [
@@ -235,46 +204,38 @@ const growkits = growkitsCollection
     <section id="anleitung" class="guide" aria-labelledby="guide-heading">
       <div class="guide__inner">
         <h2 id="guide-heading">{guideHeading}</h2>
-        {
-          steps.length > 0 ? (
-            <>
-              {guideIntro.map((p) => <p class="guide__intro" set:html={p} />)}
-              <ol class="guide__grid" role="list">
-                {steps.map((step, i) => {
-                  const photo = stepImage(step.title);
-                  return (
-                    <li class="step">
-                      {photo ? (
-                        <Image
-                          src={photo.image}
-                          alt={photo.alt}
-                          class="step__media"
-                          widths={[320, 480, 640]}
-                          sizes="(max-width: 768px) 90vw, 300px"
-                          format="webp"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div
-                          class="step__media step__placeholder"
-                          style={`--ph: ${placeholders[i % placeholders.length]}`}
-                          aria-hidden="true"
-                        />
-                      )}
-                      <div class="step__body">
-                        <p class="step__num">{String(i + 1).padStart(2, "0")}</p>
-                        <h3 class="step__title">{step.title}</h3>
-                        {step.text.map((p) => <p set:html={p} />)}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            </>
-          ) : (
-            <div class="guide__fallback"><PageContent /></div>
-          )
-        }
+        {guideIntro.map((p) => <p class="guide__intro" set:html={p} />)}
+        <ol class="guide__grid" role="list">
+          {steps.map((step, i) => {
+            const photo = stepImage(step.photo);
+            return (
+              <li class="step">
+                {photo ? (
+                  <Image
+                    src={photo.image}
+                    alt={photo.alt}
+                    class="step__media"
+                    widths={[320, 480, 640]}
+                    sizes="(max-width: 768px) 90vw, 300px"
+                    format="webp"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div
+                    class="step__media step__placeholder"
+                    style={`--ph: ${placeholders[i % placeholders.length]}`}
+                    aria-hidden="true"
+                  />
+                )}
+                <div class="step__body">
+                  <p class="step__num">{String(i + 1).padStart(2, "0")}</p>
+                  <h3 class="step__title">{step.title}</h3>
+                  {step.text.map((p) => <p set:html={p} />)}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
 
@@ -677,16 +638,6 @@ const growkits = growkitsCollection
 
   .step__body :global(p:last-child) {
     margin-bottom: 0;
-  }
-
-  .guide__fallback {
-    max-width: 70ch;
-    margin-top: 24px;
-    color: var(--color-paper);
-  }
-
-  .guide__fallback :global(a) {
-    color: var(--color-accent-light);
   }
 
   /* ── Abholen / Versand ──────────────────────────── */

@@ -169,7 +169,7 @@ collections:
           - { name: kitsTitle, label: Überschrift Kit-Auswahl, widget: string }
           - { name: kitDetailsLabel, label: Aufklapp-Titel je Kit, widget: string }
           - { name: kitShopButton, label: Shop-Button je Kit, widget: string }
-          - { name: guideHarvestImageAlt, label: Anleitung Foto „Ernten“ Alt-Text, widget: string, hint: 'Foto beim Schritt, dessen Titel mit „Ernten“ beginnt' }
+          - { name: guideHarvestImageAlt, label: Anleitung Foto „Ernten“ Alt-Text, widget: string, hint: 'Alt-Text des Fotos bei Schritten mit „Foto anzeigen“' }
           - { name: ctaTitle, label: Abholen/Shop Überschrift, widget: string }
           - { name: ctaText, label: Abholen/Shop Text, widget: text }
           - { name: ctaShopButton, label: Shop-Button, widget: string }
@@ -177,7 +177,20 @@ collections:
           - { name: ctaButtonLink, label: Kontakt-Button Link, widget: string, hint: 'z.B. "/kontakt/"' }
           - { name: shippingLabel, label: Versand-Hinweis Titel, widget: string }
           - { name: shippingText, label: Versand-Hinweis Text, widget: text }
-          - { name: body, label: Anleitung, widget: markdown, hint: 'Aufbau: „## Überschrift“, Einleitung, dann je Schritt „### 1. Titel“ mit Text (**fett** und *kursiv* erlaubt)' }
+          - name: guide
+            label: Anleitung
+            widget: object
+            fields:
+              - { name: title, label: Überschrift, widget: string }
+              - { name: intro, label: Einleitung (Absätze), widget: list, field: { name: p, label: Absatz, widget: text, hint: "HTML erlaubt (<strong>, <em>)" } }
+              - name: steps
+                label: Schritte
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: title, label: Titel, widget: string }
+                  - { name: photo, label: Foto anzeigen, widget: boolean, default: false, hint: "Zeigt das Ernte-Foto statt der Farbfläche" }
+                  - { name: text, label: Text (Absätze), widget: list, field: { name: p, label: Absatz, widget: text, hint: "HTML erlaubt (<strong>, <em>)" } }
 
       - name: faq-page
         label: FAQ-Seite

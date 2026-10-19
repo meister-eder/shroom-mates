@@ -159,8 +159,21 @@ const growkitsPage = defineCollection({
 			kitsTitle: z.string(),
 			kitDetailsLabel: z.string(),
 			kitShopButton: z.string(),
-			// Foto beim Anleitungsschritt „Ernten“ (Bild liegt im Template)
+			// Alt-Text für das Foto bei Schritten mit photo: true (Bild liegt im Template)
 			guideHarvestImageAlt: z.string(),
+			guide: z.object({
+				title: z.string(),
+				// Absätze, einfaches HTML (<strong>, <em>) erlaubt
+				intro: z.array(z.string()),
+				steps: z.array(
+					z.object({
+						title: z.string(),
+						photo: z.boolean().default(false),
+						// Absätze, einfaches HTML (<strong>, <em>) erlaubt
+						text: z.array(z.string()),
+					}),
+				),
+			}),
 			ctaTitle: z.string(),
 			ctaText: z.string(),
 			ctaShopButton: z.string(),

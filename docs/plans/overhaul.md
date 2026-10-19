@@ -94,7 +94,7 @@ from any of it.
   `apps/website/src/pages/growkits.astro` hardcodes `kitMeta` (tone, shop handle, level, temp, pins, sort) and regex-parses each growkit's Markdown body ("Spezielle Tipps", "Verwendung", intro). Move all of it into frontmatter of `src/content/growkits/*.md`: `order` (existing), `tone` (`pink|lavender|olive-soft`), `shopHandle`, `level`, `temperature`, `firstPins`, `intro`, `tips: string[]`, `usage` (string, may contain the same inline HTML as today). Copy texts verbatim from the current bodies; bodies become empty or are removed. Update the zod schema in `src/content.config.ts` and the Sveltia config `public/admin/config.yml` (list widgets for `tips`, select for `tone`). Delete `kitMeta`, `inlineMd`, `paragraphs` and the section parsing. Keep `set:html` only where the CMS field is documented as HTML. Rendered page must be visually identical.
   Commit: `refactor(website): growkit data as CMS fields`
 
-- [ ] **P3.3 Growkit guide as CMS fields** · deps: P3.2 · verify: visual
+- [x] **P3.3 Growkit guide as CMS fields** · deps: P3.2 · verify: visual · bf9e7e3
   Same for `src/content/growkits-page/content.md`: the guide heading, intro and `### n. Step` sections become frontmatter `guide: { title, intro: string[], steps: [{ title, text: string[] }] }`; move `guideHarvestImageAlt` usage so the harvest photo is chosen by a `photo: boolean` (or image field) on the step instead of a title regex. Update schema + Sveltia config; delete the remaining parser code and the `<PageContent />` fallback. Visually identical.
   Commit: `refactor(website): growkit guide as CMS fields`
 
@@ -254,3 +254,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:43 P2.3 DONE 2516bd7 — guard extracted, 8 unit tests green
 2026-10-19 23:45 P3.1 DONE c373202 — SHIPPING in @shroom-mates/ui/shop-facts, 4 call sites; visual PASS
 2026-10-19 23:48 P3.2 DONE 9f6600b — growkit frontmatter fields; inlineMd/paragraphs kept for guide (P3.3)
+2026-10-19 23:51 P3.3 DONE bf9e7e3 — guide as frontmatter, parser and fallback removed
