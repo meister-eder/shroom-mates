@@ -114,6 +114,6 @@ export const SumUpWidget = ({
   }, [checkoutId]);
 
   return (
-    <div id={SUMUP_WIDGET_ID} ref={containerRef} className="min-h-[200px]" />
+    <div id={SUMUP_WIDGET_ID} ref={containerRef} className="sumup-widget" />
   );
 };

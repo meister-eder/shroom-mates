@@ -65,30 +65,21 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
 
   if (!cart && isCartLoading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-16 text-center text-muted sm:px-8">
-        Pilzkorb wird geladen…
-      </div>
+      <div className="shop-page shop-page--loading">Pilzkorb wird geladen…</div>
     );
   }
 
   if (!cart || !cart.items?.length) {
     return (
-      <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
-        <MatesEyes size={180} alt="" className="mb-5 max-w-full" />
-        <h1 className="mb-4! text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">
-          Dein Pilzkorb ist leer
-        </h1>
-        <p className="mb-1.5 font-display text-[30px] font-black leading-tight [font-variation-settings:'SOFT'_100,'WONK'_1]">
-          Hier wächst noch nichts.
-        </p>
-        <p className="mb-5">
+      <div className="shop-notice">
+        <MatesEyes size={180} alt="" className="shop-eyes" />
+        <h1 className="shop-h1 shop-h1--sm">Dein Pilzkorb ist leer</h1>
+        <p className="shop-notice-lead">Hier wächst noch nichts.</p>
+        <p className="shop-notice-copy">
           Die Mates langweilen sich. Füge Produkte hinzu, bevor du zur Kasse
           gehst.
         </p>
-        <a
-          href={`/${countryCode}/store`}
-          className="btn btn--primary min-h-[50px] px-[22px]"
-        >
+        <a href={`/${countryCode}/store`} className="btn btn--primary">
           Zum Sortiment
         </a>
       </div>
@@ -103,12 +94,10 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
   const currentIdx = isReviewing ? RAIL.length - 1 : VALID_STEPS.indexOf(step);
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-8 sm:px-8">
-      <h1 className="mb-6! text-[clamp(44px,5vw,72px)]! leading-[.92]! text-accent">
-        Kasse
-      </h1>
+    <div className="shop-page">
+      <h1 className="shop-h1 shop-h1--gap">Kasse</h1>
       <nav aria-label="Checkout-Schritte">
-        <ol className="m-0 grid list-none grid-cols-4 gap-1.5 p-0 sm:gap-2">
+        <ol className="checkout-rail">
           {RAIL.map((label, i) => {
             const isDone = i < currentIdx;
             const isCurrent = i === currentIdx;
@@ -116,18 +105,15 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
               <li
                 key={label}
                 aria-current={isCurrent ? "step" : undefined}
-                className={`flex min-w-0 flex-col items-start gap-0 rounded-pill border-2 border-ink px-2.5 py-2 text-[12px] font-bold leading-tight sm:flex-row sm:items-center sm:gap-2.5 sm:px-3.5 sm:py-2.5 sm:text-[15px] ${
+                className={`checkout-rail__item${
                   isCurrent
-                    ? "bg-ink text-cream"
+                    ? " checkout-rail__item--current"
                     : isDone
-                      ? "bg-olive-soft text-ink"
-                      : "bg-transparent text-ink"
+                      ? " checkout-rail__item--done"
+                      : ""
                 }`}
               >
-                <span
-                  className="font-mono text-[13px] font-medium"
-                  aria-hidden="true"
-                >
+                <span className="checkout-rail__num" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {label}
@@ -138,8 +124,8 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
         </ol>
       </nav>
 
-      <div className="mt-7 flex flex-wrap items-start gap-8 lg:gap-10">
-        <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-4">
+      <div className="shop-split checkout-split">
+        <div className="checkout-main">
           <ShippingAddressStep
             cart={cart}
             countries={countries}

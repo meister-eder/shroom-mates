@@ -48,7 +48,10 @@ export const WithdrawalForm = () => {
   if (received) {
     return (
       // biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern
-      <div className="shop-card p-6 space-y-3" role="status">
+      <div
+        className="shop-card withdraw-card shop-stack shop-stack--3"
+        role="status"
+      >
         <h2 className="checkout-step-title">Dein Widerruf ist eingegangen</h2>
         <p>
           Eingegangen am{" "}
@@ -56,7 +59,7 @@ export const WithdrawalForm = () => {
           Eingangsbestätigung mit dem Inhalt deiner Erklärung haben wir dir per
           E-Mail geschickt.
         </p>
-        <p className="text-muted text-sm">
+        <p className="withdraw-note">
           Bitte sende die Ware an: shroom-mates GbR, Markranstädter Straße 8,
           04229 Leipzig. Wir melden uns zur Rückabwicklung. Referenz:{" "}
           {received.id}
@@ -66,8 +69,8 @@ export const WithdrawalForm = () => {
   }
 
   return (
-    <form onSubmit={onSubmit} className="shop-card p-6 space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form onSubmit={onSubmit} className="shop-card withdraw-card shop-stack">
+      <div className="form-grid form-grid--2">
         <div>
           <label className="input-label" htmlFor="withdraw-name">
             Name *
@@ -114,9 +117,7 @@ export const WithdrawalForm = () => {
           placeholder="z. B. #12"
           className="input-field"
         />
-        <p className="text-xs text-muted mt-1">
-          Steht in deiner Bestellbestätigung.
-        </p>
+        <p className="withdraw-hint">Steht in deiner Bestellbestätigung.</p>
       </div>
       <div>
         <label className="input-label" htmlFor="withdraw-items">
@@ -149,7 +150,11 @@ export const WithdrawalForm = () => {
 
       {error && <p className="input-error">{error}</p>}
 
-      <button type="submit" disabled={isSending} className="btn-accent w-full">
+      <button
+        type="submit"
+        disabled={isSending}
+        className="btn btn--accent btn--block withdraw-submit"
+      >
         {isSending ? "Wird gesendet…" : "Widerruf bestätigen"}
       </button>
     </form>

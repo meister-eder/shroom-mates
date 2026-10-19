@@ -17,13 +17,8 @@ export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
   const shipping = cart.shipping_methods?.[0];
 
   return (
-    <section
-      className="flex flex-col gap-3.5 rounded-none border-2 border-accent bg-paper p-[18px] sm:p-[22px]"
-      aria-label="Bestellübersicht"
-    >
-      <h3 className="m-0 font-display text-[22px]! leading-none! font-black">
-        Deine Bestellung
-      </h3>
+    <section className="review" aria-label="Bestellübersicht">
+      <h3 className="review-title">Deine Bestellung</h3>
       {cart.items?.map((item) => (
         <SummaryLine
           key={item.id}
@@ -49,16 +44,11 @@ export const OrderReview = ({ cart, countryCode }: OrderReviewProps) => {
         discountTotal={cart.discount_total}
         total={cart.total}
       />
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t-2 border-ink pt-3 text-base">
+      <div className="review-foot">
         <span>
           Lieferung an: {formatAddressLines(cart.shipping_address).join(", ")}
         </span>
-        <a
-          href={`/${countryCode}/checkout?step=address`}
-          className="inline-flex min-h-11 items-center text-ink underline hover:text-accent-dark"
-        >
-          Ändern
-        </a>
+        <a href={`/${countryCode}/checkout?step=address`}>Ändern</a>
       </div>
     </section>
   );

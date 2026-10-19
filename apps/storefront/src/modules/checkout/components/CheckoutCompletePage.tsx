@@ -71,7 +71,7 @@ export const CheckoutCompletePage = ({
   if (state.kind === "completing") {
     return (
       <Shell title="Zahlung wird verarbeitet…">
-        <p className="text-lg">
+        <p className="shop-notice-sub">
           Bitte warte einen Moment, deine Bestellung wird abgeschlossen.
         </p>
       </Shell>
@@ -81,7 +81,7 @@ export const CheckoutCompletePage = ({
   if (state.kind === "pending") {
     return (
       <Shell title="Zahlung wird noch bestätigt">
-        <p className="mb-8 text-lg">
+        <p className="shop-notice-text">
           Das dauert länger als üblich. Du erhältst eine Bestätigungs-E-Mail,
           sobald deine Bestellung eingegangen ist.
         </p>
@@ -99,7 +99,7 @@ export const CheckoutCompletePage = ({
   if (state.kind === "no_cart") {
     return (
       <Shell title="Keine offene Bestellung gefunden">
-        <p className="mb-8 text-lg">
+        <p className="shop-notice-text">
           Falls deine Zahlung erfolgreich war, erhältst du eine Bestätigung per
           E-Mail.
         </p>
@@ -112,7 +112,7 @@ export const CheckoutCompletePage = ({
 
   return (
     <Shell title="Zahlung konnte nicht verarbeitet werden">
-      <p className="mb-8 text-lg">{state.message}</p>
+      <p className="shop-notice-text">{state.message}</p>
       <a
         href={`/${countryCode}/checkout?step=payment`}
         className="btn btn--primary"
@@ -124,11 +124,9 @@ export const CheckoutCompletePage = ({
 };
 
 const Shell = ({ title, children }: { title: string; children: ReactNode }) => (
-  <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
-    <MatesEyes size={160} alt="" className="mb-6 max-w-full" />
-    <h1 className="mb-4! text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">
-      {title}
-    </h1>
+  <div className="shop-notice">
+    <MatesEyes size={160} alt="" className="shop-eyes shop-eyes--wide" />
+    <h1 className="shop-h1 shop-h1--sm">{title}</h1>
     {children}
   </div>
 );

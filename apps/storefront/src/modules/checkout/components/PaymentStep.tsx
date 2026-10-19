@@ -183,7 +183,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
   }
 
   const errorMessage = error && (
-    <p className={`${ERROR_CLASS} mb-4`} role="alert">
+    <p className={`${ERROR_CLASS} checkout-error--spaced`} role="alert">
       {error}
     </p>
   );
@@ -196,15 +196,15 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
     <>
       <CheckoutStep number={3} title="Zahlung" state="active">
         {isLoading && (
-          <p className="mb-4 text-muted">Zahlungsoptionen werden geladen...</p>
+          <p className="checkout-note">Zahlungsoptionen werden geladen...</p>
         )}
 
         {!isLoading && paymentProviders.length === 0 && !error && (
-          <p className="mb-4 text-muted">Keine Zahlungsoptionen verfügbar.</p>
+          <p className="checkout-note">Keine Zahlungsoptionen verfügbar.</p>
         )}
 
         {!isLoading && paymentProviders.length > 0 && (
-          <div className="mb-3.5 flex flex-col gap-3">
+          <div className="checkout-options">
             {paymentProviders.map((provider) => (
               <OptionCard
                 key={provider.id}
@@ -216,9 +216,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
               >
                 {formatProviderName(provider.id)}
                 {isTestProvider(provider.id) && (
-                  <span className="rounded-pill border-2 border-ink bg-lavender px-2 py-0.5 font-mono text-xs font-medium">
-                    Nur zum Testen
-                  </span>
+                  <span className="pay-test-pill">Nur zum Testen</span>
                 )}
               </OptionCard>
             ))}
@@ -226,7 +224,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         )}
 
         {isSumUp && (
-          <div className="rounded-none border-2 border-dashed border-ink bg-cream p-5 sm:p-7">
+          <div className="pay-box">
             {isSaving || (!sumupCheckoutId && !error) ? (
               <p className="text-muted">Zahlung wird initialisiert...</p>
             ) : (
@@ -246,10 +244,10 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
               )
             )}
             {isProcessing && (
-              <p className="mt-2 text-muted">Zahlung wird verarbeitet…</p>
+              <p className="pay-status">Zahlung wird verarbeitet…</p>
             )}
             {isPlacing && (
-              <p className="mt-2 text-muted">Bestellung wird aufgegeben…</p>
+              <p className="pay-status">Bestellung wird aufgegeben…</p>
             )}
           </div>
         )}
@@ -261,7 +259,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             type="button"
             onClick={() => startSession(selectedProviderId)}
             disabled={isSaving}
-            className="btn btn--secondary btn--block mt-4"
+            className="btn btn--secondary btn--block pay-retry"
           >
             Neue Zahlung starten
           </button>
@@ -274,15 +272,15 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         state={selectedProviderId ? "active" : "inactive"}
       >
         {selectedProviderId && (
-          <div className="grid gap-4">
+          <div className="review-grid">
             <OrderReview cart={cart} countryCode={countryCode} />
 
-            <p className="m-0 text-[15px] leading-relaxed">
+            <p className="review-legal">
               Es gelten unsere{" "}
               <a
                 href={`/${countryCode}/agb`}
                 target="_blank"
-                className="text-accent-dark underline hover:text-ink"
+                className="shop-link"
               >
                 AGB
               </a>
@@ -290,7 +288,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
               <a
                 href={`/${countryCode}/widerruf`}
                 target="_blank"
-                className="text-accent-dark underline hover:text-ink"
+                className="shop-link"
               >
                 Widerrufsrecht
               </a>{" "}
@@ -298,7 +296,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
               <a
                 href={`/${countryCode}/datenschutz`}
                 target="_blank"
-                className="text-accent-dark underline hover:text-ink"
+                className="shop-link"
               >
                 Datenschutz
               </a>
@@ -308,7 +306,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             <a
               href={`/${countryCode}/gewaehrleistung`}
               target="_blank"
-              className="flex items-center gap-4 rounded-none border-2 border-ink bg-cream p-3 text-[14px] leading-snug text-ink! no-underline [&:hover_strong]:underline"
+              className="warranty-link"
               aria-label="EU-Mitteilung: Ihre gesetzlichen Gewährleistungsrechte (öffnet in neuem Tab)"
             >
               <img
@@ -316,7 +314,6 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
                 alt=""
                 width="96"
                 height="131"
-                className="h-auto w-16 shrink-0 border-2 border-ink"
               />
               <span>
                 <strong>Gesetzliche Gewährleistung</strong>
@@ -341,14 +338,14 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
                 (isSumUp && !sumupCard)
               }
               onClick={() => (isSumUp ? sumupCard?.submit() : completeOrder())}
-              className="btn btn--primary btn--block min-h-[62px] text-xl font-extrabold shadow-none!"
+              className="btn btn--primary btn--block btn--flat"
             >
               {isPlacing || isProcessing
                 ? "Wird verarbeitet..."
                 : `Zahlungspflichtig bestellen · ${orderTotal}`}
             </button>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[13px]">
-              <span className="inline-flex items-center gap-1.5">
+            <div className="pay-trust">
+              <span>
                 <svg
                   viewBox="0 0 24 24"
                   width="16"
@@ -365,7 +362,7 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
                 </svg>
                 Sichere Zahlung
               </span>
-              <span className="inline-flex items-center gap-1.5">
+              <span>
                 <svg
                   viewBox="0 0 24 24"
                   width="16"

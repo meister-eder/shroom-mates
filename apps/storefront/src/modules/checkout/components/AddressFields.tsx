@@ -27,13 +27,11 @@ export interface CheckoutFormValues {
   billing: AddressValues;
 }
 
-export const ERROR_CLASS =
-  "input-error field__error text-accent-dark! [&::before]:bg-accent-dark!";
+export const ERROR_CLASS = "input-error field__error checkout-error";
 const ERROR = ERROR_CLASS;
 
 /** Feld wie im Mockup: fette Label, 2px Tinte, eckig, Creme, 14px Innenabstand. */
-export const FIELD =
-  "field gap-1.5 text-base leading-[1.2] [&_input]:p-3.5 [&_select]:p-3.5 [&_input]:text-base [&_select]:text-base [&_input]:bg-cream! [&_select]:bg-cream! [&_input]:leading-[1.2] [&_select]:leading-[1.2]";
+export const FIELD = "field field--checkout";
 
 interface AddressFieldsProps {
   prefix: "shipping" | "billing";
@@ -52,9 +50,9 @@ export const AddressFields = ({
     `${prefix}.${name}` as Path<CheckoutFormValues>;
 
   return (
-    <div className="space-y-4">
+    <div className="shop-stack">
       {/* Row 1: First name / Last name */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="form-grid form-grid--2">
         <div className={FIELD}>
           <label htmlFor={`${prefix}-firstName`}>Vorname *</label>
           <input
@@ -84,7 +82,7 @@ export const AddressFields = ({
       </div>
 
       {/* Row 2: Address */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="form-grid">
         <div className={FIELD}>
           <label htmlFor={`${prefix}-address`}>Straße und Hausnummer *</label>
           <input
@@ -99,7 +97,7 @@ export const AddressFields = ({
       </div>
 
       {/* Row 3: Postal code / City */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="form-grid form-grid--2">
         <div className={FIELD}>
           <label htmlFor={`${prefix}-postalCode`}>PLZ *</label>
           <input
@@ -128,7 +126,7 @@ export const AddressFields = ({
       </div>
 
       {/* Row 4: Country / State */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="form-grid form-grid--2">
         <div className={FIELD}>
           <label htmlFor={`${prefix}-country`}>Land *</label>
           <select
@@ -150,7 +148,7 @@ export const AddressFields = ({
         </div>
         <div className={FIELD}>
           <label htmlFor={`${prefix}-province`}>
-            Bundesland <span className="font-normal text-sm">(optional)</span>
+            Bundesland <span className="field-note">(optional)</span>
           </label>
           <input
             id={`${prefix}-province`}
@@ -162,10 +160,10 @@ export const AddressFields = ({
       </div>
 
       {/* Row 5: Company */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="form-grid">
         <div className={FIELD}>
           <label htmlFor={`${prefix}-company`}>
-            Firma <span className="font-normal text-sm">(optional)</span>
+            Firma <span className="field-note">(optional)</span>
           </label>
           <input
             id={`${prefix}-company`}

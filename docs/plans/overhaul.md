@@ -43,6 +43,7 @@ from any of it.
 - P5.5: drawer screenshots old vs new in session scratchpad (p55/); mobile filled-state drawer not compared, check by eye on staging. Drawer thumbnails now load on open (data-src).
 - P5.6: decide on branch failed/P5.6 (4c7fa5c): scroll-snap carousel works; only [mobile] shop-produkt-growkit differs (old React gallery loaded 1049w candidate after fullPage resize; new one keeps correct 524w). If OK: cherry-pick + rebaseline that one key. Note: it sets loading=eager on all gallery images.
 - P5.7: three mascot-eyes implementations remain (MatesLogo.astro, React MatesEyes.tsx for cart/checkout/order pages, vanilla lib/mates-eyes.ts for drawer/toast using /mascot.webp) — unify as separate task.
+- P5.8c: billing-address h3 has no bottom margin (Tailwind mb-4 never applied before either) — design check.
 
 ---
 
@@ -162,7 +163,7 @@ from any of it.
   Same for `modules/store/**`, `modules/products/**`, `pages/[countryCode]/store/**`, `pages/[countryCode]/index.astro`.
   Commit: `refactor(shop): plain CSS for catalog and product pages`
 
-- [ ] **P5.8c Tailwind out: cart, checkout, order, withdrawal** · deps: P5.8b · verify: visual
+- [x] **P5.8c Tailwind out: cart, checkout, order, withdrawal** · deps: P5.8b · verify: visual · f96f6d7
   Same for `modules/cart/**`, `modules/checkout/**`, `modules/order/**`, `modules/withdrawal/**` and their pages. Markup/style only; no logic changes (rule 5). Replace the legacy `.btn-accent`/`.btn-outline`/`.btn-ghost` in `src/styles/global.css` with the shared `.btn` variants (add a variant to `utilities.css` if one is missing, matching the current look exactly). Visual + smoke must pass.
   Commit: `refactor(shop): plain CSS for cart and checkout`
 
@@ -293,3 +294,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 01:01 P5.7 DONE c40e867 — shop 404 uses MatesLogo; MatesEyes.tsx still used elsewhere
 2026-10-20 01:03 P5.8a DONE 361e8c3 — scope already plain CSS (grep-checked); own .sr-only added
 2026-10-20 01:04 P5.8b DONE no-op — scope already semantic classes (worker + orchestrator grep), no commit needed
+2026-10-20 01:13 P5.8c DONE f96f6d7 — checkout/cart/order plain CSS; logic identical ignoring className

@@ -16,7 +16,7 @@ const WaveEdge = ({ flip = false }: { flip?: boolean }) => (
     aria-hidden="true"
     viewBox="0 0 1440 56"
     preserveAspectRatio="none"
-    className="block h-14 w-full fill-ink"
+    className="order-wave"
     style={
       flip
         ? { margin: "-1px 0 0", transform: "scaleY(-1)" }
@@ -34,8 +34,6 @@ const NEXT_STEPS = [
   ["Auspacken", "Growkit bald aufschneiden und loslegen."],
 ] as const;
 
-const H2 = "m-0 mb-4! font-display text-[26px]! leading-[1.1]! font-black";
-
 /** Server-rendered: the order is loaded by the page (404 if unknown). */
 export const OrderConfirmedPage = ({
   countryCode,
@@ -48,23 +46,23 @@ export const OrderConfirmedPage = ({
   const firstName = order.shipping_address?.first_name?.trim();
 
   return (
-    <section aria-label="Bestellbestätigung" className="overflow-hidden">
-      <section className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-10 px-4 pb-[72px] pt-12 sm:px-8">
-        <div className="relative h-[380px] min-w-0 flex-[0_1_420px]">
+    <section aria-label="Bestellbestätigung" className="order-page">
+      <section className="order-hero">
+        <div className="order-hero-art">
           <MatesEyes
             size={340}
             alt="Die beiden Maskottchen schauen dir hinterher"
-            className="mx-auto mt-2.5"
+            className="order-hero-eyes"
           />
         </div>
-        <div className="min-w-0 flex-[1_1_480px]">
-          <p className="m-0 mb-3.5 font-mono text-sm uppercase tracking-[.12em] text-accent-dark">
+        <div className="order-hero-text">
+          <p className="order-kicker">
             Bestellung #{order.display_id} ist eingegangen
           </p>
-          <h1 className="m-0 text-[clamp(52px,7vw,104px)]! leading-[.9]! text-accent">
+          <h1 className="order-title">
             {firstName ? `Danke, ${firstName}!` : "Danke!"}
           </h1>
-          <p className="mb-0 mt-5 max-w-[40ch] text-xl leading-normal">
+          <p className="order-lead">
             Die Mates packen schon.
             {order.email && (
               <> Eine Bestätigung ist unterwegs an {order.email}.</>
@@ -74,27 +72,21 @@ export const OrderConfirmedPage = ({
       </section>
 
       <WaveEdge />
-      <section className="bg-ink px-4 py-[72px] text-cream sm:px-8">
-        <div className="mx-auto max-w-[1280px]">
-          <h2 className="m-0 mb-8! text-[clamp(36px,4.4vw,60px)]! leading-[.95]! text-accent-light">
-            Wie es jetzt weitergeht
-          </h2>
-          <ol className="m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[18px] p-0">
+      <section className="order-band">
+        <div className="order-band-inner">
+          <h2 className="order-band-title">Wie es jetzt weitergeht</h2>
+          <ol className="order-steps">
             {NEXT_STEPS.map(([title, text], i) => (
               <li
                 key={title}
-                className={`p-[22px] text-ink ${i === 0 ? "bg-olive-soft" : "bg-cream"}`}
+                className={`order-step${i === 0 ? " order-step--first" : ""}`}
               >
-                <p
-                  className={`m-0 mb-1.5 font-mono text-[13px] ${i === 0 ? "" : "text-accent-dark"}`}
-                >
+                <p className="order-step-num">
                   {String(i + 1).padStart(2, "0")}
                   {i === 0 ? " · jetzt" : ""}
                 </p>
-                <h3 className="m-0 mb-1.5 font-display text-2xl! font-extrabold! leading-[1.2]!">
-                  {title}
-                </h3>
-                <p className="m-0 text-[15px]">{text}</p>
+                <h3 className="order-step-title">{title}</h3>
+                <p className="order-step-text">{text}</p>
               </li>
             ))}
           </ol>
@@ -102,22 +94,19 @@ export const OrderConfirmedPage = ({
       </section>
       <WaveEdge flip />
 
-      <section className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-8 px-4 pb-24 pt-[72px] sm:px-8">
-        <div className="min-w-0 flex-[1_1_460px] rounded-none border-2 border-accent bg-paper p-6">
-          <h2 className={H2}>Deine Bestellung</h2>
-          <div className="flex flex-col">
+      <section className="order-detail">
+        <div className="order-card">
+          <h2 className="order-card-title">Deine Bestellung</h2>
+          <div className="order-items">
             {order.items?.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between gap-4 border-b border-[#b9bbe6] py-2"
-              >
+              <div key={item.id} className="totals-row totals-row--receipt">
                 <span>
                   {item.quantity ?? 1} × {item.title}
                   {item.variant_title &&
                     item.variant_title !== "Standard" &&
                     ` (${item.variant_title})`}
                 </span>
-                <span className="font-mono">
+                <span className="shop-mono">
                   {convertToLocale({
                     amount: (item.unit_price ?? 0) * (item.quantity ?? 1),
                     currencyCode,
@@ -139,53 +128,43 @@ export const OrderConfirmedPage = ({
             total={order.total}
           />
 
-          <div className="mt-6 grid grid-cols-1 gap-6 border-t-2 border-ink pt-5 sm:grid-cols-2">
+          <div className="order-meta">
             <div>
-              <p className="label mb-1">Lieferadresse</p>
-              <address className="not-italic leading-relaxed">
+              <p className="label">Lieferadresse</p>
+              <address>
                 {formatAddressLines(order.shipping_address).map((line, i) => (
                   // biome-ignore lint/suspicious/noArrayIndexKey: Adresszeilen sind statisch, die Reihenfolge ändert sich nicht
-                  <span key={i} className="block">
-                    {line}
-                  </span>
+                  <span key={i}>{line}</span>
                 ))}
               </address>
             </div>
             <div>
-              <p className="label mb-1">Rechnungsadresse</p>
+              <p className="label">Rechnungsadresse</p>
               {isSameAddress(order.shipping_address, order.billing_address) ? (
                 <p>Wie Lieferadresse</p>
               ) : (
-                <address className="not-italic leading-relaxed">
+                <address>
                   {formatAddressLines(order.billing_address).map((line, i) => (
                     // biome-ignore lint/suspicious/noArrayIndexKey: Adresszeilen sind statisch, die Reihenfolge ändert sich nicht
-                    <span key={i} className="block">
-                      {line}
-                    </span>
+                    <span key={i}>{line}</span>
                   ))}
                 </address>
               )}
             </div>
             {paymentProviderId && (
               <div>
-                <p className="label mb-1">Zahlung</p>
+                <p className="label">Zahlung</p>
                 <p>{formatProviderName(paymentProviderId)}</p>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-[1_1_360px] flex-col gap-4">
-          <a
-            href={`/${countryCode}/store`}
-            className="flex h-14 items-center justify-center rounded-pill border-2 border-ink text-lg font-bold text-ink! no-underline hover:bg-white"
-          >
+        <div className="order-aside">
+          <a href={`/${countryCode}/store`} className="order-back">
             Zurück zum Shop
           </a>
-          <a
-            href={INSTAGRAM_URL}
-            className="text-center text-ink! underline hover:text-accent-dark!"
-          >
+          <a href={INSTAGRAM_URL} className="order-insta">
             Folg uns auf Instagram fürs Daily Business
           </a>
         </div>

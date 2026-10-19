@@ -31,44 +31,38 @@ export const OrderTotals = ({
   const hasDiscount = (discountTotal ?? 0) > 0;
   const receipt = variant === "receipt";
 
-  const row = receipt
-    ? "flex justify-between gap-4 border-b border-[#b9bbe6] py-2"
-    : "flex justify-between gap-4";
+  const row = receipt ? "totals-row totals-row--receipt" : "totals-row";
 
   const lines = (
     <>
       <div className={row}>
         <span>Zwischensumme</span>
-        <span className="font-mono">{fmt(itemTotal)}</span>
+        <span className="shop-mono">{fmt(itemTotal)}</span>
       </div>
       <div className={row}>
         <span>{shippingLabel}</span>
-        <span className="font-mono">
+        <span className="shop-mono">
           {shippingPending ? "nächster Schritt" : fmt(shippingTotal)}
         </span>
       </div>
       {hasDiscount && (
-        <div className={`${row} font-bold`}>
+        <div className={`${row} totals-row--bold`}>
           <span>Rabatt</span>
-          <span className="font-mono">−{fmt(discountTotal)}</span>
+          <span className="shop-mono">−{fmt(discountTotal)}</span>
         </div>
       )}
     </>
   );
 
   const totalRow = (
-    <div
-      className={`flex items-baseline justify-between gap-4 ${
-        receipt ? "pt-3" : "border-t-2 border-ink pt-3"
-      }`}
-    >
-      <span className="font-display text-2xl font-black">Gesamt</span>
-      <span className="font-mono text-[26px] font-medium">{fmt(total)}</span>
+    <div className={`totals-total${receipt ? "" : " totals-total--rule"}`}>
+      <span className="totals-total-label">Gesamt</span>
+      <span className="totals-total-amount">{fmt(total)}</span>
     </div>
   );
 
   const note = (
-    <p className="m-0 font-mono text-xs text-muted">
+    <p className="shop-meta">
       inkl. MwSt.
       {(taxTotal ?? 0) > 0 && ` (davon ${fmt(taxTotal)})`}
       {shippingPending && " · zzgl. Versand"}
@@ -77,19 +71,17 @@ export const OrderTotals = ({
 
   if (receipt) {
     return (
-      <div className="flex flex-col text-base">
+      <div className="totals--receipt">
         {lines}
         {totalRow}
-        <div className="mt-2">{note}</div>
+        <div className="totals-note">{note}</div>
       </div>
     );
   }
 
   return (
     <>
-      <div className="flex flex-col gap-1.5 border-t-2 border-ink pt-3 text-base">
-        {lines}
-      </div>
+      <div className="totals-lines">{lines}</div>
       {totalRow}
       {note}
     </>

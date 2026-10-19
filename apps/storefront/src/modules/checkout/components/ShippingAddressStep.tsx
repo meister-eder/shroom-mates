@@ -159,9 +159,9 @@ const ReadOnlyView = ({
 
   return (
     <CheckoutStep number={1} title="Adresse" state="done" onEdit={onEdit}>
-      <p className="m-0">{summary}</p>
+      <p className="checkout-line">{summary}</p>
       {!isBillingSame && (
-        <p className="m-0 mt-1 text-[15px]">
+        <p className="checkout-line checkout-line--small">
           Rechnungsadresse:{" "}
           {formatAddressLines(cart.billing_address).join(" · ")}
         </p>
@@ -269,7 +269,7 @@ export const ShippingAddressStep = ({
   return (
     <CheckoutStep number={1} title="Adresse" state="active">
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div className="space-y-4">
+        <div className="shop-stack">
           <AddressFields
             prefix="shipping"
             register={register}
@@ -278,13 +278,11 @@ export const ShippingAddressStep = ({
           />
 
           {/* Email / Phone */}
-          <div className="grid grid-cols-1 gap-4">
+          <div className="form-grid">
             <div className={FIELD}>
               <label htmlFor="checkout-email">
                 E-Mail *{" "}
-                <span className="text-sm font-normal">
-                  für die Bestellbestätigung
-                </span>
+                <span className="field-note">für die Bestellbestätigung</span>
               </label>
               {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
               <input
@@ -298,9 +296,9 @@ export const ShippingAddressStep = ({
                 <p className={ERROR_CLASS}>{errors.email.message}</p>
               )}
             </div>
-            <div className={`${FIELD} sm:max-w-[calc(50%-8px)]`}>
+            <div className={`${FIELD} field--half`}>
               <label htmlFor="checkout-phone">
-                Telefon <span className="font-normal text-sm">(optional)</span>
+                Telefon <span className="field-note">(optional)</span>
               </label>
               {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
               <input
@@ -317,19 +315,15 @@ export const ShippingAddressStep = ({
           </div>
 
           {/* Billing same as shipping */}
-          <label className="flex cursor-pointer select-none items-center gap-2.5 text-base">
-            <input
-              type="checkbox"
-              {...register("billingSameAsShipping")}
-              className="h-[22px] w-[22px] shrink-0 accent-ink"
-            />
+          <label className="checkout-check">
+            <input type="checkbox" {...register("billingSameAsShipping")} />
             <span>Rechnungsadresse entspricht der Lieferadresse</span>
           </label>
 
           {/* Billing address section */}
           {!billingSameAsShipping && (
-            <div className="border-t-2 border-ink pt-5">
-              <h3 className="mb-4 text-xl! font-black!">Rechnungsadresse</h3>
+            <div className="checkout-billing">
+              <h3>Rechnungsadresse</h3>
               <AddressFields
                 prefix="billing"
                 register={register}
@@ -348,7 +342,7 @@ export const ShippingAddressStep = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn--primary btn--block min-h-[58px] text-lg"
+            className="btn btn--primary btn--block"
           >
             {isSubmitting ? "Wird gespeichert..." : "Weiter zur Lieferung"}
           </button>

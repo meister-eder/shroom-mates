@@ -44,6 +44,6 @@ try {
 <Layout title="Kasse" description="Schließe deine Bestellung ab." noindex wide>
   <!-- Client-only: the checkout depends entirely on the browser's cart -->
   <CheckoutPage client:only="react" countryCode={countryCode} countries={countries}>
-    <p slot="fallback" class="text-muted text-center py-16">Kasse wird geladen…</p>
+    <p slot="fallback" class="checkout-loading">Kasse wird geladen…</p>
   </CheckoutPage>
 </Layout>

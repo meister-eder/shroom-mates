@@ -10,15 +10,9 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
   const currencyCode = cart.currency_code || "EUR";
 
   return (
-    <aside
-      aria-labelledby="order-summary-title"
-      className="flex min-w-0 flex-[1_1_340px] flex-col gap-3.5 rounded-none border-2 border-accent bg-paper p-[22px] lg:sticky lg:top-6"
-    >
+    <aside aria-labelledby="order-summary-title" className="shop-side">
       {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
-      <h2
-        id="order-summary-title"
-        className="m-0 font-display text-[26px]! leading-[1.1]! font-black"
-      >
+      <h2 id="order-summary-title" className="summary-title">
         Dein Pilzkorb
       </h2>
 
@@ -50,7 +44,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
         discountTotal={cart.discount_total}
         total={cart.total}
       />
-      <p className="m-0 font-mono text-xs text-muted">
+      <p className="shop-meta">
         Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und weiteren
         Zahlarten über SumUp.
       </p>

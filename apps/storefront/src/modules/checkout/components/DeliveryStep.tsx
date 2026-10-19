@@ -95,7 +95,7 @@ export const DeliveryStep = ({
     return (
       <CheckoutStep number={2} title="Lieferung" state="done" onEdit={onEdit}>
         {method && (
-          <p className="m-0">
+          <p className="checkout-line">
             {method.name} · {formatPrice(method.amount)}
           </p>
         )}
@@ -106,17 +106,19 @@ export const DeliveryStep = ({
   return (
     <CheckoutStep number={2} title="Lieferung" state="active">
       {isLoading && (
-        <p className="mb-3 text-muted">Versandoptionen werden geladen...</p>
+        <p className="checkout-note checkout-note--tight">
+          Versandoptionen werden geladen...
+        </p>
       )}
 
       {!isLoading && shippingOptions.length === 0 && !error && (
-        <p className="mb-4 text-muted">
+        <p className="checkout-note">
           Keine Versandoptionen für deine Adresse verfügbar.
         </p>
       )}
 
       {!isLoading && shippingOptions.length > 0 && (
-        <div className="mb-3 flex flex-col gap-3">
+        <div className="checkout-options checkout-options--tight">
           {shippingOptions.map((option) => (
             <OptionCard
               key={option.id}
@@ -125,7 +127,7 @@ export const DeliveryStep = ({
               checked={selectedOptionId === option.id}
               onSelect={handleOptionChange}
               aside={
-                <span className="font-mono text-lg">
+                <span className="optcard-price">
                   {formatPrice(option.amount)}
                 </span>
               }
@@ -137,7 +139,7 @@ export const DeliveryStep = ({
       )}
 
       {error && (
-        <p className={`${ERROR_CLASS} mb-4`} role="alert">
+        <p className={`${ERROR_CLASS} checkout-error--spaced`} role="alert">
           {error}
         </p>
       )}
@@ -146,7 +148,7 @@ export const DeliveryStep = ({
         type="button"
         disabled={!selectedOptionId || isSaving}
         onClick={onContinue}
-        className="btn btn--primary btn--block min-h-[58px] text-lg"
+        className="btn btn--primary btn--block"
       >
         {isSaving ? "Wird gespeichert..." : "Weiter zur Zahlung"}
       </button>

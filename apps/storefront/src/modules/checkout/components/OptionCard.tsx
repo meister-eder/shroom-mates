@@ -21,11 +21,11 @@ export const OptionCard = ({
   aside,
 }: OptionCardProps) => (
   <label
-    className={`flex items-center justify-between gap-4 rounded-none border-2 border-accent px-[18px] py-4 focus-within:outline-[3px] focus-within:outline-offset-2 focus-within:outline-accent ${
-      checked ? "bg-cream shadow-[4px_4px_0_var(--color-accent)]" : "bg-white"
-    } ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+    className={`optcard${checked ? " optcard--checked" : ""}${
+      disabled ? " optcard--disabled" : ""
+    }`}
   >
-    <span className="flex min-w-0 items-center gap-4 text-lg font-bold">
+    <span className="optcard-label">
       <input
         type="radio"
         name={name}
@@ -33,7 +33,7 @@ export const OptionCard = ({
         checked={checked}
         disabled={disabled}
         onChange={() => onSelect(value)}
-        className="m-0 h-[22px] w-[22px] shrink-0 cursor-[inherit] appearance-none rounded-full border-2 border-accent bg-white checked:bg-ink"
+        className="optcard-radio"
       />
       {children}
     </span>
