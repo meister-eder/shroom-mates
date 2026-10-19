@@ -158,7 +158,7 @@ from any of it.
   The storefront mixes Tailwind utilities (often with `!` overrides and arbitrary values) with `shop.css`. Goal of P5.8a–d: plain CSS only, like the website. This task: convert every `class`/`className` utility in `modules/layout/**`, `modules/common/**`, `layouts/**`, `pages/*.astro` (not checkout/cart/order) to semantic classes in `src/styles/shop.css` (or scoped `<style>` in `.astro` files) using tokens from `packages/ui/src/tokens.css` (no hex values; `--color-*` aliases are fine where they exist). Use the shared `.btn`/`.pill` utilities from `packages/ui/src/utilities.css` instead of re-creating buttons. Visual must pass.
   Commit: `refactor(shop): plain CSS for layout and common components`
 
-- [ ] **P5.8b Tailwind out: store and product modules** · deps: P5.8a · verify: visual
+- [x] **P5.8b Tailwind out: store and product modules** · deps: P5.8a · verify: visual · no-op
   Same for `modules/store/**`, `modules/products/**`, `pages/[countryCode]/store/**`, `pages/[countryCode]/index.astro`.
   Commit: `refactor(shop): plain CSS for catalog and product pages`
 
@@ -292,3 +292,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 00:57 P5.6 BLOCKED — mobile shop-produkt-growkit baseline diff (harness srcset quirk), re-baseline not allowed; parked on failed/P5.6
 2026-10-20 01:01 P5.7 DONE c40e867 — shop 404 uses MatesLogo; MatesEyes.tsx still used elsewhere
 2026-10-20 01:03 P5.8a DONE 361e8c3 — scope already plain CSS (grep-checked); own .sr-only added
+2026-10-20 01:04 P5.8b DONE no-op — scope already semantic classes (worker + orchestrator grep), no commit needed
