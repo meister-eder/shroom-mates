@@ -17,7 +17,7 @@ Assets (Bilder) per action "list", scope "assets", dann einzeln per path=<id>.
 ### Zuordnung
 
 - Tokens: `packages/ui/src/tokens.css` ↔ `project/tokens.json` im Design System
-  (Namen 1:1 aus tokens.json; `theme.css`/`base.css` importieren tokens.css, ältere Namen wie `--color-accent` oder die Tailwind-Namen `paper`, `lavender`, `olive-soft` sind nur Aliase darauf; `tokens.ts` spiegelt die Werte für TS)
+  (Namen 1:1 aus tokens.json; `base.css` importiert tokens.css, ältere Namen wie `--color-accent` oder die Namen `paper`, `lavender`, `olive-soft` sind nur Aliase darauf; `tokens.ts` spiegelt die Werte für TS)
 - Regeln: diese Datei ↔ `project/README.md` im Design System
 - Komponenten: Button, Pill, ProductCard, WaveDivider ↔ `project/components/*/README.md`
   (Button/Pill/Chip in `packages/ui/src/utilities.css`, WaveDivider/Header/Footer in `packages/ui/src`, Produktkarte als `.product-tile` in `apps/storefront/src/styles/shop.css` und `apps/website/src/components/ProductCard.astro`)

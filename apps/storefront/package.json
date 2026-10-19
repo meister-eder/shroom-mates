@@ -18,7 +18,6 @@
     "@medusajs/js-sdk": "^2.13.1",
     "@nanostores/react": "^1.0.0",
     "@shroom-mates/ui": "workspace:*",
-    "@tailwindcss/vite": "^4.1.18",
     "astro": "^6.1.1",
     "clsx": "^2.1.1",
     "nanostores": "^1.1.0",
@@ -34,7 +33,6 @@
     "@medusajs/types": "^2.13.1",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
-    "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }

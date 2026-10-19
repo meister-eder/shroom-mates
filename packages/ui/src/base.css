@@ -8,7 +8,7 @@
 /* Aliase — die Werte stehen in tokens.css (Design System). Die bisherigen
    Namen (--color-accent, --accent, --text-color, …) zeigen darauf, damit
    Website und Storefront ohne Tailwind dieselben Namen lesen können
-   (Spiegel der Zuordnung in theme.css). */
+  . */
 :root {
   /* Flächen */
   --color-bg: var(--bg);
@@ -36,6 +36,7 @@
   --color-muted: var(--text-muted);
 
   --font-body: var(--font-sans);
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 
   --radius-card: var(--radius-none);
   --radius-img: var(--radius-none);
@@ -281,4 +282,17 @@ a {
   margin: 0 0 1.5rem;
   color: var(--color-ink);
   text-wrap: balance;
+}
+
+/* Visually hidden, still available to assistive tech */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

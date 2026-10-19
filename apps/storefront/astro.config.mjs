@@ -1,6 +1,5 @@
 import node from "@astrojs/node";
 import react from "@astrojs/react";
-import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 
@@ -40,7 +39,6 @@ export default defineConfig({
       // Vite's own resolver handles these correctly when bundling.
       noExternal: ["@medusajs/js-sdk"],
     },
-    plugins: [tailwindcss()],
   },
   image: {
     domains: [

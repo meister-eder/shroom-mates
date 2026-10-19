@@ -7,7 +7,7 @@ Website und Onlineshop für Speisepilze, Growkits und Tinkturen (shroom-mates.de
 Monorepo mit Bun-Workspaces und Turbo (`apps/*`, `packages/*`):
 
 - `apps/website`: Astro 6, statisch gebaut. Inhalte als Content Collections in `src/content/` (Schema in `src/content.config.ts`), gepflegt über Sveltia CMS (`public/admin/`, wird vor dev/build von `scripts/copy-cms.mjs` kopiert).
-- `apps/storefront`: Astro 6 SSR (`@astrojs/node`), React-Inseln, Tailwind 4, nanostores. Spricht mit Medusa über `@medusajs/js-sdk` (`src/lib/sdk.ts`). Routen unter `src/pages/[countryCode]/`.
+- `apps/storefront`: Astro 6 SSR (`@astrojs/node`), React-Inseln, plain CSS, nanostores. Spricht mit Medusa über `@medusajs/js-sdk` (`src/lib/sdk.ts`). Routen unter `src/pages/[countryCode]/`.
 - `packages/ui`: geteilte Tokens (`tokens.css`), Styles und Astro-Komponenten (Header, Footer, WaveDivider …) für beide Apps.
 - `backend`: Medusa 2 mit Zahlungsplugin `medusa-payment-sumup`, eigenen Modulen (`resend`, `withdrawal`) und Subscribern. **Kein** Workspace: eigene Abhängigkeiten, CI nutzt `npm ci` mit `package-lock.json`.
 - `e2e`: Playwright-Tests für den Shop.

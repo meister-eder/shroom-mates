@@ -6,7 +6,7 @@ E-Commerce-Storefront für shroom-mates.de, basierend auf [astro-medusa-starter]
 
 - **Astro 6** (SSR mit Node.js-Adapter)
 - **React 19** (Islands für Cart, Checkout, Navigation)
-- **Tailwind CSS v4**
+- **Plain CSS** (Tokens aus `@shroom-mates/ui`)
 - **Medusa JS SDK** (Backend-Anbindung)
 - **Nanostores** (State Management)
 - **Mollie** (Zahlungsanbieter, Redirect-basiert)

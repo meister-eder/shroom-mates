@@ -1,6 +1,118 @@
-@import "tailwindcss";
-@import "@shroom-mates/ui/theme.css";
+/* tokens.css kommt hier bewusst nach base.css erneut: es überschreibt
+   --gutter (32px) auch mobil, wie es das Aussehen des Shops bisher hatte
+   (früher über theme.css). Bei Token-Hygiene (P5.9) bewusst entscheiden. */
+@import "@shroom-mates/ui/tokens.css";
 @import "@shroom-mates/ui/utilities.css";
+
+/* Reset (früher Tailwind-Preflight). In einem Layer, damit alle ungelayerten
+   Regeln (base.css, utilities.css, shop.css) wie bisher gewinnen. */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+
+  html {
+    line-height: 1.5;
+    tab-size: 4;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  b,
+  strong {
+    font-weight: bolder;
+  }
+
+  small {
+    font-size: 80%;
+  }
+
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    display: block;
+    vertical-align: middle;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  input,
+  select,
+  optgroup,
+  textarea {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+
+  button,
+  input:where([type="button"], [type="reset"], [type="submit"]) {
+    appearance: button;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  table {
+    border-collapse: collapse;
+    text-indent: 0;
+    border-color: inherit;
+  }
+
+  summary {
+    display: list-item;
+  }
+
+  ::placeholder {
+    opacity: 1;
+    color: color-mix(in oklab, currentcolor 50%, transparent);
+  }
+
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
 
 /* ===== Shroom-Mates Storefront Design System ===== */
 
@@ -129,139 +241,19 @@ select.input-field {
   flex-shrink: 0;
 }
 
-/* ── Checkout step card ───────────────────────────────────────────────────── */
-/* Website card style: hard black border + offset shadow */
-.shop-card,
-.checkout-step {
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+/* Website card style: hard black border */
+.shop-card {
   background: var(--bg-color);
   border: 2px solid var(--color-ink);
   border-radius: 0;
   box-shadow: none;
 }
 
-.checkout-step {
-  overflow: hidden;
-}
-
-.checkout-step-header {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  padding: 1.125rem 1.5rem;
-  border-bottom: 2px solid var(--border-subtle);
-  background: var(--bg-accent);
-}
-
-.checkout-step-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  border: 2px solid var(--border-subtle);
-  font-family: "DM Mono", monospace;
-  font-weight: 700;
-  font-size: 0.8rem;
-  background: #fff;
-  color: #999;
-  flex-shrink: 0;
-}
-
-.checkout-step-number.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 73, 8, 0.15);
-}
-
-.checkout-step-number.done {
-  background: var(--color-forest);
-  color: #fff;
-  border-color: var(--color-forest);
-}
-
-.checkout-step-body {
-  padding: 1.75rem 1.5rem;
-}
-
-.checkout-step.inactive {
-  opacity: 0.5;
-}
-
 .checkout-step-title {
   font-family: "DM Mono", monospace;
   font-weight: 700;
   font-size: 1.1rem;
-}
-
-.checkout-step.inactive .checkout-step-title {
-  color: var(--text-muted);
-}
-
-.checkout-edit-btn {
-  margin-left: auto;
-  font-size: 0.875rem;
-  color: var(--accent);
-}
-
-.checkout-edit-btn:hover {
-  text-decoration: underline;
-}
-
-/* ── Checkout progress ───────────────────────────────────────────────────── */
-.checkout-progress {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: "DM Mono", monospace;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-}
-
-.checkout-progress li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.checkout-progress li + li::before {
-  content: "›";
-}
-
-.checkout-progress .done {
-  color: var(--color-forest);
-}
-
-.checkout-progress .active {
-  color: var(--text-color);
-  font-weight: 700;
-}
-
-/* ── Selectable option (shipping / payment) ──────────────────────────────── */
-.option-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--color-ink);
-  border-radius: 0;
-  background: #fff;
-  cursor: pointer;
-  transition:
-    border-color 0.15s ease,
-    background 0.15s ease;
-}
-
-.option-card.selected {
-  border-color: var(--accent);
-  background: var(--color-cream);
-  box-shadow: 0 0 0 1px var(--accent);
-}
-
-.option-card.disabled {
-  cursor: progress;
 }
 
 /* ── Small text helpers ──────────────────────────────────────────────────── */
@@ -273,61 +265,6 @@ select.input-field {
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
-}
-
-.line-item-thumb {
-  width: 4rem;
-  height: 4rem;
-  flex-shrink: 0;
-  object-fit: cover;
-  border: 2px solid var(--color-ink);
-  border-radius: 0;
-  background: var(--bg-warm);
-}
-
-.page-heading {
-  font-family: "DM Mono", monospace;
-  font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-}
-
-/* ── Order summary card ───────────────────────────────────────────────────── */
-.order-summary-card {
-  background: var(--bg-color);
-  border: 2px solid var(--color-ink);
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: none;
-}
-
-.order-summary-header {
-  padding: 1rem 1.375rem;
-  border-bottom: 2px solid var(--border-subtle);
-  background: var(--bg-accent);
-}
-
-.order-summary-body {
-  padding: 1.25rem 1.375rem;
-}
-
-.order-summary-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.4rem 0;
-  font-size: 0.9rem;
-}
-
-.order-summary-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.875rem 0 0;
-  margin-top: 0.625rem;
-  border-top: 1.5px solid var(--border-subtle);
-  font-weight: 700;
-  font-size: 1.075rem;
 }
 
 /* ── Section inner ────────────────────────────────────────────────────────── */
@@ -360,31 +297,6 @@ select.input-field {
   background: var(--bg-accent);
   border-radius: 0;
   padding: 1rem 1.25rem;
-}
-
-.warranty-notice {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  border: 2px solid #003399;
-  border-radius: 0;
-  background: #fff;
-  color: var(--text-color);
-  font-size: 0.85rem;
-  line-height: 1.4;
-  text-decoration: none;
-}
-
-.warranty-notice img {
-  width: 64px;
-  height: auto;
-  flex-shrink: 0;
-  border: 1px solid var(--border-subtle);
-}
-
-.warranty-notice:hover strong {
-  text-decoration: underline;
 }
 
 /* Delivery/payment info at the start of the order process (§ 312j Abs. 1 BGB) */

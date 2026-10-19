@@ -1,7 +1,7 @@
 /* ===================================================================
    Shop-Redesign 2026: Pilzkorb (Pille + Seitenleiste + Seite), Sortiment,
    Produktseite, Toast. Tokens + .btn/.chip/.sticker-card/.comic-panel/…
-   kommen aus @shroom-mates/ui (theme.css, utilities.css, base.css).
+   kommen aus @shroom-mates/ui (utilities.css, base.css).
    Der Checkout-Bereich hat eigene Klassen in global.css.
    =================================================================== */
 
@@ -1890,19 +1890,6 @@ a.chip[aria-current="page"] {
   .site-header .header-info li:nth-child(n + 3) {
     display: none;
   }
-}
-
-/* Visually hidden, still available to assistive tech */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
 }
 
 /* ===================================================================

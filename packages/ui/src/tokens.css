@@ -1,7 +1,7 @@
 /* ===================================================================
    Shroom-Mates Design Tokens (Quelle: Design System "Version B",
    project/tokens.json). Namen und Werte 1:1 aus tokens.json.
-   Von base.css und theme.css importiert; die bisherigen Namen
+   Von base.css importiert; die bisherigen Namen
    (--color-accent, --color-paper, --color-lavender, ...) sind dort
    Aliase auf diese Tokens.
    Einzige Abweichung: --font-display nennt zusätzlich "Fraunces Variable",
