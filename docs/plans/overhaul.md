@@ -33,6 +33,7 @@ from any of it.
 - P1.1: px font sizes in components (--body-size: 17px, shop.css, growkits.astro, CartPage) don't scale with browser font setting; separate task.
 - P1.3: stale comment 'SvgHeading reads SVGs from ./public' in apps/storefront/Dockerfile (~l.45); COPY public stays needed.
 - P2.1: 107 Biome warnings remain (non-null assertions, any, !important) — possible cleanup task. Never put comments in biome.json (breaks excludes silently).
+- P2.2: deploy-server.yml installs backend deps with bun install instead of npm ci (out of scope, review).
 
 ---
 
@@ -74,7 +75,7 @@ from any of it.
   Move Biome config to the repo root (`biome.json`, same version 2.2.6, devDependency at root) covering `apps/*`, `packages/*`, `e2e/` (not `backend/`, not `docs/`). Keep each package's current indentation via `overrides` (website: tabs; storefront, packages/ui: whatever they use now) so formatting doesn't churn every line. Add `lint` scripts (`biome check .`) to storefront and packages/ui; change storefront `build` to `astro check && astro build` (add `@astrojs/check` devDependency). Run `biome check --write`, then fix remaining lint and type errors properly (no blanket rule disables; a narrowly scoped disable with a reason comment is OK for generated or vendor-shaped code). Update the format hook path assumptions if needed (`.claude/hooks/format.sh` finds the nearest `biome.json` upwards and runs the root binary).
   Commit: `chore(repo): biome and astro check for all workspaces`
 
-- [ ] **P2.2 CI covers what we verify locally** · deps: P2.1 · verify: quick
+- [x] **P2.2 CI covers what we verify locally** · deps: P2.1 · verify: quick · 2e4a8c1
   `.github/workflows/ci.yml`: pin bun to `1.3.10` (matches `packageManager`), lint all workspaces (`bun run --filter '*' lint`), build all, add a `test-backend-unit` step (`npm run test:unit`). Keep the integration-test job. Pin bun the same way in `deploy-staging.yml` and `deploy-server.yml` (only that change there). Validate YAML with `bunx --bun yaml-lint` or `npx -y @action-validator/cli` if available offline; otherwise careful review.
   Commit: `ci: lint all workspaces, unit tests, pinned bun`
 
@@ -248,3 +249,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:28 P1.3 DONE 872e2de — dead components, helpers, 10 images removed
 2026-10-19 23:29 P1.4 DONE f339c6a — rewrite to /404 (verified 404 status), German error copy
 2026-10-19 23:40 P2.1 DONE 42d5a1b — root biome, astro check; checkout only reformatted; visual PASS
+2026-10-19 23:41 P2.2 DONE 2e4a8c1 — CI lints/builds all, backend unit tests, bun 1.3.10; YAML parses
