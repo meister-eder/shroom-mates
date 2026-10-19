@@ -105,7 +105,7 @@ const badgeText = cheapestPrice?.price_type === "sale" ? "Sale" : badge;
     {
       canQuickAdd && onlyVariant ? (
         <div class="product-tile__action">
-          <QuickAdd client:visible variantId={onlyVariant.id} title={title} />
+          <QuickAdd client:load variantId={onlyVariant.id} title={title} />
         </div>
       ) : (
         hasChoice && (
