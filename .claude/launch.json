@@ -30,11 +30,11 @@
       "autoPort": false
     },
     {
-      "name": "storefront-dev",
+      "name": "web-dev",
       "runtimeExecutable": "sh",
       "runtimeArgs": [
         "-c",
-        "cd apps/storefront && PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9010 bunx astro dev --port 8000"
+        "cd apps/web && PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9010 bunx astro dev --port 8000"
       ],
       "port": 8000
     },

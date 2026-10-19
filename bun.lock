@@ -9,8 +9,8 @@
         "turbo": "^2.4.4",
       },
     },
-    "apps/storefront": {
-      "name": "@shroom-mates/storefront",
+    "apps/web": {
+      "name": "@shroom-mates/web",
       "version": "0.1.0",
       "dependencies": {
         "@astrojs/node": "^10.0.4",
@@ -398,9 +398,9 @@
 
     "@shikijs/vscode-textmate": ["@shikijs/vscode-textmate@10.0.2", "", {}, "sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg=="],
 
-    "@shroom-mates/storefront": ["@shroom-mates/storefront@workspace:apps/storefront"],
-
     "@shroom-mates/ui": ["@shroom-mates/ui@workspace:packages/ui"],
+
+    "@shroom-mates/web": ["@shroom-mates/web@workspace:apps/web"],
 
     "@shroom-mates/website": ["@shroom-mates/website@workspace:apps/website"],
 

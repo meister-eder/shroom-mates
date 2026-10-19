@@ -57,7 +57,7 @@ shroom-mates.de {
 
 # ── Storefront (Astro SSR) ───────────────────────────────────
 shop.shroom-mates.de {
-	reverse_proxy storefront:4321
+	reverse_proxy web:4321
 
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"

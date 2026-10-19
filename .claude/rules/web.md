@@ -1,10 +1,10 @@
 ---
 paths:
-  - "apps/storefront/**"
+  - "apps/web/**"
   - "e2e/**"
 ---
 
-# Storefront (Shop)
+# Web-App (Shop)
 
 - Astro SSR mit React-Inseln. Medusa-Zugriffe nur über `src/lib/sdk.ts` und die Funktionen in `src/lib/data/`; Client-Zustand (Warenkorb) über nanostores in `src/lib/stores/`.
 - Formulare mit react-hook-form + zod.

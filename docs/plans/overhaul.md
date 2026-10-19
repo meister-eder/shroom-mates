@@ -47,6 +47,7 @@ from any of it.
 - P5.8d: storefront global.css re-imports tokens.css after base.css (keeps --gutter 32px on mobile as baseline expects) — design decision. CSS 17.5 KB → 15.0 KB gzip.
 - P5.9 (design, DESIGN.md Rückweg): hex values without exact token left in code: #b9bbe6, #ff7a45, #bfc1ea, #fff0eb, #c0392b, #b0aca5, #555, #2f2c57, #000, #fff8d6, #ffe66d, #ffc9a8, #15132b, #ebc477c5, #fdfcea, #5c5a50; plus SVG presentation-attribute hex values.
 - P5.10 (design): step cards comic-panel / step / how-card differ visibly (image height, borders, shadows, type) — unify only after a design decision.
+- P7.1: compose service renamed storefront → web: next deploy leaves an orphan storefront container (docker compose up --remove-orphans); adjust branch protection if it checks old CI job/step names.
 
 ---
 
@@ -205,7 +206,7 @@ Target: `apps/web` (renamed from `apps/storefront`) serves everything on `shroom
 
 Every old URL 301s to the new one (query strings preserved: SumUp sends buyers back to `/de/checkout/complete?...`). Remove the website's `"/shop": "/kontakt/"` redirect.
 
-- [ ] **P7.1 Rename storefront → web** · deps: P5.10, P6.1, P4.2, P3.5 · verify: visual
+- [x] **P7.1 Rename storefront → web** · deps: P5.10, P6.1, P4.2, P3.5 · verify: visual · 2ad6a73
   `git mv apps/storefront apps/web`, package name `@shroom-mates/web`. Update every reference: root/turbo config, Dockerfile path + its internal paths, all `docker-compose*.yml`, `.github/workflows/*.yml`, `.claude/launch.json`, `.claude/rules/storefront.md` (rename to `web.md` with `paths: apps/web/**`), `CLAUDE.md`, `DESIGN.md`, `DEPLOYMENT.md`, `e2e` configs, `scripts/`, `.dockerignore`. No behaviour change. Grep for `storefront` afterwards; leftovers only in historical docs.
   Commit: `chore(repo): rename storefront app to web`
 
@@ -302,3 +303,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 01:25 P5.9 DONE 5974dbc — 8 unused aliases removed, exact-match hex → tokens, theme-color from tokens
 2026-10-20 01:28 P5.10 DONE a1c541c — shared .btn--outline + check icon; step card not unified (not identical)
 2026-10-20 01:31 P6.1 DONE 36b5ced — privacy guard: 18 routes + map click, no violations
+2026-10-20 01:34 P7.1 DONE 2ad6a73 — apps/web, service web; leftovers only prose comments

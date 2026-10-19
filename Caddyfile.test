@@ -28,7 +28,7 @@ shop.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
-	reverse_proxy storefront:4321 {
+	reverse_proxy web:4321 {
 		header_up Host {http.request.host}
 		header_up X-Forwarded-Proto https
 	}

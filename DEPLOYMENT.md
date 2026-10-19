@@ -6,7 +6,7 @@ Caddy terminates TLS and routes three hostnames:
 | Host | Service |
 |------|---------|
 | `shroom-mates.<domain>` | Website (static files from `apps/website/dist`) |
-| `shop.<domain>` | Storefront (Astro SSR, `storefront:4321`) |
+| `shop.<domain>` | Storefront (Astro SSR, `web:4321`) |
 | `api.<domain>` | Medusa API + Admin (`medusa:9000`, admin at `/app`) |
 
 ## Environments
@@ -41,7 +41,7 @@ The workflow:
 2. rsyncs the repo to `/opt/shroom-mates` (never touches the server's `.env`),
 3. writes `SUMUP_API_KEY` / `SUMUP_MERCHANT_CODE` from the `netcup-test`
    environment secrets into the server `.env` (only if **both** are set),
-4. rebuilds the `medusa` and `storefront` images on the server and restarts the stack,
+4. rebuilds the `medusa` and `web` images on the server and restarts the stack,
 5. smoke-tests `api…/health`, `shop…/de/store` and the website.
 
 Pushes that only touch `apps/website/` take a fast path that just syncs the static build.
@@ -158,7 +158,7 @@ cd /opt/shroom-mates
 C="docker compose -f docker-compose.test.yml"
 
 $C ps                       # status
-$C logs -f medusa           # logs (or storefront, caddy)
+$C logs -f medusa           # logs (or web, caddy)
 $C restart medusa           # restart one service
 ./scripts/backup-postgres.sh
 docker image prune -f && docker builder prune -f   # free disk space

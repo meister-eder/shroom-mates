@@ -17,7 +17,7 @@ export const MOCK_SERVERS = [
   },
   {
     command:
-      "cd ../../apps/storefront && HOST=127.0.0.1 PORT=8000 node dist/server/entry.mjs",
+      "cd ../../apps/web && HOST=127.0.0.1 PORT=8000 node dist/server/entry.mjs",
     port: 8000,
   },
 ];

@@ -1,6 +1,6 @@
 # Design
 
-Shroom Mates Redesign Version B, gilt für Website (`apps/website`) und Shop (`apps/storefront`). Geteilte Styles und Komponenten liegen in `packages/ui`.
+Shroom Mates Redesign Version B, gilt für Website (`apps/website`) und Shop (`apps/web`). Geteilte Styles und Komponenten liegen in `packages/ui`.
 
 ## Quellen und Abgleich
 
@@ -20,7 +20,7 @@ Assets (Bilder) per action "list", scope "assets", dann einzeln per path=<id>.
   (Namen 1:1 aus tokens.json; `base.css` importiert tokens.css, ältere Namen wie `--color-accent` oder die Namen `paper`, `lavender`, `olive-soft` sind nur Aliase darauf; `tokens.ts` spiegelt die Werte für TS)
 - Regeln: diese Datei ↔ `project/README.md` im Design System
 - Komponenten: Button, Pill, ProductCard, WaveDivider ↔ `project/components/*/README.md`
-  (Button/Pill/Chip in `packages/ui/src/utilities.css`, WaveDivider/Header/Footer in `packages/ui/src`, Produktkarte als `.product-tile` in `apps/storefront/src/styles/shop.css` und `apps/website/src/components/ProductCard.astro`)
+  (Button/Pill/Chip in `packages/ui/src/utilities.css`, WaveDivider/Header/Footer in `packages/ui/src`, Produktkarte als `.product-tile` in `apps/web/src/styles/shop.css` und `apps/website/src/components/ProductCard.astro`)
 - Seiten: Sortiment, Produkt, Warenkorb, Kasse, Bestätigung, Mobil ↔ Boards `Shop*.dc.html` im Redesign-Canvas, Footer ↔ `Footer.dc.html`, Header ↔ `Header.dc.html`/`HeaderMobil.dc.html`
   (Kopie der Boards zum Stand der letzten Übernahme: `docs/redesign/version-b/latest/project/`)
 

@@ -147,8 +147,8 @@ jobs:
         env:
           PUBLIC_SHOP_URL: https://shop.${{ env.DOMAIN }}
 
-      - name: Build storefront
-        run: bun run --filter @shroom-mates/storefront build
+      - name: Build web
+        run: bun run --filter @shroom-mates/web build
         env:
           PUBLIC_MEDUSA_BACKEND_URL: https://api.${{ env.DOMAIN }}
           PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
@@ -252,7 +252,7 @@ jobs:
             export DOMAIN="$DEPLOY_HOST.sslip.io"
             export MEDUSA_PUBLISHABLE_KEY="${{ secrets.MEDUSA_PUBLISHABLE_KEY }}"
             docker compose -f $COMPOSE_FILE pull postgres redis caddy
-            docker compose -f $COMPOSE_FILE build medusa storefront
+            docker compose -f $COMPOSE_FILE build medusa web
             docker compose -f $COMPOSE_FILE up -d --remove-orphans --force-recreate
             echo "Waiting for health checks..."
             sleep 10

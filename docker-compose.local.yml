@@ -24,7 +24,7 @@ services:
     depends_on:
       medusa:
         condition: service_started
-      storefront:
+      web:
         condition: service_started
 
   postgres:
@@ -72,10 +72,10 @@ services:
       - postgres
       - redis
 
-  storefront:
+  web:
     build:
       context: .
-      dockerfile: apps/storefront/Dockerfile
+      dockerfile: apps/web/Dockerfile
       args:
         PUBLIC_MEDUSA_BACKEND_URL: http://${DOMAIN}:9000
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}

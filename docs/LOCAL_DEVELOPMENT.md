@@ -110,7 +110,7 @@ Restart the backend after changing `.env`.
 ## 4. Storefront Setup
 
 ```bash
-cd apps/storefront
+cd apps/web
 cp .env.example .env
 ```
 
@@ -118,7 +118,7 @@ You need a **Publishable API Key** from the Medusa admin:
 
 1. Go to http://localhost:9000/app → **Settings** → **API Key Management** → **Publishable API Keys**
 2. Copy the key (or create one if none exists)
-3. Add it to `apps/storefront/.env`:
+3. Add it to `apps/web/.env`:
 
 ```env
 PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
@@ -271,7 +271,7 @@ docker compose -f docker-compose.dev.yml up -d
 cd backend && bun run dev
 
 # Terminal 3 — Storefront
-cd apps/storefront && bun run dev
+cd apps/web && bun run dev
 
 # Terminal 4 — Tunnel (only needed for SumUp webhooks)
 ngrok http 9000
@@ -282,7 +282,7 @@ ngrok http 9000
 | File | Purpose |
 |------|---------|
 | `backend/.env` | Backend config (database, Redis, API keys, CORS) |
-| `apps/storefront/.env` | Storefront config (backend URL, publishable key) |
+| `apps/web/.env` | Storefront config (backend URL, publishable key) |
 
 ### Useful Commands
 

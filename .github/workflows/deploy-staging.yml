@@ -44,8 +44,8 @@ jobs:
       - name: Build website
         run: bun run --filter @shroom-mates/website build
 
-      - name: Build storefront
-        run: bun run --filter @shroom-mates/storefront build
+      - name: Build web
+        run: bun run --filter @shroom-mates/web build
 
       - name: Install backend dependencies
         working-directory: backend
@@ -90,7 +90,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << 'EOF'
             cd /opt/shroom-mates-staging
             docker compose -f docker-compose.staging.yml --env-file .env.staging pull postgres redis
-            docker compose -f docker-compose.staging.yml --env-file .env.staging build medusa storefront
+            docker compose -f docker-compose.staging.yml --env-file .env.staging build medusa web
             docker compose -f docker-compose.staging.yml --env-file .env.staging up -d --remove-orphans
             echo "Waiting for health checks..."
             sleep 15

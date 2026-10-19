@@ -25,7 +25,7 @@ services:
     depends_on:
       medusa:
         condition: service_started
-      storefront:
+      web:
         condition: service_started
 
   postgres:
@@ -65,7 +65,7 @@ services:
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
       # Derived from DOMAIN so they can't drift from the real hosts (the
-      # storefront's per-country redirect_url must be on the shop host).
+      # web's per-country redirect_url must be on the shop host).
       SUMUP_MEDUSA_URL: https://api.${DOMAIN}
       SUMUP_REDIRECT_URL: https://shop.${DOMAIN}/de/checkout/complete
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
@@ -81,10 +81,10 @@ services:
       - postgres
       - redis
 
-  storefront:
+  web:
     build:
       context: .
-      dockerfile: apps/storefront/Dockerfile
+      dockerfile: apps/web/Dockerfile
       args:
         PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}

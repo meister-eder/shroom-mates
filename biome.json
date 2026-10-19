@@ -48,7 +48,7 @@
 	"overrides": [
 		{
 			"includes": [
-				"apps/storefront/**",
+				"apps/web/**",
 				"packages/ui/**",
 				"e2e/**"
 			],
