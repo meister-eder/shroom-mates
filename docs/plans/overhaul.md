@@ -44,7 +44,7 @@ from any of it.
   `packages/ui/src/base.css` sets `html { font-size: 17px }`. Change to `106.25%` (identical at the 16px browser default, scales with user settings). Grep both apps for other `html`/`:root` absolute font sizes and fix the same way.
   Commit: `fix(ui): root font size relative to user setting`
 
-- [ ] **P1.2 Clean up website SEO meta and JSON-LD** · deps: — · verify: quick
+- [x] **P1.2 Clean up website SEO meta and JSON-LD** · deps: — · verify: quick · ab82bed
   In `apps/website`:
   - `layouts/Layout.astro`: remove `meta keywords`, the two self-referencing `hreflang` links, the `geo.*`/`ICBM` meta and the `geo` block with TODO coordinates, and the whole `hasOfferCatalog` (offers without prices are invalid). Keep LocalBusiness core: `@id`, name, legalName, image, description, address, url, email, sameAs, founder, areaServed. Remove `priceRange: "$$"`. Fix `og:image:width/height`: compute from the actual image or drop the two tags.
   - `pages/growkits.astro`: delete the `HowTo` schema (Google retired HowTo rich results) and the `Product` schemas (products live in the shop; P4.1 adds proper ones there).
@@ -232,3 +232,4 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
 
 _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 — note`)_
 2026-10-19 23:26 P1.1 DONE 4d81baa — html font-size 106.25%; visual unchanged
+2026-10-19 23:27 P1.2 DONE ab82bed — dead meta/schemas removed, jsonLd helper, og size tags dropped

@@ -73,33 +73,9 @@ const mushrooms = await Promise.all(
 			};
 		}),
 );
-
-// Product Schema je Sorte (ohne offers: Frischware wird nicht online verkauft)
-const productSchemas = mushrooms.map((mushroom) => ({
-	"@context": "https://schema.org",
-	"@type": "Product",
-	name: mushroom.title,
-	description: `Frische ${mushroom.title} aus nachhaltiger Zucht in Leipzig. Erhältlich auf dem Egenberger Samstagsmarkt.`,
-	image: mushroom.image.src,
-	brand: {
-		"@type": "Brand",
-		name: "shroom-mates",
-	},
-	category: "Edelpilze",
-	isRelatedTo: {
-		"@type": "Product",
-		name: "Growkit",
-		description: "Pilzzuchtset zum Selberziehen",
-	},
-}));
 ---
 
 <Layout title={title} description={description} isLandingPage={true} active="pilze">
-  {
-    productSchemas.map((schema) => (
-      <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
-    ))
-  }
 
   <div class="page" data-sorten>
     <section class="hero">

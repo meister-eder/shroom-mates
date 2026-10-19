@@ -5,6 +5,7 @@ import Icon from "@shroom-mates/ui/Icon.astro";
 import { linkBuilders } from "@shroom-mates/ui/site";
 import tinkturenHero from "../assets/images/fotos/tinkturen-reishi.jpg";
 import Layout from "../layouts/Layout.astro";
+import { jsonLd } from "../utils/json-ld";
 
 const tinkturenPageEntry = await getEntry("tinkturen-page", "content");
 if (!tinkturenPageEntry) {
@@ -57,7 +58,7 @@ const productSchemas = tinctures.map((t) => ({
 	"@type": "Product",
 	name: t.title,
 	description: `Handgemachte Pilztinktur – ${t.title} (${t.botanicalName}). Doppelextrakt aus eigener Zucht in Leipzig.`,
-	image: t.image?.src || "",
+	image: t.image ? new URL(t.image.src, Astro.site).href : undefined,
 	brand: { "@type": "Brand", name: "shroom-mates" },
 	manufacturer: {
 		"@type": "Organization",
@@ -71,7 +72,7 @@ const productSchemas = tinctures.map((t) => ({
 <Layout title={title} description={description} ogImage={heroImage?.src} isLandingPage={true} active="tinkturen">
 	{
 		productSchemas.map((schema) => (
-			<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+			<script is:inline type="application/ld+json" set:html={jsonLd(schema)} />
 		))
 	}
 

@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import Layout from "../layouts/Layout.astro";
+import { jsonLd } from "../utils/json-ld";
 
 const gastroPageEntry = await getEntry("gastronomie-page", "content");
 if (!gastroPageEntry) {
@@ -57,7 +58,7 @@ const gastroSchema = {
 ---
 
 <Layout title={title} description={description} ogImage={heroImage?.src} active="gastro" isLandingPage>
-  <script type="application/ld+json" set:html={JSON.stringify(gastroSchema)} />
+  <script type="application/ld+json" set:html={jsonLd(gastroSchema)} />
 
   <div class="gastro-page">
     <section class="gastro-hero">

@@ -9,6 +9,7 @@ import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
 import type { NavKey } from "@shroom-mates/ui/site";
 import WaveRoller from "@shroom-mates/ui/WaveRoller.astro";
+import { jsonLd } from "../utils/json-ld";
 
 interface Props {
 	title: string;
@@ -67,14 +68,8 @@ const structuredData = {
 		postalCode: "04179",
 		addressCountry: "DE",
 	},
-	geo: {
-		"@type": "GeoCoordinates",
-		latitude: 51.354, // TODO: Koordinaten verifizieren
-		longitude: 12.301, // TODO: Koordinaten verifizieren
-	},
 	url: "https://shroom-mates.de",
 	email: "hey@shroom-mates.de",
-	priceRange: "$$",
 	knowsLanguage: "de",
 	knowsAbout: [
 		"Edelpilze",
@@ -102,88 +97,6 @@ const structuredData = {
 		{ "@type": "Person", name: "Emmelie Kunz" },
 		{ "@type": "Person", name: "Tim Eder" },
 	],
-	hasOfferCatalog: {
-		"@type": "OfferCatalog",
-		name: "Edelpilze, Growkits & Tinkturen aus Leipzig",
-		itemListElement: [
-			{
-				"@type": "OfferCatalog",
-				name: "Frische Edelpilze",
-				itemListElement: [
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "Rosenseitling",
-							description:
-								"Rosa Austernpilze, zart und nussig, saisonal im Sommer",
-						},
-					},
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "Pioppino",
-							description: "Südlicher Schüppling, knackig und aromatisch",
-						},
-					},
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "Lion's Mane",
-							description:
-								"Igelstachelbart, Vitalpilz mit besonderem Geschmack",
-						},
-					},
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "White Pearl",
-							description: "Weißer Austernpilz, vielseitig und ertragreich",
-						},
-					},
-				],
-			},
-			{
-				"@type": "OfferCatalog",
-				name: "Growkits: Pilze selber züchten",
-				itemListElement: [
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "Growkit",
-							description: "Pilzzuchtset für Zuhause, in 2-3 Wochen ernten",
-						},
-					},
-				],
-			},
-			{
-				"@type": "OfferCatalog",
-				name: "Pilztinkturen & Extrakte",
-				itemListElement: [
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "Lion's Mane Tinktur",
-							description: "Handgemachter Doppelextrakt aus eigenem Anbau",
-						},
-					},
-					{
-						"@type": "Offer",
-						itemOffered: {
-							"@type": "Product",
-							name: "Reishi + Cordyceps Tinktur",
-							description: "Adaptogener Doppelextrakt, immunsystemstärkend",
-						},
-					},
-				],
-			},
-		],
-	},
 };
 
 // Breadcrumb structured data
@@ -252,7 +165,7 @@ const breadcrumbSchema = {
     <!-- Structured Data for Local Business SEO -->
     <script
       type="application/ld+json"
-      set:html={JSON.stringify(structuredData)}
+      set:html={jsonLd(structuredData)}
     />
 
     <!-- Breadcrumb Structured Data -->
@@ -260,22 +173,10 @@ const breadcrumbSchema = {
       pathSegments.length > 0 && (
         <script
           type="application/ld+json"
-          set:html={JSON.stringify(breadcrumbSchema)}
+          set:html={jsonLd(breadcrumbSchema)}
         />
       )
     }
-
-    <!-- Location/Geo Targeting -->
-    <meta name="geo.region" content="DE-SN" />
-    <meta name="geo.placename" content="Leipzig-Leutzsch" />
-    <meta name="geo.position" content="51.3540;12.3010" />
-    <meta name="ICBM" content="51.3540, 12.3010" />
-
-    <!-- Keywords for local search -->
-    <meta
-      name="keywords"
-      content="Pilze Leipzig, Edelpilze Leipzig, frische Pilze kaufen Leipzig, Pilze Gastronomie Leipzig, Pilzlieferant Leipzig, Austernpilze Leipzig, Vitalpilze Leipzig, Growkits Leipzig, Growkits kaufen, Pilze selber züchten, Pilzzuchtset, Pilztinkturen Leipzig, Pilzextrakte Leipzig, Lion's Mane Leipzig, Lion's Mane Tinktur, Reishi Tinktur, Pilzzucht Leipzig, Leutzscher Markthalle, regionale Pilze Sachsen"
-    />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -285,8 +186,6 @@ const breadcrumbSchema = {
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_DE" />
     <meta property="og:image" content={defaultOgImage} />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
     <meta
       property="og:image:alt"
       content="shroom-mates Logo - Edelpilze aus Leipzig"
@@ -315,10 +214,6 @@ const breadcrumbSchema = {
     }
     <meta name="author" content="shroom-mates - Emmelie Kunz & Tim Eder" />
     <meta name="theme-color" content="#e9eaff" />
-
-    <!-- Language alternates (for future expansion) -->
-    <link rel="alternate" hreflang="de" href={canonicalURL} />
-    <link rel="alternate" hreflang="x-default" href={canonicalURL} />
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
