@@ -1,0 +1,48 @@
+---
+import Icon from "@shroom-mates/ui/Icon.astro";
+
+interface Props {
+  regionId?: string | null;
+}
+
+const { regionId } = Astro.props;
+---
+
+<button
+  type="button"
+  class="cart-pill"
+  aria-label="Pilzkorb, 0 Artikel"
+  aria-haspopup="dialog"
+  data-cart-button
+  data-region-id={regionId ?? undefined}
+>
+  <Icon name="cart" size={20} />
+  <span class="cart-pill__label" aria-hidden="true">Pilzkorb</span>
+  <span class="cart-pill__count" aria-hidden="true" data-cart-count>0</span>
+</button>
+
+<script>
+  import {
+    $cartItemCount,
+    $regionId,
+    initCart,
+    toggleCartSidebar,
+  } from "@lib/stores/cart";
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    "[data-cart-button]",
+  )) {
+    const count = button.querySelector("[data-cart-count]");
+    $cartItemCount.subscribe((n) => {
+      button.classList.toggle("has-items", n > 0);
+      button.setAttribute("aria-label", `Pilzkorb, ${n} Artikel`);
+      if (count) count.textContent = String(n);
+    });
+    button.addEventListener("click", () => toggleCartSidebar());
+    const regionId = button.dataset.regionId;
+    if (regionId) {
+      $regionId.set(regionId);
+      initCart();
+    }
+  }
+</script>

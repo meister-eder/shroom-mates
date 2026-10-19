@@ -6,7 +6,7 @@ import { stickerColor } from "../../../../lib/utils/product-color";
 import type { ProductVariant } from "../../../../types/global";
 import Thumbnail from "../thumbnail/Thumbnail.astro";
 import Price from "./Price.astro";
-import { QuickAdd } from "./QuickAdd";
+import QuickAdd from "./QuickAdd.astro";
 
 type PreviewVariant = ProductVariant & {
   title?: string | null;
@@ -113,7 +113,7 @@ const badgeText = cheapestPrice?.price_type === "sale" ? "Sale" : badge;
     {
       canQuickAdd && onlyVariant ? (
         <div class="product-tile__action">
-          <QuickAdd client:load variantId={onlyVariant.id} title={title} />
+          <QuickAdd variantId={onlyVariant.id} title={title} />
         </div>
       ) : (
         hasChoice && (

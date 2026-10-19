@@ -1,0 +1,62 @@
+<div class="toast-region" role="status" aria-live="polite" data-toast-region>
+</div>
+
+<script>
+  import { createMatesEyes } from "@lib/mates-eyes";
+  import { openCartSidebar } from "@lib/stores/cart";
+  import { $toast, hideToast } from "@lib/stores/toast";
+
+  const region = document.querySelector<HTMLElement>("[data-toast-region]");
+  let timer = 0;
+  let destroyEyes: (() => void) | undefined;
+
+  const clear = () => {
+    clearTimeout(timer);
+    destroyEyes?.();
+    destroyEyes = undefined;
+    region?.replaceChildren();
+  };
+
+  $toast.subscribe((toast) => {
+    if (!region) return;
+    clear();
+    if (!toast) return;
+
+    const el = document.createElement("div");
+    el.className = `toast${toast.kind === "error" ? " toast--error" : ""}`;
+
+    const eyes = createMatesEyes(56, "toast__mascot");
+    destroyEyes = eyes.destroy;
+
+    const text = document.createElement("p");
+    text.className = "toast__text";
+    const strong = document.createElement("strong");
+    if (toast.kind === "added") {
+      const name = document.createElement("span");
+      name.className = "toast__name";
+      name.textContent = `${toast.title} `;
+      strong.append(name, "liegt im Körbchen!");
+      text.append(strong);
+    } else {
+      strong.textContent = "Das hat nicht geklappt.";
+      const detail = document.createElement("span");
+      detail.textContent = toast.title;
+      text.append(strong, detail);
+    }
+    el.append(eyes.el, text);
+
+    if (toast.kind === "added") {
+      const action = document.createElement("button");
+      action.type = "button";
+      action.className = "toast__action";
+      action.textContent = "Ansehen";
+      action.addEventListener("click", () => {
+        hideToast();
+        openCartSidebar();
+      });
+      el.append(action);
+    }
+    region.append(el);
+    timer = window.setTimeout(hideToast, 3200);
+  });
+</script>

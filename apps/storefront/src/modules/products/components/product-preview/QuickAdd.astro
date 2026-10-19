@@ -1,0 +1,51 @@
+---
+import Icon from "@shroom-mates/ui/Icon.astro";
+
+interface Props {
+  variantId: string;
+  title: string;
+}
+
+const { variantId, title } = Astro.props;
+---
+
+<!--
+  "Rein ins Körbchen" on the product card (round 44px "+" on mobile). Only
+  rendered for products with exactly one variant; the cart drawer stays
+  closed, the toast confirms.
+-->
+<button
+  type="button"
+  class="quick-add"
+  data-quick-add={variantId}
+  data-title={title}
+  aria-label={`${title} rein ins Körbchen`}
+>
+  <Icon name="plus" size={16} strokeWidth={3} />
+  <span class="quick-add__label">Rein ins Körbchen</span>
+</button>
+
+<script>
+  import { flyToCart } from "@lib/fly-to-cart";
+  import { addToCart } from "@lib/stores/cart";
+  import { showAddedToast, showErrorToast } from "@lib/stores/toast";
+
+  document.addEventListener("click", async (ev) => {
+    const button = (ev.target as Element).closest<HTMLButtonElement>(
+      "[data-quick-add]",
+    );
+    if (!button || button.disabled) return;
+    button.disabled = true;
+    try {
+      await addToCart(button.dataset.quickAdd as string, 1, {
+        openSidebar: false,
+      });
+      flyToCart(button);
+      showAddedToast(button.dataset.title ?? "");
+    } catch {
+      showErrorToast("Lade die Seite neu und versuch es nochmal.");
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>

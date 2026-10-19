@@ -3,7 +3,7 @@
 // right next to "Kontakt". Info line instead of the website's ticker.
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
 import { SHIPPING } from "@shroom-mates/ui/shop-facts";
-import { CartButton } from "./CartButton";
+import CartButton from "./CartButton.astro";
 
 interface Props {
   countryCode: string;
@@ -27,5 +27,5 @@ const info = [
   info={info}
   infoCompact={`Selbst gezüchtet in Leipzig ✦ Versand ab ${SHIPPING.standard.price}`}
 >
-  <CartButton slot="cart" client:load regionId={regionId} />
+  <CartButton slot="cart" regionId={regionId} />
 </SiteHeader>

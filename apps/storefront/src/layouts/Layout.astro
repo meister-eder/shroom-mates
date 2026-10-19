@@ -3,7 +3,7 @@ import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
 import frauncesUrl from "@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2?url";
 import { getRegion } from "@lib/data/regions";
-import { AddedToast } from "@modules/layout/components/AddedToast";
+import AddedToast from "@modules/layout/components/AddedToast.astro";
 import { CartSidebar } from "@modules/layout/components/CartSidebar";
 import Footer from "@modules/layout/components/Footer.astro";
 import Header from "@modules/layout/components/Header.astro";
@@ -107,7 +107,7 @@ const regionId = region?.id || null;
       </main>
       <Footer countryCode={countryCode} />
       <CartSidebar client:load countryCode={countryCode} />
-      <AddedToast client:load />
+      <AddedToast />
     </div>
 
     <LayoutScripts />

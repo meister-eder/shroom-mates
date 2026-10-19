@@ -135,7 +135,7 @@ from any of it.
   First write `e2e/smoke/cart.spec.ts` + `e2e/smoke/playwright.config.ts` (reuse the server setup of `e2e/visual/playwright.config.ts`; export it from a shared module instead of copying). Flow against the mock: catalog → product → add to cart → header count = 1 → drawer opens with the item → change quantity → cart page shows it → checkout page renders the address form. Make it pass on the current code and add a `smoke` mode to `scripts/verify.sh` (and include it in `visual` and `all`). Then replace client-side use of `@medusajs/js-sdk` in `src/lib/stores/cart.ts` (and any other browser-side import) with `src/lib/store-api.ts`: a small typed `fetch` wrapper (base URL, publishable key header, JSON, errors with `status`) covering exactly the calls in use. Server-side code (`src/lib/data`, middleware) keeps the SDK. Exported function signatures of the cart store stay identical; payment functions keep their behaviour (rule 5). Smoke + visual must pass; report the new client bundle sizes (`find dist/client -name '*.js'` gzip sizes).
   Commit: `perf(shop): thin store API client in the browser, cart smoke test`
 
-- [ ] **P5.4 Header cart button, toast and quick-add without React** · deps: P5.3 · verify: visual
+- [x] **P5.4 Header cart button, toast and quick-add without React** · deps: P5.3 · verify: visual · 2099ced
   Rewrite `CartButton.tsx`, `AddedToast.tsx` and the quick-add button in `modules/products/components/product-preview/` as Astro components with module scripts subscribing to the nanostores (`$cartItemCount`, toast store). Same markup, classes, ARIA (live region for the toast, accessible name with count for the button), same fly-to-cart animation. Remove `client:load` usages for them. Smoke + visual must pass.
   Commit: `perf(shop): cart button, toast and quick-add as vanilla islands`
 
@@ -284,3 +284,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 00:12 P5.1 DONE f91aed9 — native view transitions; cart count survives nav (orchestrator Playwright check)
 2026-10-20 00:23 P5.2 DONE a0d5b07 — sticky header; menu + anchors checked by orchestrator (Playwright)
 2026-10-20 00:29 P5.3 DONE cea6617 — smoke test + thin store-api client; SDK out of client bundle
+2026-10-20 00:33 P5.4 DONE 2099ced — vanilla CartButton/Toast/QuickAdd; quick-add+toast+fly checked by orchestrator
