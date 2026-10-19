@@ -1,5 +1,6 @@
 import { sdk } from "@lib/sdk";
 import { addToCart } from "@lib/stores/cart";
+import { showErrorToast } from "@lib/stores/toast";
 import { basePriceLabel } from "@lib/utils/base-price";
 import { getPricesForVariant, getProductPrice } from "@lib/utils/get-product-price";
 import { isProductInStock } from "@lib/utils/is-product-in-stock";
@@ -39,6 +40,8 @@ interface Props {
 }
 
 const MAX_QTY = 10;
+/** From this stock level on the page says "Nur noch N Stück da" */
+const LOW_STOCK = 5;
 
 export const ProductActions = ({
   options,
@@ -168,10 +171,21 @@ export const ProductActions = ({
       addedTimer.current = setTimeout(() => setJustAdded(false), 2200);
     } catch (error) {
       console.error("Failed to add item to cart:", error);
+      showErrorToast("Lade die Seite neu und versuch es nochmal.");
     } finally {
       setIsAdding(false);
     }
   };
+
+  // Low stock hint (only when Medusa tracks inventory for the variant)
+  const lowStock =
+    selectedVariant?.manage_inventory &&
+    !selectedVariant.allow_backorder &&
+    typeof selectedVariant.inventory_quantity === "number" &&
+    selectedVariant.inventory_quantity > 0 &&
+    selectedVariant.inventory_quantity <= LOW_STOCK
+      ? selectedVariant.inventory_quantity
+      : null;
 
   const isAddToCardButtonDisabled =
     !selectedVariant || isLoadingVariants || !inStock || isAdding;
@@ -252,6 +266,11 @@ export const ProductActions = ({
           {buttonLabel}
         </button>
       </div>
+      {lowStock !== null && !isLoadingVariants && (
+        <p className="buy-box__stock">
+          Nur noch {lowStock} Stück da
+        </p>
+      )}
       <span className="sr-only" role="status">
         {justAdded ? `${quantity}× ${productTitle} liegt im Körbchen` : ""}
       </span>

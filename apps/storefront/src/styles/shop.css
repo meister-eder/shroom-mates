@@ -1351,6 +1351,14 @@ a.chip[aria-current="page"] {
   color: var(--ink-muted);
 }
 
+/* Low stock: "Nur noch 3 Stück da" */
+.buy-box__stock {
+  margin: 10px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-accent-dark, #bf2300);
+}
+
 .buy-box__options {
   min-width: 0;
   margin: 0;

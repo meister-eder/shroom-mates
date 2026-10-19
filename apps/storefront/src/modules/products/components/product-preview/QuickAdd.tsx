@@ -23,7 +23,7 @@ export const QuickAdd = ({ variantId, title }: QuickAddProps) => {
       await addToCart(variantId, 1, { openSidebar: false });
       showAddedToast(title);
     } catch {
-      showErrorToast(`${title}: Bitte versuch es auf der Produktseite.`);
+      showErrorToast("Lade die Seite neu und versuch es nochmal.");
     } finally {
       setBusy(false);
     }

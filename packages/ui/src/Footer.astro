@@ -12,7 +12,7 @@
  * The old `links` prop is ignored (deprecated).
  */
 import { Image } from "astro:assets";
-import drawing from "./assets/shroom-mates-drawing.png";
+import drawing from "./assets/shroom-mates-drawing-eyeless.png";
 import Icon from "./Icon.astro";
 import {
   ADDRESS,
@@ -42,9 +42,13 @@ const { app = "website", countryCode = "de", legalExtended } = Astro.props;
 const columns = footerColumns(app, countryCode, legalExtended);
 const currentYear = new Date().getFullYear();
 
-/* Augen der Footer-Zeichnung (Pixelkoordinaten im 1200 x 547-Raster des Bildes) */
-const eyes = [{"x": 1003.2, "y": 199.9, "rx": 8.5, "ry": 7.5}, {"x": 979.0, "y": 206.9, "rx": 7.0, "ry": 6.5}, {"x": 1160.2, "y": 303.7, "rx": 4.0, "ry": 8.5}, {"x": 1145.9, "y": 307.2, "rx": 4.5, "ry": 9.0}, {"x": 181.3, "y": 307.4, "rx": 4.5, "ry": 5.0}, {"x": 196.8, "y": 309.4, "rx": 4.5, "ry": 6.0}, {"x": 1050.6, "y": 335.1, "rx": 4.0, "ry": 5.5}, {"x": 1062.7, "y": 335.6, "rx": 4.5, "ry": 7.5}, {"x": 674.6, "y": 346.0, "rx": 3.0, "ry": 6.0}, {"x": 662.3, "y": 349.3, "rx": 3.0, "ry": 6.5}, {"x": 883.5, "y": 349.6, "rx": 5.0, "ry": 5.0}, {"x": 897.1, "y": 354.6, "rx": 4.5, "ry": 5.0}, {"x": 72.3, "y": 381.0, "rx": 7.0, "ry": 8.0}, {"x": 101.6, "y": 381.4, "rx": 7.0, "ry": 7.0}, {"x": 439.5, "y": 389.2, "rx": 3.0, "ry": 6.0}, {"x": 749.7, "y": 431.3, "rx": 7.0, "ry": 3.5}, {"x": 786.0, "y": 442.7, "rx": 7.5, "ry": 4.0}, {"x": 204.1, "y": 467.4, "rx": 8.0, "ry": 9.5}, {"x": 526.3, "y": 493.7, "rx": 4.5, "ry": 5.0}, {"x": 512.2, "y": 494.6, "rx": 3.5, "ry": 5.0}, {"x": 126.9, "y": 494.7, "rx": 4.0, "ry": 4.0}];
-const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
+/*
+ * Augen der Footer-Zeichnung: [x, y, rx, ry, gesicht] im 1200 x 547-Raster des
+ * Bildes. Die Zeichnung selbst ist augenlos (shroom-mates-drawing-eyeless.png),
+ * die Pupillen liegen als SVG genau an den gezeichneten Stellen. Augen mit
+ * gleicher Gesichts-Nummer blinzeln zusammen.
+ */
+const eyes: [number, number, number, number, number][] = [[27.1,522.2,1.5,2.5,0],[63.1,482.6,2,3,1],[71.4,479,3,2.5,1],[72.3,381,7,8.5,2],[101.6,381.5,7,7.5,2],[126.9,494.5,4,4.5,3],[138.6,490.8,4,4.5,3],[181.3,307.4,5,5,4],[196.8,309.6,5,6.5,4],[204.3,467.8,8,10,5],[220.4,458.1,8,10.5,5],[298.6,327.3,2,4,6],[304.1,325.7,2.5,5,6],[366.9,269.2,2.5,3.5,7],[374.8,269.6,2.5,4,7],[439.5,389.3,3.5,6.5,8],[452.9,391.1,3,3.5,8],[512.1,494.7,3.5,5,9],[526.4,493.7,4.5,5.5,9],[573,518.2,3.5,3.5,10],[587.6,520.4,3,4,10],[600.9,442,3.5,3.5,11],[625,440.9,4.5,3.5,11],[650.4,534.3,2,3,12],[657.1,532.7,2.5,3.5,12],[662.5,349.4,3,7,13],[674.6,346.1,3,6.5,13],[735.5,476.6,2,4,14],[743.2,477.7,2.5,3,14],[749.8,431.3,7.5,3.5,15],[786,442.6,7.5,4,15],[883.4,349.6,5.5,5,17],[897.2,354.8,5,5.5,17],[922.7,417,2,5,18],[929.9,416.6,1.5,4,18],[950.2,337.9,2,4,19],[957.5,340.4,2,4,19],[979,206.8,7.5,6.5,20],[1003.3,199.9,8.5,7.5,20],[1011.8,442.7,4,2,21],[1050.6,335.2,5,5.5,22],[1062.5,336.7,4.5,10,22],[1099.6,525.6,3,4,23],[1110.3,527.5,3,4,23],[1145.9,307.1,4.5,9,24],[1160.1,303.9,4.5,9,24],[1151.7,436.1,3,5.5,25],[1158.8,438.4,2.5,5.5,25]];
 ---
 
 <footer class="site-footer" role="contentinfo">
@@ -60,11 +64,16 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
     />
     <svg class="footer-eyes" viewBox="0 0 1200 547" aria-hidden="true" focusable="false">
       {
-        eyes.map((e) => (
-          <g data-eye data-cx={e.x} data-cy={e.y} data-r={Math.min(e.rx, e.ry)}>
-            <ellipse cx={e.x} cy={e.y} rx={e.rx + 3} ry={e.ry + 3} fill={BODY} />
-            <ellipse class="footer-eyes__pupil" cx={e.x} cy={e.y} rx={e.rx} ry={e.ry} fill="#15132b" />
-          </g>
+        eyes.map(([x, y, rx, ry, face]) => (
+          <ellipse
+            class="footer-eyes__pupil"
+            data-face={face}
+            cx={x}
+            cy={y}
+            rx={rx}
+            ry={ry}
+            fill="#15132b"
+          />
         ))
       }
     </svg>
@@ -284,42 +293,110 @@ const BODY = "#ebe8dd"; /* Körperfarbe der Zeichnung unter den Pupillen */
 </style>
 
 <script>
-  // Pupils follow the pointer (rAF-throttled). Touch / reduced motion: they keep
-  // their drawn position.
+  // Pupils of the drawn crowd follow the pointer (mouse and touch). Without a
+  // pointer nearby the mates glance around on their own; faces blink now and
+  // then. Reduced motion: pupils stay where they are drawn.
   function init() {
     const wrap = document.querySelector<HTMLElement>("[data-footer-eyes]");
     if (!wrap || wrap.dataset.ready) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     wrap.dataset.ready = "1";
     const svg = wrap.querySelector("svg") as SVGSVGElement;
-    const eyes = [...svg.querySelectorAll<SVGGElement>("[data-eye]")].map((g) => ({
-      pupil: g.querySelector<SVGEllipseElement>(".footer-eyes__pupil")!,
-      cx: Number(g.dataset.cx),
-      cy: Number(g.dataset.cy),
-      r: Number(g.dataset.r),
-    }));
+    const eyes = [...svg.querySelectorAll<SVGEllipseElement>(".footer-eyes__pupil")].map((el) => {
+      const rx = Number(el.getAttribute("rx"));
+      const ry = Number(el.getAttribute("ry"));
+      return {
+        el,
+        cx: Number(el.getAttribute("cx")),
+        cy: Number(el.getAttribute("cy")),
+        ry,
+        face: el.dataset.face!,
+        // how far the pupil may wander (image px): bigger eyes look further
+        reach: Math.min(5, Math.max(1.4, Math.min(rx, ry) * 0.75)),
+        x: 0,
+        y: 0,
+        blink: 1,
+      };
+    });
+    const faces = [...new Set(eyes.map((e) => e.face))];
+
     let px = 0;
     let py = 0;
+    let lastMove = -1e9;
+    let glance = { x: 0, y: -1, until: 0 };
+    let blinkFace = "";
+    let blinkStart = 0;
+    let nextBlink = performance.now() + 1500;
+    let visible = false;
     let frame = 0;
-    const draw = () => {
+
+    const tick = (now: number) => {
       frame = 0;
       const rect = svg.getBoundingClientRect();
       const k = rect.width / 1200;
-      for (const e of eyes) {
-        const dx = px - (rect.left + e.cx * k);
-        const dy = py - (rect.top + e.cy * k);
-        const d = Math.hypot(dx, dy) || 1;
-        const reach = Math.min(1, d / 60) * (e.r * 0.8);
-        e.pupil.setAttribute("transform", `translate(${((dx / d) * reach).toFixed(2)} ${((dy / d) * reach).toFixed(2)})`);
+      const idle = now - lastMove > 2500;
+      if (idle && now > glance.until) {
+        const a = Math.random() * Math.PI * 2;
+        glance = { x: Math.cos(a), y: Math.sin(a) * 0.6, until: now + 900 + Math.random() * 1800 };
       }
+      if (now > nextBlink) {
+        blinkFace = faces[Math.floor(Math.random() * faces.length)];
+        blinkStart = now;
+        nextBlink = now + 1200 + Math.random() * 2600;
+      }
+      let moving = false;
+      for (const e of eyes) {
+        let tx: number;
+        let ty: number;
+        if (idle) {
+          tx = glance.x * e.reach;
+          ty = glance.y * e.reach;
+        } else {
+          const dx = px - (rect.left + e.cx * k);
+          const dy = py - (rect.top + e.cy * k);
+          const d = Math.hypot(dx, dy) || 1;
+          const s = Math.min(1, d / 90) * e.reach;
+          tx = (dx / d) * s;
+          ty = (dy / d) * s;
+        }
+        // ease toward the target so the gaze moves instead of jumping
+        e.x += (tx - e.x) * 0.25;
+        e.y += (ty - e.y) * 0.25;
+        if (Math.abs(tx - e.x) > 0.05 || Math.abs(ty - e.y) > 0.05) moving = true;
+        const t = (now - blinkStart) / 160;
+        e.blink = e.face === blinkFace && t < 1 ? Math.max(0.12, Math.abs(1 - 2 * t)) : 1;
+        e.el.setAttribute(
+          "transform",
+          `translate(${(e.x + e.cx).toFixed(2)} ${(e.y + e.cy).toFixed(2)}) scale(1 ${e.blink.toFixed(2)}) translate(${-e.cx} ${-e.cy})`,
+        );
+      }
+      if (visible && (moving || idle || now - blinkStart < 200)) frame = requestAnimationFrame(tick);
     };
+    const kick = () => {
+      if (!frame && visible) frame = requestAnimationFrame(tick);
+    };
+
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      kick();
+    }).observe(wrap);
     addEventListener(
       "pointermove",
       (ev) => {
         px = ev.clientX;
         py = ev.clientY;
-        if (!frame) frame = requestAnimationFrame(draw);
+        lastMove = performance.now();
+        kick();
+      },
+      { passive: true },
+    );
+    addEventListener(
+      "pointerdown",
+      (ev) => {
+        px = ev.clientX;
+        py = ev.clientY;
+        lastMove = performance.now();
+        kick();
       },
       { passive: true },
     );
