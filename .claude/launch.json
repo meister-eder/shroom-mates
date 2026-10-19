@@ -1,0 +1,50 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "website-preview",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd apps/website && bun run astro preview --port 4400"
+      ],
+      "port": 4400
+    },
+    {
+      "name": "website-dev",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd apps/website && bunx astro dev --port 4510"
+      ],
+      "port": 4510
+    },
+    {
+      "name": "medusa-mock",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "PORT=9010 node docs/redesign/version-b/dev/mock-medusa.mjs"
+      ],
+      "port": 9010,
+      "autoPort": false
+    },
+    {
+      "name": "storefront-dev",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd apps/storefront && PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9010 bunx astro dev --port 8000"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "mockup-viewer",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "docs/redesign/version-b/dev/viewer.mjs"
+      ],
+      "port": 4600
+    }
+  ]
+}

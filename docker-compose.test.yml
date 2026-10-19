@@ -2,17 +2,19 @@
 # Auto TLS via sslip.io. No DNS setup needed.
 #
 # Usage:
-#   DOMAIN=159.195.31.11.sslip.io docker compose -f docker-compose.test.yml up -d
+#   DOMAIN=<server-ip>.sslip.io docker compose -f docker-compose.test.yml up -d
 #
 # Access:
-#   Website:    https://shroom-mates.159.195.31.11.sslip.io
-#   Storefront: https://shop.159.195.31.11.sslip.io
-#   Medusa:     https://api.159.195.31.11.sslip.io
+#   Website:    https://shroom-mates.<server-ip>.sslip.io
+#   Storefront: https://shop.<server-ip>.sslip.io
+#   Medusa:     https://api.<server-ip>.sslip.io
 
 services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN is required}
     ports:
       - "80:80"
       - "443:443"

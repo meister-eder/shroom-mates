@@ -1,0 +1,74 @@
+#!/bin/sh
+# Blockiert Commits, die Secrets, .env-Dateien oder öffentliche IP-Adressen enthalten.
+# Das Repo ist öffentlich: was einmal committet ist, bleibt in der History.
+# Aktivieren: git config core.hooksPath .githooks
+# Im Notfall umgehen (nur bei Fehlalarm): git commit --no-verify
+
+fail=0
+
+# 1. Verbotene Dateien (.env ohne .example/.template, Schlüssel, Dumps)
+files=$(git diff --cached --name-only --diff-filter=ACMR)
+bad_files=$(printf '%s\n' "$files" | grep -E '(^|/)\.env($|\.)|\.(pem|key|p12|pfx|sql|dump)$|(^|/)id_(rsa|ed25519|ecdsa)' \
+	| grep -vE '\.env\.(example|template)$|\.env\.[a-z]+\.example$')
+if [ -n "$bad_files" ]; then
+	echo "✖ Diese Dateien dürfen nicht ins Repo:" >&2
+	printf '  %s\n' $bad_files >&2
+	fail=1
+fi
+
+# 2. Secret-Muster in den hinzugefügten Zeilen (Platzhalter wie sup_sk_your… werden ignoriert)
+patterns='sup_sk_[A-Za-z0-9]{16,}|re_[A-Za-z0-9]{8,}_[A-Za-z0-9]{16,}|sk_(live|test)_[A-Za-z0-9]{16,}|pk_[0-9a-f]{40,}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|xox[abp]-[A-Za-z0-9-]{10,}'
+# Generische Zuweisungen wie JWT_SECRET=…, außer offensichtliche Platzhalter/Testwerte
+generic='(SECRET|PASSWORD|API_KEY|TOKEN)[A-Z_]*[=:][[:space:]]*["'\'']?[A-Za-z0-9+/_-]{20,}'
+placeholder='your|example|placeholder|changeme|dummy|xxx|test|local|dev-|not-for-production|ci-only|<[A-Z_]+>'
+# 3. Öffentliche IPv4-Adressen (private Netze, localhost und 1.2.3.4 als Beispiel sind erlaubt)
+# (ohne {n}-Intervalle: das awk von macOS kennt sie nicht)
+o='[0-9][0-9]?[0-9]?'
+ip="$o[.]$o[.]$o[.]$o"
+ip_ok='^(127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.|0\.0\.0\.0|1\.2\.3\.4|255\.)'
+
+added=$(git diff --cached -U0 --no-color -- . ':(exclude)*.lock' ':(exclude)*package-lock.json' ':(exclude)*.svg' \
+	| grep -E '^(\+\+\+ |\+)' | grep -vE '^\+\+\+ /dev/null')
+
+hits=$(printf '%s\n' "$added" | awk -v p="$patterns" -v g="$generic" -v ph="$placeholder" '
+	/^\+\+\+ / { file = substr($0, 7); next }
+	$0 ~ p || ($0 ~ g && tolower($0) !~ ph) { print "  " file ": " substr($0, 2, 160) }')
+if [ -n "$hits" ]; then
+	echo "✖ Mögliche Secrets gefunden:" >&2
+	printf '%s\n' "$hits" >&2
+	fail=1
+fi
+
+ip_hits=$(printf '%s\n' "$added" | awk -v ip="$ip" -v ok="$ip_ok" '
+	/^\+\+\+ / { file = substr($0, 7); next }
+	{
+		line = $0
+		while (match(line, ip)) {
+			addr = substr(line, RSTART, RLENGTH)
+			b1 = substr(line, RSTART - 1, 1); b2 = substr(line, RSTART - 2, 1)
+			a1 = substr(line, RSTART + RLENGTH, 1); a2 = substr(line, RSTART + RLENGTH + 1, 1)
+			n = split(addr, o, ".")
+			valid = (o[1] <= 255 && o[2] <= 255 && o[3] <= 255 && o[4] <= 255)
+			# nur freistehende Adressen (shop.1.2.3.4.sslip.io zählt), keine Versionen wie 1.2.3.4.5
+			if (b1 ~ /[0-9]/ || (b1 == "." && b2 ~ /[0-9]/) || a1 ~ /[0-9]/ || (a1 == "." && a2 ~ /[0-9]/)) valid = 0
+			if (valid && addr !~ ok) print "  " file ": " addr
+			line = substr(line, RSTART + RLENGTH)
+		}
+	}' | sort -u)
+if [ -n "$ip_hits" ]; then
+	echo "✖ Öffentliche IP-Adressen gefunden (Server-IPs gehören in Secrets/.env):" >&2
+	printf '%s\n' "$ip_hits" >&2
+	fail=1
+fi
+
+# 4. Zusätzlich gitleaks, falls installiert (brew install gitleaks)
+if command -v gitleaks >/dev/null 2>&1; then
+	gitleaks git --staged --no-banner --redact || fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+	echo "" >&2
+	echo "Commit abgebrochen. Werte in .env / GitHub Secrets verschieben." >&2
+	echo "Nur bei Fehlalarm: git commit --no-verify" >&2
+	exit 1
+fi

@@ -40,3 +40,7 @@ yalc.lock
 
 dogfood-output
 .npm-cache/
+
+# claude code (lokal)
+.claude/worktrees/
+.claude/settings.local.json

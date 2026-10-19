@@ -1,7 +1,9 @@
 # ── Test Caddyfile (self-signed TLS) ─────────────────────────
 # Accept the cert warning in your browser once
+# DOMAIN (<server-ip>.sslip.io) comes from the caddy service environment;
+# the deploy workflow derives it from the DEPLOY_HOST secret.
 
-shroom-mates.159.195.31.11.sslip.io {
+shroom-mates.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
@@ -22,7 +24,7 @@ shroom-mates.159.195.31.11.sslip.io {
 	}
 }
 
-shop.159.195.31.11.sslip.io {
+shop.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
@@ -32,7 +34,7 @@ shop.159.195.31.11.sslip.io {
 	}
 }
 
-api.159.195.31.11.sslip.io {
+api.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
