@@ -31,6 +31,7 @@ from any of it.
 ## Manual follow-ups (collected by the orchestrator for the humans)
 
 - P1.1: px font sizes in components (--body-size: 17px, shop.css, growkits.astro, CartPage) don't scale with browser font setting; separate task.
+- P1.3: stale comment 'SvgHeading reads SVGs from ./public' in apps/storefront/Dockerfile (~l.45); COPY public stays needed.
 
 ---
 
@@ -53,7 +54,7 @@ from any of it.
   - JSON-LD output: escape `<` as `<` in all `set:html={JSON.stringify(...)}` (add one helper `jsonLd(obj)` in `apps/website/src/utils/json-ld.ts` and use it everywhere).
   Commit: `fix(website): valid structured data, drop dead meta`
 
-- [ ] **P1.3 Delete dead code and unused assets** · deps: — · verify: quick
+- [x] **P1.3 Delete dead code and unused assets** · deps: — · verify: quick · 872e2de
   Grep before every delete (include `public/admin/config.yml` and all apps); keep anything still referenced and report it.
   - Components: `apps/website/src/components/{CustomerDeliverySection,ImageGallery,UpcomingDates}.astro`; `packages/ui/src/{PageHero,SvgHeading}.astro` (+ their `exports` in `packages/ui/package.json`); `apps/storefront/src/modules/common/components/{CartTotals,LineItemRow}.tsx`; `apps/website/src/utils/color.ts`.
   - `packages/ui/src/site.ts`: unused `navLinks`, `footerLinks`.
@@ -233,3 +234,4 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
 _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 — note`)_
 2026-10-19 23:26 P1.1 DONE 4d81baa — html font-size 106.25%; visual unchanged
 2026-10-19 23:27 P1.2 DONE ab82bed — dead meta/schemas removed, jsonLd helper, og size tags dropped
+2026-10-19 23:28 P1.3 DONE 872e2de — dead components, helpers, 10 images removed

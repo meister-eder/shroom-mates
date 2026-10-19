@@ -109,33 +109,6 @@ async function getCountryCode(pathname: string) {
 	return countryCode;
 }
 
-/**
- * Sets security headers on every response. In production these are also
- * set by Caddy, but this ensures they're present during local development.
- */
-function addSecurityHeaders(response: Response): Response {
-	response.headers.set("X-Content-Type-Options", "nosniff");
-	response.headers.set("X-Frame-Options", "SAMEORIGIN");
-	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-	response.headers.set(
-		"Permissions-Policy",
-		"camera=(), microphone=(), geolocation=()",
-	);
-	response.headers.set(
-		"Content-Security-Policy",
-		[
-			"default-src 'self'",
-			"script-src 'self' https://gateway.sumup.com",
-			"style-src 'self' 'unsafe-inline'",
-			"img-src 'self' https: data:",
-			"connect-src 'self' https://api.shroom-mates.de http://localhost:9000",
-			"frame-src https://gateway.sumup.com",
-			"font-src 'self'",
-		].join("; "),
-	);
-	return response;
-}
-
 export const onRequest = defineMiddleware(async (context, next) => {
 	// Never redirect non-page requests (assets, dev internals, etc.)
 	if (isStaticOrInternalPath(context.url.pathname)) {
