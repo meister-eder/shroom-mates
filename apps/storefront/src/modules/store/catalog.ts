@@ -26,7 +26,8 @@ export async function loadCatalog(regionId: string): Promise<Catalog> {
   }
 
   products = products.filter(
-    (p) => !p.categories?.some((c) => HIDDEN_CATEGORIES.includes(c.handle ?? "")),
+    (p) =>
+      !p.categories?.some((c) => HIDDEN_CATEGORIES.includes(c.handle ?? "")),
   );
 
   const rank = (p: Products[number]) => {
@@ -45,7 +46,9 @@ export async function loadCatalog(regionId: string): Promise<Catalog> {
     }
   }
   const pos = (h: string) => (ORDER.indexOf(h) === -1 ? 99 : ORDER.indexOf(h));
-  const categories = Array.from(map.entries()).sort(([a], [b]) => pos(a) - pos(b));
+  const categories = Array.from(map.entries()).sort(
+    ([a], [b]) => pos(a) - pos(b),
+  );
 
   return { products, categories, error };
 }

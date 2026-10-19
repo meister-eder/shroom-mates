@@ -127,9 +127,7 @@ export class CheckoutFlow {
   }
 
   async submitDeliveryStep() {
-    await this.page
-      .getByRole("button", { name: /Weiter zur Zahlung/ })
-      .click();
+    await this.page.getByRole("button", { name: /Weiter zur Zahlung/ }).click();
     await this.page.waitForTimeout(500);
   }
 
@@ -204,10 +202,10 @@ export class CheckoutFlow {
       payment: "Zahlung",
     };
     // The active step has bold text in the step indicator
-    const stepIndicator = this.page.locator("nav[aria-label='Checkout-Schritte']");
-    await expect(
-      stepIndicator.getByText(labels[step]),
-    ).toBeVisible();
+    const stepIndicator = this.page.locator(
+      "nav[aria-label='Checkout-Schritte']",
+    );
+    await expect(stepIndicator.getByText(labels[step])).toBeVisible();
   }
 
   /**
@@ -220,7 +218,9 @@ export class CheckoutFlow {
 
   async assertEmptyCartMessage() {
     await expect(
-      this.main.getByRole("heading", { name: /Dein (Warenkorb|Pilzkorb) ist leer/ }),
+      this.main.getByRole("heading", {
+        name: /Dein (Warenkorb|Pilzkorb) ist leer/,
+      }),
     ).toBeVisible();
   }
 

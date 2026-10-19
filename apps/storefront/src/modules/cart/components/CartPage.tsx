@@ -5,9 +5,9 @@ import {
   updateLineItemQuantity,
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
-import { useStore } from "@nanostores/react";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { QtyStepper } from "@modules/common/components/QtyStepper";
+import { useStore } from "@nanostores/react";
 import { useState } from "react";
 
 interface CartPageProps {
@@ -49,7 +49,10 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
             Hier wächst noch nichts.
           </h1>
           <p className="mb-5 mt-3 text-base">Die Mates langweilen sich.</p>
-          <a href={`/${countryCode}/store`} className="btn btn--primary min-h-[50px] px-[22px]">
+          <a
+            href={`/${countryCode}/store`}
+            className="btn btn--primary min-h-[50px] px-[22px]"
+          >
             Zum Sortiment
           </a>
         </div>
@@ -63,11 +66,18 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
           </div>
 
           <div className="flex flex-wrap items-start gap-8 lg:gap-10">
-            <ul className="m-0 flex min-w-0 flex-[999_1_560px] list-none flex-col gap-3.5 p-0" role="list">
+            {/* biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern */}
+            <ul
+              className="m-0 flex min-w-0 flex-[999_1_560px] list-none flex-col gap-3.5 p-0"
+              // biome-ignore lint/a11y/noRedundantRoles: role="list" bleibt, weil list-style: none in Safari/VoiceOver die Listensemantik entfernt
+              role="list"
+            >
               {cart?.items?.map((item) => {
                 const product = item.variant?.product;
                 const thumbnailUrl =
-                  item.thumbnail || product?.thumbnail || product?.images?.[0]?.url;
+                  item.thumbnail ||
+                  product?.thumbnail ||
+                  product?.images?.[0]?.url;
                 const productTitle = product?.title || item.title || "Produkt";
                 const variantTitle = item.variant?.title || "";
                 const unitPrice = item.unit_price || 0;
@@ -85,9 +95,17 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                     }`}
                   >
                     {thumbnailUrl ? (
-                      <img src={thumbnailUrl} alt={productTitle} className={thumbClass} loading="lazy" />
+                      <img
+                        src={thumbnailUrl}
+                        alt={productTitle}
+                        className={thumbClass}
+                        loading="lazy"
+                      />
                     ) : (
-                      <div className={`${thumbClass} bg-paper`} aria-hidden="true" />
+                      <div
+                        className={`${thumbClass} bg-paper`}
+                        aria-hidden="true"
+                      />
                     )}
                     <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                       <div className="flex justify-between gap-2">
@@ -95,7 +113,10 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                           {productTitle}
                         </p>
                         <p className="m-0 whitespace-nowrap font-mono text-[15px] sm:text-lg">
-                          {convertToLocale({ amount: unitPrice * quantity, currencyCode })}
+                          {convertToLocale({
+                            amount: unitPrice * quantity,
+                            currencyCode,
+                          })}
                         </p>
                       </div>
                       <p className="m-0 font-mono text-xs text-muted">
@@ -108,18 +129,26 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                           label={`Anzahl ${productTitle}`}
                           disabled={busy}
                           decreaseLabel={
-                            quantity <= 1 ? `${productTitle} entfernen` : "Menge verringern"
+                            quantity <= 1
+                              ? `${productTitle} entfernen`
+                              : "Menge verringern"
                           }
                           onDecrease={() =>
-                            run(item.id, () => updateLineItemQuantity(item.id, quantity - 1))
+                            run(item.id, () =>
+                              updateLineItemQuantity(item.id, quantity - 1),
+                            )
                           }
                           onIncrease={() =>
-                            run(item.id, () => updateLineItemQuantity(item.id, quantity + 1))
+                            run(item.id, () =>
+                              updateLineItemQuantity(item.id, quantity + 1),
+                            )
                           }
                         />
                         <button
                           type="button"
-                          onClick={() => run(item.id, () => removeFromCart(item.id))}
+                          onClick={() =>
+                            run(item.id, () => removeFromCart(item.id))
+                          }
                           disabled={busy}
                           className="min-h-11 cursor-pointer border-0 bg-transparent px-2.5 font-body text-sm text-accent-dark underline hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
                           aria-label={`${productTitle} aus dem Pilzkorb entfernen`}
@@ -137,13 +166,17 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
               aria-labelledby="cart-summary-title"
               className="flex min-w-0 flex-[1_1_340px] flex-col gap-2.5 rounded-none border-2 border-accent bg-paper p-[22px] lg:sticky lg:top-6"
             >
+              {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
               <h2 id="cart-summary-title" className="sr-only">
                 Zusammenfassung
               </h2>
               <div className="flex items-baseline justify-between gap-4 text-[17px]">
                 <span>Zwischensumme</span>
                 <span className="font-mono text-xl">
-                  {convertToLocale({ amount: cart?.item_total ?? 0, currencyCode })}
+                  {convertToLocale({
+                    amount: cart?.item_total ?? 0,
+                    currencyCode,
+                  })}
                 </span>
               </div>
               {discountTotal > 0 && (
@@ -170,8 +203,8 @@ export const CartPage = ({ countryCode }: CartPageProps) => {
                 Weiter stöbern
               </a>
               <p className="m-0 font-mono text-xs text-muted">
-                Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und weiteren
-                Zahlarten über SumUp.
+                Lieferung nur innerhalb Deutschlands. Bezahlung per Karte und
+                weiteren Zahlarten über SumUp.
               </p>
             </aside>
           </div>

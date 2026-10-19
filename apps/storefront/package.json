@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro check && astro build",
+    "lint": "biome check .",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -28,6 +29,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
     "@astrojs/ts-plugin": "^1.10.7",
     "@medusajs/types": "^2.13.1",
     "@types/react": "^19.2.13",

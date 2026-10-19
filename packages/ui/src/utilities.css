@@ -163,8 +163,12 @@
   border-color: var(--color-accent, #ff4908);
   color: var(--color-cream, #fffdf5);
 }
-.badge--lavender { background: var(--color-lavender, #9fa2f7); }
-.badge--butter { background: var(--color-olive-soft, #f2ec8a); }
+.badge--lavender {
+  background: var(--color-lavender, #9fa2f7);
+}
+.badge--butter {
+  background: var(--color-olive-soft, #f2ec8a);
+}
 
 /* ===== Chip (Auswahl, echte <button aria-pressed>) ===== */
 
@@ -250,17 +254,28 @@
   border: 3px solid var(--color-white, #fff);
   border-radius: var(--radius-img, 0);
   background:
-    radial-gradient(var(--color-ink, #1c1a33) 1.6px, transparent 1.7px) 0 0 / 14px 14px,
+    radial-gradient(var(--color-ink, #1c1a33) 1.6px, transparent 1.7px) 0 0 /
+    14px 14px,
     var(--sticker-bg);
   opacity: 0.9;
 }
 
 /* Kartonfarben */
-.sticker-card--lavender { --sticker-bg: var(--color-lavender, #9fa2f7); }
-.sticker-card--pink { --sticker-bg: var(--color-pink, #ffc4d2); }
-.sticker-card--olive-soft { --sticker-bg: var(--color-olive-soft, #f2ec8a); }
-.sticker-card--stone { --sticker-bg: var(--color-stone, #7c7da6); }
-.sticker-card--paper { --sticker-bg: var(--color-paper, #d7d9fc); }
+.sticker-card--lavender {
+  --sticker-bg: var(--color-lavender, #9fa2f7);
+}
+.sticker-card--pink {
+  --sticker-bg: var(--color-pink, #ffc4d2);
+}
+.sticker-card--olive-soft {
+  --sticker-bg: var(--color-olive-soft, #f2ec8a);
+}
+.sticker-card--stone {
+  --sticker-bg: var(--color-stone, #7c7da6);
+}
+.sticker-card--paper {
+  --sticker-bg: var(--color-paper, #d7d9fc);
+}
 
 @media (max-width: 768px) {
   .sticker-card {
@@ -542,7 +557,8 @@
 .section--checkered {
   background-color: var(--color-cream, #fffdf5);
   background-size: 20px 20px;
-  background-image: linear-gradient(to right, #ebc477c5 1px, transparent 1px),
+  background-image:
+    linear-gradient(to right, #ebc477c5 1px, transparent 1px),
     linear-gradient(to bottom, #ebc477c5 1px, transparent 1px);
 }
 
@@ -679,7 +695,6 @@
 
 /* Prefers reduced motion */
 @media (prefers-reduced-motion: reduce) {
-
   .reveal,
   .reveal-left,
   .reveal-right,

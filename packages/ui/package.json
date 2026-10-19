@@ -2,6 +2,9 @@
   "name": "@shroom-mates/ui",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "lint": "biome check ."
+  },
   "type": "module",
   "exports": {
     "./tokens.css": "./src/tokens.css",

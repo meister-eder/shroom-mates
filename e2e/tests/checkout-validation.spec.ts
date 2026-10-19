@@ -5,7 +5,7 @@
  * Tests both server-side (empty fields, bad format) and edge cases.
  */
 
-import { test, expect, CheckoutFlow } from "../fixtures/checkout-fixture";
+import { CheckoutFlow, expect, test } from "../fixtures/checkout-fixture";
 
 test.describe("Checkout — Form Validation", () => {
   test.beforeAll(async ({ browser }) => {

@@ -10,7 +10,7 @@
  * Plus additional robustness tests for a production e-commerce site.
  */
 
-import { test, expect, CheckoutFlow } from "../fixtures/checkout-fixture";
+import { CheckoutFlow, expect, test } from "../fixtures/checkout-fixture";
 
 test.describe("Checkout — Edge Cases (B6)", () => {
   test.beforeAll(async ({ browser }) => {
@@ -227,11 +227,7 @@ test.describe("Checkout — Additional Robustness", () => {
   });
 
   test("legal pages load correctly", async ({ page }) => {
-    const legalPages = [
-      "/de/agb",
-      "/de/datenschutz",
-      "/de/widerruf",
-    ];
+    const legalPages = ["/de/agb", "/de/datenschutz", "/de/widerruf"];
 
     for (const path of legalPages) {
       await page.goto(path);

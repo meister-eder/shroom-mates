@@ -6,7 +6,7 @@ import StoreCatalog from "@modules/store/components/StoreCatalog.astro";
 
 const { countryCode } = Astro.params;
 
-const region = await getRegion(countryCode);
+const region = await getRegion(countryCode ?? "");
 if (!region) {
   return Astro.rewrite("/404");
 }

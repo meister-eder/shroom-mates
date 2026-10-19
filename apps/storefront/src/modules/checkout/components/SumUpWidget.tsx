@@ -17,7 +17,10 @@ declare global {
         locale?: string;
         showSubmitButton?: boolean;
         onLoad?: () => void;
-        onResponse?: (type: SumUpResponseType, body: Record<string, unknown>) => void;
+        onResponse?: (
+          type: SumUpResponseType,
+          body: Record<string, unknown>,
+        ) => void;
       }): { unmount?: () => void; submit?: () => void } | void;
     };
   }
@@ -94,7 +97,9 @@ export const SumUpWidget = ({
           onResponse: (type, body) => callbacks.current.onResponse(type, body),
         });
         const card = instance;
-        callbacks.current.onReady(card?.submit ? { submit: () => card.submit?.() } : null);
+        callbacks.current.onReady(
+          card?.submit ? { submit: () => card.submit?.() } : null,
+        );
       })
       .catch(() => {
         if (!cancelled) callbacks.current.onLoadError();
@@ -108,5 +113,7 @@ export const SumUpWidget = ({
     };
   }, [checkoutId]);
 
-  return <div id={SUMUP_WIDGET_ID} ref={containerRef} className="min-h-[200px]" />;
+  return (
+    <div id={SUMUP_WIDGET_ID} ref={containerRef} className="min-h-[200px]" />
+  );
 };

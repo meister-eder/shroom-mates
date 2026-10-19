@@ -1,8 +1,8 @@
 import { $cart, $isCartLoading } from "@lib/stores/cart";
-import { useStore } from "@nanostores/react";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
+import { useStore } from "@nanostores/react";
 import { useEffect, useState } from "react";
-import { type RegionCountry } from "./AddressFields";
+import type { RegionCountry } from "./AddressFields";
 import { DeliveryStep } from "./DeliveryStep";
 import { OrderSummary } from "./OrderSummary";
 import { PaymentStep } from "./PaymentStep";
@@ -81,8 +81,14 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
         <p className="mb-1.5 font-display text-[30px] font-black leading-tight [font-variation-settings:'SOFT'_100,'WONK'_1]">
           Hier wächst noch nichts.
         </p>
-        <p className="mb-5">Die Mates langweilen sich. Füge Produkte hinzu, bevor du zur Kasse gehst.</p>
-        <a href={`/${countryCode}/store`} className="btn btn--primary min-h-[50px] px-[22px]">
+        <p className="mb-5">
+          Die Mates langweilen sich. Füge Produkte hinzu, bevor du zur Kasse
+          gehst.
+        </p>
+        <a
+          href={`/${countryCode}/store`}
+          className="btn btn--primary min-h-[50px] px-[22px]"
+        >
           Zum Sortiment
         </a>
       </div>
@@ -92,12 +98,15 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
   // 04 "Prüfen" is shown inside the payment step once a payment session exists
   // (same condition under which the review panel is active there).
   const isReviewing =
-    step === "payment" && Boolean(cart.payment_collection?.payment_sessions?.length);
+    step === "payment" &&
+    Boolean(cart.payment_collection?.payment_sessions?.length);
   const currentIdx = isReviewing ? RAIL.length - 1 : VALID_STEPS.indexOf(step);
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-8 sm:px-8">
-      <h1 className="mb-6! text-[clamp(44px,5vw,72px)]! leading-[.92]! text-accent">Kasse</h1>
+      <h1 className="mb-6! text-[clamp(44px,5vw,72px)]! leading-[.92]! text-accent">
+        Kasse
+      </h1>
       <nav aria-label="Checkout-Schritte">
         <ol className="m-0 grid list-none grid-cols-4 gap-1.5 p-0 sm:gap-2">
           {RAIL.map((label, i) => {
@@ -115,7 +124,10 @@ export const CheckoutPage = ({ countryCode, countries }: CheckoutPageProps) => {
                       : "bg-transparent text-ink"
                 }`}
               >
-                <span className="font-mono text-[13px] font-medium" aria-hidden="true">
+                <span
+                  className="font-mono text-[13px] font-medium"
+                  aria-hidden="true"
+                >
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {label}

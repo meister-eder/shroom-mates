@@ -8,8 +8,20 @@
  *   <Icon name="mushroom" label="Pilzen" size={18} />
  */
 type IconName =
-  "cart" | "basket" | "menu" | "close" | "arrow-right" | "arrow-left" | "plus" |
-  "minus" | "check" | "mushroom" | "instagram" | "mail" | "map-pin" | "truck";
+  | "cart"
+  | "basket"
+  | "menu"
+  | "close"
+  | "arrow-right"
+  | "arrow-left"
+  | "plus"
+  | "minus"
+  | "check"
+  | "mushroom"
+  | "instagram"
+  | "mail"
+  | "map-pin"
+  | "truck";
 
 interface Props {
   name: IconName;
@@ -22,12 +34,19 @@ interface Props {
   class?: string;
 }
 
-const { name, size = 24, strokeWidth = 2.4, label, class: className } = Astro.props;
+const {
+  name,
+  size = 24,
+  strokeWidth = 2.4,
+  label,
+  class: className,
+} = Astro.props;
 
 const shapes: Record<IconName, string> = {
   // Pilzkorb: Korb mit Henkel, Körper und drei Streben (kein Einkaufswagen)
   cart: '<path d="M7 10a5 5 0 0 1 10 0"/><path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2Z"/><path d="M9 13.5v4M12 13.5v4M15 13.5v4"/>',
-  basket: '<path d="M7 10a5 5 0 0 1 10 0"/><path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2Z"/><path d="M9 13.5v4M12 13.5v4M15 13.5v4"/>',
+  basket:
+    '<path d="M7 10a5 5 0 0 1 10 0"/><path d="M3 10h18l-1.8 9.2a1.5 1.5 0 0 1-1.5 1.2H6.3a1.5 1.5 0 0 1-1.5-1.2Z"/><path d="M9 13.5v4M12 13.5v4M15 13.5v4"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   close: '<path d="M5 5l14 14M19 5L5 19"/>',
   "arrow-right": '<path d="M4 12h16M14 6l6 6-6 6"/>',

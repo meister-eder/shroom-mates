@@ -53,7 +53,9 @@ export const CheckoutStep = ({
         </button>
       )}
     </div>
-    {state === "active" && children && <div className="p-[22px]">{children}</div>}
+    {state === "active" && children && (
+      <div className="p-[22px]">{children}</div>
+    )}
     {state === "done" && children && (
       <div className="px-[22px] pb-[18px] pt-3.5 text-base">{children}</div>
     )}

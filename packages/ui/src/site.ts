@@ -58,7 +58,9 @@ export const ADDRESS = {
 export function linkBuilders(app: AppId, countryCode = "de") {
   const website = (path = "/") => (app === "website" ? path : websiteUrl(path));
   const shop = (path = "/") =>
-    app === "shop" ? `/${countryCode}${path === "/" ? "" : path}` : shopUrl(`/${countryCode}${path === "/" ? "" : path}`);
+    app === "shop"
+      ? `/${countryCode}${path === "/" ? "" : path}`
+      : shopUrl(`/${countryCode}${path === "/" ? "" : path}`);
   return { website, shop, home: app === "website" ? "/" : `/${countryCode}` };
 }
 
@@ -69,13 +71,43 @@ export function mainNav(app: AppId, countryCode = "de"): NavItem[] {
   const s = app !== "shop";
   return [
     { key: "shop", label: "Shop", href: shop("/store"), external: s },
-    { key: "pilze", label: "Unsere Pilze", href: website("/unsere-pilze/"), external: w },
-    { key: "growkits", label: "Growkits", href: website("/growkits/"), external: w },
-    { key: "tinkturen", label: "Tinkturen", href: website("/tinkturen/"), external: w },
-    { key: "gastro", label: "Gastronomie", href: website("/gastronomie/"), external: w },
-    { key: "ueber-uns", label: "Über uns", href: website("/ueber-uns/"), external: w },
+    {
+      key: "pilze",
+      label: "Unsere Pilze",
+      href: website("/unsere-pilze/"),
+      external: w,
+    },
+    {
+      key: "growkits",
+      label: "Growkits",
+      href: website("/growkits/"),
+      external: w,
+    },
+    {
+      key: "tinkturen",
+      label: "Tinkturen",
+      href: website("/tinkturen/"),
+      external: w,
+    },
+    {
+      key: "gastro",
+      label: "Gastronomie",
+      href: website("/gastronomie/"),
+      external: w,
+    },
+    {
+      key: "ueber-uns",
+      label: "Über uns",
+      href: website("/ueber-uns/"),
+      external: w,
+    },
     { key: "faq", label: "FAQ", href: website("/faq/"), external: w },
-    { key: "kontakt", label: "Kontakt", href: website("/kontakt/"), external: w },
+    {
+      key: "kontakt",
+      label: "Kontakt",
+      href: website("/kontakt/"),
+      external: w,
+    },
   ];
 }
 

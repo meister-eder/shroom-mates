@@ -1,4 +1,6 @@
-const PUBLIC_BACKEND_URL = (import.meta.env.PUBLIC_MEDUSA_BACKEND_URL ?? "").replace(/\/+$/, "");
+const PUBLIC_BACKEND_URL = (
+  import.meta.env.PUBLIC_MEDUSA_BACKEND_URL ?? ""
+).replace(/\/+$/, "");
 
 /**
  * Source URL for Astro's <Image>/getImage(). The optimiser fetches the

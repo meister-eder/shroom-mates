@@ -1,3 +1,4 @@
+import { useHydrated } from "@lib/hooks/use-hydrated";
 import {
   $cartItemCount,
   $regionId,
@@ -5,7 +6,6 @@ import {
   toggleCartSidebar,
 } from "@lib/stores/cart";
 import { useStore } from "@nanostores/react";
-import { useHydrated } from "@lib/hooks/use-hydrated";
 import { useEffect } from "react";
 
 interface CartButtonProps {

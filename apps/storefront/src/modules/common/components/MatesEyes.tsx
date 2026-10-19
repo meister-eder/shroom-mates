@@ -25,7 +25,10 @@ interface Props {
 export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
   const box = useRef<HTMLDivElement>(null);
   // Ruhestellung wie im Mockup: Blick leicht nach unten (600/900 im 1200er-Raster).
-  const [look, setLook] = useState<{ x: number; y: number }>({ x: 600, y: 900 });
+  const [look, setLook] = useState<{ x: number; y: number }>({
+    x: 600,
+    y: 900,
+  });
   const [blink, setBlink] = useState(false);
 
   useEffect(() => {
@@ -37,7 +40,12 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
         frame = 0;
         const r = box.current?.getBoundingClientRect();
         if (!r) return;
-        const p = gazePoint(gaze, r.left + r.width / 2, r.top + r.height / 2, Math.max(200, r.width));
+        const p = gazePoint(
+          gaze,
+          r.left + r.width / 2,
+          r.top + r.height / 2,
+          Math.max(200, r.width),
+        );
         if (!p) return setLook({ x: 600, y: 900 });
         const k = 1200 / r.width;
         setLook({ x: (p.x - r.left) * k, y: (p.y - r.top) * k });
@@ -60,19 +68,35 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
     <div
       ref={box}
       className={className}
-      style={{ position: "relative", width: size, maxWidth: "100%", aspectRatio: "1 / 1" }}
+      style={{
+        position: "relative",
+        width: size,
+        maxWidth: "100%",
+        aspectRatio: "1 / 1",
+      }}
     >
       <img
         src="/mascot.webp"
         alt={alt}
         width={size}
         height={size}
-        style={{ position: "absolute", inset: 0, display: "block", width: "100%", height: "100%" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "block",
+          width: "100%",
+          height: "100%",
+        }}
       />
       <svg
         aria-hidden="true"
         viewBox="0 0 1200 1200"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+        }}
       >
         {EYES.map(([cx, cy, rx, ry]) => {
           const prx = rx * 0.6;
@@ -88,8 +112,18 @@ export const MatesEyes = ({ size = 340, alt = "", className }: Props) => {
           const by = blink ? 0.08 : 1;
           return (
             <g key={`${cx}-${cy}`}>
-              <ellipse cx={cx} cy={cy} rx={rx} ry={ry * by} fill="#fffdf5" stroke="#ff4908" strokeWidth={7} />
-              {!blink && <ellipse cx={px} cy={py} rx={prx} ry={pry} fill="#ff4908" />}
+              <ellipse
+                cx={cx}
+                cy={cy}
+                rx={rx}
+                ry={ry * by}
+                fill="#fffdf5"
+                stroke="#ff4908"
+                strokeWidth={7}
+              />
+              {!blink && (
+                <ellipse cx={px} cy={py} rx={prx} ry={pry} fill="#ff4908" />
+              )}
             </g>
           );
         })}

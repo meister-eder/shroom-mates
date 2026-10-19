@@ -14,6 +14,7 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
       aria-labelledby="order-summary-title"
       className="flex min-w-0 flex-[1_1_340px] flex-col gap-3.5 rounded-none border-2 border-accent bg-paper p-[22px] lg:sticky lg:top-6"
     >
+      {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
       <h2
         id="order-summary-title"
         className="m-0 font-display text-[26px]! leading-[1.1]! font-black"
@@ -24,7 +25,9 @@ export const OrderSummary = ({ cart }: OrderSummaryProps) => {
       {cart.items?.map((item) => (
         <SummaryLine
           key={item.id}
-          title={item.variant?.product?.title || item.product_title || "Produkt"}
+          title={
+            item.variant?.product?.title || item.product_title || "Produkt"
+          }
           subtitle={item.variant?.title}
           handle={item.variant?.product?.handle}
           thumbnail={

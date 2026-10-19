@@ -23,7 +23,8 @@ export const SummaryLine = ({
 }: SummaryLineProps) => {
   const color = stickerColorVar(stickerColor({ handle, title }));
   const fmt = (amount: number) => convertToLocale({ amount, currencyCode });
-  const thumbClass = "box-border h-[60px] w-[60px] shrink-0 rounded-none border-[3px] object-cover";
+  const thumbClass =
+    "box-border h-[60px] w-[60px] shrink-0 rounded-none border-[3px] object-cover";
 
   return (
     <div className="flex items-center gap-3">

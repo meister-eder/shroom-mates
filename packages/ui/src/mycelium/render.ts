@@ -34,7 +34,10 @@ export function drawEntries(
     const aq = Math.min(7, Math.round(net.alpha[e]! * 7));
     const b = (net.kind[e]! << 12) | (wq << 3) | aq;
     let list = buckets.get(b);
-    if (!list) buckets.set(b, (list = []));
+    if (!list) {
+      list = [];
+      buckets.set(b, list);
+    }
     list.push(e);
   }
   const pos = net.pos;
@@ -104,7 +107,14 @@ export function upperBound(keys: Float32Array, v: number) {
  * the front whose successor is not revealed yet get a small bright bead with a
  * soft glow. ctx must map page (main) coordinates; y0..y1 is the visible range.
  */
-export function drawTips(ctx: CanvasRenderingContext2D, net: Network, front: number, y0: number, y1: number, fade = 160) {
+export function drawTips(
+  ctx: CanvasRenderingContext2D,
+  net: Network,
+  front: number,
+  y0: number,
+  y1: number,
+  fade = 160,
+) {
   const end = upperBound(net.key, front);
   const start = upperBound(net.key, front - fade);
   const { pos, kind, next, key, width } = net;

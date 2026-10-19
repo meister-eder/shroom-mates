@@ -7,7 +7,7 @@
  * Prerequisites: seeded DB, running backend (:9000) and storefront (:8000).
  */
 
-import { test, expect, CheckoutFlow } from "../fixtures/checkout-fixture";
+import { CheckoutFlow, expect, test } from "../fixtures/checkout-fixture";
 
 test.describe("Checkout — Manual Payment (Happy Path)", () => {
   test.beforeAll(async ({ browser }) => {
@@ -60,9 +60,7 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
     await checkout.assertOnOrderConfirmation();
   });
 
-  test("B1 — order appears in Medusa Admin API", async ({
-    page,
-  }) => {
+  test("B1 — order appears in Medusa Admin API", async ({ page }) => {
     // Check that the backend has at least one order (from seed or previous test)
     const resp = await page.request.get(
       "http://localhost:9000/admin/orders?limit=1",
@@ -75,18 +73,14 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
     expect([200, 401]).toContain(resp.status());
   });
 
-  test("verify cart is empty after order placed", async ({
-    checkout,
-  }) => {
+  test("verify cart is empty after order placed", async ({ checkout }) => {
     // After order placement, the cart should be empty
     // (the storefront clears the cart state)
     await checkout.goToCart();
 
     // Cart may be empty (cleared after order) or show empty state
     // This depends on client-side state — just verify the page loads
-    await expect(
-      checkout.page.locator("h1").first(),
-    ).toBeVisible();
+    await expect(checkout.page.locator("h1").first()).toBeVisible();
   });
 
   test("browse store → verify product grid and category filters", async ({
@@ -107,7 +101,9 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
     const pillCount = await pills.count();
     if (pillCount > 0) {
       // Click a non-active category pill
-      const filteredPill = pills.filter({ hasNot: page.locator(".active") }).first();
+      const filteredPill = pills
+        .filter({ hasNot: page.locator(".active") })
+        .first();
       if (await filteredPill.isVisible()) {
         await filteredPill.click();
         await page.waitForTimeout(500);
@@ -121,9 +117,7 @@ test.describe("Checkout — Manual Payment (Happy Path)", () => {
     }
   });
 
-  test("cart — add, change quantity, remove item", async ({
-    checkout,
-  }) => {
+  test("cart — add, change quantity, remove item", async ({ checkout }) => {
     // Add a product first
     await checkout.goToStore();
     await checkout.clickFirstProduct();

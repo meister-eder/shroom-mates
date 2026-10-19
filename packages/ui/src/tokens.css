@@ -29,7 +29,8 @@
 
   /* ── Schrift ───────────────────────────────────────────────────── */
   --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
-  --font-sans: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui, sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
 
   --display-xl-size: 104px;

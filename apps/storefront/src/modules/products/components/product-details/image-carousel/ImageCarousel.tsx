@@ -73,6 +73,7 @@ export const ImageCarousel = ({ images, alt, color = "paper" }: Props) => {
   return (
     <div className="gallery">
       {isPreviewing && (
+        // biome-ignore lint/a11y/useKeyWithClickEvents: Backdrop-Klick ist nur ein Zusatz, Schließen per Tastatur über den Button
         <div
           className="gallery__lightbox"
           role="dialog"
@@ -89,6 +90,7 @@ export const ImageCarousel = ({ images, alt, color = "paper" }: Props) => {
             className="round-btn gallery__lightbox-close"
             aria-label="Vergrößerung schließen"
             onClick={() => setIsPreviewing(false)}
+            // biome-ignore lint/a11y/noAutofocus: Fokus beim Öffnen des Dialogs gehört auf den Schließen-Button
             autoFocus
           >
             ×
@@ -114,6 +116,7 @@ export const ImageCarousel = ({ images, alt, color = "paper" }: Props) => {
 
       {images.length > 1 && (
         <>
+          {/* biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern */}
           <div className="gallery__thumbs" role="group" aria-label="Bilder">
             {images.map((image, index) => (
               <button
@@ -128,6 +131,7 @@ export const ImageCarousel = ({ images, alt, color = "paper" }: Props) => {
               </button>
             ))}
           </div>
+          {/* biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern */}
           <div className="gallery__pager" role="group" aria-label="Bilder">
             {images.map((image, index) => (
               <button

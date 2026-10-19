@@ -1,16 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateCartAddress } from "@lib/stores/cart";
-import type { StoreCart } from "@medusajs/types";
 import { formatAddressLines, isSameAddress } from "@lib/utils/address";
+import type { StoreCart } from "@medusajs/types";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
   AddressFields,
-  ERROR_CLASS,
-  FIELD,
   type AddressValues,
   type CheckoutFormValues,
+  ERROR_CLASS,
+  FIELD,
   type RegionCountry,
 } from "./AddressFields";
 import { CheckoutStep } from "./CheckoutStep";
@@ -20,10 +20,20 @@ type AddressIssue = { field: keyof AddressValues; message: string };
 function addressFormatIssues(a: AddressValues): AddressIssue[] {
   const issues: AddressIssue[] = [];
   if (a.address.trim() && !/\d/.test(a.address)) {
-    issues.push({ field: "address", message: "Bitte gib auch die Hausnummer an" });
+    issues.push({
+      field: "address",
+      message: "Bitte gib auch die Hausnummer an",
+    });
   }
-  if (a.country === "de" && a.postalCode.trim() && !/^\d{5}$/.test(a.postalCode.trim())) {
-    issues.push({ field: "postalCode", message: "Bitte gib eine gültige fünfstellige PLZ ein" });
+  if (
+    a.country === "de" &&
+    a.postalCode.trim() &&
+    !/^\d{5}$/.test(a.postalCode.trim())
+  ) {
+    issues.push({
+      field: "postalCode",
+      message: "Bitte gib eine gültige fünfstellige PLZ ein",
+    });
   }
   return issues;
 }
@@ -139,7 +149,10 @@ const ReadOnlyView = ({
   cart: StoreCart;
   onEdit?: () => void;
 }) => {
-  const isBillingSame = isSameAddress(cart.shipping_address, cart.billing_address);
+  const isBillingSame = isSameAddress(
+    cart.shipping_address,
+    cart.billing_address,
+  );
   const summary = [...formatAddressLines(cart.shipping_address), cart.email]
     .filter(Boolean)
     .join(" · ");
@@ -149,7 +162,8 @@ const ReadOnlyView = ({
       <p className="m-0">{summary}</p>
       {!isBillingSame && (
         <p className="m-0 mt-1 text-[15px]">
-          Rechnungsadresse: {formatAddressLines(cart.billing_address).join(" · ")}
+          Rechnungsadresse:{" "}
+          {formatAddressLines(cart.billing_address).join(" · ")}
         </p>
       )}
     </CheckoutStep>
@@ -228,21 +242,23 @@ export const ShippingAddressStep = ({
         billing_address: data.billingSameAsShipping
           ? shippingAddress
           : {
-            first_name: data.billing.firstName,
-            last_name: data.billing.lastName,
-            address_1: data.billing.address,
-            company: data.billing.company || undefined,
-            postal_code: data.billing.postalCode,
-            city: data.billing.city,
-            country_code: data.billing.country,
-            province: data.billing.province || undefined,
-          },
+              first_name: data.billing.firstName,
+              last_name: data.billing.lastName,
+              address_1: data.billing.address,
+              company: data.billing.company || undefined,
+              postal_code: data.billing.postalCode,
+              city: data.billing.city,
+              country_code: data.billing.country,
+              province: data.billing.province || undefined,
+            },
       });
 
       onContinue?.();
     } catch (error) {
       console.error("Failed to update shipping address:", error);
-      setSubmitError("Adresse konnte nicht gespeichert werden. Bitte versuche es erneut.");
+      setSubmitError(
+        "Adresse konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      );
     }
   };
 
@@ -264,7 +280,13 @@ export const ShippingAddressStep = ({
           {/* Email / Phone */}
           <div className="grid grid-cols-1 gap-4">
             <div className={FIELD}>
-              <label htmlFor="checkout-email">E-Mail * <span className="text-sm font-normal">für die Bestellbestätigung</span></label>
+              <label htmlFor="checkout-email">
+                E-Mail *{" "}
+                <span className="text-sm font-normal">
+                  für die Bestellbestätigung
+                </span>
+              </label>
+              {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
               <input
                 id="checkout-email"
                 type="email"
@@ -272,10 +294,15 @@ export const ShippingAddressStep = ({
                 {...register("email")}
                 aria-invalid={errors.email ? true : undefined}
               />
-              {errors.email && <p className={ERROR_CLASS}>{errors.email.message}</p>}
+              {errors.email && (
+                <p className={ERROR_CLASS}>{errors.email.message}</p>
+              )}
             </div>
             <div className={`${FIELD} sm:max-w-[calc(50%-8px)]`}>
-              <label htmlFor="checkout-phone">Telefon <span className="font-normal text-sm">(optional)</span></label>
+              <label htmlFor="checkout-phone">
+                Telefon <span className="font-normal text-sm">(optional)</span>
+              </label>
+              {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
               <input
                 id="checkout-phone"
                 type="tel"
@@ -283,7 +310,9 @@ export const ShippingAddressStep = ({
                 {...register("phone")}
                 aria-invalid={errors.phone ? true : undefined}
               />
-              {errors.phone && <p className={ERROR_CLASS}>{errors.phone.message}</p>}
+              {errors.phone && (
+                <p className={ERROR_CLASS}>{errors.phone.message}</p>
+              )}
             </div>
           </div>
 
@@ -311,7 +340,9 @@ export const ShippingAddressStep = ({
           )}
 
           {submitError && (
-            <p className={ERROR_CLASS} role="alert">{submitError}</p>
+            <p className={ERROR_CLASS} role="alert">
+              {submitError}
+            </p>
           )}
 
           <button

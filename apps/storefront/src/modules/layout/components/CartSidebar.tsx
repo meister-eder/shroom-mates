@@ -1,3 +1,4 @@
+import { useHydrated } from "@lib/hooks/use-hydrated";
 import {
   $cart,
   $isCartSidebarOpen,
@@ -7,11 +8,10 @@ import {
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
 import { stickerColor, stickerColorVar } from "@lib/utils/product-color";
-import { useStore } from "@nanostores/react";
-import { useHydrated } from "@lib/hooks/use-hydrated";
-import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { Icon } from "@modules/common/components/Icon";
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { QtyStepper } from "@modules/common/components/QtyStepper";
+import { useStore } from "@nanostores/react";
 import { useEffect, useRef, useState } from "react";
 
 interface CartSidebarProps {
@@ -49,10 +49,16 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       const active = document.activeElement;
-      if (e.shiftKey && (active === first || !sidebarRef.current.contains(active))) {
+      if (
+        e.shiftKey &&
+        (active === first || !sidebarRef.current.contains(active))
+      ) {
         e.preventDefault();
         last.focus();
-      } else if (!e.shiftKey && (active === last || !sidebarRef.current.contains(active))) {
+      } else if (
+        !e.shiftKey &&
+        (active === last || !sidebarRef.current.contains(active))
+      ) {
         e.preventDefault();
         first.focus();
       }
@@ -81,7 +87,11 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
     }
   };
 
-  const run = async (lineItemId: string, action: () => Promise<void>, what: string) => {
+  const run = async (
+    lineItemId: string,
+    action: () => Promise<void>,
+    what: string,
+  ) => {
     setBusyId(lineItemId);
     try {
       await action();
@@ -143,17 +153,24 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
           </div>
         ) : (
           <>
+            {/* biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern */}
+            {/* biome-ignore lint/a11y/noRedundantRoles: role="list" bleibt, weil list-style: none in Safari/VoiceOver die Listensemantik entfernt */}
             <ul className="cart-drawer__items" role="list">
               {cart?.items?.map((item) => {
                 const product = item.variant?.product;
                 const thumbnailUrl =
-                  item.thumbnail || product?.thumbnail || product?.images?.[0]?.url;
+                  item.thumbnail ||
+                  product?.thumbnail ||
+                  product?.images?.[0]?.url;
                 const productTitle = product?.title || item.title || "Produkt";
                 const variantTitle = item.variant?.title || "";
                 const unitPrice = item.unit_price || 0;
                 const quantity = item.quantity || 1;
                 const color = stickerColorVar(
-                  stickerColor({ handle: product?.handle, title: productTitle }),
+                  stickerColor({
+                    handle: product?.handle,
+                    title: productTitle,
+                  }),
                 );
                 const busy = busyId === item.id;
 
@@ -181,11 +198,16 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                       <div className="cart-line__top">
                         <p className="cart-line__name">{productTitle}</p>
                         <p className="cart-line__total">
-                          {convertToLocale({ amount: unitPrice * quantity, currencyCode })}
+                          {convertToLocale({
+                            amount: unitPrice * quantity,
+                            currencyCode,
+                          })}
                         </p>
                       </div>
                       <p className="cart-line__meta">
-                        {variantTitle && variantTitle !== "Standard" && `${variantTitle} · `}
+                        {variantTitle &&
+                          variantTitle !== "Standard" &&
+                          `${variantTitle} · `}
                         {convertToLocale({ amount: unitPrice, currencyCode })}
                       </p>
                       <div className="cart-line__actions">
@@ -194,15 +216,31 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                           label={`Anzahl ${productTitle}`}
                           disabled={busy}
                           onDecrease={() =>
-                            run(item.id, () => updateLineItemQuantity(item.id, quantity - 1), "update quantity")
+                            run(
+                              item.id,
+                              () =>
+                                updateLineItemQuantity(item.id, quantity - 1),
+                              "update quantity",
+                            )
                           }
                           onIncrease={() =>
-                            run(item.id, () => updateLineItemQuantity(item.id, quantity + 1), "update quantity")
+                            run(
+                              item.id,
+                              () =>
+                                updateLineItemQuantity(item.id, quantity + 1),
+                              "update quantity",
+                            )
                           }
                         />
                         <button
                           type="button"
-                          onClick={() => run(item.id, () => removeFromCart(item.id), "remove item")}
+                          onClick={() =>
+                            run(
+                              item.id,
+                              () => removeFromCart(item.id),
+                              "remove item",
+                            )
+                          }
                           disabled={busy}
                           className="text-btn"
                           aria-label={`${productTitle} aus dem Pilzkorb entfernen`}
@@ -215,12 +253,14 @@ export const CartSidebar = ({ countryCode }: CartSidebarProps) => {
                 );
               })}
             </ul>
-
             <div className="cart-drawer__foot">
               <div className="cart-drawer__subtotal">
                 <span>Zwischensumme</span>
                 <span>
-                  {convertToLocale({ amount: cart?.item_total || 0, currencyCode })}
+                  {convertToLocale({
+                    amount: cart?.item_total || 0,
+                    currencyCode,
+                  })}
                 </span>
               </div>
               <p className="cart-drawer__note">

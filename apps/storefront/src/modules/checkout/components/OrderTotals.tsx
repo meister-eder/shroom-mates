@@ -43,7 +43,9 @@ export const OrderTotals = ({
       </div>
       <div className={row}>
         <span>{shippingLabel}</span>
-        <span className="font-mono">{shippingPending ? "nächster Schritt" : fmt(shippingTotal)}</span>
+        <span className="font-mono">
+          {shippingPending ? "nächster Schritt" : fmt(shippingTotal)}
+        </span>
       </div>
       {hasDiscount && (
         <div className={`${row} font-bold`}>
@@ -85,7 +87,9 @@ export const OrderTotals = ({
 
   return (
     <>
-      <div className="flex flex-col gap-1.5 border-t-2 border-ink pt-3 text-base">{lines}</div>
+      <div className="flex flex-col gap-1.5 border-t-2 border-ink pt-3 text-base">
+        {lines}
+      </div>
       {totalRow}
       {note}
     </>

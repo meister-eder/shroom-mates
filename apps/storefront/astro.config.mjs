@@ -1,9 +1,8 @@
-import { defineConfig } from "astro/config";
-import { loadEnv } from "vite";
-
 import node from "@astrojs/node";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+import { loadEnv } from "vite";
 
 const { PUBLIC_MEDUSA_BACKEND_URL } = loadEnv(
   process.env.NODE_ENV ?? "",

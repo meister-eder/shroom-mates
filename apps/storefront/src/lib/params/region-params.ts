@@ -10,7 +10,7 @@ export const getRegionParams = async () => {
   try {
     const { regions } = await sdk.store.region.list();
 
-    let paths: RegionParams[] = [];
+    const paths: RegionParams[] = [];
 
     regions.forEach((region) => {
       region.countries?.forEach((country) => {

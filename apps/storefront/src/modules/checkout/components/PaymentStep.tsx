@@ -1,19 +1,23 @@
+import { goToOrderConfirmation } from "@lib/checkout/order-handoff";
 import {
   formatProviderName,
   isSumUpProvider,
   isTestProvider,
 } from "@lib/checkout/payment-providers";
-import { goToOrderConfirmation } from "@lib/checkout/order-handoff";
 import { sdk } from "@lib/sdk";
-import { convertToLocale } from "@lib/utils/money";
 import { initPaymentSession, placeOrder } from "@lib/stores/cart";
+import { convertToLocale } from "@lib/utils/money";
 import type { StoreCart, StorePaymentProvider } from "@medusajs/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CheckoutStep } from "./CheckoutStep";
 import { ERROR_CLASS } from "./AddressFields";
+import { CheckoutStep } from "./CheckoutStep";
 import { OptionCard } from "./OptionCard";
 import { OrderReview } from "./OrderReview";
-import { type SumUpCardHandle, SumUpWidget, type SumUpResponseType } from "./SumUpWidget";
+import {
+  type SumUpCardHandle,
+  type SumUpResponseType,
+  SumUpWidget,
+} from "./SumUpWidget";
 
 interface PaymentStepProps {
   cart: StoreCart;
@@ -21,10 +25,13 @@ interface PaymentStepProps {
   mode: "edit" | "inactive";
 }
 
-const ORDER_FAILED = "Bestellung konnte nicht aufgegeben werden. Bitte versuche es erneut.";
+const ORDER_FAILED =
+  "Bestellung konnte nicht aufgegeben werden. Bitte versuche es erneut.";
 
 export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
-  const [paymentProviders, setPaymentProviders] = useState<StorePaymentProvider[]>([]);
+  const [paymentProviders, setPaymentProviders] = useState<
+    StorePaymentProvider[]
+  >([]);
   const [selectedProviderId, setSelectedProviderId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,8 +45,11 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
   const session = sessions.find((s) => s.provider_id === selectedProviderId);
   const isSumUp = isSumUpProvider(selectedProviderId);
   const sumupCheckoutId =
-    isSumUp && !isSaving ? (session?.data?.id as string | undefined) : undefined;
+    isSumUp && !isSaving
+      ? (session?.data?.id as string | undefined)
+      : undefined;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: läuft bewusst nur bei den genannten Abhängigkeiten
   useEffect(() => {
     if (mode !== "edit") return;
 
@@ -47,9 +57,10 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
       setIsLoading(true);
       setError("");
       try {
-        const { payment_providers } = await sdk.store.payment.listPaymentProviders({
-          region_id: cart.region_id!,
-        });
+        const { payment_providers } =
+          await sdk.store.payment.listPaymentProviders({
+            region_id: cart.region_id!,
+          });
         setPaymentProviders(payment_providers);
 
         const existingProviderId = sessions[0]?.provider_id;
@@ -58,7 +69,9 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         }
       } catch (err) {
         console.error("Failed to load payment providers:", err);
-        setError("Zahlungsoptionen konnten nicht geladen werden. Bitte versuche es erneut.");
+        setError(
+          "Zahlungsoptionen konnten nicht geladen werden. Bitte versuche es erneut.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -79,7 +92,9 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
         return true;
       } catch (err) {
         console.error("Failed to initialize payment session:", err);
-        setError("Zahlungsmethode konnte nicht gesetzt werden. Bitte versuche es erneut.");
+        setError(
+          "Zahlungsmethode konnte nicht gesetzt werden. Bitte versuche es erneut.",
+        );
         return false;
       } finally {
         setIsSaving(false);
@@ -129,7 +144,10 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
     setIsPlacing(false);
   };
 
-  const handleSumUpResponse = (type: SumUpResponseType, body: Record<string, unknown>) => {
+  const handleSumUpResponse = (
+    type: SumUpResponseType,
+    body: Record<string, unknown>,
+  ) => {
     switch (type) {
       case "sent":
       case "auth-screen":
@@ -177,7 +195,9 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
   return (
     <>
       <CheckoutStep number={3} title="Zahlung" state="active">
-        {isLoading && <p className="mb-4 text-muted">Zahlungsoptionen werden geladen...</p>}
+        {isLoading && (
+          <p className="mb-4 text-muted">Zahlungsoptionen werden geladen...</p>
+        )}
 
         {!isLoading && paymentProviders.length === 0 && !error && (
           <p className="mb-4 text-muted">Keine Zahlungsoptionen verfügbar.</p>
@@ -218,13 +238,19 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
                   onResponse={handleSumUpResponse}
                   onReady={setSumupCard}
                   onLoadError={() =>
-                    setError("Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.")
+                    setError(
+                      "Zahlungswidget konnte nicht geladen werden. Bitte Seite neu laden.",
+                    )
                   }
                 />
               )
             )}
-            {isProcessing && <p className="mt-2 text-muted">Zahlung wird verarbeitet…</p>}
-            {isPlacing && <p className="mt-2 text-muted">Bestellung wird aufgegeben…</p>}
+            {isProcessing && (
+              <p className="mt-2 text-muted">Zahlung wird verarbeitet…</p>
+            )}
+            {isPlacing && (
+              <p className="mt-2 text-muted">Bestellung wird aufgegeben…</p>
+            )}
           </div>
         )}
 
@@ -253,12 +279,30 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
 
             <p className="m-0 text-[15px] leading-relaxed">
               Es gelten unsere{" "}
-              <a href={`/${countryCode}/agb`} target="_blank" className="text-accent-dark underline hover:text-ink">AGB</a>.
-              Informationen zu deinem{" "}
-              <a href={`/${countryCode}/widerruf`} target="_blank" className="text-accent-dark underline hover:text-ink">Widerrufsrecht</a>{" "}
+              <a
+                href={`/${countryCode}/agb`}
+                target="_blank"
+                className="text-accent-dark underline hover:text-ink"
+              >
+                AGB
+              </a>
+              . Informationen zu deinem{" "}
+              <a
+                href={`/${countryCode}/widerruf`}
+                target="_blank"
+                className="text-accent-dark underline hover:text-ink"
+              >
+                Widerrufsrecht
+              </a>{" "}
               und zum{" "}
-              <a href={`/${countryCode}/datenschutz`} target="_blank" className="text-accent-dark underline hover:text-ink">Datenschutz</a>.
-              Dein Zahlungsmittel wird mit Absenden der Bestellung belastet.
+              <a
+                href={`/${countryCode}/datenschutz`}
+                target="_blank"
+                className="text-accent-dark underline hover:text-ink"
+              >
+                Datenschutz
+              </a>
+              . Dein Zahlungsmittel wird mit Absenden der Bestellung belastet.
             </p>
 
             <a
@@ -277,7 +321,8 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
               <span>
                 <strong>Gesetzliche Gewährleistung</strong>
                 <br />
-                Mindestens zwei Jahre für Waren, die in der EU verkauft werden. Mehr erfahren
+                Mindestens zwei Jahre für Waren, die in der EU verkauft werden.
+                Mehr erfahren
               </span>
             </a>
 
@@ -304,14 +349,34 @@ export const PaymentStep = ({ cart, countryCode, mode }: PaymentStepProps) => {
             </button>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[13px]">
               <span className="inline-flex items-center gap-1.5">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
                   <rect x="5" y="11" width="14" height="9" rx="2" />
                   <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                 </svg>
                 Sichere Zahlung
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
                   <path d="M5 13l4 4L19 7" />
                 </svg>
                 SSL-verschlüsselt

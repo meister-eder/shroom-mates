@@ -1,15 +1,15 @@
 ---
-import Layout from "@layouts/Layout.astro";
 import { Image } from "astro:assets";
+import Layout from "@layouts/Layout.astro";
 import { listProducts, retrieveProduct } from "@lib/data/products";
 import { getRegion } from "@lib/data/regions";
 import { getProductPrice } from "@lib/utils/get-product-price";
 import { serverImageSrc } from "@lib/utils/image";
 import { stickerColor } from "@lib/utils/product-color";
-import { websiteUrl } from "@shroom-mates/ui/site";
 import ImageCarouselWrapper from "@modules/products/components/product-details/image-carousel/ImageCarouselWrapper.astro";
 import { ProductActions } from "@modules/products/components/product-details/ProductActions";
 import ProductAttributes from "@modules/products/components/product-details/ProductAttributes.astro";
+import { websiteUrl } from "@shroom-mates/ui/site";
 
 const { countryCode, handle } = Astro.params;
 
@@ -63,7 +63,8 @@ const color = stickerColor({ handle: product?.handle, title });
 
 // Latin name only when the shop data has one (subtitle or metadata.latin_name)
 const meta = (product?.metadata ?? {}) as Record<string, unknown>;
-const text = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+const text = (v: unknown) =>
+  typeof v === "string" && v.trim() ? v.trim() : null;
 const latinName = text(meta.latin_name) ?? text(product?.subtitle);
 const contents = text(meta.inhalt);
 const care = text(meta.pflege);
@@ -84,8 +85,12 @@ if (product) {
         p.id !== product!.id &&
         !p.categories?.some((c) => c.handle === "frische-pilze"),
     );
-    const sameCat = all.filter((p) => p.categories?.[0]?.handle === category?.handle);
-    const otherCat = all.filter((p) => p.categories?.[0]?.handle !== category?.handle);
+    const sameCat = all.filter(
+      (p) => p.categories?.[0]?.handle === category?.handle,
+    );
+    const otherCat = all.filter(
+      (p) => p.categories?.[0]?.handle !== category?.handle,
+    );
     related = [otherCat[0], sameCat[0]].filter(Boolean).slice(0, 2);
     if (related.length < 2) related = all.slice(0, 2);
   } catch (e) {

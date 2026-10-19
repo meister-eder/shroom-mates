@@ -18,7 +18,10 @@ const rows = [
   ["Herkunftsland", origin_country],
   ["Typ", type?.value],
   ["Gewicht", weight ? `${weight} g` : null],
-  ["Maße", length && width && height ? `${length} × ${width} × ${height}` : null],
+  [
+    "Maße",
+    length && width && height ? `${length} × ${width} × ${height}` : null,
+  ],
 ].filter((row): row is [string, string] => !!row[1]);
 ---
 

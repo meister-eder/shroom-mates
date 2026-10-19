@@ -14,24 +14,28 @@ import { Image } from "astro:assets";
 import logo from "./assets/logo_with_shrooms.png";
 
 interface Props {
-	class?: string;
-	alt?: string;
-	loading?: "lazy" | "eager";
-	/** Darstellungsbreite in px (bestimmt die srcset-Stufen), Default 480 */
-	width?: number;
-	/** sizes-Attribut; Default `(max-width: {width}px) 100vw, {width}px` */
-	sizes?: string;
+  class?: string;
+  alt?: string;
+  loading?: "lazy" | "eager";
+  /** Darstellungsbreite in px (bestimmt die srcset-Stufen), Default 480 */
+  width?: number;
+  /** sizes-Attribut; Default `(max-width: {width}px) 100vw, {width}px` */
+  sizes?: string;
 }
 
 const {
-	class: className,
-	alt = "Die shroom-mates: ein Austernpilz und ein Lion's Mane",
-	loading = "lazy",
-	width = 480,
-	sizes = `(max-width: ${width}px) 100vw, ${width}px`,
+  class: className,
+  alt = "Die shroom-mates: ein Austernpilz und ein Lion's Mane",
+  loading = "lazy",
+  width = 480,
+  sizes = `(max-width: ${width}px) 100vw, ${width}px`,
 } = Astro.props;
 
-const widths = [...new Set([0.5, 0.75, 1, 1.5, 2].map((f) => Math.min(1024, Math.round(width * f))))];
+const widths = [
+  ...new Set(
+    [0.5, 0.75, 1, 1.5, 2].map((f) => Math.min(1024, Math.round(width * f))),
+  ),
+];
 
 /*
  * Augen-Geometrie im 1024er-Raster, aus den Pixeln des 8192er-Masters
@@ -42,20 +46,68 @@ const widths = [...new Set([0.5, 0.75, 1, 1.5, 2].map((f) => Math.min(1024, Math
  * (gedrehten) Augen-Koordinatensystem, wird auf das Augeninnere geclippt.
  */
 const mascots = [
-	{
-		name: "oyster",
-		eyes: [
-			{ cx: 353.11, cy: 393.85, rot: 4.24, rx: 21.82, ry: 36.77, sw: 5.63, pu: 15.95, pv: 11.72, prx: 34.27, pry: 34.27, pphi: -7.89 },
-			{ cx: 407.5, cy: 396.92, rot: 4.24, rx: 21.82, ry: 36.77, sw: 5.63, pu: 7.93, pv: 11.28, prx: 21.32, pry: 32.87, pphi: 9.58 },
-		],
-	},
-	{
-		name: "lions-mane",
-		eyes: [
-			{ cx: 665.93, cy: 509.35, rot: 1.85, rx: 25.6, ry: 43.6, sw: 5.63, pu: -8.5, pv: -11.42, prx: 25.88, pry: 38.44, pphi: 17.6 },
-			{ cx: 727.58, cy: 506.61, rot: -0.66, rx: 26.11, ry: 44.49, sw: 5.74, pu: -12.36, pv: -20.79, prx: 26.16, pry: 45.78, pphi: 16.78 },
-		],
-	},
+  {
+    name: "oyster",
+    eyes: [
+      {
+        cx: 353.11,
+        cy: 393.85,
+        rot: 4.24,
+        rx: 21.82,
+        ry: 36.77,
+        sw: 5.63,
+        pu: 15.95,
+        pv: 11.72,
+        prx: 34.27,
+        pry: 34.27,
+        pphi: -7.89,
+      },
+      {
+        cx: 407.5,
+        cy: 396.92,
+        rot: 4.24,
+        rx: 21.82,
+        ry: 36.77,
+        sw: 5.63,
+        pu: 7.93,
+        pv: 11.28,
+        prx: 21.32,
+        pry: 32.87,
+        pphi: 9.58,
+      },
+    ],
+  },
+  {
+    name: "lions-mane",
+    eyes: [
+      {
+        cx: 665.93,
+        cy: 509.35,
+        rot: 1.85,
+        rx: 25.6,
+        ry: 43.6,
+        sw: 5.63,
+        pu: -8.5,
+        pv: -11.42,
+        prx: 25.88,
+        pry: 38.44,
+        pphi: 17.6,
+      },
+      {
+        cx: 727.58,
+        cy: 506.61,
+        rot: -0.66,
+        rx: 26.11,
+        ry: 44.49,
+        sw: 5.74,
+        pu: -12.36,
+        pv: -20.79,
+        prx: 26.16,
+        pry: 45.78,
+        pphi: 16.78,
+      },
+    ],
+  },
 ];
 
 const ORANGE = "#ff4908"; // exakt aus den Pixeln (255, 73, 8)

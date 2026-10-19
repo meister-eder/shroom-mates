@@ -15,15 +15,20 @@ export const AddedToast = () => {
   }, [toast]);
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern
     <div className="toast-region" role="status" aria-live="polite">
       {toast && (
-        <div className={`toast${toast.kind === "error" ? " toast--error" : ""}`} key={toast.id}>
+        <div
+          className={`toast${toast.kind === "error" ? " toast--error" : ""}`}
+          key={toast.id}
+        >
           <MatesEyes size={56} className="toast__mascot" />
           <p className="toast__text">
             {toast.kind === "added" ? (
               <>
                 <strong>
-                  <span className="toast__name">{toast.title} </span>liegt im Körbchen!
+                  <span className="toast__name">{toast.title} </span>liegt im
+                  Körbchen!
                 </strong>
               </>
             ) : (

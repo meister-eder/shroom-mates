@@ -76,7 +76,11 @@ let initPromise: Promise<void> | null = null;
  */
 export function initCart(): Promise<void> {
   const loaded = $cart.get();
-  if (loaded && loaded.id === getCartId() && loaded.region_id === $regionId.get()) {
+  if (
+    loaded &&
+    loaded.id === getCartId() &&
+    loaded.region_id === $regionId.get()
+  ) {
     $isCartLoading.set(false);
     return Promise.resolve();
   }

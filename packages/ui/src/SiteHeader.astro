@@ -16,11 +16,17 @@
  * "end") still work but are deprecated.
  */
 import { Image } from "astro:assets";
-import logoWithShrooms from "./assets/logo_with_shrooms.png";
-import MatesLogo from "./MatesLogo.astro";
 import logoFont from "./assets/logo_font.svg?url";
+import logoWithShrooms from "./assets/logo_with_shrooms.png";
 import Icon from "./Icon.astro";
-import { INSTAGRAM_URL, linkBuilders, mainNav, type AppId, type NavKey } from "./site";
+import MatesLogo from "./MatesLogo.astro";
+import {
+  type AppId,
+  INSTAGRAM_URL,
+  linkBuilders,
+  mainNav,
+  type NavKey,
+} from "./site";
 
 export interface NavLink {
   label: string;
@@ -76,7 +82,8 @@ if (legacyLinks) {
 } else {
   items = mainNav(app, countryCode);
   // Shop nav (ShopHeader mockup): no Growkits/Tinkturen; Kontakt only in the mobile menu
-  if (app === "shop") items = items.filter((i) => i.key !== "growkits" && i.key !== "tinkturen");
+  if (app === "shop")
+    items = items.filter((i) => i.key !== "growkits" && i.key !== "tinkturen");
 }
 const isShop = app === "shop";
 

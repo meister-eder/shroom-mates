@@ -50,16 +50,19 @@ export const WithdrawalForm = () => {
 
   if (received) {
     return (
+      // biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern
       <div className="shop-card p-6 space-y-3" role="status">
         <h2 className="checkout-step-title">Dein Widerruf ist eingegangen</h2>
         <p>
-          Eingegangen am <strong>{formatReceivedAt(received.received_at)}</strong>.
-          Eine Eingangsbestätigung mit dem Inhalt deiner Erklärung haben wir dir
-          per E-Mail geschickt.
+          Eingegangen am{" "}
+          <strong>{formatReceivedAt(received.received_at)}</strong>. Eine
+          Eingangsbestätigung mit dem Inhalt deiner Erklärung haben wir dir per
+          E-Mail geschickt.
         </p>
         <p className="text-muted text-sm">
           Bitte sende die Ware an: shroom-mates GbR, Markranstädter Straße 8,
-          04229 Leipzig. Wir melden uns zur Rückabwicklung. Referenz: {received.id}
+          04229 Leipzig. Wir melden uns zur Rückabwicklung. Referenz:{" "}
+          {received.id}
         </p>
       </div>
     );
@@ -69,30 +72,82 @@ export const WithdrawalForm = () => {
     <form onSubmit={onSubmit} className="shop-card p-6 space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="input-label" htmlFor="withdraw-name">Name *</label>
-          <input id="withdraw-name" name="name" required maxLength={200} autoComplete="name" className="input-field" />
+          <label className="input-label" htmlFor="withdraw-name">
+            Name *
+          </label>
+          {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
+          <input
+            id="withdraw-name"
+            name="name"
+            required
+            maxLength={200}
+            autoComplete="name"
+            className="input-field"
+          />
         </div>
         <div>
-          <label className="input-label" htmlFor="withdraw-email">E-Mail für die Bestätigung *</label>
-          <input id="withdraw-email" name="email" type="email" required maxLength={320} autoComplete="email" className="input-field" />
+          <label className="input-label" htmlFor="withdraw-email">
+            E-Mail für die Bestätigung *
+          </label>
+          {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
+          <input
+            id="withdraw-email"
+            name="email"
+            type="email"
+            required
+            maxLength={320}
+            autoComplete="email"
+            className="input-field"
+          />
         </div>
       </div>
       <div>
-        <label className="input-label" htmlFor="withdraw-order">Bestellnummer *</label>
-        <input id="withdraw-order" name="order_reference" required maxLength={12} pattern="#?\s*\d{1,10}" title="Bestellnummer, z. B. #12" inputMode="numeric" placeholder="z. B. #12" className="input-field" />
-        <p className="text-xs text-muted mt-1">Steht in deiner Bestellbestätigung.</p>
+        <label className="input-label" htmlFor="withdraw-order">
+          Bestellnummer *
+        </label>
+        {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
+        <input
+          id="withdraw-order"
+          name="order_reference"
+          required
+          maxLength={12}
+          pattern="#?\s*\d{1,10}"
+          title="Bestellnummer, z. B. #12"
+          inputMode="numeric"
+          placeholder="z. B. #12"
+          className="input-field"
+        />
+        <p className="text-xs text-muted mt-1">
+          Steht in deiner Bestellbestätigung.
+        </p>
       </div>
       <div>
         <label className="input-label" htmlFor="withdraw-items">
-          Welche Artikel? <span className="label-optional">(optional – leer lassen für die ganze Bestellung)</span>
+          Welche Artikel?{" "}
+          <span className="label-optional">
+            (optional – leer lassen für die ganze Bestellung)
+          </span>
         </label>
-        <input id="withdraw-items" name="items" maxLength={1000} className="input-field" />
+        {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
+        <input
+          id="withdraw-items"
+          name="items"
+          maxLength={1000}
+          className="input-field"
+        />
       </div>
       <div>
         <label className="input-label" htmlFor="withdraw-message">
           Nachricht <span className="label-optional">(optional)</span>
         </label>
-        <textarea id="withdraw-message" name="message" maxLength={2000} rows={3} className="input-field" />
+        {/* biome-ignore lint/correctness/useUniqueElementIds: feste ID für label/aria-Verknüpfung, Komponente wird pro Seite nur einmal gerendert */}
+        <textarea
+          id="withdraw-message"
+          name="message"
+          maxLength={2000}
+          rows={3}
+          className="input-field"
+        />
       </div>
 
       {error && <p className="input-error">{error}</p>}

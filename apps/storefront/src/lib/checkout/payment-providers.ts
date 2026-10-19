@@ -1,6 +1,8 @@
 export const SYSTEM_PROVIDER_ID = "pp_system_default";
 
-export function isSumUpProvider(providerId: string | null | undefined): boolean {
+export function isSumUpProvider(
+  providerId: string | null | undefined,
+): boolean {
   return !!providerId?.startsWith("pp_sumup");
 }
 

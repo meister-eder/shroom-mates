@@ -7,7 +7,7 @@ import { CheckoutCompletePage } from "@modules/checkout/components/CheckoutCompl
 const { countryCode } = Astro.params;
 
 if (!countryCode) {
-    return Astro.rewrite("/404");
+  return Astro.rewrite("/404");
 }
 ---
 

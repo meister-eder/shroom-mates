@@ -1,12 +1,12 @@
 ---
+import { basePriceLabel } from "../../../../lib/utils/base-price";
 import { getProductPrice } from "../../../../lib/utils/get-product-price";
+import { isProductInStock } from "../../../../lib/utils/is-product-in-stock";
+import { stickerColor } from "../../../../lib/utils/product-color";
 import type { ProductVariant } from "../../../../types/global";
 import Thumbnail from "../thumbnail/Thumbnail.astro";
 import Price from "./Price.astro";
 import { QuickAdd } from "./QuickAdd";
-import { basePriceLabel } from "../../../../lib/utils/base-price";
-import { isProductInStock } from "../../../../lib/utils/is-product-in-stock";
-import { stickerColor } from "../../../../lib/utils/product-color";
 
 type PreviewVariant = ProductVariant & {
   title?: string | null;
@@ -28,8 +28,16 @@ interface Props {
   badge?: string;
 }
 
-const { handle, variants, thumbnailUrl, imageUrl, title, priority, categoryName, badge } =
-  Astro.props;
+const {
+  handle,
+  variants,
+  thumbnailUrl,
+  imageUrl,
+  title,
+  priority,
+  categoryName,
+  badge,
+} = Astro.props;
 const countryCode = Astro.params.countryCode;
 
 const { cheapestPrice } = getProductPrice({ productVariants: variants });

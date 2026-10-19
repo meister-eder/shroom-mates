@@ -12,6 +12,7 @@
         "preview": "turbo preview"
     },
     "devDependencies": {
+        "@biomejs/biome": "2.2.6",
         "turbo": "^2.4.4"
     }
 }

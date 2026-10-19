@@ -1,9 +1,9 @@
-import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { formatProviderName } from "@lib/checkout/payment-providers";
 import { formatAddressLines, isSameAddress } from "@lib/utils/address";
+import { convertToLocale } from "@lib/utils/money";
 import type { StoreOrder } from "@medusajs/types";
 import { OrderTotals } from "@modules/checkout/components/OrderTotals";
-import { convertToLocale } from "@lib/utils/money";
+import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { INSTAGRAM_URL } from "@shroom-mates/ui/site";
 
 interface OrderConfirmedPageProps {
@@ -17,7 +17,11 @@ const WaveEdge = ({ flip = false }: { flip?: boolean }) => (
     viewBox="0 0 1440 56"
     preserveAspectRatio="none"
     className="block h-14 w-full fill-ink"
-    style={flip ? { margin: "-1px 0 0", transform: "scaleY(-1)" } : { margin: "0 0 -1px" }}
+    style={
+      flip
+        ? { margin: "-1px 0 0", transform: "scaleY(-1)" }
+        : { margin: "0 0 -1px" }
+    }
   >
     <path d="M0 56V28C80 6 160 6 240 28S400 50 480 28 640 6 720 28 880 50 960 28 1120 6 1200 28 1360 50 1440 28V56Z" />
   </svg>
@@ -33,7 +37,10 @@ const NEXT_STEPS = [
 const H2 = "m-0 mb-4! font-display text-[26px]! leading-[1.1]! font-black";
 
 /** Server-rendered: the order is loaded by the page (404 if unknown). */
-export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPageProps) => {
+export const OrderConfirmedPage = ({
+  countryCode,
+  order,
+}: OrderConfirmedPageProps) => {
   const currencyCode = order.currency_code ?? "eur";
   const paymentProviderId =
     order.payment_collections?.[0]?.payment_sessions?.[0]?.provider_id;
@@ -41,7 +48,7 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
   const firstName = order.shipping_address?.first_name?.trim();
 
   return (
-    <div aria-label="Bestellbestätigung" className="overflow-hidden">
+    <section aria-label="Bestellbestätigung" className="overflow-hidden">
       <section className="mx-auto flex max-w-[1280px] flex-wrap items-center gap-10 px-4 pb-[72px] pt-12 sm:px-8">
         <div className="relative h-[380px] min-w-0 flex-[0_1_420px]">
           <MatesEyes
@@ -59,7 +66,9 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
           </h1>
           <p className="mb-0 mt-5 max-w-[40ch] text-xl leading-normal">
             Die Mates packen schon.
-            {order.email && <> Eine Bestätigung ist unterwegs an {order.email}.</>}
+            {order.email && (
+              <> Eine Bestätigung ist unterwegs an {order.email}.</>
+            )}
           </p>
         </div>
       </section>
@@ -104,7 +113,9 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
               >
                 <span>
                   {item.quantity ?? 1} × {item.title}
-                  {item.variant_title && item.variant_title !== "Standard" && ` (${item.variant_title})`}
+                  {item.variant_title &&
+                    item.variant_title !== "Standard" &&
+                    ` (${item.variant_title})`}
                 </span>
                 <span className="font-mono">
                   {convertToLocale({
@@ -120,7 +131,9 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
             currencyCode={currencyCode}
             itemTotal={order.item_total ?? order.subtotal}
             shippingTotal={order.shipping_total}
-            shippingLabel={shippingMethod ? `Versand ${shippingMethod.name}` : "Versand"}
+            shippingLabel={
+              shippingMethod ? `Versand ${shippingMethod.name}` : "Versand"
+            }
             taxTotal={order.tax_total}
             discountTotal={order.discount_total}
             total={order.total}
@@ -131,6 +144,7 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
               <p className="label mb-1">Lieferadresse</p>
               <address className="not-italic leading-relaxed">
                 {formatAddressLines(order.shipping_address).map((line, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: Adresszeilen sind statisch, die Reihenfolge ändert sich nicht
                   <span key={i} className="block">
                     {line}
                   </span>
@@ -144,6 +158,7 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
               ) : (
                 <address className="not-italic leading-relaxed">
                   {formatAddressLines(order.billing_address).map((line, i) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: Adresszeilen sind statisch, die Reihenfolge ändert sich nicht
                     <span key={i} className="block">
                       {line}
                     </span>
@@ -175,6 +190,6 @@ export const OrderConfirmedPage = ({ countryCode, order }: OrderConfirmedPagePro
           </a>
         </div>
       </section>
-    </div>
+    </section>
   );
 };

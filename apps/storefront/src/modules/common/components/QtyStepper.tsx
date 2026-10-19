@@ -27,7 +27,12 @@ export const QtyStepper = ({
   disableIncrease = false,
   size = "md",
 }: QtyStepperProps) => (
-  <div role="group" aria-label={label} className={`qty-stepper qty-stepper--${size}`}>
+  // biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern
+  <div
+    role="group"
+    aria-label={label}
+    className={`qty-stepper qty-stepper--${size}`}
+  >
     <button
       type="button"
       onClick={onDecrease}

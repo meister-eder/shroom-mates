@@ -1,10 +1,13 @@
-import { addShippingMethod } from "@lib/stores/cart";
 import { sdk } from "@lib/sdk";
+import { addShippingMethod } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
-import type { StoreCart, StoreCartShippingOptionWithServiceZone } from "@medusajs/types";
+import type {
+  StoreCart,
+  StoreCartShippingOptionWithServiceZone,
+} from "@medusajs/types";
 import { useEffect, useState } from "react";
-import { CheckoutStep } from "./CheckoutStep";
 import { ERROR_CLASS } from "./AddressFields";
+import { CheckoutStep } from "./CheckoutStep";
 import { OptionCard } from "./OptionCard";
 
 interface DeliveryStepProps {
@@ -20,9 +23,9 @@ export const DeliveryStep = ({
   onContinue,
   onEdit,
 }: DeliveryStepProps) => {
-  const [shippingOptions, setShippingOptions] = useState<StoreCartShippingOptionWithServiceZone[]>(
-    [],
-  );
+  const [shippingOptions, setShippingOptions] = useState<
+    StoreCartShippingOptionWithServiceZone[]
+  >([]);
   const [selectedOptionId, setSelectedOptionId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -32,6 +35,7 @@ export const DeliveryStep = ({
   const formatPrice = (amount: number) =>
     amount === 0 ? "Kostenlos" : convertToLocale({ amount, currencyCode });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: läuft bewusst nur bei den genannten Abhängigkeiten
   useEffect(() => {
     if (mode !== "edit") return;
 
@@ -50,7 +54,9 @@ export const DeliveryStep = ({
         }
       } catch (err) {
         console.error("Failed to load shipping options:", err);
-        setError("Versandoptionen konnten nicht geladen werden. Bitte versuche es erneut.");
+        setError(
+          "Versandoptionen konnten nicht geladen werden. Bitte versuche es erneut.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -68,7 +74,9 @@ export const DeliveryStep = ({
       await addShippingMethod(optionId);
     } catch (err) {
       console.error("Failed to update shipping method:", err);
-      setError("Versandart konnte nicht aktualisiert werden. Bitte versuche es erneut.");
+      setError(
+        "Versandart konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+      );
       // Revert to the previously saved method
       const savedMethodId = cart.shipping_methods?.[0]?.shipping_option_id;
       setSelectedOptionId(savedMethodId ?? "");
@@ -115,7 +123,11 @@ export const DeliveryStep = ({
               value={option.id}
               checked={selectedOptionId === option.id}
               onSelect={handleOptionChange}
-              aside={<span className="font-mono text-lg">{formatPrice(option.amount)}</span>}
+              aside={
+                <span className="font-mono text-lg">
+                  {formatPrice(option.amount)}
+                </span>
+              }
             >
               {option.name}
             </OptionCard>
@@ -123,7 +135,11 @@ export const DeliveryStep = ({
         </div>
       )}
 
-      {error && <p className={`${ERROR_CLASS} mb-4`} role="alert">{error}</p>}
+      {error && (
+        <p className={`${ERROR_CLASS} mb-4`} role="alert">
+          {error}
+        </p>
+      )}
 
       <button
         type="button"

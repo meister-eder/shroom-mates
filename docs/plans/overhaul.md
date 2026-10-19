@@ -32,6 +32,7 @@ from any of it.
 
 - P1.1: px font sizes in components (--body-size: 17px, shop.css, growkits.astro, CartPage) don't scale with browser font setting; separate task.
 - P1.3: stale comment 'SvgHeading reads SVGs from ./public' in apps/storefront/Dockerfile (~l.45); COPY public stays needed.
+- P2.1: 107 Biome warnings remain (non-null assertions, any, !important) — possible cleanup task. Never put comments in biome.json (breaks excludes silently).
 
 ---
 
@@ -69,7 +70,7 @@ from any of it.
 
 ## P2 Tooling and tests
 
-- [ ] **P2.1 Lint and type-check the storefront and UI package** · deps: P1.3 · verify: quick
+- [x] **P2.1 Lint and type-check the storefront and UI package** · deps: P1.3 · verify: quick · 42d5a1b
   Move Biome config to the repo root (`biome.json`, same version 2.2.6, devDependency at root) covering `apps/*`, `packages/*`, `e2e/` (not `backend/`, not `docs/`). Keep each package's current indentation via `overrides` (website: tabs; storefront, packages/ui: whatever they use now) so formatting doesn't churn every line. Add `lint` scripts (`biome check .`) to storefront and packages/ui; change storefront `build` to `astro check && astro build` (add `@astrojs/check` devDependency). Run `biome check --write`, then fix remaining lint and type errors properly (no blanket rule disables; a narrowly scoped disable with a reason comment is OK for generated or vendor-shaped code). Update the format hook path assumptions if needed (`.claude/hooks/format.sh` finds the nearest `biome.json` upwards and runs the root binary).
   Commit: `chore(repo): biome and astro check for all workspaces`
 
@@ -214,9 +215,19 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Merge `packages/ui/src/legal/datenschutz-website.md` and `datenschutz-shop.md` into one `datenschutz.md` rendered at `/datenschutz/`: keep every section of both (no legal content dropped), dedupe identical sections, add a short section "Speicherung im Browser" listing exactly the allowlisted storage keys from P6.1 and their purpose (technically necessary, § 25 Abs. 2 Nr. 2 TDDDG). Mark every sentence you wrote or changed with `<mark class="legal-open">…</mark>` (existing convention) so the humans can have it checked legally. Footer/legal links point to the merged page. Follow-up for humans: legal review of the merged policy and AGB/Widerruf URLs.
   Commit: `docs(legal): one privacy policy for the merged site`
 
+- [ ] **P7.7 Server-log analytics with GoAccess (no JS, no consent needed)** · deps: P7.6 · verify: quick
+  Decided by the user on 2026-10-19: reach measurement from Caddy access logs, nothing added to the pages, no client-side storage (stays outside § 25 TDDDG).
+  - Caddy (`Caddyfile` and `Caddyfile.test`, main site block only, not `api.`): JSON access log to a file on a new named volume `caddy_logs` (e.g. `/var/log/caddy/access.log`), `roll_size 50MiB`, `roll_keep_for 720h` (30 days). Use `format filter` to mask client IPs (`request>remote_ip` and `request>client_ip`: `ip_mask` IPv4 /16, IPv6 /32) and delete `request>headers>Cookie` and `request>headers>Authorization`. Use the filter syntax of the Caddy version in the compose files (`caddy:2-alpine`, current 2.x); check the Caddy docs for the exact `format filter` grammar rather than guessing.
+  - `docker-compose.yml` and `docker-compose.staging.yml`: mount `caddy_logs` into Caddy; add a `goaccess` service (image `allinurl/goaccess`, pinned to a specific version tag) that mounts `caddy_logs` read-only and a `goaccess_report` volume, and regenerates a static report every 10 minutes in a shell loop: `--log-format=CADDY`, `--ignore-crawlers`, `--anonymize-ip`, `--no-query-string`, `--ignore-statics=req`, excluding `/_astro/`, `/assets/`, `/admin/` and `/_image`. Serve the report from a tiny static server in that container or a second one (`busybox httpd` is fine) bound to `127.0.0.1:7890` on the host only: never public, no Caddy route, no new secrets or env vars. Restart policy and a health check like the other services.
+  - `DEPLOYMENT.md`: how to view the report (`ssh -L 7890:127.0.0.1:7890 <user>@<host>` then `http://localhost:7890`), placeholders only, no real host. Same note in `CLAUDE.md` (Aufbau, one line).
+  - Privacy policy (the merged `datenschutz.md` from P7.6): section "Server-Logfiles und Reichweitenmessung": which data (masked IP, time, URL without query string, referrer, user agent), purpose (operations, security, aggregated reach statistics), legal basis Art. 6 Abs. 1 lit. f DSGVO, storage 30 days, no cookies, no sharing with third parties, processed on our own server. Wrap the whole new section in `<mark class="legal-open">` for the legal review.
+  - Validation: YAML parses; if `caddy` or `goaccess` binaries are available locally use `caddy adapt --config Caddyfile` / `goaccess --version`, otherwise review against the docs. The real check is the staging deploy in P8.2: add to that smoke check that the `goaccess` container is healthy and that the report file exists.
+  Follow-up for humans: GoAccess report access works via SSH tunnel; mention it in the legal review together with P7.6.
+  Commit: `feat(deploy): privacy-friendly server-log analytics with GoAccess`
+
 ## P8 Finish, staging, land
 
-- [ ] **P8.1 Full verification and report** · deps: P7.6 · verify: all
+- [ ] **P8.1 Full verification and report** · deps: P7.7 · verify: all
   Run `scripts/verify.sh all`. Build both a clean install (`rm -rf node_modules apps/*/node_modules && bun install --frozen-lockfile`) and the production build. Measure: JS and CSS gzip per page type (home, growkits, catalog, product, cart, checkout) before (from the review: website ≈17 KB JS, shop ≈90 KB JS, shop CSS 16 KB) vs. after. Write `docs/plans/overhaul-report.md`: what changed per phase, numbers, deviations, blocked tasks with reasons, every manual follow-up from the Log. Commit it.
   Commit: `docs(plan): overhaul report`
 
@@ -236,3 +247,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-19 23:27 P1.2 DONE ab82bed — dead meta/schemas removed, jsonLd helper, og size tags dropped
 2026-10-19 23:28 P1.3 DONE 872e2de — dead components, helpers, 10 images removed
 2026-10-19 23:29 P1.4 DONE f339c6a — rewrite to /404 (verified 404 status), German error copy
+2026-10-19 23:40 P2.1 DONE 42d5a1b — root biome, astro check; checkout only reformatted; visual PASS

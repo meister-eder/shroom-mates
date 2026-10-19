@@ -5,7 +5,7 @@
  * Verifies all key pages load and render correctly.
  */
 
-import { test, expect, CheckoutFlow } from "../fixtures/checkout-fixture";
+import { CheckoutFlow, expect, test } from "../fixtures/checkout-fixture";
 
 test.describe("Storefront — Pages & Navigation", () => {
   test.beforeAll(async ({ browser }) => {
@@ -139,7 +139,9 @@ test.describe("Storefront — Accessibility Basics", () => {
     // Should have at least one h1
     // querySelectorAll doesn't pierce shadow DOM, so the Astro dev
     // toolbar's own headings (dev server only) aren't counted.
-    const h1Count = await page.evaluate(() => document.querySelectorAll("h1").length);
+    const h1Count = await page.evaluate(
+      () => document.querySelectorAll("h1").length,
+    );
     expect(h1Count).toBe(1); // Exactly one h1 per page
 
     // Navigation should have aria-label

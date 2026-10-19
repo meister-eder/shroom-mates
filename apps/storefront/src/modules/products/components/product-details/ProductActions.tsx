@@ -1,13 +1,16 @@
-import { sdk } from "@lib/sdk";
 import { flyToCart } from "@lib/fly-to-cart";
+import { sdk } from "@lib/sdk";
 import { addToCart } from "@lib/stores/cart";
 import { showErrorToast } from "@lib/stores/toast";
 import { basePriceLabel } from "@lib/utils/base-price";
-import { getPricesForVariant, getProductPrice } from "@lib/utils/get-product-price";
+import {
+  getPricesForVariant,
+  getProductPrice,
+} from "@lib/utils/get-product-price";
 import { isProductInStock } from "@lib/utils/is-product-in-stock";
 import { QtyStepper } from "@modules/common/components/QtyStepper";
-import type { ProductVariant } from "../../../../types/global";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ProductVariant } from "../../../../types/global";
 
 type Variant = {
   id: string;
@@ -72,6 +75,7 @@ export const ProductActions = ({
 
   useEffect(() => () => clearTimeout(addedTimer.current), []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: läuft bewusst nur bei den genannten Abhängigkeiten
   useEffect(() => {
     let cancelled = false;
 
@@ -137,7 +141,8 @@ export const ProductActions = ({
     return (
       (selectedVariant
         ? getPricesForVariant(selectedVariant as unknown as ProductVariant)
-        : null) ?? getProductPrice({ productVariants: asVariants }).cheapestPrice
+        : null) ??
+      getProductPrice({ productVariants: asVariants }).cheapestPrice
     );
   }, [selectedVariant, variants]);
   const basePrice = price
@@ -222,7 +227,9 @@ export const ProductActions = ({
               inkl. MwSt., zzgl. <a href="#versand">Versandkosten</a>
             </span>
           </div>
-          {basePrice && <p className="buy-box__base">Grundpreis: {basePrice}</p>}
+          {basePrice && (
+            <p className="buy-box__base">Grundpreis: {basePrice}</p>
+          )}
         </div>
       )}
 
@@ -271,10 +278,9 @@ export const ProductActions = ({
         </button>
       </div>
       {lowStock !== null && !isLoadingVariants && (
-        <p className="buy-box__stock">
-          Nur noch {lowStock} Stück da
-        </p>
+        <p className="buy-box__stock">Nur noch {lowStock} Stück da</p>
       )}
+      {/* biome-ignore lint/a11y/useSemanticElements: ARIA-Rolle bewusst gesetzt, natives Element würde Darstellung und Verhalten ändern */}
       <span className="sr-only" role="status">
         {justAdded ? `${quantity}× ${productTitle} liegt im Körbchen` : ""}
       </span>

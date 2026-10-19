@@ -38,9 +38,12 @@ const clamp = (v: number) => Math.max(-1, Math.min(1, v));
 
 function current(now = performance.now()): Gaze {
   if (mouse) return { kind: "point", ...mouse };
-  if (touch && now - touch.at < TOUCH_MS) return { kind: "point", x: touch.x, y: touch.y };
-  if (tilt && now - tilt.at < TILT_MS) return { kind: "dir", x: tilt.x, y: tilt.y };
-  if (scroll && now - scroll.at < SCROLL_MS) return { kind: "dir", x: 0, y: scroll.y };
+  if (touch && now - touch.at < TOUCH_MS)
+    return { kind: "point", x: touch.x, y: touch.y };
+  if (tilt && now - tilt.at < TILT_MS)
+    return { kind: "dir", x: tilt.x, y: tilt.y };
+  if (scroll && now - scroll.at < SCROLL_MS)
+    return { kind: "dir", x: 0, y: scroll.y };
   return null;
 }
 
@@ -97,7 +100,11 @@ function start() {
   );
   addEventListener("deviceorientation", (e) => {
     if (e.gamma === null || e.beta === null) return;
-    tilt = { x: clamp(e.gamma / 25), y: clamp((e.beta - 45) / 25), at: performance.now() };
+    tilt = {
+      x: clamp(e.gamma / 25),
+      y: clamp((e.beta - 45) / 25),
+      at: performance.now(),
+    };
     emit();
   });
 }

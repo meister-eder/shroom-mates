@@ -14,11 +14,13 @@ export function stickerColor(product: {
   title?: string | null;
 }): StickerColor {
   const key = `${product.handle ?? ""} ${product.title ?? ""}`.toLowerCase();
-  if (key.includes("black pearl") || key.includes("black-pearl")) return "stone";
+  if (key.includes("black pearl") || key.includes("black-pearl"))
+    return "stone";
   if (key.includes("rosen")) return "pink";
   if (key.includes("reishi") || key.includes("cordyceps")) return "pink";
   if (key.includes("lion")) return "lavender";
-  if (key.includes("white pearl") || key.includes("white-pearl")) return "olive-soft";
+  if (key.includes("white pearl") || key.includes("white-pearl"))
+    return "olive-soft";
   if (key.includes("auster") || key.includes("tinktur")) return "olive-soft";
   return "paper";
 }

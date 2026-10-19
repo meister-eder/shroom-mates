@@ -66,7 +66,10 @@ export function flyToCart(from: Element | null | undefined): void {
       opacity: t > 0.92 ? 0 : 1,
     });
   }
-  const flight = el.animate(frames, { duration: 820, easing: "cubic-bezier(.45,0,.55,1)" });
+  const flight = el.animate(frames, {
+    duration: 820,
+    easing: "cubic-bezier(.45,0,.55,1)",
+  });
   flight.onfinish = flight.oncancel = () => {
     el.remove();
     target?.animate(

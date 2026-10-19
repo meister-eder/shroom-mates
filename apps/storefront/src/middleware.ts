@@ -6,41 +6,41 @@ const MEDUSA_BACKEND_URL = import.meta.env.PUBLIC_MEDUSA_BACKEND_URL;
 const DEFAULT_REGION = import.meta.env.DEFAULT_REGION;
 
 const regionMapCache = {
-	regionMap: new Map<string, HttpTypes.StoreRegion>(),
-	regionMapUpdated: Date.now(),
+  regionMap: new Map<string, HttpTypes.StoreRegion>(),
+  regionMapUpdated: Date.now(),
 };
 
 function isStaticOrInternalPath(pathname: string) {
-	// Astro/Vite internal and image optimization routes
-	if (
-		pathname === "/_astro" ||
-		pathname.startsWith("/_astro/") ||
-		pathname === "/_image" ||
-		pathname.startsWith("/_image") ||
-		pathname.startsWith("/@") || // e.g. /@vite, /@id, /@fs (dev)
-		pathname.startsWith("/__") // e.g. /__vite_ping (dev)
-	) {
-		return true;
-	}
+  // Astro/Vite internal and image optimization routes
+  if (
+    pathname === "/_astro" ||
+    pathname.startsWith("/_astro/") ||
+    pathname === "/_image" ||
+    pathname.startsWith("/_image") ||
+    pathname.startsWith("/@") || // e.g. /@vite, /@id, /@fs (dev)
+    pathname.startsWith("/__") // e.g. /__vite_ping (dev)
+  ) {
+    return true;
+  }
 
-	// The 404 page (also the target of Astro.rewrite("/404")) has no country
-	if (pathname === "/404") {
-		return true;
-	}
+  // The 404 page (also the target of Astro.rewrite("/404")) has no country
+  if (pathname === "/404") {
+    return true;
+  }
 
-	// Common site root static files
-	if (
-		pathname === "/favicon.ico" ||
-		pathname === "/robots.txt" ||
-		pathname === "/sitemap.xml" ||
-		pathname === "/manifest.webmanifest"
-	) {
-		return true;
-	}
+  // Common site root static files
+  if (
+    pathname === "/favicon.ico" ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
+    pathname === "/manifest.webmanifest"
+  ) {
+    return true;
+  }
 
-	// Any file with an extension (images, css, js, fonts, etc.)
-	const lastSegment = pathname.split("/").pop() ?? "";
-	return lastSegment.includes(".") && lastSegment !== ".well-known";
+  // Any file with an extension (images, css, js, fonts, etc.)
+  const lastSegment = pathname.split("/").pop() ?? "";
+  return lastSegment.includes(".") && lastSegment !== ".well-known";
 }
 
 /**
@@ -48,42 +48,42 @@ function isStaticOrInternalPath(pathname: string) {
  * @returns A map of country codes to regions.
  */
 async function getRegionMap() {
-	const { regionMap, regionMapUpdated } = regionMapCache;
+  const { regionMap, regionMapUpdated } = regionMapCache;
 
-	if (!MEDUSA_BACKEND_URL) {
-		throw new Error(
-			"src/middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a PUBLIC_MEDUSA_BACKEND_URL environment variable?",
-		);
-	}
+  if (!MEDUSA_BACKEND_URL) {
+    throw new Error(
+      "src/middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a PUBLIC_MEDUSA_BACKEND_URL environment variable?",
+    );
+  }
 
-	const isCacheValid =
-		regionMap.keys().next().value &&
-		regionMapUpdated > Date.now() - 3600 * 1000; // 1 hour
+  const isCacheValid =
+    regionMap.keys().next().value &&
+    regionMapUpdated > Date.now() - 3600 * 1000; // 1 hour
 
-	if (!isCacheValid) {
-		try {
-			const { regions } = await sdk.store.region.list();
+  if (!isCacheValid) {
+    try {
+      const { regions } = await sdk.store.region.list();
 
-			if (!regions?.length) {
-				throw new Error(
-					"No regions found. Please set up regions in your Medusa Admin.",
-				);
-			}
+      if (!regions?.length) {
+        throw new Error(
+          "No regions found. Please set up regions in your Medusa Admin.",
+        );
+      }
 
-			regions.forEach((region: HttpTypes.StoreRegion) => {
-				region.countries?.forEach((country) => {
-					regionMapCache.regionMap.set(country.iso_2 ?? "", region);
-				});
-			});
+      regions.forEach((region: HttpTypes.StoreRegion) => {
+        region.countries?.forEach((country) => {
+          regionMapCache.regionMap.set(country.iso_2 ?? "", region);
+        });
+      });
 
-			regionMapCache.regionMapUpdated = Date.now();
-		} catch (error) {
-			console.error(error);
-			throw new Error("Failed to fetch regions from Medusa.");
-		}
-	}
+      regionMapCache.regionMapUpdated = Date.now();
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to fetch regions from Medusa.");
+    }
+  }
 
-	return regionMapCache.regionMap;
+  return regionMapCache.regionMap;
 }
 
 /**
@@ -92,61 +92,67 @@ async function getRegionMap() {
  * @returns The country code.
  */
 async function getCountryCode(pathname: string) {
-	let countryCode: string | undefined;
+  let countryCode: string | undefined;
 
-	const urlCountryCode = pathname.split("/")[1]?.toLowerCase();
+  const urlCountryCode = pathname.split("/")[1]?.toLowerCase();
 
-	const regionMap = await getRegionMap();
+  const regionMap = await getRegionMap();
 
-	if (urlCountryCode && regionMap.has(urlCountryCode)) {
-		countryCode = urlCountryCode;
-	} else if (regionMap.has(DEFAULT_REGION)) {
-		countryCode = DEFAULT_REGION;
-	} else if (regionMap.keys().next().value) {
-		countryCode = regionMap.keys().next().value;
-	}
+  if (urlCountryCode && regionMap.has(urlCountryCode)) {
+    countryCode = urlCountryCode;
+  } else if (regionMap.has(DEFAULT_REGION)) {
+    countryCode = DEFAULT_REGION;
+  } else if (regionMap.keys().next().value) {
+    countryCode = regionMap.keys().next().value;
+  }
 
-	return countryCode;
+  return countryCode;
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
-	// Never redirect non-page requests (assets, dev internals, etc.)
-	if (isStaticOrInternalPath(context.url.pathname)) {
-		return next();
-	}
+  // Never redirect non-page requests (assets, dev internals, etc.)
+  if (isStaticOrInternalPath(context.url.pathname)) {
+    return next();
+  }
 
-	// Only redirect navigations; avoid changing semantics for form submits, etc.
-	const method = context.request.method.toUpperCase();
-	if (method !== "GET" && method !== "HEAD") {
-		return next();
-	}
+  // Only redirect navigations; avoid changing semantics for form submits, etc.
+  const method = context.request.method.toUpperCase();
+  if (method !== "GET" && method !== "HEAD") {
+    return next();
+  }
 
-	const pathname = context.url.pathname;
-	const search = context.url.search;
+  const pathname = context.url.pathname;
+  const search = context.url.search;
 
-	let countryCode: string | undefined;
-	try {
-		countryCode = await getCountryCode(pathname);
-	} catch (err) {
-		// Region lookup failed (Medusa down, no regions, etc.) — continue without redirect
-		console.warn("Region lookup failed, continuing without country redirect:", err);
-	}
+  let countryCode: string | undefined;
+  try {
+    countryCode = await getCountryCode(pathname);
+  } catch (err) {
+    // Region lookup failed (Medusa down, no regions, etc.) — continue without redirect
+    console.warn(
+      "Region lookup failed, continuing without country redirect:",
+      err,
+    );
+  }
 
-	if (countryCode) {
-		const urlHasCountryCode =
-			pathname.split("/")[1] === countryCode ||
-			pathname.split("/")[1].includes(`${countryCode}/`);
+  if (countryCode) {
+    const urlHasCountryCode =
+      pathname.split("/")[1] === countryCode ||
+      pathname.split("/")[1].includes(`${countryCode}/`);
 
-		if (!urlHasCountryCode) {
-			const redirectPath = pathname === "/" ? "" : pathname;
-			const queryString = search || "";
-			// Relative on purpose: behind the reverse proxy context.url.origin is
-			// the internal address (http://localhost:4321), not the public host.
-			return context.redirect(`/${countryCode}${redirectPath}${queryString}`, 307);
-		}
-	}
+    if (!urlHasCountryCode) {
+      const redirectPath = pathname === "/" ? "" : pathname;
+      const queryString = search || "";
+      // Relative on purpose: behind the reverse proxy context.url.origin is
+      // the internal address (http://localhost:4321), not the public host.
+      return context.redirect(
+        `/${countryCode}${redirectPath}${queryString}`,
+        307,
+      );
+    }
+  }
 
-	const response = await next();
-	// Security headers are handled by Caddy in production
-	return response;
+  const response = await next();
+  // Security headers are handled by Caddy in production
+  return response;
 });

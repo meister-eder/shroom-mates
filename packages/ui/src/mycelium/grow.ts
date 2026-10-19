@@ -88,9 +88,27 @@ type Hypha = {
   children: number[];
 };
 
-type Origin = { x: number; y: number; dir: number; spread: number; n: number; life: number; lead: number };
+type Origin = {
+  x: number;
+  y: number;
+  dir: number;
+  spread: number;
+  n: number;
+  life: number;
+  lead: number;
+};
 
-type Entry = { x1: number; y1: number; x2: number; y2: number; w: number; a: number; k: number; kind: number; next: number };
+type Entry = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  w: number;
+  a: number;
+  k: number;
+  kind: number;
+  next: number;
+};
 
 /** centre line of the main cord, sampled every ~3px */
 function cordLine(W: number, H: number, compact: boolean, rnd: () => number) {
@@ -102,7 +120,11 @@ function cordLine(W: number, H: number, compact: boolean, rnd: () => number) {
   pts.push([W * (compact ? 0.66 : 0.58), -60]);
   pts.push([W * (compact ? 0.6 : 0.5), 60]);
   let right = rnd() < 0.5;
-  for (let y = spacing * 0.75; y < H + spacing; y += spacing * (0.85 + rnd() * 0.3)) {
+  for (
+    let y = spacing * 0.75;
+    y < H + spacing;
+    y += spacing * (0.85 + rnd() * 0.3)
+  ) {
     const [a, b] = right ? hi : lo;
     pts.push([W * (a! + rnd() * (b! - a!)), y]);
     right = !right;
@@ -118,8 +140,15 @@ function cordLine(W: number, H: number, compact: boolean, rnd: () => number) {
       const s2 = s * s;
       const s3 = s2 * s;
       const f = (a: number, b: number, c: number, d: number) =>
-        0.5 * (2 * b + (-a + c) * s + (2 * a - 5 * b + 4 * c - d) * s2 + (-a + 3 * b - 3 * c + d) * s3);
-      dense.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1])]);
+        0.5 *
+        (2 * b +
+          (-a + c) * s +
+          (2 * a - 5 * b + 4 * c - d) * s2 +
+          (-a + 3 * b - 3 * c + d) * s3);
+      dense.push([
+        f(p0[0], p1[0], p2[0], p3[0]),
+        f(p0[1], p1[1], p2[1], p3[1]),
+      ]);
     }
   }
   const out: { x: number; y: number; nx: number; ny: number; s: number }[] = [];
@@ -138,7 +167,10 @@ function cordLine(W: number, H: number, compact: boolean, rnd: () => number) {
     const nx = -ty / tl;
     const ny = tx / tl;
     // organic wobble, like the prototype's displacement map
-    const wob = 11 * Math.sin(acc / 120 + ph[0]!) + 5 * Math.sin(acc / 47 + ph[1]!) + 2 * Math.sin(acc / 17 + ph[2]!);
+    const wob =
+      11 * Math.sin(acc / 120 + ph[0]!) +
+      5 * Math.sin(acc / 47 + ph[1]!) +
+      2 * Math.sin(acc / 17 + ph[2]!);
     out.push({ x: p[0] + nx * wob, y: p[1] + ny * wob, nx, ny, s: acc });
     if (p[1] > H + 40) break;
   }
@@ -212,7 +244,10 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
     let g: number;
     if (compact) g = 0.5 + 0.5 * Math.min(1, d / half) ** 2;
     else {
-      const t = Math.min(1, Math.max(0, (d - content * 0.35) / (content * 0.75)));
+      const t = Math.min(
+        1,
+        Math.max(0, (d - content * 0.35) / (content * 0.75)),
+      );
       g = 0.4 + 0.6 * t * t * (3 - 2 * t);
     }
     return Math.max(g, Math.min(1, near(x, y) * 1.6));
@@ -239,23 +274,58 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
   {
     const every = compact ? 7 : 5; // cord samples (~3px each)
     let side = 1;
-    for (let i = 4; i < cord.length; i += every + Math.floor(rndCord() * every)) {
+    for (
+      let i = 4;
+      i < cord.length;
+      i += every + Math.floor(rndCord() * every)
+    ) {
       const p = cord[i]!;
       side = rndCord() < 0.75 ? -side : side;
-      const dir = Math.atan2(p.ny * side, p.nx * side) + (rndCord() - 0.5) * 1.1;
-      origins.push({ x: p.x, y: p.y, dir, spread: 0, n: 1, life: 25 + rndCord() * (compact ? 120 : 170), lead: 1 });
+      const dir =
+        Math.atan2(p.ny * side, p.nx * side) + (rndCord() - 0.5) * 1.1;
+      origins.push({
+        x: p.x,
+        y: p.y,
+        dir,
+        spread: 0,
+        n: 1,
+        life: 25 + rndCord() * (compact ? 120 : 170),
+        lead: 1,
+      });
     }
   }
   // hero: a little from both upper corners
-  origins.push({ x: -4, y: 60, dir: 0.5, spread: 1.1, n: compact ? 4 : 7, life: 200, lead: 0.6 });
-  origins.push({ x: W + 4, y: 140, dir: Math.PI - 0.5, spread: 1.1, n: compact ? 4 : 7, life: 200, lead: 0.6 });
+  origins.push({
+    x: -4,
+    y: 60,
+    dir: 0.5,
+    spread: 1.1,
+    n: compact ? 4 : 7,
+    life: 200,
+    lead: 0.6,
+  });
+  origins.push({
+    x: W + 4,
+    y: 140,
+    dir: Math.PI - 0.5,
+    spread: 1.1,
+    n: compact ? 4 : 7,
+    life: 200,
+    lead: 0.6,
+  });
   // then along both edges, staggered down the page
-  for (let y = 700, i = 0; y < H - 200; y += (compact ? 760 : 900) * (0.8 + rndEdge() * 0.4), i++) {
+  for (
+    let y = 700, i = 0;
+    y < H - 200;
+    y += (compact ? 760 : 900) * (0.8 + rndEdge() * 0.4), i++
+  ) {
     const left = i % 2 === 1;
     origins.push({
       x: left ? -4 : W + 4,
       y,
-      dir: left ? 0.15 + (rndEdge() - 0.5) * 0.4 : Math.PI - 0.15 + (rndEdge() - 0.5) * 0.4,
+      dir: left
+        ? 0.15 + (rndEdge() - 0.5) * 0.4
+        : Math.PI - 0.15 + (rndEdge() - 0.5) * 0.4,
       spread: 1.45,
       n: compact ? 5 : 8,
       life: compact ? 130 : 180,
@@ -263,18 +333,53 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
     });
   }
   // inoculation points (spawn grains) in the gutters: small star colonies
-  for (let y = 400 + rndSpot() * 200; y < H - 150; y += (compact ? 900 : 650) * (0.7 + rndSpot() * 0.6)) {
+  for (
+    let y = 400 + rndSpot() * 200;
+    y < H - 150;
+    y += (compact ? 900 : 650) * (0.7 + rndSpot() * 0.6)
+  ) {
     const left = rndSpot() < 0.5;
-    const x = compact ? (left ? 0.04 : 0.96) * W : (left ? 0.015 + rndSpot() * 0.1 : 0.885 + rndSpot() * 0.1) * W;
-    origins.push({ x, y, dir: rndSpot() * 6.28, spread: Math.PI, n: compact ? 5 : 8, life: compact ? 60 : 85, lead: 0.6 });
+    const x = compact
+      ? (left ? 0.04 : 0.96) * W
+      : (left ? 0.015 + rndSpot() * 0.1 : 0.885 + rndSpot() * 0.1) * W;
+    origins.push({
+      x,
+      y,
+      dir: rndSpot() * 6.28,
+      spread: Math.PI,
+      n: compact ? 5 : 8,
+      life: compact ? 60 : 85,
+      lead: 0.6,
+    });
   }
   // an origin starts when the front has (nearly) reached it
-  const startTick = (o: Origin) => Math.max(0, (o.y - FRONT_SLACK * o.lead) / FRONT_V);
+  const startTick = (o: Origin) =>
+    Math.max(0, (o.y - FRONT_SLACK * o.lead) / FRONT_V);
   origins.sort((a, b) => startTick(a) - startTick(b));
   let nextOrigin = 0;
 
-  const spawn = (h: number, x: number, y: number, a: number, life: number, ox: number, oy: number) => {
-    tips.push({ h, ox, oy, x, y, a, c: (rnd() - 0.5) * 0.02, life, age: 0, side: rnd() < 0.5 ? 1 : -1, gap: 3 + rnd() * 6 });
+  const spawn = (
+    h: number,
+    x: number,
+    y: number,
+    a: number,
+    life: number,
+    ox: number,
+    oy: number,
+  ) => {
+    tips.push({
+      h,
+      ox,
+      oy,
+      x,
+      y,
+      a,
+      c: (rnd() - 0.5) * 0.02,
+      life,
+      age: 0,
+      side: rnd() < 0.5 ? 1 : -1,
+      gap: 3 + rnd() * 6,
+    });
   };
 
   const branchLife = () => {
@@ -291,14 +396,32 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
 
   let tick = 0;
   const lastTick = (H + FRONT_SLACK) / FRONT_V + 400;
-  while ((tips.length || nextOrigin < origins.length) && sx1.length < MAX_SEGS && tick < lastTick) {
-    while (nextOrigin < origins.length && startTick(origins[nextOrigin]!) <= tick) {
+  while (
+    (tips.length || nextOrigin < origins.length) &&
+    sx1.length < MAX_SEGS &&
+    tick < lastTick
+  ) {
+    while (
+      nextOrigin < origins.length &&
+      startTick(origins[nextOrigin]!) <= tick
+    ) {
       const o = origins[nextOrigin++]!;
       for (let k = 0; k < o.n; k++) {
         const h = newHypha(-1, 0);
-        const a = o.dir + (o.n > 1 ? (k / (o.n - 1) - 0.5) * o.spread * 2 : 0) + (rnd() - 0.5) * 0.3;
+        const a =
+          o.dir +
+          (o.n > 1 ? (k / (o.n - 1) - 0.5) * o.spread * 2 : 0) +
+          (rnd() - 0.5) * 0.3;
         const jitter = o.n > 1 ? 1 : 0;
-        spawn(h, o.x + (rnd() - 0.5) * 10 * jitter, o.y + (rnd() - 0.5) * 30 * jitter, a, o.life * (0.6 + rnd() * 0.8), o.x, o.y);
+        spawn(
+          h,
+          o.x + (rnd() - 0.5) * 10 * jitter,
+          o.y + (rnd() - 0.5) * 30 * jitter,
+          a,
+          o.life * (0.6 + rnd() * 0.8),
+          o.x,
+          o.y,
+        );
       }
     }
     const front = tick * FRONT_V + FRONT_SLACK;
@@ -307,21 +430,33 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
       const t = tips[i]!;
       // the front holds tips back so growth sweeps down the page
       // (with a ragged edge, so the frontier doesn't read as a ruler line)
-      const edge = front + 46 * Math.sin(t.x / 110 + 1.3) + 26 * Math.sin(t.x / 41);
+      const edge =
+        front + 46 * Math.sin(t.x / 110 + 1.3) + 26 * Math.sin(t.x / 41);
       if (t.y > edge && Math.sin(t.a) > -0.2) continue;
       t.age++;
       t.life--;
 
       // negative autotropism: steer away from the denser side
       const look = CELL * 2.2;
-      const dl = sense(t.x + Math.cos(t.a - 0.55) * look, t.y + Math.sin(t.a - 0.55) * look);
-      const dr = sense(t.x + Math.cos(t.a + 0.55) * look, t.y + Math.sin(t.a + 0.55) * look);
+      const dl = sense(
+        t.x + Math.cos(t.a - 0.55) * look,
+        t.y + Math.sin(t.a - 0.55) * look,
+      );
+      const dr = sense(
+        t.x + Math.cos(t.a + 0.55) * look,
+        t.y + Math.sin(t.a + 0.55) * look,
+      );
       t.c += (rnd() - 0.5) * 0.016;
       t.c *= 0.9;
       // apical dominance: tips keep growing away from where they started
       const out = Math.atan2(t.y - t.oy, t.x - t.ox);
-      const off = t.age > 3 ? Math.atan2(Math.sin(out - t.a), Math.cos(out - t.a)) : 0;
-      t.a += t.c + (rnd() - 0.5) * 0.2 + off * 0.015 + (dl > dr ? 0.05 : dr > dl ? -0.05 : 0);
+      const off =
+        t.age > 3 ? Math.atan2(Math.sin(out - t.a), Math.cos(out - t.a)) : 0;
+      t.a +=
+        t.c +
+        (rnd() - 0.5) * 0.2 +
+        off * 0.015 +
+        (dl > dr ? 0.05 : dr > dl ? -0.05 : 0);
 
       const step = STEP * (0.85 + rnd() * 0.3);
       const nx = t.x + Math.cos(t.a) * step;
@@ -364,7 +499,11 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
       t.gap--;
       const local = c >= 0 ? dens[c]! : 0;
       const g = weight(nx, ny);
-      const pB = (compact ? 0.12 : 0.14) * g * (local > 4 ? 0.3 : 1) * (tips.length > MAX_TIPS ? 0 : 1);
+      const pB =
+        (compact ? 0.12 : 0.14) *
+        g *
+        (local > 4 ? 0.3 : 1) *
+        (tips.length > MAX_TIPS ? 0 : 1);
       if (t.gap <= 0 && rnd() < pB && hy.segs.length > 4) {
         const back = Math.min(hy.segs.length - 1, 3 + Math.floor(rnd() * 6));
         const sIdx = hy.segs[hy.segs.length - 1 - back]!;
@@ -379,7 +518,8 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
       }
 
       // tips over the text column die off a little earlier
-      if ((g < 0.6 && rnd() < (0.6 - g) * 0.012) || (local > 6 && rnd() < 0.25)) tips.splice(i, 1);
+      if ((g < 0.6 && rnd() < (0.6 - g) * 0.012) || (local > 6 && rnd() < 0.25))
+        tips.splice(i, 1);
     }
     tick++;
   }
@@ -418,11 +558,27 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
     for (let j = 0; j < hy.segs.length; j++) {
       const s = hy.segs[j]!;
       const next = j + 1 < hy.segs.length ? segKey(hy.segs[j + 1]!) : Infinity;
-      const w = Math.min(compact ? 1.7 : 2.1, 0.45 + 0.009 * Math.sqrt(fed[s]!) * (compact ? 0.9 : 1));
+      const w = Math.min(
+        compact ? 1.7 : 2.1,
+        0.45 + 0.009 * Math.sqrt(fed[s]!) * (compact ? 0.9 : 1),
+      );
       const a = weight((sx1[s]! + sx2[s]!) / 2, (sy1[s]! + sy2[s]!) / 2);
-      const base = { x1: sx1[s]!, y1: sy1[s]!, x2: sx2[s]!, y2: sy2[s]!, kind: KIND_HYPHA };
+      const base = {
+        x1: sx1[s]!,
+        y1: sy1[s]!,
+        x2: sx2[s]!,
+        y2: sy2[s]!,
+        kind: KIND_HYPHA,
+      };
       entries.push({ ...base, w: Math.min(w, 0.65), a, k: segKey(s), next });
-      if (w > 0.95) entries.push({ ...base, w, a: a * 0.9, k: segKey(s) + THICK_DELAY, next: Infinity });
+      if (w > 0.95)
+        entries.push({
+          ...base,
+          w,
+          a: a * 0.9,
+          k: segKey(s) + THICK_DELAY,
+          next: Infinity,
+        });
     }
   }
 
@@ -446,7 +602,11 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
           [-3, 1.4],
           [11, 0.9],
         ];
-    const phase = strands.map(() => [rndCord() * 6.28, rndCord() * 6.28, 200 + rndCord() * 200]);
+    const phase = strands.map(() => [
+      rndCord() * 6.28,
+      rndCord() * 6.28,
+      200 + rndCord() * 200,
+    ]);
     const keys = new Float32Array(cord.length);
     let m = -Infinity;
     for (let i = 0; i < cord.length; i++) {
@@ -459,11 +619,23 @@ export function grow(W: number, H: number, opts: GrowOptions = {}): Network {
       const q = cord[i + 1]!;
       const k = keys[i + 1]!;
       const next = i + 2 < cord.length ? keys[i + 2]! : Infinity;
-      entries.push({ x1: p.x, y1: p.y, x2: q.x, y2: q.y, w: glowW, a: 1, k, next: Infinity, kind: KIND_GLOW });
+      entries.push({
+        x1: p.x,
+        y1: p.y,
+        x2: q.x,
+        y2: q.y,
+        w: glowW,
+        a: 1,
+        k,
+        next: Infinity,
+        kind: KIND_GLOW,
+      });
       strands.forEach(([base, w], j) => {
         const [p1, p2, per] = phase[j]!;
         // strands drift apart and back together, with a little fine wobble
-        const off = (s: number) => base! * (0.55 + 0.6 * Math.sin(s / per! + p1!)) + 2.2 * Math.sin(s / 37 + p2!);
+        const off = (s: number) =>
+          base! * (0.55 + 0.6 * Math.sin(s / per! + p1!)) +
+          2.2 * Math.sin(s / 37 + p2!);
         const o1 = off(p.s);
         const o2 = off(q.s);
         entries.push({

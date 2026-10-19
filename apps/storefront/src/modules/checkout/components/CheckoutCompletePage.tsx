@@ -1,7 +1,7 @@
 import { goToOrderConfirmation } from "@lib/checkout/order-handoff";
 import { getCheckoutCartId, placeOrder } from "@lib/stores/cart";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 interface CheckoutCompletePageProps {
   countryCode: string;
@@ -18,10 +18,13 @@ type State =
  * methods). Completes the cart the payment was started for; Medusa returns the
  * existing order if the payment webhook already completed it.
  */
-export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps) => {
+export const CheckoutCompletePage = ({
+  countryCode,
+}: CheckoutCompletePageProps) => {
   const [state, setState] = useState<State>({ kind: "completing" });
   const [attempt, setAttempt] = useState(0);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: läuft bewusst nur bei den genannten Abhängigkeiten
   useEffect(() => {
     const cartId = getCheckoutCartId();
     if (!cartId) {
@@ -43,7 +46,9 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
         } else {
           setState({
             kind: "error",
-            message: result.message || "Zahlung fehlgeschlagen. Bitte versuche es erneut.",
+            message:
+              result.message ||
+              "Zahlung fehlgeschlagen. Bitte versuche es erneut.",
           });
         }
       })
@@ -52,7 +57,8 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
         if (!cancelled) {
           setState({
             kind: "error",
-            message: "Bestellung konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
+            message:
+              "Bestellung konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
           });
         }
       });
@@ -65,7 +71,9 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
   if (state.kind === "completing") {
     return (
       <Shell title="Zahlung wird verarbeitet…">
-        <p className="text-lg">Bitte warte einen Moment, deine Bestellung wird abgeschlossen.</p>
+        <p className="text-lg">
+          Bitte warte einen Moment, deine Bestellung wird abgeschlossen.
+        </p>
       </Shell>
     );
   }
@@ -74,10 +82,14 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
     return (
       <Shell title="Zahlung wird noch bestätigt">
         <p className="mb-8 text-lg">
-          Das dauert länger als üblich. Du erhältst eine Bestätigungs-E-Mail, sobald deine
-          Bestellung eingegangen ist.
+          Das dauert länger als üblich. Du erhältst eine Bestätigungs-E-Mail,
+          sobald deine Bestellung eingegangen ist.
         </p>
-        <button type="button" className="btn btn--primary" onClick={() => setAttempt((a) => a + 1)}>
+        <button
+          type="button"
+          className="btn btn--primary"
+          onClick={() => setAttempt((a) => a + 1)}
+        >
           Erneut prüfen
         </button>
       </Shell>
@@ -88,7 +100,8 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
     return (
       <Shell title="Keine offene Bestellung gefunden">
         <p className="mb-8 text-lg">
-          Falls deine Zahlung erfolgreich war, erhältst du eine Bestätigung per E-Mail.
+          Falls deine Zahlung erfolgreich war, erhältst du eine Bestätigung per
+          E-Mail.
         </p>
         <a href={`/${countryCode}/store`} className="btn btn--primary">
           Weiter einkaufen
@@ -100,7 +113,10 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
   return (
     <Shell title="Zahlung konnte nicht verarbeitet werden">
       <p className="mb-8 text-lg">{state.message}</p>
-      <a href={`/${countryCode}/checkout?step=payment`} className="btn btn--primary">
+      <a
+        href={`/${countryCode}/checkout?step=payment`}
+        className="btn btn--primary"
+      >
         Zurück zur Kasse
       </a>
     </Shell>
@@ -110,7 +126,9 @@ export const CheckoutCompletePage = ({ countryCode }: CheckoutCompletePageProps)
 const Shell = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-16 text-center sm:px-8">
     <MatesEyes size={160} alt="" className="mb-6 max-w-full" />
-    <h1 className="mb-4! text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">{title}</h1>
+    <h1 className="mb-4! text-[clamp(36px,5vw,56px)]! leading-[.95]! text-accent">
+      {title}
+    </h1>
     {children}
   </div>
 );

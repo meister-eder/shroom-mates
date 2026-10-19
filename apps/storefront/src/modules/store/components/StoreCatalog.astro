@@ -2,11 +2,11 @@
 // Shop start / catalog (Version B): headline, category chips + note, product
 // grid, price note, news band (desktop) or fresh-mushroom link card (mobile).
 import ProductPreview from "@modules/products/components/product-preview/ProductPreview.astro";
-import type { Catalog } from "../catalog";
-import StoreHero from "./StoreHero.astro";
-import NewsBand from "./NewsBand.astro";
-import FreshLink from "./FreshLink.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import type { Catalog } from "../catalog";
+import FreshLink from "./FreshLink.astro";
+import NewsBand from "./NewsBand.astro";
+import StoreHero from "./StoreHero.astro";
 
 interface Props extends Catalog {
   /** Path the chips link to, e.g. "/de/store" */
@@ -14,14 +14,23 @@ interface Props extends Catalog {
   activeCategory?: string;
 }
 
-const { products, categories, error, basePath, activeCategory = "" } = Astro.props;
+const {
+  products,
+  categories,
+  error,
+  basePath,
+  activeCategory = "",
+} = Astro.props;
 
 const filtered = activeCategory
-  ? products.filter((p) => p.categories?.some((c) => c.handle === activeCategory))
+  ? products.filter((p) =>
+      p.categories?.some((c) => c.handle === activeCategory),
+    )
   : products;
 
 const badgeFor = (product: (typeof products)[number]) => {
-  const b = (product.metadata as Record<string, unknown> | null | undefined)?.badge;
+  const b = (product.metadata as Record<string, unknown> | null | undefined)
+    ?.badge;
   return typeof b === "string" && b.trim() ? b.trim() : undefined;
 };
 ---

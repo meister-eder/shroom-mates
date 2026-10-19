@@ -64,7 +64,9 @@ export const AddressFields = ({
             {...register(f("firstName"))}
             aria-invalid={errors.firstName ? true : undefined}
           />
-          {errors.firstName && <p className={ERROR}>{errors.firstName.message}</p>}
+          {errors.firstName && (
+            <p className={ERROR}>{errors.firstName.message}</p>
+          )}
         </div>
         <div className={FIELD}>
           <label htmlFor={`${prefix}-lastName`}>Nachname *</label>
@@ -75,7 +77,9 @@ export const AddressFields = ({
             {...register(f("lastName"))}
             aria-invalid={errors.lastName ? true : undefined}
           />
-          {errors.lastName && <p className={ERROR}>{errors.lastName.message}</p>}
+          {errors.lastName && (
+            <p className={ERROR}>{errors.lastName.message}</p>
+          )}
         </div>
       </div>
 
@@ -106,7 +110,9 @@ export const AddressFields = ({
             {...register(f("postalCode"))}
             aria-invalid={errors.postalCode ? true : undefined}
           />
-          {errors.postalCode && <p className={ERROR}>{errors.postalCode.message}</p>}
+          {errors.postalCode && (
+            <p className={ERROR}>{errors.postalCode.message}</p>
+          )}
         </div>
         <div className={FIELD}>
           <label htmlFor={`${prefix}-city`}>Stadt *</label>
@@ -131,7 +137,9 @@ export const AddressFields = ({
             {...register(f("country"))}
             aria-invalid={errors.country ? true : undefined}
           >
-            <option disabled value="">Land auswählen</option>
+            <option disabled value="">
+              Land auswählen
+            </option>
             {countries.map((c) => (
               <option key={c.iso_2} value={c.iso_2}>
                 {c.display_name ?? c.name}
@@ -141,7 +149,9 @@ export const AddressFields = ({
           {errors.country && <p className={ERROR}>{errors.country.message}</p>}
         </div>
         <div className={FIELD}>
-          <label htmlFor={`${prefix}-province`}>Bundesland <span className="font-normal text-sm">(optional)</span></label>
+          <label htmlFor={`${prefix}-province`}>
+            Bundesland <span className="font-normal text-sm">(optional)</span>
+          </label>
           <input
             id={`${prefix}-province`}
             type="text"
@@ -154,7 +164,9 @@ export const AddressFields = ({
       {/* Row 5: Company */}
       <div className="grid grid-cols-1 gap-4">
         <div className={FIELD}>
-          <label htmlFor={`${prefix}-company`}>Firma <span className="font-normal text-sm">(optional)</span></label>
+          <label htmlFor={`${prefix}-company`}>
+            Firma <span className="font-normal text-sm">(optional)</span>
+          </label>
           <input
             id={`${prefix}-company`}
             type="text"
