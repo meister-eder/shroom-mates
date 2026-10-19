@@ -30,7 +30,7 @@ from any of it.
 
 ## Manual follow-ups (collected by the orchestrator for the humans)
 
-_(filled during the run)_
+- P1.1: px font sizes in components (--body-size: 17px, shop.css, growkits.astro, CartPage) don't scale with browser font setting; separate task.
 
 ---
 
@@ -40,7 +40,7 @@ _(filled during the run)_
 
 ## P1 Quick wins
 
-- [ ] **P1.1 Respect the user's font size** · deps: — · verify: visual
+- [x] **P1.1 Respect the user's font size** · deps: — · verify: visual · 4d81baa
   `packages/ui/src/base.css` sets `html { font-size: 17px }`. Change to `106.25%` (identical at the 16px browser default, scales with user settings). Grep both apps for other `html`/`:root` absolute font sizes and fix the same way.
   Commit: `fix(ui): root font size relative to user setting`
 
@@ -231,3 +231,4 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
 ## Log
 
 _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 — note`)_
+2026-10-19 23:26 P1.1 DONE 4d81baa — html font-size 106.25%; visual unchanged

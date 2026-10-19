@@ -86,7 +86,7 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 106.25%;
   line-height: 1.55;
   color: var(--color-ink);
   background: var(--color-bg);
