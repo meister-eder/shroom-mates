@@ -1,0 +1,299 @@
+---
+import Icon from "@shroom-mates/ui/Icon.astro";
+import { SHIPPING } from "@shroom-mates/ui/shop-facts";
+
+interface Props {
+  countryCode: string;
+}
+
+const { countryCode } = Astro.props;
+---
+
+<dialog class="cart-drawer" aria-label="Pilzkorb" data-cart-drawer>
+  <div class="cart-drawer__head">
+    <span class="cart-drawer__mascot" data-mascot="54"></span>
+    <h2 class="cart-drawer__title">Dein Pilzkorb</h2>
+    <button
+      type="button"
+      class="round-btn"
+      aria-label="Pilzkorb schließen"
+      data-cart-close
+    >
+      <Icon name="close" size={14} strokeWidth={2.6} />
+    </button>
+  </div>
+
+  <div class="cart-empty" data-cart-empty>
+    <span class="cart-empty__mascot" data-mascot="180"></span>
+    <p class="cart-empty__title">Hier wächst noch nichts.</p>
+    <p class="cart-empty__text">Die Mates langweilen sich.</p>
+    <a href={`/${countryCode}/store`} class="btn btn--primary" data-cart-close>
+      Zum Sortiment
+    </a>
+  </div>
+
+  <ul class="cart-drawer__items" role="list" data-cart-items hidden></ul>
+
+  <div class="cart-drawer__foot" data-cart-foot hidden>
+    <div class="cart-drawer__subtotal">
+      <span>Zwischensumme</span>
+      <span data-cart-subtotal></span>
+    </div>
+    <p class="cart-drawer__note">
+      inkl. MwSt. · Versand ab {SHIPPING.standard.price} im nächsten Schritt
+    </p>
+    <a
+      href={`/${countryCode}/checkout`}
+      class="btn btn--primary btn--block btn--lg"
+      data-cart-close
+    >
+      Zur Kasse
+    </a>
+    <a href={`/${countryCode}/store`} class="cart-drawer__more" data-cart-close>
+      Weiter stöbern
+    </a>
+  </div>
+
+  <template data-cart-line>
+    <li class="cart-line">
+      <img
+        class="cart-line__thumb"
+        alt=""
+        width="84"
+        height="84"
+        decoding="async"
+        draggable="false"
+      />
+      <div class="cart-line__thumb" data-thumb-fallback aria-hidden="true">
+      </div>
+      <div class="cart-line__body">
+        <div class="cart-line__top">
+          <p class="cart-line__name" data-name></p>
+          <p class="cart-line__total" data-total></p>
+        </div>
+        <p class="cart-line__meta" data-meta></p>
+        <div class="cart-line__actions">
+          <div role="group" class="qty-stepper qty-stepper--md" data-stepper>
+            <button type="button" aria-label="Menge verringern" data-dec>
+              <Icon name="minus" size={18} />
+            </button>
+            <span aria-live="polite" aria-atomic="true">
+              <span class="sr-only">Menge: </span><span data-qty></span>
+            </span>
+            <button type="button" aria-label="Menge erhöhen" data-inc>
+              <Icon name="plus" size={18} />
+            </button>
+          </div>
+          <button type="button" class="text-btn" data-remove>Entfernen</button>
+        </div>
+      </div>
+    </li>
+  </template>
+</dialog>
+
+<script>
+  import {
+    $cart,
+    $isCartSidebarOpen,
+    closeCartSidebar,
+    removeFromCart,
+    updateLineItemQuantity,
+  } from "@lib/stores/cart";
+  import { createMatesEyes } from "@lib/mates-eyes";
+  import { convertToLocale } from "@lib/utils/money";
+  import { stickerColor, stickerColorVar } from "@lib/utils/product-color";
+  import type { StoreCart } from "@medusajs/types";
+
+  type Line = NonNullable<StoreCart["items"]>[number];
+
+  const dialog = document.querySelector<HTMLDialogElement>(
+    "[data-cart-drawer]",
+  );
+  if (dialog) init(dialog);
+
+  function init(dialog: HTMLDialogElement) {
+    const empty = dialog.querySelector<HTMLElement>("[data-cart-empty]");
+    const list = dialog.querySelector<HTMLUListElement>("[data-cart-items]");
+    const foot = dialog.querySelector<HTMLElement>("[data-cart-foot]");
+    const subtotal = dialog.querySelector<HTMLElement>("[data-cart-subtotal]");
+    const template = dialog.querySelector<HTMLTemplateElement>(
+      "template[data-cart-line]",
+    );
+    if (!empty || !list || !foot || !subtotal || !template) return;
+
+    const rows = new Map<string, HTMLLIElement>();
+    let mascotsReady = false;
+
+    // Maskottchen (laufende Augen) erst beim ersten Öffnen aufbauen.
+    const mountMascots = () => {
+      if (mascotsReady) return;
+      mascotsReady = true;
+      for (const slot of dialog.querySelectorAll<HTMLElement>("[data-mascot]")) {
+        const { el } = createMatesEyes(Number(slot.dataset.mascot));
+        slot.replaceChildren(el);
+      }
+    };
+
+    const run = async (
+      li: HTMLLIElement,
+      action: () => Promise<void>,
+      what: string,
+    ) => {
+      setBusy(li, true);
+      try {
+        await action();
+      } catch (error) {
+        console.error(`Failed to ${what}:`, error);
+      } finally {
+        setBusy(li, false);
+      }
+    };
+
+    const setBusy = (li: HTMLLIElement, busy: boolean) => {
+      li.setAttribute("aria-busy", String(busy));
+      for (const b of li.querySelectorAll("button")) b.disabled = busy;
+    };
+
+    const loadThumb = (img: HTMLImageElement) => {
+      const src = img.dataset.src;
+      if (src && img.getAttribute("src") !== src) img.src = src;
+    };
+
+    const update = (li: HTMLLIElement, item: Line, currencyCode: string) => {
+      const product = item.variant?.product;
+      const thumb =
+        item.thumbnail || product?.thumbnail || product?.images?.[0]?.url;
+      const title = product?.title || item.title || "Produkt";
+      const variantTitle = item.variant?.title || "";
+      const unitPrice = item.unit_price || 0;
+      const quantity = item.quantity || 1;
+
+      const img = li.querySelector<HTMLImageElement>("img.cart-line__thumb");
+      const fallback = li.querySelector<HTMLElement>("[data-thumb-fallback]");
+      if (img && fallback) {
+        img.hidden = !thumb;
+        fallback.hidden = !!thumb;
+        if (thumb) {
+          // Thumbnails load only once the drawer has been opened.
+          img.dataset.src = thumb;
+          if (dialog.open) loadThumb(img);
+        } else {
+          fallback.style.background = stickerColorVar(
+            stickerColor({ handle: product?.handle, title }),
+          );
+        }
+      }
+      const text = (sel: string, value: string) => {
+        const el = li.querySelector(sel);
+        if (el) el.textContent = value;
+      };
+      text("[data-name]", title);
+      text(
+        "[data-total]",
+        convertToLocale({ amount: unitPrice * quantity, currencyCode }),
+      );
+      text(
+        "[data-meta]",
+        `${
+          variantTitle && variantTitle !== "Standard" ? `${variantTitle} · ` : ""
+        }${convertToLocale({ amount: unitPrice, currencyCode })}`,
+      );
+      text("[data-qty]", String(quantity));
+      li.querySelector("[data-stepper]")?.setAttribute(
+        "aria-label",
+        `Anzahl ${title}`,
+      );
+      li.querySelector("[data-remove]")?.setAttribute(
+        "aria-label",
+        `${title} aus dem Pilzkorb entfernen`,
+      );
+      li.dataset.quantity = String(quantity);
+    };
+
+    const create = (item: Line): HTMLLIElement => {
+      const li = (template.content.cloneNode(true) as DocumentFragment)
+        .firstElementChild as HTMLLIElement;
+      li.setAttribute("aria-busy", "false");
+      li.querySelector("[data-dec]")?.addEventListener("click", () =>
+        run(
+          li,
+          () =>
+            updateLineItemQuantity(item.id, Number(li.dataset.quantity) - 1),
+          "update quantity",
+        ),
+      );
+      li.querySelector("[data-inc]")?.addEventListener("click", () =>
+        run(
+          li,
+          () =>
+            updateLineItemQuantity(item.id, Number(li.dataset.quantity) + 1),
+          "update quantity",
+        ),
+      );
+      li.querySelector("[data-remove]")?.addEventListener("click", () =>
+        run(li, () => removeFromCart(item.id), "remove item"),
+      );
+      return li;
+    };
+
+    const render = (cart: StoreCart | null) => {
+      const items = cart?.items ?? [];
+      const currencyCode = cart?.currency_code || "EUR";
+      empty.hidden = items.length > 0;
+      list.hidden = foot.hidden = items.length === 0;
+
+      const seen = new Set<string>();
+      let previous: Element | null = null;
+      for (const item of items) {
+        seen.add(item.id);
+        let li = rows.get(item.id);
+        if (!li) {
+          li = create(item);
+          rows.set(item.id, li);
+        }
+        update(li, item, currencyCode);
+        // Keep order without re-inserting nodes (focus stays on the button).
+        const expected: Element | null = previous
+          ? previous.nextElementSibling
+          : list.firstElementChild;
+        if (expected !== li) list.insertBefore(li, expected);
+        previous = li;
+      }
+      for (const [id, li] of rows) {
+        if (!seen.has(id)) {
+          li.remove();
+          rows.delete(id);
+        }
+      }
+      subtotal.textContent = convertToLocale({
+        amount: cart?.item_total || 0,
+        currencyCode,
+      });
+    };
+
+    $cart.subscribe(render);
+
+    $isCartSidebarOpen.subscribe((open) => {
+      if (open && !dialog.open) {
+        mountMascots();
+        dialog.showModal();
+        for (const img of list.querySelectorAll<HTMLImageElement>("img"))
+          loadThumb(img);
+      } else if (!open && dialog.open) {
+        dialog.close();
+      }
+    });
+
+    // Escape and dialog.close() both end up here.
+    dialog.addEventListener("close", () => {
+      if ($isCartSidebarOpen.get()) closeCartSidebar();
+    });
+    dialog.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      // Click on the backdrop hits the dialog element itself.
+      if (target === dialog || target.closest("[data-cart-close]")) {
+        closeCartSidebar();
+      }
+    });
+  }
+</script>

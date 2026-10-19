@@ -229,47 +229,67 @@
 
 /* ── Pilzkorb-Seitenleiste ────────────────────────────────────────────── */
 
-.cart-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1100;
-  background: rgba(19, 18, 42, 0.45);
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.25s ease,
-    visibility 0s linear 0.25s;
-}
-
-.cart-backdrop[data-open="true"] {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.25s ease;
-}
-
 .cart-drawer {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0 0 0 auto;
   z-index: 1101;
-  display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   width: min(480px, 100vw);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   background: var(--color-cream);
   color: var(--color-ink);
+  border: 0;
   border-left: 2px solid var(--color-accent);
   transform: translateX(100%);
-  visibility: hidden;
   transition:
     transform 0.3s var(--ease-smooth),
-    visibility 0s linear 0.3s;
+    overlay 0.3s allow-discrete,
+    display 0.3s allow-discrete;
 }
 
-.cart-drawer[data-open="true"] {
+.cart-drawer[open] {
+  display: flex;
   transform: none;
-  visibility: visible;
-  transition: transform 0.3s var(--ease-smooth);
+}
+
+@starting-style {
+  .cart-drawer[open] {
+    transform: translateX(100%);
+  }
+}
+
+.cart-drawer::backdrop {
+  background: rgba(19, 18, 42, 0.45);
+  opacity: 0;
+  transition:
+    opacity 0.25s ease,
+    overlay 0.25s allow-discrete,
+    display 0.25s allow-discrete;
+}
+
+.cart-drawer[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .cart-drawer[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* Seite hinter dem modalen Pilzkorb nicht scrollen */
+body:has(.cart-drawer[open]) {
+  overflow: hidden;
+}
+
+.cart-drawer [hidden] {
+  display: none;
 }
 
 .cart-drawer__head {

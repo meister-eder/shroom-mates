@@ -40,6 +40,7 @@ from any of it.
 - P5.1: view-transition fade now 0.3s for both apps (website had 0.6s). Unused cleanup return in hamburger.ts setupHamburgerMenu.
 - P5.2: scroll-padding-top 5rem (85px) < mobile header height (~103px): anchor sections' top padding slightly under the header (headings visible). Header line-heights set to whole px (.ticker 21/17px, .header-info 21px). Unused --spacing-navbar* in theme.css (goes with P5.8d).
 - P5.3: browser store-api client untested against the real backend with publishable key (x-publishable-api-key) and credentials: include — test a full checkout on staging. Client JS after P5.3: React 58.3 KB, CheckoutPage 35.0 KB, total ≈111.7 KB gzip.
+- P5.5: drawer screenshots old vs new in session scratchpad (p55/); mobile filled-state drawer not compared, check by eye on staging. Drawer thumbnails now load on open (data-src).
 
 ---
 
@@ -139,7 +140,7 @@ from any of it.
   Rewrite `CartButton.tsx`, `AddedToast.tsx` and the quick-add button in `modules/products/components/product-preview/` as Astro components with module scripts subscribing to the nanostores (`$cartItemCount`, toast store). Same markup, classes, ARIA (live region for the toast, accessible name with count for the button), same fly-to-cart animation. Remove `client:load` usages for them. Smoke + visual must pass.
   Commit: `perf(shop): cart button, toast and quick-add as vanilla islands`
 
-- [ ] **P5.5 Cart drawer without React** · deps: P5.4 · verify: visual
+- [x] **P5.5 Cart drawer without React** · deps: P5.4 · verify: visual · cd34640
   Rewrite `CartSidebar.tsx` as an Astro component using a native `<dialog>` (modal, `showModal()`, Escape closes, focus returns to the cart button, inert background handled by the browser), rendering line items from the cart store via a `<template>`. Same look, German copy, quantity stepper and remove buttons with accessible names. After this, React must only load on routes that still need it (checkout, cart page, order, withdrawal form, product options if still React); check with the built bundle that catalog pages no longer load `client.*.js`. Smoke + visual must pass (drawer open state isn't in the baseline: compare it by eye against a screenshot of the old drawer, which you take first and attach the path to in your report).
   Commit: `perf(shop): cart drawer as native dialog`
 
@@ -285,3 +286,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 00:23 P5.2 DONE a0d5b07 — sticky header; menu + anchors checked by orchestrator (Playwright)
 2026-10-20 00:29 P5.3 DONE cea6617 — smoke test + thin store-api client; SDK out of client bundle
 2026-10-20 00:33 P5.4 DONE 2099ced — vanilla CartButton/Toast/QuickAdd; quick-add+toast+fly checked by orchestrator
+2026-10-20 00:47 P5.5 DONE cd34640 — native dialog drawer, lazy thumbnails fixed after 1 retry; catalog without React
