@@ -53,10 +53,10 @@ Scope boundaries and user decisions (2026-10-20):
   Re-baseline allowed: all keys, desktop only (header area only; mobile must stay unchanged).
   Commit: `fix(ui): header nav scales down and stays on one line` · c6ff5d2
 
-- [ ] **P1.3 Marquee on every page, pausable** · deps: P1.1 · verify: visual
+- [x] **P1.3 Marquee on every page, pausable** · deps: P1.1 · verify: visual
   One list of marquee texts, defined once (where today's marketing `ticker` texts live), containing today's ticker items followed by the former shop info items ("Versand in 3–5 Werktagen", "Selbst gezüchtet in Leipzig", "Sicher bezahlen mit SumUp" and "Versand ab 4,95 €"; take the exact current wording and the shipping price from `packages/ui/src/shop-facts.ts`, don't duplicate the number). Shown on every page. Pausing (WCAG 2.2.2) must not look like an added control (user, 2026-10-20): the marquee pauses on hover, on keyboard focus inside the bar and on tap/click anywhere on the bar (toggle), and there is a very discreet pause/play icon (~14 px, same colour and opacity as the bar text, no pill/border, `aria-pressed`, label "Laufband anhalten"/"Laufband abspielen", visible focus ring only on keyboard focus) at the right end that reads as part of the bar; `prefers-reduced-motion: reduce` keeps it static as today. The duplicated groups stay `aria-hidden`.
   Re-baseline allowed: all keys (bar area only).
-  Commit: `feat(ui): marquee on every page with a pause button`
+  Commit: `feat(ui): marquee on every page with a pause button` · fca8444
 
 - [ ] **P1.4 One footer for every page** · deps: P1.1 · verify: visual
   `Footer` loses its `shop` prop: every page gets the same footer with all legal links (Impressum, Datenschutz, AGB, Widerrufsbelehrung, Gewährleistung, Vertrag widerrufen) and links to FAQ and Kontakt; keep today's column structure and look, merge the link lists without duplicates. The WaveRoller (`{!shop && <WaveRoller />}` in `Layout.astro`) shows on every page.
@@ -143,3 +143,4 @@ The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged int
 _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — note`)_
 2026-10-20 10:51 P1.1 DONE 7c2047b — one header everywhere; 14 shop-* keys re-baselined
 2026-10-20 11:01 P1.2 DONE c6ff5d2 — fluid header, hamburger <1024px, header smoke spec; desktop keys re-baselined
+2026-10-20 11:06 P1.3 DONE fca8444 — marquee everywhere incl. shop facts; hover/focus/tap pause + discreet toggle; no re-baseline

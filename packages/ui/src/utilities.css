@@ -486,6 +486,7 @@
 /* ===== Ticker (Laufband) ===== */
 
 .ticker {
+  position: relative;
   overflow: hidden;
   background: var(--color-ink, #1c1a33);
   color: var(--color-cream, #fffdf5);
@@ -513,8 +514,52 @@
   list-style: none;
 }
 
-.ticker:hover .ticker__track {
+/* Pausing (WCAG 2.2.2): hover, keyboard focus in the bar, tap/click (data-paused) */
+.ticker:focus-within .ticker__track,
+.ticker[data-paused="true"] .ticker__track {
   animation-play-state: paused;
+}
+
+@media (hover: hover) {
+  .ticker:hover .ticker__track {
+    animation-play-state: paused;
+  }
+}
+
+/* Discreet pause/play icon at the right end, part of the bar */
+.ticker__toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-ink, #1c1a33) 40%
+  );
+  color: inherit;
+  cursor: pointer;
+}
+
+.ticker__toggle:focus-visible {
+  outline: 2px solid var(--color-cream, #fffdf5);
+  outline-offset: -3px;
+}
+
+.ticker__icon--play,
+.ticker__toggle[aria-pressed="true"] .ticker__icon--pause {
+  display: none;
+}
+
+.ticker__toggle[aria-pressed="true"] .ticker__icon--play {
+  display: block;
 }
 
 @media (max-width: 768px) {
@@ -543,7 +588,8 @@
     padding-inline: 16px;
   }
 
-  .ticker__group[aria-hidden="true"] {
+  .ticker__group[aria-hidden="true"],
+  .ticker__toggle {
     display: none;
   }
 }

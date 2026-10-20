@@ -35,7 +35,7 @@ const hasCart = Astro.slots.has("cart");
 // Without a cart, Kontakt is the orange call-to-action pill
 const kontaktAccent = !hasCart;
 // duplicated groups make the marquee seamless; only the first one is exposed
-const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
+const tickerGroups = ticker?.length ? [0, 1, 2, 3] : [];
 ---
 
 <header class="site-header" role="banner">
@@ -51,6 +51,35 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
             </ul>
           ))}
         </div>
+        <button
+          type="button"
+          class="ticker__toggle"
+          aria-pressed="false"
+          aria-label="Laufband anhalten"
+          data-label-pause="Laufband anhalten"
+          data-label-play="Laufband abspielen"
+        >
+          <svg
+            class="ticker__icon ticker__icon--pause"
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M4 2.5v9M10 2.5v9" fill="none" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <svg
+            class="ticker__icon ticker__icon--play"
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M3.5 2l8 5-8 5z" fill="currentColor" />
+          </svg>
+        </button>
       </div>
     )
   }
@@ -460,4 +489,5 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
 
 <script>
   import "./scripts/hamburger.ts";
+  import "./scripts/marquee.ts";
 </script>
