@@ -134,13 +134,13 @@ The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged int
 
 ## P5 Finish
 
-- [ ] **P5.0 Take over the footer eyes** · deps: P4.1 · verify: visual
+- [x] **P5.0 Take over the footer eyes** · deps: P4.1 · verify: visual
   Branch `footer-eyes` (a40ed58, made by the owner's session on 2026-10-20, approved by the owner): softer graphite pupils and two added eyes in `packages/ui/src/Footer.astro` + an edited `shroom-mates-drawing-eyeless.png`. `git merge --no-edit footer-eyes` into `polish` (no other changes). Re-baseline allowed: all keys, footer drawing area only (check the diff images: only the pupils change). If the merge conflicts in `Footer.astro`, keep both sides' intent (the eye list and pupil style from `footer-eyes`, everything else from `polish`).
   Commit: the merge commit (`Merge branch 'footer-eyes' into polish`), plus a re-baseline needs no commit (baselines are gitignored)
 
 - [ ] **P5.1 Full verification and report** · deps: P1.1, P1.2, P1.3, P1.4, P1.5, P1.6, P1.7, P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P3.1, P3.2, P4.1, P5.0 · verify: all
   Run `scripts/verify.sh all`, write `docs/plans/polish-report.md`: changes per phase, re-baselined keys, client JS gzip per page type before/after, HCVO text changes (before/after), CSP status, blocked tasks, every manual follow-up.
-  Commit: `docs(plan): polish report`
+  Commit: `docs(plan): polish report` · b57d4e7
 
 - [ ] **P5.2 Land on shop and deploy staging** · deps: P5.1 · verify: —
   Approved by the user on 2026-10-20. Main checkout = first entry of `git worktree list`; never touch its uncommitted files. If `shop` moved: merge `shop` into `polish` here and re-run `scripts/verify.sh visual`. Then `git -C <main> merge --ff-only polish` and `git -C <main> push origin shop` (this triggers the "Deploy server" workflow to staging.shroom-mates.de). Watch it: `gh run list --branch shop --limit 1`, `gh run watch <id> --exit-status`. On failure: `gh run view <id> --log-failed`, fix on `polish`, verify, fast-forward and push `shop` again; at most 3 attempts; anything needing the server itself (SSH, secrets, database) → blocked with description. After success: `curl` / , /shop/, /growkits/ on staging return 200, header HTML identical on / and /shop/ apart from `aria-current`. Never push `main`, never force-push.
@@ -166,3 +166,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:47 P3.1 DONE c8480a1 — effect claims and sources removed, neutral text; web-tinkturen re-baselined
 2026-10-20 11:54 P3.2 DONE c06a4fd — Kontakt single address, Daily Business→Instagram, Austernseitling in growkit content
 2026-10-20 11:56 P4.1 DONE 9a55a38 — unsafe-eval only on /shop/checkout*; self-framing not from our code
+2026-10-20 12:00 P5.0 DONE b57d4e7 — footer-eyes merged cleanly; visual within tolerance, no re-baseline
