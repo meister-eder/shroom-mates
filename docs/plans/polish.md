@@ -37,6 +37,7 @@ Scope boundaries and user decisions (2026-10-20):
 - P2.2: check the drawer line-item price padding on a real phone (≤480 px); it was not screenshot-tested.
 - P2.6: Caddyfile not validated locally (Docker down): run the `caddy validate` command from P2.6 (CI deploy will also catch syntax errors).
 - P3.1 legal review (HCVO): all /tinkturen/ text changes incl. removed Quellen list and one FAQ sentence are in commit c8480a1 (`git show c8480a1`); also check "Vitalpilze" (landing teaser) and "Pilzextrakte" (FAQ).
+- P3.2: "daily business" still in landing-page content; "Austernpilze" still on Pilze/Gastronomie/Über uns/Landing content and in Layout: decide whether to align.
 - Product descriptions live in Medusa (not in the repo): check them for health claims ("maximale Bioverfügbarkeit") and English fragments ("Hot-water und alkohol-extrahiert") in the Medusa Admin.
 
 ---
@@ -115,12 +116,12 @@ Scope boundaries and user decisions (2026-10-20):
   Re-baseline allowed: `web-tinkturen` (text only).
   Commit: `fix(content): tinctures without health claims (needs legal review)` · c8480a1
 
-- [ ] **P3.2 Copy fixes** · deps: — · verify: visual
+- [x] **P3.2 Copy fixes** · deps: — · verify: visual
   - /kontakt/: heading "DAILY BUSINESS" → German (e.g. "Öffnungszeiten" or what fits the content); the address appears twice ("Besuch" block and "Unser Standort" block): keep it once, the block with the map stays.
   - `OrderConfirmedPage.tsx`: English fragments → German. Leave "Körbchen"/"Pilzkorb" wording as it is everywhere.
   - Naming: "Austernseitlinge" consistently on the Austernseitlinge pages (e.g. "Züchte deine eigenen Austernpilze!" → "Züchte deine eigenen Austernseitlinge!"); grep `Austernpilz` in `apps/web/src`.
   Re-baseline allowed: `web-kontakt`, `web-growkits` (text only).
-  Commit: `fix(content): German wording, Kontakt without duplicate address`
+  Commit: `fix(content): German wording, Kontakt without duplicate address` · c06a4fd
 
 ## P4 CSP
 
@@ -162,3 +163,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:38 P2.5 DONE 65ac159 — aria-describedby on all checkout fields with error messages
 2026-10-20 11:39 P2.6 DONE 5c9211e — /de and /de/ → / in Astro route and Caddy; Caddy not validated (no Docker)
 2026-10-20 11:47 P3.1 DONE c8480a1 — effect claims and sources removed, neutral text; web-tinkturen re-baselined
+2026-10-20 11:54 P3.2 DONE c06a4fd — Kontakt single address, Daily Business→Instagram, Austernseitling in growkit content

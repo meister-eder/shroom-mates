@@ -166,7 +166,7 @@ export const OrderConfirmedPage = ({ order }: OrderConfirmedPageProps) => {
             Zurück zum Shop
           </a>
           <a href={INSTAGRAM_URL} className="order-insta">
-            Folg uns auf Instagram fürs Daily Business
+            Folg uns auf Instagram und schau uns beim Wachsen zu
           </a>
         </div>
       </section>
