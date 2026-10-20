@@ -72,7 +72,7 @@ Scope boundaries and user decisions (2026-10-20):
   Visual baselines must stay unchanged (screenshots run with reduced motion).
   Commit: `feat(ui): smoother page transitions, header and marquee stay put` · bbd70c2
 
-- [ ] **P1.7 One type scale for page headings** · deps: P1.5 · verify: visual
+- [!] **P1.7 One type scale for page headings** · deps: P1.5 · verify: visual
   The shop index h1 ("shroom shop", 172.8 px) is much larger than the marketing h1s (~107 px). Use the same display heading size and colour rule as the marketing pages (look up the h1 rule of e.g. /unsere-pilze/ and the design tokens; orange only per DESIGN.md rules). Check the other shop headings (product title, cart, checkout) against the same scale and align only clear outliers.
   Re-baseline allowed: `shop-katalog`, `shop-produkt-*`, `shop-pilzkorb`, `shop-kasse` (heading area only).
   Commit: `fix(shop): headings use the site type scale`
@@ -147,3 +147,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:17 P1.4 DONE 9b7b719 — one footer, all legal links + Kontakt; all keys re-baselined (footer + P1.3 bar)
 2026-10-20 11:20 P1.5 DONE 39f114d — one layout; titles | shroom-mates; JSON-LD on all but cart/checkout/order
 2026-10-20 11:25 P1.6 DONE bbd70c2 — header static in VT, content fade, marquee phase synced via page-sync.js
+2026-10-20 11:27 P1.7 BLOCKED failed/P1.7 — re-baseline denied by permission classifier; shop.css change parked, needs human re-baseline
