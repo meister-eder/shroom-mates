@@ -89,9 +89,9 @@ Scope boundaries and user decisions (2026-10-20):
   Drawer (`CartSidebar`): add a secondary link "Pilzkorb ansehen" → `/shop/cart/` next to "Zur Kasse"; on mobile the line-item price must not touch the right edge (padding). On `/shop/cart/` and `/shop/checkout/` the header Pilzkorb pill is a plain link to `/shop/cart/` instead of opening the drawer. Smoke test: drawer has the link; on /shop/cart/ the pill doesn't open the dialog.
   Commit: `fix(shop): drawer links to the Pilzkorb page` · 3c9ac32
 
-- [ ] **P2.3 Cart page feels instant** · deps: P2.2 · verify: smoke
+- [x] **P2.3 Cart page feels instant** · deps: P2.2 · verify: smoke
   Removing a line or changing quantity on /shop/cart/ greys the row for 4–5 s without feedback. Make quantity change and remove optimistic (update the row and totals immediately, roll back with an error message in a live region if the request fails) and show a small inline spinner while syncing; don't change the cart store's API or any payment function. The initial "Pilzkorb wird geladen…" state gets a skeleton of the expected layout (no layout jump when data arrives). Smoke test: remove a line → row disappears immediately.
-  Commit: `perf(shop): optimistic cart updates`
+  Commit: `perf(shop): optimistic cart updates` · a7d63e6
 
 - [x] **P2.4 Wording: Pilzkorb everywhere** · dropped by the user on 2026-10-20: "Körbchen" button texts stay as they are. Do nothing.
   Buttons say "Rein ins Körbchen" (3 places in `apps/web/src`), the cart is called Pilzkorb everywhere else. Change the button label to "In den Pilzkorb" and the success state "Liegt im Körbchen ✓" to "Liegt im Pilzkorb ✓" (also aria-labels and the smoke test selectors). Grep for other "Körbchen" / "Warenkorb" in UI text and align them.
@@ -130,7 +130,11 @@ The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged int
 
 ## P5 Finish
 
-- [ ] **P5.1 Full verification and report** · deps: P1.1, P1.2, P1.3, P1.4, P1.5, P1.6, P1.7, P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P3.1, P3.2, P4.1 · verify: all
+- [ ] **P5.0 Take over the footer eyes** · deps: P4.1 · verify: visual
+  Branch `footer-eyes` (a40ed58, made by the owner's session on 2026-10-20, approved by the owner): softer graphite pupils and two added eyes in `packages/ui/src/Footer.astro` + an edited `shroom-mates-drawing-eyeless.png`. `git merge --no-edit footer-eyes` into `polish` (no other changes). Re-baseline allowed: all keys, footer drawing area only (check the diff images: only the pupils change). If the merge conflicts in `Footer.astro`, keep both sides' intent (the eye list and pupil style from `footer-eyes`, everything else from `polish`).
+  Commit: the merge commit (`Merge branch 'footer-eyes' into polish`), plus a re-baseline needs no commit (baselines are gitignored)
+
+- [ ] **P5.1 Full verification and report** · deps: P1.1, P1.2, P1.3, P1.4, P1.5, P1.6, P1.7, P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P3.1, P3.2, P4.1, P5.0 · verify: all
   Run `scripts/verify.sh all`, write `docs/plans/polish-report.md`: changes per phase, re-baselined keys, client JS gzip per page type before/after, HCVO text changes (before/after), CSP status, blocked tasks, every manual follow-up.
   Commit: `docs(plan): polish report`
 
@@ -152,3 +156,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:27 P1.7 BLOCKED failed/P1.7 — re-baseline denied by permission classifier; shop.css change parked, needs human re-baseline
 2026-10-20 11:30 P2.1 DONE c70dae5 — toast already worked after P1.5 (mock); added busy state + smoke test
 2026-10-20 11:32 P2.2 DONE 3c9ac32 — drawer link to Pilzkorb page, pill is a link on cart/checkout, mobile padding
+2026-10-20 11:36 P2.3 DONE a7d63e6 — optimistic qty/remove with rollback alert, sync spinner, cart skeleton
