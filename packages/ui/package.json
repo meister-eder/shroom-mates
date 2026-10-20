@@ -24,6 +24,7 @@
     "./WaveDivider.astro": "./src/WaveDivider.astro",
     "./Icon.astro": "./src/Icon.astro",
     "./MatesLogo.astro": "./src/MatesLogo.astro",
+    "./PageHero.astro": "./src/PageHero.astro",
     "./LegalPage.astro": "./src/LegalPage.astro",
     "./legal/*": "./src/legal/*"
   },

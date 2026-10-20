@@ -1,0 +1,131 @@
+---
+/**
+ * Shared top area of a page: eyebrow + headline in one <h1>, optional lead,
+ * actions, media column and a full-width row below. Sits in the normal
+ * `.container`, so every page starts at the same left edge and `--page-top`.
+ */
+interface Props {
+  eyebrow?: string;
+  /** Plain headline */
+  title?: string;
+  /** Headline with markup (e.g. <br>); wins over `title` */
+  titleHtml?: string;
+  /** Plain lead; use the default slot for rich lead markup */
+  lead?: string;
+  align?: "start";
+}
+
+const { eyebrow, title, titleHtml, lead, align = "start" } = Astro.props;
+const hasMedia = Astro.slots.has("media");
+const hasActions = Astro.slots.has("actions");
+const hasAfter = Astro.slots.has("after");
+const hasLead = Boolean(lead) || Astro.slots.has("default");
+---
+
+<section class:list={["page-hero", "container", { "page-hero--media": hasMedia }]} data-align={align}>
+  <div class="page-hero__copy">
+    <h1 class="page-hero__heading">
+      {eyebrow && <span class="eyebrow page-hero__eyebrow">{eyebrow}</span>}
+      {titleHtml ? <span class="page-hero__title" set:html={titleHtml} /> : <span class="page-hero__title">{title}</span>}
+    </h1>
+    {
+      hasLead && (
+        <p class="lead page-hero__lead">
+          {lead}
+          <slot />
+        </p>
+      )
+    }
+    {
+      hasActions && (
+        <div class="page-hero__actions">
+          <slot name="actions" />
+        </div>
+      )
+    }
+  </div>
+  {
+    hasMedia && (
+      <div class="page-hero__media">
+        <slot name="media" />
+      </div>
+    )
+  }
+  {
+    hasAfter && (
+      <div class="page-hero__after">
+        <slot name="after" />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .page-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 32px 48px;
+    padding-top: var(--page-top);
+    padding-bottom: 72px;
+  }
+
+  .page-hero--media {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+
+  .page-hero__copy {
+    min-width: 0;
+  }
+
+  .page-hero__heading {
+    margin: 0;
+  }
+
+  .page-hero__eyebrow {
+    display: block;
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--color-accent-dark);
+  }
+
+  .page-hero__title {
+    display: block;
+    font-size: clamp(2.75rem, 7.4vw, 7rem);
+    line-height: 0.9;
+    color: var(--color-accent);
+  }
+
+  .page-hero__lead {
+    max-width: 44ch;
+    margin: 24px 0 0;
+  }
+
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 32px;
+  }
+
+  .page-hero__media {
+    position: relative;
+    min-width: 0;
+  }
+
+  .page-hero__after {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  @media (max-width: 900px) {
+    .page-hero--media {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .page-hero {
+      padding-bottom: 56px;
+    }
+  }
+</style>

@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
 import rosenseitlingBueschel from "../../assets/images/fotos/rosenseitling-bueschel.jpg";
 
 interface Props {
@@ -75,21 +76,12 @@ const growkits = Astro.props.growkits
 <Layout title={title} description={description} ogImage={heroImage?.src} isLandingPage={true} active="growkits">
 
   <div class="page">
-    <section class="hero">
-      <div class="hero__copy">
-        <h1>
-          <span class="eyebrow hero__eyebrow">{heroTitle}</span>
-          <span class="hero__title">{heroHeadline}</span>
-        </h1>
-        <p class="lead hero__lead">
-          {heroSubtitle}
-        </p>
-        <div class="hero__actions">
-          <a class="btn btn--primary hero__btn" href="#kits">{heroPrimaryButton}</a>
-          <a class="btn btn--outline hero__btn" href="#anleitung">{heroSecondaryButton}</a>
-        </div>
-      </div>
-      <div class="hero__media">
+    <PageHero eyebrow={heroTitle} title={heroHeadline} lead={heroSubtitle}>
+      <Fragment slot="actions">
+        <a class="btn btn--primary hero__btn" href="#kits">{heroPrimaryButton}</a>
+        <a class="btn btn--outline hero__btn" href="#anleitung">{heroSecondaryButton}</a>
+      </Fragment>
+      <div slot="media" class="hero__media">
         <div class="dots" aria-hidden="true"></div>
         <Image
           src={heroImage}
@@ -101,7 +93,7 @@ const growkits = Astro.props.growkits
           format="webp"
         />
       </div>
-    </section>
+    </PageHero>
 
     {
       growkits.length > 0 && (
@@ -280,50 +272,7 @@ const growkits = Astro.props.growkits
     overflow-x: clip;
   }
 
-  /* ── Hero ───────────────────────────────────────── */
-  .hero {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 48px;
-    /* Entwurf: content-box, 1280px Inhaltsbreite + 2 x Gutter */
-    max-width: calc(var(--container, 1280px) + 2 * var(--gutter));
-    margin-inline: auto;
-    padding: 40px var(--gutter) 96px;
-  }
-
-  .hero__copy {
-    flex: 1 1 520px;
-    min-width: 0;
-  }
-
-  .hero__eyebrow {
-    display: block;
-    margin-bottom: 18px;
-    font-size: 0.875rem;
-    line-height: 1.4;
-    color: var(--color-accent-dark);
-  }
-
-  .hero__title {
-    display: block;
-    font-size: clamp(3rem, 7.4vw, 7rem);
-    line-height: 0.9;
-    color: var(--color-accent);
-  }
-
-  .hero__lead {
-    max-width: 38ch;
-    margin: 24px 0 0;
-  }
-
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 32px;
-  }
-
+  /* ── Hero (Gerüst in PageHero) ──────────────────── */
   .hero__btn {
     padding: 16px 26px;
     font-size: 1.125rem;
@@ -331,9 +280,6 @@ const growkits = Astro.props.growkits
 
   .hero__media {
     position: relative;
-    box-sizing: content-box;
-    flex: 1 1 420px;
-    min-width: 0;
     padding: 24px;
   }
 
@@ -692,20 +638,12 @@ const growkits = Astro.props.growkits
 
   /* ── Responsive ─────────────────────────────────── */
   @media (max-width: 900px) {
-    .hero {
-      padding-bottom: 56px;
-    }
-
     .hero__media :global(.hero__img) {
       height: 340px;
     }
   }
 
   @media (max-width: 768px) {
-    .hero {
-      gap: 32px;
-    }
-
     .kits,
     .guide {
       padding-block: 56px;

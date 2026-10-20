@@ -62,6 +62,7 @@
 @media (max-width: 768px) {
   :root {
     --gutter: 16px;
+    --page-top: 24px;
     --section-gap: 56px;
   }
 }

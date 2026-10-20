@@ -73,6 +73,7 @@
   /* ── Abstand ───────────────────────────────────────────────────── */
   --container: 1280px;
   --gutter: 32px;
+  --page-top: 40px;
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
