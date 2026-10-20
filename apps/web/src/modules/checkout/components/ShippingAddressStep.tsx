@@ -291,9 +291,15 @@ export const ShippingAddressStep = ({
                 autoComplete="email"
                 {...register("email")}
                 aria-invalid={errors.email ? true : undefined}
+                aria-describedby={
+                  errors.email ? "checkout-email-error" : undefined
+                }
               />
               {errors.email && (
-                <p className={ERROR_CLASS}>{errors.email.message}</p>
+                // biome-ignore lint/correctness/useUniqueElementIds: feste ID für aria-describedby, Komponente wird pro Seite nur einmal gerendert
+                <p className={ERROR_CLASS} id="checkout-email-error">
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div className={`${FIELD} field--half`}>
@@ -307,9 +313,15 @@ export const ShippingAddressStep = ({
                 autoComplete="tel"
                 {...register("phone")}
                 aria-invalid={errors.phone ? true : undefined}
+                aria-describedby={
+                  errors.phone ? "checkout-phone-error" : undefined
+                }
               />
               {errors.phone && (
-                <p className={ERROR_CLASS}>{errors.phone.message}</p>
+                // biome-ignore lint/correctness/useUniqueElementIds: feste ID für aria-describedby, Komponente wird pro Seite nur einmal gerendert
+                <p className={ERROR_CLASS} id="checkout-phone-error">
+                  {errors.phone.message}
+                </p>
               )}
             </div>
           </div>

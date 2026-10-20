@@ -98,9 +98,9 @@ Scope boundaries and user decisions (2026-10-20):
   Re-baseline allowed: `shop-katalog`, `shop-produkt-*` (button text only).
   Commit: `fix(shop): call the cart Pilzkorb everywhere`
 
-- [ ] **P2.5 Checkout form errors are announced** · deps: — · verify: smoke
+- [x] **P2.5 Checkout form errors are announced** · deps: — · verify: smoke
   Checkout field errors ("E-Mail ist erforderlich") set `aria-invalid` but are not linked to the field: add `aria-describedby` pointing at the message element (stable ids), for every field with a message. No change to validation logic or payment.
-  Commit: `fix(checkout): link field errors to their inputs`
+  Commit: `fix(checkout): link field errors to their inputs` · 65ac159
 
 - [ ] **P2.6 `/de/` goes to the homepage** · deps: — · verify: quick
   `/de/` and `/de` redirect (301) to `/` instead of `/shop/`, both in the Astro legacy route (`apps/web/src/pages/de/[...path].ts`) and in the Caddy `legacy_shop` snippet if it handles the bare path; all other legacy mappings stay exactly as they are (`/de/store/…` → `/shop/…`, `/de/checkout/complete?…` with query). Validate the Caddyfile with `docker run --rm -e DOMAIN=example.test -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile` if Docker is available, otherwise note it in the report.
@@ -157,3 +157,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:30 P2.1 DONE c70dae5 — toast already worked after P1.5 (mock); added busy state + smoke test
 2026-10-20 11:32 P2.2 DONE 3c9ac32 — drawer link to Pilzkorb page, pill is a link on cart/checkout, mobile padding
 2026-10-20 11:36 P2.3 DONE a7d63e6 — optimistic qty/remove with rollback alert, sync spinner, cart skeleton
+2026-10-20 11:38 P2.5 DONE 65ac159 — aria-describedby on all checkout fields with error messages

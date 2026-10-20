@@ -61,9 +61,14 @@ export const AddressFields = ({
             autoComplete="given-name"
             {...register(f("firstName"))}
             aria-invalid={errors.firstName ? true : undefined}
+            aria-describedby={
+              errors.firstName ? `${prefix}-firstName-error` : undefined
+            }
           />
           {errors.firstName && (
-            <p className={ERROR}>{errors.firstName.message}</p>
+            <p className={ERROR} id={`${prefix}-firstName-error`}>
+              {errors.firstName.message}
+            </p>
           )}
         </div>
         <div className={FIELD}>
@@ -74,9 +79,14 @@ export const AddressFields = ({
             autoComplete="family-name"
             {...register(f("lastName"))}
             aria-invalid={errors.lastName ? true : undefined}
+            aria-describedby={
+              errors.lastName ? `${prefix}-lastName-error` : undefined
+            }
           />
           {errors.lastName && (
-            <p className={ERROR}>{errors.lastName.message}</p>
+            <p className={ERROR} id={`${prefix}-lastName-error`}>
+              {errors.lastName.message}
+            </p>
           )}
         </div>
       </div>
@@ -91,8 +101,15 @@ export const AddressFields = ({
             autoComplete="street-address"
             {...register(f("address"))}
             aria-invalid={errors.address ? true : undefined}
+            aria-describedby={
+              errors.address ? `${prefix}-address-error` : undefined
+            }
           />
-          {errors.address && <p className={ERROR}>{errors.address.message}</p>}
+          {errors.address && (
+            <p className={ERROR} id={`${prefix}-address-error`}>
+              {errors.address.message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -107,9 +124,14 @@ export const AddressFields = ({
             autoComplete="postal-code"
             {...register(f("postalCode"))}
             aria-invalid={errors.postalCode ? true : undefined}
+            aria-describedby={
+              errors.postalCode ? `${prefix}-postalCode-error` : undefined
+            }
           />
           {errors.postalCode && (
-            <p className={ERROR}>{errors.postalCode.message}</p>
+            <p className={ERROR} id={`${prefix}-postalCode-error`}>
+              {errors.postalCode.message}
+            </p>
           )}
         </div>
         <div className={FIELD}>
@@ -120,8 +142,13 @@ export const AddressFields = ({
             autoComplete="address-level2"
             {...register(f("city"))}
             aria-invalid={errors.city ? true : undefined}
+            aria-describedby={errors.city ? `${prefix}-city-error` : undefined}
           />
-          {errors.city && <p className={ERROR}>{errors.city.message}</p>}
+          {errors.city && (
+            <p className={ERROR} id={`${prefix}-city-error`}>
+              {errors.city.message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -134,6 +161,9 @@ export const AddressFields = ({
             autoComplete="country"
             {...register(f("country"))}
             aria-invalid={errors.country ? true : undefined}
+            aria-describedby={
+              errors.country ? `${prefix}-country-error` : undefined
+            }
           >
             <option disabled value="">
               Land auswählen
@@ -144,7 +174,11 @@ export const AddressFields = ({
               </option>
             ))}
           </select>
-          {errors.country && <p className={ERROR}>{errors.country.message}</p>}
+          {errors.country && (
+            <p className={ERROR} id={`${prefix}-country-error`}>
+              {errors.country.message}
+            </p>
+          )}
         </div>
         <div className={FIELD}>
           <label htmlFor={`${prefix}-province`}>
