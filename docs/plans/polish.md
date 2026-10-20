@@ -33,6 +33,7 @@ Scope boundaries and user decisions (2026-10-20):
 ## Manual follow-ups (collected by the orchestrator for the humans)
 
 - Product image URLs on staging still point at the old sslip host (broken images, and the server IP shows up in the HTML): run the SQL rewrite from the chat of 2026-10-20 / DEPLOYMENT.md "Product images".
+- P2.1: quick-add toast works against the mock; confirm on staging with the real backend (slow responses).
 - Product descriptions live in Medusa (not in the repo): check them for health claims ("maximale Bioverfügbarkeit") and English fragments ("Hot-water und alkohol-extrahiert") in the Medusa Admin.
 
 ---
@@ -79,9 +80,9 @@ Scope boundaries and user decisions (2026-10-20):
 
 ## P2 Shop UX
 
-- [ ] **P2.1 Quick-add gives visible feedback** · deps: P1.5 · verify: smoke
+- [x] **P2.1 Quick-add gives visible feedback** · deps: P1.5 · verify: smoke
   On /shop/ the quick-add button only greys out for 1–2 s, then just the badge count changes; the `AddedToast` never shows (`div.toast-region` stays empty). Find why (event name, import, region element on catalog pages) and make the toast appear for quick-add on the catalog and on product cards elsewhere, same as the product page's feedback. The button shows a busy state immediately on click ("Wird hinzugefügt…"). Extend the smoke test: quick-add on /shop/ shows the toast and increments the badge.
-  Commit: `fix(shop): quick-add shows the toast`
+  Commit: `fix(shop): quick-add shows the toast` · c70dae5
 
 - [ ] **P2.2 Pilzkorb drawer and pill** · deps: P2.1 · verify: smoke
   Drawer (`CartSidebar`): add a secondary link "Pilzkorb ansehen" → `/shop/cart/` next to "Zur Kasse"; on mobile the line-item price must not touch the right edge (padding). On `/shop/cart/` and `/shop/checkout/` the header Pilzkorb pill is a plain link to `/shop/cart/` instead of opening the drawer. Smoke test: drawer has the link; on /shop/cart/ the pill doesn't open the dialog.
@@ -148,3 +149,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:20 P1.5 DONE 39f114d — one layout; titles | shroom-mates; JSON-LD on all but cart/checkout/order
 2026-10-20 11:25 P1.6 DONE bbd70c2 — header static in VT, content fade, marquee phase synced via page-sync.js
 2026-10-20 11:27 P1.7 BLOCKED failed/P1.7 — re-baseline denied by permission classifier; shop.css change parked, needs human re-baseline
+2026-10-20 11:30 P2.1 DONE c70dae5 — toast already worked after P1.5 (mock); added busy state + smoke test

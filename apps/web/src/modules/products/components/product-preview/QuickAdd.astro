@@ -36,6 +36,10 @@ const { variantId, title } = Astro.props;
     );
     if (!button || button.disabled) return;
     button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    const label = button.querySelector<HTMLElement>(".quick-add__label");
+    const idleLabel = label?.textContent ?? "";
+    if (label) label.textContent = "Wird hinzugefügt…";
     try {
       await addToCart(button.dataset.quickAdd as string, 1, {
         openSidebar: false,
@@ -45,6 +49,8 @@ const { variantId, title } = Astro.props;
     } catch {
       showErrorToast("Lade die Seite neu und versuch es nochmal.");
     } finally {
+      if (label) label.textContent = idleLabel;
+      button.removeAttribute("aria-busy");
       button.disabled = false;
     }
   });

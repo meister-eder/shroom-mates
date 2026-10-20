@@ -39,3 +39,21 @@ test("Pilzkorb: Sortiment, Produkt, Korb, Kasse", async ({ page }) => {
 
   expect(errors).toEqual([]);
 });
+
+test("Quick-Add im Sortiment zeigt Toast und erhöht den Zähler", async ({
+  page,
+}) => {
+  await page.goto(`${SHOP}/shop/`);
+  const quick = page.locator("[data-quick-add]").first();
+  await expect(quick).toBeEnabled();
+  await quick.click();
+  await expect(quick).toBeDisabled();
+  await expect(quick).toContainText("Wird hinzugefügt");
+
+  const toast = page.locator(".toast-region .toast");
+  await expect(toast).toBeVisible();
+  await expect(toast).toContainText("liegt im Körbchen!");
+  await expect(
+    page.getByRole("button", { name: /^Pilzkorb, 1 Artikel/ }),
+  ).toBeVisible();
+});
