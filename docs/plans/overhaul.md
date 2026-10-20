@@ -54,6 +54,7 @@ from any of it.
 - P7.5: Caddyfiles not validated locally (no caddy, Docker daemon off) — staging deploy is the first real check. Server .env (staging/prod): point SUMUP_REDIRECT_URL, STORE_CORS, AUTH_CORS, MEDUSA_BACKEND_URL to the main domain if set explicitly. Search Console: add new sitemap, keep shop. property during redirect period. X-Frame-Options now SAMEORIGIN (was DENY on website). deploy-server.yml: every deploy is a full deploy now.
 - P7.6 (legal review): merged packages/ui/src/legal/datenschutz.md — all legal-open/legal-check marks, date, log retention, Web3Forms address; GitHub-Pages section kept (drop if site no longer on GH Pages); obsolete 'Online-Shop' pointer section dropped; check AGB/Widerruf URLs.
 - P7.7: Umami first run — change default admin password, create website, set PUBLIC_UMAMI_WEBSITE_ID in .env (staging/prod), set up funnel (DEPLOYMENT.md). Legal review of new datenschutz.md sections (13/16/17, legal-open; retention open: Umami doesn't auto-delete). data-domains=shroom-mates.de → no tracking on test domain. purchase fires again on order-page reload. DATABASE_URL uses unencoded password (as Medusa). Staging compose has no Caddy/tracker.
+- P7.8: try the CMS preview in /admin/ for each page type (Sveltia login; templates not yet tested in a real Sveltia run), incl. admin CSP frame-src for srcdoc iframe; Caddyfile change not validated with caddy. No preview yet for single collections mushrooms/growkits. Preview endpoint loads page CSS via loopback 127.0.0.1:$PORT.
 
 ---
 
@@ -252,7 +253,7 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Follow-ups for humans: change the Umami default password on first login; create the website and set `PUBLIC_UMAMI_WEBSITE_ID` on staging and production; set up the funnel; legal review of the new privacy text together with P7.6.
   Commit: `feat(analytics): self-hosted cookieless Umami with shop events`
 
-- [ ] **P7.8 Live preview in Sveltia CMS with the real page design** · deps: P7.5 · verify: visual
+- [x] **P7.8 Live preview in Sveltia CMS with the real page design** · deps: P7.5 · verify: visual · d2363ac
   Decided by the user on 2026-10-20: stay with Sveltia (git-based, no extra server), but editors get a live preview that looks exactly like the real page. Approach: Sveltia's preview pane posts the entry being edited to an SSR endpoint of the web app, which renders the real Astro page component with that data; the pane shows the HTML in a sandboxed iframe. No duplicated preview markup.
   - **Pages take data as props.** For every CMS-driven page (landing, unsere-pilze, growkits, tinkturen, gastronomie, ueber-uns, faq; check `content.config.ts` for the full list) move the page body into `src/components/pages/<Name>Page.astro` that receives the entry data (and any related collection, e.g. growkits, mushrooms) as props. The page file in `src/pages/` only loads content and renders the component. Screenshot-identical (verify: visual).
   - **Render endpoint** `src/pages/vorschau/render.ts` (`prerender = false`): `POST` JSON `{ collection, file, data, related? }`, renders the matching `<Name>Page` inside the real Layout with the Astro Container API (`astro/container`; check the Astro 6 docs for the current export name and how to register the renderers/integrations it needs). Validate `data` with the same zod schema as the collection (errors → 422 with a German message listing the fields). Images: field values that resolve to an existing asset (same lookup the content layer uses, e.g. `import.meta.glob` over the content folders) render through `astro:assets`; anything else (new upload not saved yet) renders a neutral placeholder box with the alt text and "Neues Bild – erscheint nach dem Speichern". Strip all `<script>` tags from the output and add `<base href="/">`.
@@ -316,3 +317,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 02:06 P7.5 DONE ecd1269 — one web app behind Caddy, shop. redirect host, apps/website removed
 2026-10-20 02:08 P7.6 DONE 0e66673 — one datenschutz.md, all sections kept, storage section marked legal-open
 2026-10-20 02:19 P7.7 DONE 2889c6f — Umami 3.4.0 self-hosted, tracker+events, masked logs; caddy validate OK
+2026-10-20 03:38 P7.8 DONE d2363ac — page components + /vorschau/render/ container endpoint + Sveltia templates

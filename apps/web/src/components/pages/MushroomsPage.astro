@@ -1,0 +1,436 @@
+---
+import { Image } from "astro:assets";
+import { type CollectionEntry, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import rosaLamellen from "../../assets/images/fotos/rosa-lamellen.jpg";
+import ProductCard from "../ProductCard.astro";
+
+interface Props {
+  data: CollectionEntry<"mushrooms-page">["data"];
+  mushrooms: CollectionEntry<"mushrooms">[];
+}
+
+const {
+  title,
+  description,
+  heroEyebrow,
+  heroTitle,
+  heroLead,
+  freshTag,
+  growkitLabel,
+  emptyText,
+  bandText,
+  ctas,
+} = Astro.props.data;
+
+// Kartonfarbe und Growkit-Link je Sorte (Schlüssel = Dateiname der Sorte)
+const GROWKIT_AUSTERN = "/shop/austernseitlinge-growkit/";
+const meta: Record<
+  string,
+  {
+    tone: "lavender" | "pink" | "olive-soft" | "mist" | "white";
+    tilt: number;
+    kit?: string;
+  }
+> = {
+  "rosa-austernpilze": { tone: "pink", tilt: -1.5, kit: GROWKIT_AUSTERN },
+  "2025-11-17-lions-mane": {
+    tone: "lavender",
+    tilt: 1,
+    kit: "/shop/lions-mane-growkit/",
+  },
+  "2025-11-17-white-pearl": {
+    tone: "olive-soft",
+    tilt: -1,
+    kit: GROWKIT_AUSTERN,
+  },
+  "2025-11-17-pioppino": { tone: "white", tilt: 1.5 },
+  "2025-11-17-black-pearl": { tone: "mist", tilt: -1 },
+};
+
+const mushrooms = await Promise.all(
+  [...Astro.props.mushrooms]
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (entry) => {
+      const { Content } = await render(entry);
+      const m = meta[entry.id];
+      return {
+        title: entry.data.title,
+        image: entry.data.image,
+        imageAlt: entry.data.imageAlt,
+        tone: m?.tone ?? "white",
+        tilt: m?.tilt ?? 0,
+        latin: entry.data.latinName,
+        badge: entry.data.badge,
+        kit: m?.kit,
+        Content,
+        slug: entry.id,
+      };
+    }),
+);
+---
+
+<Layout title={title} description={description} isLandingPage={true} active="pilze">
+
+  <div class="page" data-sorten>
+    <section class="hero">
+      <div class="hero__copy">
+        <h1>
+          <span class="eyebrow hero__eyebrow">{heroEyebrow}</span>
+          <span class="hero__title">{heroTitle}</span>
+        </h1>
+        <p class="lead hero__lead">{heroLead}</p>
+      </div>
+      <div class="filter" role="group" aria-label="Sorten filtern">
+        <button type="button" class="filter__chip" aria-pressed="true" data-filter="all">Alle Sorten</button>
+        <button type="button" class="filter__chip" aria-pressed="false" data-filter="kit">Als Growkit</button>
+      </div>
+    </section>
+
+    <section class="sorten" aria-label="Pilzsorten">
+      <div class="sorten__grid">
+        {
+          mushrooms.map((mushroom) => (
+            <div class="sorten__item" data-kit={mushroom.kit ? "true" : "false"}>
+              <ProductCard
+                title={mushroom.title}
+                image={mushroom.image}
+                imageAlt={mushroom.imageAlt}
+                tone={mushroom.tone}
+                tilt={mushroom.tilt}
+                subtitle={mushroom.latin}
+                badge={mushroom.badge}
+                id={mushroom.slug}
+              >
+                <mushroom.Content />
+                <Fragment slot="actions">
+                  <span class="tag">{freshTag}</span>
+                  {mushroom.kit && (
+                    <a class="tag" href={mushroom.kit}>
+                      {growkitLabel} <Icon name="arrow-right" size={16} />
+                    </a>
+                  )}
+                </Fragment>
+              </ProductCard>
+            </div>
+          ))
+        }
+      </div>
+
+      {
+        mushrooms.length === 0 && (
+          <p class="no-content">{emptyText}</p>
+        )
+      }
+    </section>
+
+    <section class="band" aria-label="Bildband">
+      <Image
+        src={rosaLamellen}
+        alt=""
+        class="band__img"
+        widths={[640, 1024, 1600]}
+        sizes="100vw"
+        loading="lazy"
+        format="webp"
+      />
+      <div class="band__inner">
+        <p class="band__bubble">{bandText}</p>
+      </div>
+    </section>
+
+    <section class="ctas" aria-label="Pilze bekommen">
+      {
+        ctas.map((cta, i) => (
+          <a class={`cta ${i === 0 ? "cta--accent" : "cta--white"}`} href={cta.link}>
+            <span class={i === 0 ? "label cta__label cta__label--ink" : "label cta__label"}>{cta.label}</span>
+            <h2 class="cta__title">{cta.title} <Icon name="arrow-right" size={32} strokeWidth={3} /></h2>
+            <p>{cta.text}</p>
+          </a>
+        ))
+      }
+    </section>
+  </div>
+</Layout>
+
+<script>
+  // Sortenfilter: "Alle Sorten" / "Als Growkit"
+  function initFilter() {
+    const root = document.querySelector<HTMLElement>("[data-sorten]");
+    if (!root) return;
+    const chips = root.querySelectorAll<HTMLButtonElement>("[data-filter]");
+    const items = root.querySelectorAll<HTMLElement>(".sorten__item");
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const kitOnly = chip.dataset.filter === "kit";
+        chips.forEach((c) =>
+          c.setAttribute("aria-pressed", c === chip ? "true" : "false"),
+        );
+        items.forEach((item) => {
+          item.hidden = kitOnly && item.dataset.kit !== "true";
+        });
+      });
+    });
+  }
+  initFilter();
+</script>
+
+<style>
+  .page {
+    overflow-x: clip;
+  }
+
+  /* ── Hero ───────────────────────────────────────── */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+    padding: 40px var(--gutter) 56px;
+  }
+
+  .hero__copy {
+    flex: 1 1 560px;
+    min-width: 0;
+  }
+
+  .hero__eyebrow {
+    display: block;
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--color-accent-dark);
+  }
+
+  .hero__title {
+    display: block;
+    font-size: clamp(3rem, 8vw, 7.5rem);
+    line-height: 0.9;
+    color: var(--color-accent);
+  }
+
+  .hero__lead {
+    max-width: 44ch;
+    margin: 24px 0 0;
+  }
+
+  /* Filter-Chips: aktiv = Tinte, sonst Outline */
+  .filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .filter__chip {
+    min-height: 44px;
+    padding: 12px 18px;
+    border: 2px solid var(--color-ink);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .filter__chip:hover {
+    background: var(--color-white);
+  }
+
+  .filter__chip[aria-pressed="true"] {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
+  /* ── Sorten ─────────────────────────────────────── */
+  .sorten {
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+    padding: 0 var(--gutter) 112px;
+  }
+
+  .sorten__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 48px 36px;
+    align-items: stretch;
+  }
+
+  .sorten__item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .sorten__item[hidden] {
+    display: none;
+  }
+
+  .sorten__item > :global(.product-card) {
+    flex: 1;
+  }
+
+  .no-content {
+    padding: 4rem 0;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  /* ── Bildband ───────────────────────────────────── */
+  .band {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 560px;
+    padding: 48px var(--gutter);
+    background: var(--color-ink);
+    overflow: hidden;
+  }
+
+  .band :global(.band__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.75;
+  }
+
+  .band__inner {
+    position: relative;
+    width: 100%;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+  }
+
+  .band__bubble {
+    display: inline-block;
+    max-width: 22ch;
+    margin: 0;
+    padding: 22px 28px;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border: 3px solid var(--color-ink);
+    border-radius: 0;
+    box-shadow: 6px 6px 0 var(--color-accent);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(1.875rem, 3.6vw, 3rem);
+    line-height: 1;
+  }
+
+  /* ── Weiter-Karten ──────────────────────────────── */
+  .ctas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 32px;
+    max-width: var(--container, 1280px);
+    margin-inline: auto;
+    padding: 96px var(--gutter);
+  }
+
+  .cta {
+    display: block;
+    padding: 36px;
+    color: var(--color-ink);
+    text-decoration: none;
+    border: 3px solid var(--color-ink);
+    border-radius: 0;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.2s var(--ease-smooth, ease),
+      box-shadow 0.2s var(--ease-smooth, ease);
+  }
+
+  .cta:hover {
+    color: var(--color-ink);
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0 var(--color-ink);
+  }
+
+  .cta--accent {
+    background: var(--color-cream);
+    border-color: var(--color-accent);
+  }
+
+  .cta--accent .cta__title {
+    color: var(--color-accent);
+  }
+
+  .cta--white {
+    background: var(--white);
+  }
+
+  .cta .label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .cta__label {
+    color: var(--color-accent-dark);
+  }
+
+  .cta .cta__label--ink {
+    color: var(--color-ink);
+  }
+
+  .cta__title {
+    margin: 0 0 12px;
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100;
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .cta__title :global(svg) {
+    vertical-align: -0.1em;
+  }
+
+  .cta p {
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 768px) {
+    .hero {
+      padding-bottom: 40px;
+    }
+
+    .sorten {
+      padding-bottom: 64px;
+    }
+
+    .band {
+      min-height: 380px;
+    }
+
+    .ctas {
+      padding-block: 56px;
+    }
+
+    .cta {
+      padding: 24px 20px;
+      box-shadow: 6px 6px 0 var(--color-ink);
+    }
+
+    .cta__title {
+      font-size: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta:hover {
+      transform: none;
+    }
+  }
+</style>

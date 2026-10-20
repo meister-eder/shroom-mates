@@ -7,6 +7,7 @@ Website und Onlineshop für Speisepilze, Growkits und Tinkturen (shroom-mates.de
 Monorepo mit Bun-Workspaces und Turbo (`apps/*`, `packages/*`):
 
 - `apps/web`: Astro 6 (`output: "static"` mit `@astrojs/node`), React-Inseln, plain CSS, nanostores. Marketingseiten (`src/pages/*.astro`) werden vorgerendert, Shop-Routen unter `src/pages/shop/` laufen per SSR (`prerender = false`) und sprechen mit Medusa über `@medusajs/js-sdk` (`src/lib/sdk.ts`). Inhalte als Content Collections in `src/content/` (Schema in `src/content.config.ts`), gepflegt über Sveltia CMS (`public/admin/`, wird vor dev/build von `scripts/copy-cms.mjs` kopiert).
+- Seiten-Markup steht in `src/components/pages/*Page.astro`, die Seiten unter `src/pages/` laden nur Daten; die CMS-Vorschau (`public/admin/preview.js`) rendert dieselben Komponenten über `/vorschau/render/` (Schemas in `src/lib/content-schemas.ts`).
 - Analytics: selbst gehostetes, cookieloses Umami (`umami`-Service in den Compose-Dateien, nur Tracker über Caddy unter `/stats/*`, Dashboard per SSH-Tunnel); Tracker nur mit Build-Env `PUBLIC_UMAMI_WEBSITE_ID`, Events über `apps/web/src/lib/analytics.ts`, Details in `DEPLOYMENT.md`.
 - `packages/ui`: geteilte Tokens (`tokens.css`), Styles und Astro-Komponenten (Header, Footer, WaveDivider …) für die App.
 - `backend`: Medusa 2 mit Zahlungsplugin `medusa-payment-sumup`, eigenen Modulen (`resend`, `withdrawal`) und Subscribern. **Kein** Workspace: eigene Abhängigkeiten, CI nutzt `npm ci` mit `package-lock.json`.

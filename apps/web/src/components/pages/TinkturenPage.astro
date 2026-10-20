@@ -1,0 +1,535 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import tinkturenHero from "../../assets/images/fotos/tinkturen-reishi.jpg";
+import { jsonLd } from "../../utils/json-ld";
+
+interface Props {
+  data: CollectionEntry<"tinkturen-page">["data"];
+}
+
+const {
+  title,
+  description,
+  heroTitle,
+  heroHeadline,
+  heroImage,
+  heroPhotoAlt,
+  introText,
+  facts,
+  tinctures,
+  shopButton,
+  process,
+  quellenTitle,
+  quellen,
+  disclaimerText,
+} = Astro.props.data;
+
+// Kartonfarbe + Shop-Produkt je Tinktur (Shop-Handles aus dem Seed)
+const processedTinctures = tinctures.map((t) => {
+  const isLions = /lion/i.test(t.title);
+  return {
+    ...t,
+    tone: isLions ? "lavender" : "pink",
+    shopHref: `/shop/${isLions ? "lions-mane-tinktur" : "reishi-cordyceps-tinktur"}/`,
+  };
+});
+
+// Hintergrundfarbe der Nummern im Ablauf (nach Position)
+const processColors = [
+  "var(--color-cream)",
+  "var(--color-cream)",
+  "var(--color-lavender)",
+  "var(--color-pink)",
+  "var(--color-accent)",
+];
+
+// Structured data for SEO
+const productSchemas = tinctures.map((t) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: t.title,
+  description: `Handgemachte Pilztinktur – ${t.title} (${t.botanicalName}). Doppelextrakt aus eigener Zucht in Leipzig.`,
+  image: t.image
+    ? new URL(t.image.src, Astro.site ?? Astro.url.origin).href
+    : undefined,
+  brand: { "@type": "Brand", name: "shroom-mates" },
+  manufacturer: {
+    "@type": "Organization",
+    name: "shroom-mates",
+    url: "https://shroom-mates.de",
+  },
+  category: "Nahrungsergänzungsmittel",
+}));
+---
+
+<Layout title={title} description={description} ogImage={heroImage?.src} isLandingPage={true} active="tinkturen">
+	{
+		productSchemas.map((schema) => (
+			<script is:inline type="application/ld+json" set:html={jsonLd(schema)} />
+		))
+	}
+
+	<div class="page">
+		<section class="hero" id="content">
+			<div class="hero__copy">
+				<h1>
+					<span class="eyebrow hero__eyebrow">{heroTitle}</span>
+					<span class="hero__title">{heroHeadline}</span>
+				</h1>
+				<p class="lead hero__lead">{introText}</p>
+			</div>
+			<div class="hero__media">
+				<div class="dots" aria-hidden="true"></div>
+				<div class="arch-frame hero__arch">
+					<Image
+						src={tinkturenHero}
+						alt={heroPhotoAlt}
+						widths={[320, 480, 640, 840]}
+						sizes="(max-width: 768px) 80vw, 420px"
+						loading="eager"
+						format="webp"
+					/>
+				</div>
+			</div>
+		</section>
+
+		<section class="facts-wrap" aria-label="Über unsere Tinkturen">
+			<dl class="facts">
+				{
+					facts.map((f) => (
+						<div class="fact">
+							<dt>{f.label}</dt>
+							<dd>{f.value}</dd>
+						</div>
+					))
+				}
+			</dl>
+		</section>
+
+		<section class="tinctures" aria-labelledby="tinctures-heading">
+			<h2 id="tinctures-heading" class="sr-only">Unsere Tinkturen</h2>
+			<div class="tinctures__grid">
+				{
+					processedTinctures.map((t) => (
+						<article class={`sticker-card sticker-card--${t.tone} tincture`}>
+							<Image
+								src={t.image}
+								alt={t.imageAlt}
+								class="tincture__img"
+								widths={[320, 480, 640]}
+								sizes="(max-width: 768px) 90vw, 280px"
+								format="webp"
+								loading="lazy"
+							/>
+							<div class="tincture__body">
+								<p class="tincture__botanical">{t.botanicalName}</p>
+								<h3 class="tincture__title">{t.title}</h3>
+								<p class="tincture__text" set:html={t.description} />
+								<div class="tincture__footer">
+									<span class="tincture__size">{t.size}</span>
+									<a class="btn btn--primary tincture__btn" href={t.shopHref}>
+										{shopButton} <Icon name="arrow-right" size={20} />
+									</a>
+								</div>
+							</div>
+						</article>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="section section--paper process" aria-labelledby="process-heading">
+			<div class="process__inner">
+				<h2 id="process-heading">{process.title}</h2>
+				<p class="process__intro">{process.intro}</p>
+				<ol class="process__list" role="list">
+					{
+						process.steps.map((step, i) => (
+							<li>
+								<span class="process__num" style={`background: ${processColors[i % processColors.length]}`}>{i + 1}</span>
+								<h3>{step.title}</h3>
+								<p>{step.text}</p>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
+
+		<section class="end" aria-label="Quellen und Hinweis">
+			{
+				quellen && quellen.length > 0 && (
+					<div class="quellen-card">
+						<h2>{quellenTitle}</h2>
+						<ol>
+							{quellen.map((q, i) => (
+								<li id={`quelle-${i + 1}`}>
+									<a href={q.url} target="_blank" rel="noopener noreferrer">
+										{q.title}
+									</a>
+								</li>
+							))}
+						</ol>
+					</div>
+				)
+			}
+			{disclaimerText && <p class="disclaimer">{disclaimerText}</p>}
+		</section>
+	</div>
+</Layout>
+
+<style>
+	.page {
+		overflow-x: clip;
+	}
+
+	/* ── Hero ───────────────────────────────────────── */
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		align-items: center;
+		gap: 48px;
+		max-width: var(--container, 1280px);
+		margin-inline: auto;
+		padding: 40px var(--gutter) 72px;
+	}
+
+	.hero__eyebrow {
+		display: block;
+		margin-bottom: 18px;
+		font-size: 0.875rem;
+		line-height: 1.4;
+		color: var(--color-accent-dark);
+	}
+
+	.hero__title {
+		display: block;
+		font-size: clamp(2.75rem, 7.4vw, 7rem);
+		line-height: 0.9;
+		color: var(--color-accent);
+	}
+
+	.hero__lead {
+		max-width: 44ch;
+		margin: 24px 0 0;
+	}
+
+	.hero__media {
+		position: relative;
+		padding: 24px;
+	}
+
+	.hero__media .dots {
+		position: absolute;
+		inset: 30px 0 0 50px;
+		border-radius: 50%;
+	}
+
+	.hero__arch {
+		position: relative;
+		width: 100%;
+		max-width: 420px;
+		height: 540px;
+		margin: 0 auto;
+		box-shadow: var(--shadow-teaser);
+	}
+
+	/* ── Fakten ─────────────────────────────────────── */
+	.facts-wrap {
+		max-width: var(--container, 1280px);
+		margin-inline: auto;
+		padding: 0 var(--gutter) 72px;
+	}
+
+	.facts {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+		gap: 16px;
+		margin: 0;
+	}
+
+	.fact {
+		padding: 16px 18px;
+		background: var(--white);
+		border: 2px solid var(--color-ink);
+		border-radius: 0;
+	}
+
+	.fact dt {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-accent-dark);
+	}
+
+	.fact dd {
+		margin: 6px 0 0;
+		font-size: 1.0625rem;
+		line-height: 1.4;
+	}
+
+	/* ── Tinkturen ──────────────────────────────────── */
+	.tinctures {
+		max-width: var(--container, 1280px);
+		margin-inline: auto;
+		padding: 0 var(--gutter) 112px;
+	}
+
+	.tinctures__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+		gap: 40px;
+		align-items: stretch;
+	}
+
+	.tincture {
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 20px;
+		padding: 18px;
+		min-width: 0;
+		box-shadow: var(--shadow-card);
+	}
+
+	/* Neigung wie im Entwurf: erste Karte -1°, zweite +1° */
+	.tincture:nth-child(odd) {
+		--sticker-rot: -1deg;
+	}
+
+	.tincture:nth-child(even) {
+		--sticker-rot: 1deg;
+	}
+
+	.tincture :global(.tincture__img) {
+		flex: 1 1 200px;
+		min-width: 0;
+		height: 320px;
+		box-sizing: border-box;
+	}
+
+	.tincture__body {
+		display: flex;
+		flex: 1 1 220px;
+		flex-direction: column;
+		gap: 12px;
+		min-width: 0;
+		padding: 8px 4px;
+	}
+
+	.tincture__botanical {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		font-style: italic;
+	}
+
+	.tincture__title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-weight: 900;
+		font-variation-settings: "SOFT" 100;
+		font-size: 2.5rem;
+		line-height: 0.95;
+	}
+
+	.tincture__text {
+		margin: 0;
+		font-size: 1.0625rem;
+		line-height: 1.5;
+	}
+
+	/* Quellen-Hochzahlen: Link in Tinte, unterstrichen, Zielgröße ausreichend */
+	.tincture__text :global(sup a) {
+		color: var(--color-ink);
+		font-weight: 700;
+		padding: 0 3px;
+	}
+
+	.tincture__footer {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-top: auto;
+		padding-top: 14px;
+		border-top: 2px solid var(--color-ink);
+	}
+
+	.tincture__size {
+		font-family: var(--font-mono);
+		font-size: 0.9375rem;
+	}
+
+	.tincture__btn {
+		min-height: 44px;
+		padding: 12px 18px;
+		box-shadow: 3px 3px 0 var(--color-accent);
+	}
+
+	.tincture__btn:hover {
+		box-shadow: 1px 1px 0 var(--color-accent);
+	}
+
+	/* ── Prozess ────────────────────────────────────── */
+	.process__inner {
+		max-width: var(--container, 1280px);
+		margin-inline: auto;
+	}
+
+	.process {
+		padding-block: 88px;
+	}
+
+	.process__inner > h2 {
+		margin-bottom: 12px;
+	}
+
+	.process__intro {
+		max-width: 56ch;
+		margin: 0 0 48px;
+		font-size: 1.1875rem;
+	}
+
+	.process__list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+		gap: 24px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.process__list li {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.process__num {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 72px;
+		height: 72px;
+		border: 3px solid var(--color-ink);
+		border-radius: 50%;
+		box-shadow: var(--shadow-btn);
+		font-family: var(--font-display);
+		font-weight: 900;
+		font-size: 2rem;
+	}
+
+	.process__list h3 {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 800;
+	}
+
+	.process__list p {
+		margin: 0;
+		line-height: 1.5;
+	}
+
+	/* ── Quellen + Hinweis ──────────────────────────── */
+	.end {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 32px;
+		max-width: var(--container, 1280px);
+		margin-inline: auto;
+		padding: 72px var(--gutter) 96px;
+	}
+
+	.quellen-card {
+		flex: 1 1 420px;
+		min-width: 0;
+		padding: 28px;
+		background: var(--white);
+		border: 3px solid var(--color-ink);
+		border-radius: 0;
+	}
+
+	.quellen-card h2 {
+		margin: 0 0 12px;
+		font-size: 1.625rem;
+		font-weight: 800;
+	}
+
+	.quellen-card ol {
+		margin: 0;
+		padding-left: 1.5rem;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+	}
+
+	.quellen-card li {
+		margin-bottom: 0.6rem;
+		scroll-margin-top: 16px;
+		overflow-wrap: anywhere;
+	}
+
+	.quellen-card li:target {
+		background: var(--color-olive-soft);
+	}
+
+	.disclaimer {
+		flex: 1 1 320px;
+		align-self: center;
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		line-height: 1.7;
+	}
+
+	/* ── Responsive ─────────────────────────────────── */
+	@media (max-width: 900px) {
+		.hero {
+			grid-template-columns: minmax(0, 1fr);
+			padding-bottom: 48px;
+		}
+
+		.hero__arch {
+			height: 420px;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.facts-wrap {
+			padding-bottom: 48px;
+		}
+
+		.tinctures {
+			padding-bottom: 64px;
+		}
+
+		.tincture {
+			box-shadow: 6px 6px 0 var(--color-ink);
+		}
+
+		.tincture__title {
+			font-size: 2rem;
+		}
+
+		.process {
+			padding-block: 56px;
+		}
+
+		.tincture :global(.tincture__img) {
+			height: 260px;
+		}
+
+		.end {
+			padding-block: 48px 56px;
+		}
+
+		.quellen-card {
+			padding: 20px;
+		}
+	}
+</style>

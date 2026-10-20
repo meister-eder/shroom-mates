@@ -1,0 +1,156 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Icon from "@shroom-mates/ui/Icon.astro";
+import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import FAQ from "../FAQ.astro";
+
+interface Props {
+  data: CollectionEntry<"faq-page">["data"];
+}
+
+const {
+  title,
+  description,
+  heroEyebrow,
+  heroHeadline,
+  heroLead,
+  helpTitle,
+  helpText,
+  helpEmail,
+  helpButton,
+} = Astro.props.data;
+---
+
+<Layout title={title} description={description} active="faq" isLandingPage>
+  <div class="faq-page">
+    <div class="container faq-layout">
+      <div class="faq-aside">
+        <h1 class="eyebrow faq-eyebrow">{heroEyebrow}</h1>
+        <p class="faq-title">{heroHeadline}</p>
+        <p class="lead faq-lead">{heroLead}</p>
+        <div class="faq-mascot">
+          <div class="dots" aria-hidden="true"></div>
+          <MatesLogo class="faq-mascot__logo" alt="" width={340} sizes="(max-width: 900px) 70vw, 340px" loading="eager" />
+        </div>
+        <div class="faq-help">
+          <h2 class="faq-help__title">{helpTitle}</h2>
+          <p>
+            {helpText}
+            <a href={`mailto:${helpEmail}`}>{helpEmail}</a>
+          </p>
+          <a class="btn btn--primary" href="/kontakt/">
+            {helpButton} <Icon name="arrow-right" size={20} />
+          </a>
+        </div>
+      </div>
+
+      <div class="faq-main">
+        <FAQ />
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .faq-page {
+    overflow-x: clip;
+  }
+
+  .faq-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 56px;
+    padding-top: 40px;
+    padding-bottom: 112px;
+  }
+
+  .faq-aside {
+    flex: 1 1 300px;
+    min-width: 0;
+  }
+
+  .faq-main {
+    flex: 2 1 560px;
+    min-width: 0;
+  }
+
+  .faq-eyebrow {
+    margin-bottom: 18px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .faq-title {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    font-size: clamp(48px, 7vw, 104px);
+    line-height: 0.9;
+    color: var(--color-accent);
+    text-wrap: balance;
+  }
+
+  .faq-lead {
+    max-width: 34ch;
+    margin: 0;
+  }
+
+  .faq-mascot {
+    position: relative;
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+
+  .faq-mascot .dots {
+    position: absolute;
+    inset: 40px 20px 0 40px;
+    border-radius: 50%;
+  }
+
+  .faq-mascot :global(.faq-mascot__logo) {
+    position: relative;
+    max-width: 340px;
+    filter: drop-shadow(5px 5px 0 var(--color-ink));
+  }
+
+  .faq-help {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--color-white);
+    border: 3px solid var(--color-ink);
+    border-radius: 0;
+    box-shadow: 6px 6px 0 var(--color-ink);
+  }
+
+  .faq-help__title {
+    margin: 0 0 8px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-variation-settings: normal;
+    line-height: 1.2;
+  }
+
+  .faq-help :global(.btn) {
+    padding: 12px 20px;
+    box-shadow: none;
+  }
+
+  .faq-help p {
+    margin: 0 0 16px;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 768px) {
+    .faq-layout {
+      gap: 40px;
+      padding-bottom: 64px;
+    }
+
+    .faq-help {
+      box-shadow: 4px 4px 0 var(--color-ink);
+    }
+  }
+</style>

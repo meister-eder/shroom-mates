@@ -73,7 +73,10 @@ const canonicalURL = new URL(
 // Use a better default image - the logo with mushrooms
 const defaultOgImage =
   ogImage ||
-  new URL("/assets/logo_with_shrooms_and_text.png", Astro.site).toString();
+  new URL(
+    "/assets/logo_with_shrooms_and_text.png",
+    Astro.site ?? Astro.url.origin,
+  ).toString();
 
 // Structured data for local business SEO
 const structuredData = {
@@ -85,7 +88,7 @@ const structuredData = {
   legalName: "shroom-mates GbR – Emmelie Kunz & Tim Eder",
   image: new URL(
     "/assets/logo_with_shrooms_and_text.png",
-    Astro.site,
+    Astro.site ?? Astro.url.origin,
   ).toString(),
   description:
     "Edelpilzzucht in Leipzig-Leutzsch. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
