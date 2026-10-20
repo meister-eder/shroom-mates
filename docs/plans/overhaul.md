@@ -266,7 +266,7 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
 
 ## P8 Finish, staging, land
 
-- [ ] **P8.1 Full verification and report** · deps: P7.7, P7.8 · verify: all
+- [x] **P8.1 Full verification and report** · deps: P7.7, P7.8 · verify: all · a60a9b0
   Run `scripts/verify.sh all`. Build both a clean install (`rm -rf node_modules apps/*/node_modules && bun install --frozen-lockfile`) and the production build. Measure: JS and CSS gzip per page type (home, growkits, catalog, product, cart, checkout) before (from the review: website ≈17 KB JS, shop ≈90 KB JS, shop CSS 16 KB) vs. after. Write `docs/plans/overhaul-report.md`: what changed per phase, numbers, deviations, blocked tasks with reasons, every manual follow-up from the Log. Commit it.
   Commit: `docs(plan): overhaul report`
 
@@ -318,3 +318,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 02:08 P7.6 DONE 0e66673 — one datenschutz.md, all sections kept, storage section marked legal-open
 2026-10-20 02:19 P7.7 DONE 2889c6f — Umami 3.4.0 self-hosted, tracker+events, masked logs; caddy validate OK
 2026-10-20 03:38 P7.8 DONE d2363ac — page components + /vorschau/render/ container endpoint + Sveltia templates
+2026-10-20 03:41 P8.1 DONE a60a9b0 — verify all PASS, clean install OK, report written
