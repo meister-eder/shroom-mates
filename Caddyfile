@@ -97,18 +97,24 @@
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 
 	# CSP: site + SumUp widget + Medusa API + web3forms + Google map frame
-	# (everything except the CMS admin)
+	# (everything except the CMS admin). The sha256 hashes allow Astro's inline
+	# island scripts on pages with React islands: the astro-island runtime and the
+	# loaders for client:idle, load, media, only, visible (in that order). They only
+	# change with an Astro update; e2e/smoke/csp.spec.ts then fails and prints the new ones.
 	@notadmin not path /admin /admin/*
 	header @notadmin {
-		{$CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self' https://gateway.sumup.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.{$DOMAIN} https://api.web3forms.com; frame-src https://gateway.sumup.com https://www.google.com; font-src 'self'"
+		{$CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self' 'sha256-QJZDUlo/qa5AJCrG6vHyWcatjwCeWidEHQfJc601lzw=' 'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw=' 'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c=' 'sha256-0chmwFk0zaA528yFfGV7J9ppIpdfTPPULncDF3WG7Zs=' 'sha256-eIXWvAmxkr251LJZkjniEK5LcPF3NkapbJepohwYRIc=' 'sha256-Q2BPg90ZMplYY+FSdApNErhpWafg2hcRRbndmvxuL/Q=' https://gateway.sumup.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.{$DOMAIN} https://api.web3forms.com; frame-src https://gateway.sumup.com https://www.google.com; font-src 'self'"
 		X-Robots-Tag "{$ROBOTS_TAG:all}"
 	}
 
 	# Sveltia CMS admin (/admin/): talks to the GitHub API, previews use blob: URLs.
+	# The bundle is self-hosted, but Sveltia lazy-loads some libraries (Immutable.js
+	# for preview templates) and its locales from unpkg, its fonts from jsdelivr and
+	# checks githubstatus.com; the logo is fetched as a data: URL.
 	# Declared after the cache rules above so its Cache-Control wins.
 	@admin path /admin /admin/*
 	header @admin {
-		{$CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; media-src 'self' blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.githubusercontent.com; frame-src 'self' blob: about:; worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+		{$CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; media-src 'self' blob: https:; connect-src 'self' data: https://api.github.com https://raw.githubusercontent.com https://*.githubusercontent.com https://unpkg.com https://www.githubstatus.com; frame-src 'self' blob: about:; worker-src 'self' blob:; font-src 'self' https://cdn.jsdelivr.net; object-src 'none'; base-uri 'self'; form-action 'self'"
 		Cache-Control "no-cache"
 		X-Robots-Tag "noindex, nofollow"
 	}
