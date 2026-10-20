@@ -1,28 +1,53 @@
-# ── Website (static) ──────────────────────────────────────────
+# Old shop URLs (former shop host, country prefix) -> new paths on the main
+# host. 301, query string kept (SumUp sends buyers back to /de/checkout/complete?...).
+# Anything unmapped lands on the shop index.
+(legacy_shop) {
+	route {
+		@new path /shop /shop/*
+		redir @new {args[0]}{uri} 301
+
+		@store path /de/store /de/store/
+		rewrite @store /shop/
+		@product path_regexp product ^/de/store/([^/]+)/?$
+		rewrite @product /shop/{re.product.1}/
+		@cart path /de/cart /de/cart/
+		rewrite @cart /shop/cart/
+		@complete path /de/checkout/complete /de/checkout/complete/
+		rewrite @complete /shop/checkout/complete/
+		@checkout path /de/checkout /de/checkout/
+		rewrite @checkout /shop/checkout/
+		@order path_regexp order ^/de/order/([^/]+)/?$
+		rewrite @order /shop/order/{re.order.1}/
+		@legal path_regexp legal ^/de/(agb|widerruf|gewaehrleistung|vertrag-widerrufen|datenschutz)/?$
+		rewrite @legal /{re.legal.1}/
+
+		@mapped path /shop/* /agb/ /widerruf/ /gewaehrleistung/ /vertrag-widerrufen/ /datenschutz/
+		redir @mapped {args[0]}{uri} 301
+		redir {args[0]}/shop/ 301
+	}
+}
+
+# ── Site + Shop (Astro: prerendered pages and SSR shop, one app) ──
 shroom-mates.de {
-	root * /srv/website
-	file_server
+	reverse_proxy web:4321
 
 	# Cache static assets aggressively
 	@assets path /assets/* /_astro/*
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 
-	# Short cache for HTML pages
-	@html path *.html /
-	header @html Cache-Control "public, max-age=3600"
-
 	# Security headers
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
 		X-Content-Type-Options "nosniff"
-		X-Frame-Options "DENY"
+		X-Frame-Options "SAMEORIGIN"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 	}
 
-	# CSP for the public site (everything except the CMS admin)
+	# CSP: site + SumUp widget + Medusa API + web3forms + Google map frame
+	# (everything except the CMS admin)
 	@notadmin not path /admin /admin/*
-	header @notadmin Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.web3forms.com; frame-src https://www.google.com; font-src 'self'"
+	header @notadmin Content-Security-Policy "default-src 'self'; script-src 'self' https://gateway.sumup.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.shroom-mates.de https://api.web3forms.com; frame-src https://gateway.sumup.com https://www.google.com; font-src 'self'"
 
 	# Sveltia CMS admin (/admin/): talks to the GitHub API, previews use blob: URLs.
 	# Declared after the cache rules above so its Cache-Control wins.
@@ -33,31 +58,12 @@ shroom-mates.de {
 		X-Robots-Tag "noindex, nofollow"
 	}
 
-	# Compression
 	encode gzip zstd
-
-	# Canonical URLs end with a slash: /faq → /faq/ (avoids duplicate content)
-	@noslash {
-		not path */
-		not path *.*
-		file {path}/index.html
-	}
-	redir @noslash {path}/ 301
-
-	# SPA fallback for clean URLs
-	try_files {path} {path}.html {path}/index.html
-
-	# Branded 404 page from the static build
-	handle_errors 404 {
-		root * /srv/website
-		rewrite * /404.html
-		file_server
-	}
 }
 
-# ── Storefront (Astro SSR) ───────────────────────────────────
+# ── Old shop host: redirects only ────────────────────────────
 shop.shroom-mates.de {
-	reverse_proxy web:4321
+	import legacy_shop https://shroom-mates.de
 
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
@@ -65,7 +71,6 @@ shop.shroom-mates.de {
 		X-Frame-Options "SAMEORIGIN"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-		Content-Security-Policy "default-src 'self'; script-src 'self' https://gateway.sumup.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.shroom-mates.de; frame-src https://gateway.sumup.com; font-src 'self'"
 	}
 
 	encode gzip zstd

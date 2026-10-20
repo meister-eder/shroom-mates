@@ -1,25 +1,21 @@
-# Shroom-Mates Storefront
+# Shroom Mates Web
 
-E-Commerce-Storefront für shroom-mates.de, basierend auf [astro-medusa-starter](https://github.com/Bystrol/astro-medusa-starter).
+Website und Onlineshop für shroom-mates.de in einer Astro-App: Marketingseiten werden statisch vorgerendert, die Shop-Routen unter `/shop/` laufen per SSR (Node-Adapter) gegen Medusa.
 
 ## Tech Stack
 
-- **Astro 6** (SSR mit Node.js-Adapter)
-- **React 19** (Islands für Cart, Checkout, Navigation)
-- **Plain CSS** (Tokens aus `@shroom-mates/ui`)
-- **Medusa JS SDK** (Backend-Anbindung)
-- **Nanostores** (State Management)
-- **Mollie** (Zahlungsanbieter, Redirect-basiert)
+- **Astro 6** (`output: "static"`, SSR-Seiten mit `prerender = false`)
+- **React 19** (Inseln für Pilzkorb, Kasse, Navigation)
+- **Content Collections** in `src/content/`, gepflegt über Sveltia CMS (`public/admin/`)
+- **Medusa JS SDK**, **Nanostores**, SumUp (Widget)
+- Tokens und geteilte Komponenten aus `@shroom-mates/ui`
 
 ## Entwicklung
 
 ```bash
-# .env erstellen
-cp .env.example .env
-# Variablen ausfüllen (Backend-URL, Publishable Key, Region)
-
-# Dev-Server starten (Port 8000)
-bun run dev
+cp .env.example .env     # Backend-URL, Publishable Key, Region
+bun run dev              # Port 8000 (kopiert vorher das CMS-Bundle)
+bun run build            # astro check + build nach ./dist/
 ```
 
 ## Umgebungsvariablen
@@ -30,4 +26,4 @@ bun run dev
 | `PUBLIC_MEDUSA_PUBLISHABLE_KEY` | Publishable API Key aus dem Medusa Admin |
 | `DEFAULT_REGION` | Standard-Region (`de`) |
 
-Siehe [MIGRATION.md](../../MIGRATION.md) — Phase 3.
+Bildverarbeitung: `docs/IMAGE_HANDLING.md`.

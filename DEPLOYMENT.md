@@ -1,12 +1,12 @@
 # Deployment — Shroom-Mates
 
 Everything runs with Docker Compose on a single **netcup** VPS (`DEPLOY_HOST`).
-Caddy terminates TLS and routes three hostnames:
+Caddy terminates TLS and routes three hostnames (one web app serves site and shop):
 
 | Host | Service |
 |------|---------|
-| `shroom-mates.<domain>` | Website (static files from `apps/website/dist`) |
-| `shop.<domain>` | Storefront (Astro SSR, `web:4321`) |
+| `shroom-mates.<domain>` | Site + shop (Astro app `web:4321`: prerendered pages, SSR shop under `/shop/`) |
+| `shop.<domain>` | Redirects only: old shop URLs (`/de/store/...`, `/de/cart`, ...) 301 to `shroom-mates.<domain>/shop/...`; unmapped paths go to `/shop/` |
 | `api.<domain>` | Medusa API + Admin (`medusa:9000`, admin at `/app`) |
 
 ## Environments
@@ -37,21 +37,18 @@ gh run watch
 
 The workflow:
 
-1. builds website, storefront and backend in CI (fails fast on build errors),
+1. builds the web app and backend in CI (fails fast on build errors),
 2. rsyncs the repo to `/opt/shroom-mates` (never touches the server's `.env`),
 3. writes `SUMUP_API_KEY` / `SUMUP_MERCHANT_CODE` from the `netcup-test`
    environment secrets into the server `.env` (only if **both** are set),
 4. rebuilds the `medusa` and `web` images on the server and restarts the stack,
-5. smoke-tests `api…/health`, `shop…/shop/` and the website.
-
-Pushes that only touch `apps/website/` take a fast path that just syncs the static build.
+5. smoke-tests `api…/health`, `shroom-mates…/shop/` and the site.
 
 **Automatic deploys:** besides the manual run, the workflow also triggers on every
-`push` to the `shop` branch that touches `apps/website/**` (this is what deploys
+`push` to the `shop` branch that touches `apps/web/**` (this is what deploys
 CMS edits, see [Content editing](#content-editing-sveltia-cms)). A push deploys
-the pushed commit (`github.sha`); change detection compares the whole pushed range
-(`before..sha`), so it takes the website-only fast path only if *none* of the pushed
-commits touched anything outside `apps/website/`. Manual runs always do a full deploy.
+the pushed commit (`github.sha`). Every deploy is a full deploy because the
+prerendered pages are baked into the `web` image.
 Deploys are serialized (`concurrency: deploy-production`), so rapid CMS saves queue up.
 
 ## Configuration
@@ -86,7 +83,7 @@ SUMUP_MERCHANT_CODE=…      # managed by the workflow (see above)
 
 All URLs (`MEDUSA_BACKEND_URL`, CORS, `SUMUP_MEDUSA_URL`, `SUMUP_REDIRECT_URL`)
 are derived from `DOMAIN` in the compose file, so the SumUp redirect always
-points at `https://shop.<domain>/shop/checkout/complete`.
+points at `https://shroom-mates.<domain>/shop/checkout/complete`.
 
 ## SumUp
 
@@ -166,13 +163,13 @@ docker image prune -f && docker builder prune -f   # free disk space
 
 ## Content editing (Sveltia CMS)
 
-The static website is edited with [Sveltia CMS](https://github.com/sveltia/sveltia-cms),
+The site content is edited with [Sveltia CMS](https://github.com/sveltia/sveltia-cms),
 a Git-based CMS with no server of its own: the admin UI is just static files served
-with the website.
+with the web app.
 
 - **URL:** `https://shroom-mates.<domain>/admin/` (test server: `https://shroom-mates.<DEPLOY_HOST>.sslip.io/admin/`)
 - **Backend:** GitHub repo `meister-eder/shroom-mates`, branch `shop`
-  (later `main`). Uploaded images go to `apps/website/src/assets/images`.
+  (later `main`). Uploaded images go to `apps/web/src/assets/images`.
 
 ### Logging in with a token
 
@@ -187,15 +184,14 @@ with the website.
 ### What happens when you save
 
 Saving (publishing) an entry creates a commit on `shop` via the GitHub API →
-the `push` trigger starts **Deploy** → only `apps/website/` changed, so the
-website-only fast path builds the site and rsyncs `dist/` to the server → live after
-about 2–3 minutes. Progress: **Actions → Deploy**. Because the CMS commits directly,
+the `push` trigger starts **Deploy** → the full deploy rebuilds the `web` image with the new content → live after
+about 5 minutes. Progress: **Actions → Deploy**. Because the CMS commits directly,
 pull before working locally on the same branch.
 
 ### Switching the branch to `main`
 
 When production moves from `shop` to `main`, change it in two places:
-`branch:` in `apps/website/public/admin/config.yml`, `branches:` under `push:` in
+`branch:` in `apps/web/public/admin/config.yml`, `branches:` under `push:` in
 `.github/workflows/deploy-server.yml`. If `main` is branch-protected, direct CMS commits need a bypass rule for the editors.
 
 ### CSP

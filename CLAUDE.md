@@ -6,9 +6,8 @@ Website und Onlineshop für Speisepilze, Growkits und Tinkturen (shroom-mates.de
 
 Monorepo mit Bun-Workspaces und Turbo (`apps/*`, `packages/*`):
 
-- `apps/website`: Astro 6, statisch gebaut. Inhalte als Content Collections in `src/content/` (Schema in `src/content.config.ts`), gepflegt über Sveltia CMS (`public/admin/`, wird vor dev/build von `scripts/copy-cms.mjs` kopiert).
-- `apps/web`: Astro 6 SSR (`@astrojs/node`), React-Inseln, plain CSS, nanostores. Spricht mit Medusa über `@medusajs/js-sdk` (`src/lib/sdk.ts`). Routen unter `src/pages/[countryCode]/`.
-- `packages/ui`: geteilte Tokens (`tokens.css`), Styles und Astro-Komponenten (Header, Footer, WaveDivider …) für beide Apps.
+- `apps/web`: Astro 6 (`output: "static"` mit `@astrojs/node`), React-Inseln, plain CSS, nanostores. Marketingseiten (`src/pages/*.astro`) werden vorgerendert, Shop-Routen unter `src/pages/shop/` laufen per SSR (`prerender = false`) und sprechen mit Medusa über `@medusajs/js-sdk` (`src/lib/sdk.ts`). Inhalte als Content Collections in `src/content/` (Schema in `src/content.config.ts`), gepflegt über Sveltia CMS (`public/admin/`, wird vor dev/build von `scripts/copy-cms.mjs` kopiert).
+- `packages/ui`: geteilte Tokens (`tokens.css`), Styles und Astro-Komponenten (Header, Footer, WaveDivider …) für die App.
 - `backend`: Medusa 2 mit Zahlungsplugin `medusa-payment-sumup`, eigenen Modulen (`resend`, `withdrawal`) und Subscribern. **Kein** Workspace: eigene Abhängigkeiten, CI nutzt `npm ci` mit `package-lock.json`.
 - `e2e`: Playwright-Tests für den Shop.
 
@@ -18,9 +17,8 @@ Lokales Setup (Postgres, Redis, SumUp-Sandbox) bei Bedarf in `docs/LOCAL_DEVELOP
 
 ```bash
 bun install                                         # Workspaces
-bun run --filter @shroom-mates/website lint         # Biome (nur Website)
-bun run --filter @shroom-mates/website build        # astro check + build
-bun run --filter @shroom-mates/web build
+bun run --filter @shroom-mates/web lint             # Biome
+bun run --filter @shroom-mates/web build            # astro check + build
 cd backend && npm ci && npx medusa build            # Backend
 cd backend && npm run test:unit                     # bzw. test:integration:http
 cd e2e && bun run test                              # Playwright

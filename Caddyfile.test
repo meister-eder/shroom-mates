@@ -3,28 +3,36 @@
 # DOMAIN (<server-ip>.sslip.io) comes from the caddy service environment;
 # the deploy workflow derives it from the DEPLOY_HOST secret.
 
-shroom-mates.{$DOMAIN} {
-	tls internal
-	# Test server: keep it out of search engines
-	header X-Robots-Tag "noindex, nofollow"
-	root * /srv/website
-	file_server
-	try_files {path} {path}.html {path}/index.html
+# Old shop URLs (former shop host, country prefix) -> new paths on the main
+# host. 301, query string kept (SumUp sends buyers back to /de/checkout/complete?...).
+# Anything unmapped lands on the shop index.
+(legacy_shop) {
+	route {
+		@new path /shop /shop/*
+		redir @new {args[0]}{uri} 301
 
-	# Sveltia CMS admin: always revalidate so config.yml changes apply at once
-	# (this test server sets no CSP, so no admin-specific CSP is needed here)
-	@admin path /admin /admin/*
-	header @admin Cache-Control "no-cache"
+		@store path /de/store /de/store/
+		rewrite @store /shop/
+		@product path_regexp product ^/de/store/([^/]+)/?$
+		rewrite @product /shop/{re.product.1}/
+		@cart path /de/cart /de/cart/
+		rewrite @cart /shop/cart/
+		@complete path /de/checkout/complete /de/checkout/complete/
+		rewrite @complete /shop/checkout/complete/
+		@checkout path /de/checkout /de/checkout/
+		rewrite @checkout /shop/checkout/
+		@order path_regexp order ^/de/order/([^/]+)/?$
+		rewrite @order /shop/order/{re.order.1}/
+		@legal path_regexp legal ^/de/(agb|widerruf|gewaehrleistung|vertrag-widerrufen|datenschutz)/?$
+		rewrite @legal /{re.legal.1}/
 
-	# Branded 404 page from the static build
-	handle_errors 404 {
-		root * /srv/website
-		rewrite * /404.html
-		file_server
+		@mapped path /shop/* /agb/ /widerruf/ /gewaehrleistung/ /vertrag-widerrufen/ /datenschutz/
+		redir @mapped {args[0]}{uri} 301
+		redir {args[0]}/shop/ 301
 	}
 }
 
-shop.{$DOMAIN} {
+shroom-mates.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
@@ -32,11 +40,21 @@ shop.{$DOMAIN} {
 		header_up Host {http.request.host}
 		header_up X-Forwarded-Proto https
 	}
+
+	@assets path /assets/* /_astro/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	# Sveltia CMS admin: always revalidate so config.yml changes apply at once
+	# (this test server sets no CSP, so no admin-specific CSP is needed here)
+	@admin path /admin /admin/*
+	header @admin Cache-Control "no-cache"
 }
 
-api.{$DOMAIN} {
+# Old shop host: redirects only
+shop.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
-	reverse_proxy medusa:9000
+	import legacy_shop https://shroom-mates.{$DOMAIN}
 }
+

@@ -1,5 +1,0 @@
-{
-	"extends": "astro/tsconfigs/strict",
-	// Gebündeltes Sveltia-CMS (kopiert nach public/admin/) nicht typprüfen
-	"exclude": ["dist", "public/admin"]
-}

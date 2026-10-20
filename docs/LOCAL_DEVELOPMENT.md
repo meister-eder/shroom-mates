@@ -306,21 +306,21 @@ docker compose -f docker-compose.dev.yml logs -f postgres
 
 ## Editing Website Content with Sveltia CMS
 
-The static website (`apps/website`) is edited through Sveltia CMS at `/admin/`.
+The marketing pages (`apps/web`) is edited through Sveltia CMS at `/admin/`.
 Locally it writes straight into your working tree, so no login or GitHub token is needed.
 
 1. Start the website dev server (this also copies the Sveltia script into `/admin/`):
 
    ```bash
-   bun run dev            # from the repo root, or inside apps/website
+   bun run dev            # from the repo root, or inside apps/web
    ```
 
 2. Open **http://localhost:4321/admin/index.html** (the Astro dev server does not serve `/admin/` without `index.html`; the deployed site does) in **Chrome or Edge**. Firefox and Safari
    do not support the File System Access API the local mode relies on.
 3. Click **Work with Local Repository** and select the **repo root folder**
-   (the one containing `apps/`, not `apps/website`). Confirm the browser's access prompt.
+   (the one containing `apps/`, not `apps/web`). Confirm the browser's access prompt.
 4. Edit and save entries. Sveltia writes directly to the files (content and images
-   in `apps/website/src/assets/images`). Nothing is committed automatically, so
+   in `apps/web/src/assets/images`). Nothing is committed automatically, so
    review with `git diff` and commit yourself.
 
 Notes: choosing a wrong folder makes saving fail or write to the wrong place; reselect

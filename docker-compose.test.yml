@@ -5,8 +5,8 @@
 #   DOMAIN=<server-ip>.sslip.io docker compose -f docker-compose.test.yml up -d
 #
 # Access:
-#   Website:    https://shroom-mates.<server-ip>.sslip.io
-#   Storefront: https://shop.<server-ip>.sslip.io
+#   Site + shop: https://shroom-mates.<server-ip>.sslip.io
+#   Old shop host (redirects only): https://shop.<server-ip>.sslip.io
 #   Medusa:     https://api.<server-ip>.sslip.io
 
 services:
@@ -21,7 +21,6 @@ services:
       - "443:443/udp"
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile:ro
-      - ./apps/website/dist:/srv/website:ro
     depends_on:
       medusa:
         condition: service_started
@@ -57,24 +56,24 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
       MEDUSA_BACKEND_URL: https://api.${DOMAIN}
-      STORE_CORS: https://shop.${DOMAIN},https://shroom-mates.${DOMAIN}
+      STORE_CORS: https://shroom-mates.${DOMAIN}
       ADMIN_CORS: https://api.${DOMAIN}
-      AUTH_CORS: https://api.${DOMAIN},https://shop.${DOMAIN}
+      AUTH_CORS: https://api.${DOMAIN},https://shroom-mates.${DOMAIN}
       COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
       # Derived from DOMAIN so they can't drift from the real hosts (the
-      # web's per-country redirect_url must be on the shop host).
+      # redirect_url must be on the site host).
       SUMUP_MEDUSA_URL: https://api.${DOMAIN}
-      SUMUP_REDIRECT_URL: https://shop.${DOMAIN}/shop/checkout/complete
+      SUMUP_REDIRECT_URL: https://shroom-mates.${DOMAIN}/shop/checkout/complete
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
       # Transactional email via Resend (mails are only logged without a key)
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-shroom-mates <bestellung@shroom-mates.de>}
       EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:-hey@shroom-mates.de}
       SHOP_NOTIFICATION_EMAIL: ${SHOP_NOTIFICATION_EMAIL:-hey@shroom-mates.de}
-      SHOP_PUBLIC_URL: https://shop.${DOMAIN}
+      SHOP_PUBLIC_URL: https://shroom-mates.${DOMAIN}
     volumes:
       - test_medusa_uploads:/app/static
     depends_on:
@@ -88,7 +87,7 @@ services:
       args:
         PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
-        PUBLIC_SITE_URL: https://shop.${DOMAIN}
+        PUBLIC_SITE_URL: https://shroom-mates.${DOMAIN}
     restart: unless-stopped
     environment:
       NODE_ENV: production

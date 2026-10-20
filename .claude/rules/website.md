@@ -1,6 +1,5 @@
 ---
 paths:
-  - "apps/website/**"
   - "apps/web/**"
   - "packages/ui/**"
 ---
