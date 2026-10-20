@@ -78,7 +78,7 @@ Scope boundaries and user decisions (2026-10-20):
   Visual baselines must stay unchanged (screenshots run with reduced motion).
   Commit: `feat(ui): smoother page transitions, header and marquee stay put` · bbd70c2
 
-- [!] **P1.7 One type scale for page headings** · deps: P1.5 · verify: visual
+- [x] **P1.7 One type scale for page headings** · deps: P1.5 · verify: visual
   The shop index h1 ("shroom shop", 172.8 px) is much larger than the marketing h1s (~107 px). Use the same display heading size and colour rule as the marketing pages (look up the h1 rule of e.g. /unsere-pilze/ and the design tokens; orange only per DESIGN.md rules). Check the other shop headings (product title, cart, checkout) against the same scale and align only clear outliers.
   Re-baseline allowed: `shop-katalog`, `shop-produkt-*`, `shop-pilzkorb`, `shop-kasse` (heading area only).
   Commit: `fix(shop): headings use the site type scale`
@@ -138,11 +138,11 @@ The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged int
   Branch `footer-eyes` (a40ed58, made by the owner's session on 2026-10-20, approved by the owner): softer graphite pupils and two added eyes in `packages/ui/src/Footer.astro` + an edited `shroom-mates-drawing-eyeless.png`. `git merge --no-edit footer-eyes` into `polish` (no other changes). Re-baseline allowed: all keys, footer drawing area only (check the diff images: only the pupils change). If the merge conflicts in `Footer.astro`, keep both sides' intent (the eye list and pupil style from `footer-eyes`, everything else from `polish`).
   Commit: the merge commit (`Merge branch 'footer-eyes' into polish`), plus a re-baseline needs no commit (baselines are gitignored)
 
-- [!] **P5.1 Full verification and report** · deps: P1.1, P1.2, P1.3, P1.4, P1.5, P1.6, P1.7, P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P3.1, P3.2, P4.1, P5.0 · verify: all
+- [x] **P5.1 Full verification and report** · deps: P1.1, P1.2, P1.3, P1.4, P1.5, P1.6, P1.7, P2.1, P2.2, P2.3, P2.4, P2.5, P2.6, P3.1, P3.2, P4.1, P5.0 · verify: all
   Run `scripts/verify.sh all`, write `docs/plans/polish-report.md`: changes per phase, re-baselined keys, client JS gzip per page type before/after, HCVO text changes (before/after), CSP status, blocked tasks, every manual follow-up.
   Commit: `docs(plan): polish report` · 393f846
 
-- [!] **P5.2 Land on shop and deploy staging** · deps: P5.1 · verify: —
+- [ ] **P5.2 Land on shop and deploy staging** · deps: P5.1 · verify: —
   Approved by the user on 2026-10-20. Main checkout = first entry of `git worktree list`; never touch its uncommitted files. If `shop` moved: merge `shop` into `polish` here and re-run `scripts/verify.sh visual`. Then `git -C <main> merge --ff-only polish` and `git -C <main> push origin shop` (this triggers the "Deploy server" workflow to staging.shroom-mates.de). Watch it: `gh run list --branch shop --limit 1`, `gh run watch <id> --exit-status`. On failure: `gh run view <id> --log-failed`, fix on `polish`, verify, fast-forward and push `shop` again; at most 3 attempts; anything needing the server itself (SSH, secrets, database) → blocked with description. After success: `curl` / , /shop/, /growkits/ on staging return 200, header HTML identical on / and /shop/ apart from `aria-current`. Never push `main`, never force-push.
   Commit: — (fixes get their own `fix(deploy): …` commits)
 
@@ -169,3 +169,5 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 12:00 P5.0 DONE 393f846 — footer-eyes merged cleanly; visual within tolerance, no re-baseline
 2026-10-20 12:00 P5.1 BLOCKED - — dep P1.7 blocked
 2026-10-20 12:00 P5.2 BLOCKED - — dep P5.1 blocked; shop not pushed, staging not deployed
+2026-10-20 12:40 P1.7 DONE 7b3e029 — taken over in the owner's session; shop-katalog re-baselined
+2026-10-20 12:45 P5.1 DONE — verify all PASS, report written; Caddyfile validated with Docker
