@@ -5,24 +5,63 @@ import {
   updateLineItemQuantity,
 } from "@lib/stores/cart";
 import { convertToLocale } from "@lib/utils/money";
+import type { StoreCart } from "@medusajs/types";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { QtyStepper } from "@modules/common/components/QtyStepper";
 import { useStore } from "@nanostores/react";
 import { useState } from "react";
+import { CartSkeleton } from "./CartSkeleton";
+
+/** Applies a quantity change (0 removes the line) and recomputes the item total. */
+const withQuantity = (
+  cart: StoreCart,
+  lineItemId: string,
+  quantity: number,
+): StoreCart => {
+  const items = (cart.items ?? [])
+    .map((item) => (item.id === lineItemId ? { ...item, quantity } : item))
+    .filter((item) => (item.quantity ?? 0) > 0);
+  const itemTotal = items.reduce(
+    (sum, item) => sum + (item.unit_price ?? 0) * (item.quantity ?? 0),
+    0,
+  );
+  return { ...cart, items, item_total: itemTotal } as StoreCart;
+};
 
 export const CartPage = () => {
   const cart = useStore($cart);
   const isCartLoading = useStore($isCartLoading);
-  const [busyId, setBusyId] = useState<string | null>(null);
+  const [pending, setPending] = useState<string[]>([]);
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
 
-  const run = async (lineItemId: string, action: () => Promise<void>) => {
-    setBusyId(lineItemId);
+  // Optimistic: the cart atom changes immediately, the request syncs in the
+  // background and the previous cart is restored if it fails.
+  const run = async (
+    lineItemId: string,
+    quantity: number,
+    action: () => Promise<void>,
+  ) => {
+    const previous = $cart.get();
+    if (!previous) return;
+    setError("");
+    setStatus(quantity <= 0 ? "Artikel entfernt." : "");
+    $cart.set(withQuantity(previous, lineItemId, quantity));
+    setPending((ids) => [...ids, lineItemId]);
     try {
       await action();
-    } catch (error) {
-      console.error("Failed to update cart:", error);
+    } catch (err) {
+      console.error("Failed to update cart:", err);
+      $cart.set(previous);
+      setStatus("");
+      setError(
+        "Der Pilzkorb konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+      );
     } finally {
-      setBusyId(null);
+      setPending((ids) => {
+        const index = ids.indexOf(lineItemId);
+        return ids.filter((_, i) => i !== index);
+      });
     }
   };
 
@@ -30,7 +69,7 @@ export const CartPage = () => {
   const isEmpty = itemCount === 0;
 
   if (!cart && isCartLoading) {
-    return <p className="page-note">Pilzkorb wird geladen…</p>;
+    return <CartSkeleton />;
   }
   const currencyCode = cart?.currency_code || "EUR";
 
@@ -38,6 +77,12 @@ export const CartPage = () => {
 
   return (
     <div className="shop-page">
+      <output className="sr-only">{status}</output>
+      {error && (
+        <p className="error-banner" role="alert">
+          {error}
+        </p>
+      )}
       {isEmpty ? (
         <div className="cartpage-empty">
           <MatesEyes size={180} alt="" className="shop-eyes" />
@@ -71,7 +116,7 @@ export const CartPage = () => {
                 const variantTitle = item.variant?.title || "";
                 const unitPrice = item.unit_price || 0;
                 const quantity = item.quantity || 1;
-                const busy = busyId === item.id;
+                const busy = pending.includes(item.id);
 
                 return (
                   <li key={item.id} aria-busy={busy} className="cartpage-item">
@@ -106,19 +151,18 @@ export const CartPage = () => {
                         <QtyStepper
                           value={quantity}
                           label={`Anzahl ${productTitle}`}
-                          disabled={busy}
                           decreaseLabel={
                             quantity <= 1
                               ? `${productTitle} entfernen`
                               : "Menge verringern"
                           }
                           onDecrease={() =>
-                            run(item.id, () =>
+                            run(item.id, quantity - 1, () =>
                               updateLineItemQuantity(item.id, quantity - 1),
                             )
                           }
                           onIncrease={() =>
-                            run(item.id, () =>
+                            run(item.id, quantity + 1, () =>
                               updateLineItemQuantity(item.id, quantity + 1),
                             )
                           }
@@ -126,14 +170,16 @@ export const CartPage = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            run(item.id, () => removeFromCart(item.id))
+                            run(item.id, 0, () => removeFromCart(item.id))
                           }
-                          disabled={busy}
                           className="text-btn cartpage-remove"
                           aria-label={`${productTitle} aus dem Pilzkorb entfernen`}
                         >
                           Entfernen
                         </button>
+                        {busy && (
+                          <span className="cartpage-sync" aria-hidden="true" />
+                        )}
                       </div>
                     </div>
                   </li>

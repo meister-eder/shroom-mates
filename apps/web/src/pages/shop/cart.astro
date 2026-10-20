@@ -3,6 +3,7 @@ export const prerender = false;
 
 import Layout from "@layouts/Layout.astro";
 import { CartPage } from "@modules/cart/components/CartPage";
+import { CartSkeleton } from "@modules/cart/components/CartSkeleton";
 ---
 
 <Layout
@@ -14,6 +15,6 @@ import { CartPage } from "@modules/cart/components/CartPage";
 >
   <!-- Client-only: rendered from the browser's cart -->
   <CartPage client:only="react">
-    <p slot="fallback" class="page-note">Pilzkorb wird geladen…</p>
+    <CartSkeleton slot="fallback" />
   </CartPage>
 </Layout>

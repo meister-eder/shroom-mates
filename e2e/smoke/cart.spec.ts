@@ -79,3 +79,29 @@ test("Pilzkorb: Drawer verlinkt die Seite, Pille auf /shop/cart/ ist ein Link", 
   await expect(page.getByRole("dialog", { name: "Pilzkorb" })).toBeHidden();
   await expect(page).toHaveURL(/\/shop\/cart\/$/);
 });
+
+test("Pilzkorb-Seite: Entfernen blendet die Zeile sofort aus", async ({
+  page,
+}) => {
+  await page.goto(`${SHOP}/shop/`);
+  const quick = page.locator("[data-quick-add]").first();
+  await expect(quick).toBeEnabled();
+  await quick.click();
+  await expect(page.locator(".toast-region .toast")).toBeVisible();
+
+  await page.goto(`${SHOP}/shop/cart/`);
+  const rows = page.locator(".cartpage-item");
+  await expect(rows).toHaveCount(1);
+  // Slow the sync down: the row must vanish without waiting for it.
+  await page.route("**/store/carts/**", async (route) => {
+    await new Promise((r) => setTimeout(r, 3000));
+    await route.continue();
+  });
+  await page
+    .getByRole("button", { name: /aus dem Pilzkorb entfernen/ })
+    .click();
+  await expect(rows).toHaveCount(0, { timeout: 1000 });
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Hier wächst noch nichts." }),
+  ).toBeVisible();
+});

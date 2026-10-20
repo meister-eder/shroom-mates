@@ -2075,8 +2075,55 @@ a.chip[aria-current="page"] {
   background: var(--color-white);
 }
 
-.cartpage-item[aria-busy="true"] {
-  opacity: 0.6;
+.cartpage-sync {
+  box-sizing: border-box;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--color-accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: cartpage-spin 0.8s linear infinite;
+}
+
+@keyframes cartpage-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cartpage-sync {
+    animation-duration: 2.4s;
+  }
+}
+
+.skeleton {
+  background: var(--color-paper);
+}
+
+.skeleton--title {
+  width: min(16rem, 70%);
+  height: clamp(36px, 5vw, 56px);
+}
+
+.skeleton--line {
+  height: 1.25rem;
+  margin-bottom: 0.625rem;
+}
+
+.skeleton--short {
+  width: 50%;
+}
+
+.skeleton--stepper {
+  width: 8.5rem;
+  height: 2.75rem;
+  border-radius: 999px;
+}
+
+.skeleton--button {
+  height: 3rem;
+  border-radius: 999px;
 }
 
 .cartpage-thumb {
