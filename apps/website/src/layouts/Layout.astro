@@ -222,7 +222,7 @@ const breadcrumbSchema = {
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
     <div class="site-wrapper">
-      <SiteHeader app="website" active={active} ticker={tickerItems} />
+      <SiteHeader active={active} ticker={tickerItems} />
       <main
         id="main-content"
         class={isLandingPage ? "site-main" : "site-main with-nav-spacing"}
@@ -231,7 +231,7 @@ const breadcrumbSchema = {
         <slot />
       </main>
 
-      <Footer app="website" />
+      <Footer />
 
 
       <LayoutScripts />

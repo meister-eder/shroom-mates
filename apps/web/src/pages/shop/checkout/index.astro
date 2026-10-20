@@ -34,7 +34,7 @@ const defaultCountry = countries.some((c) => c.iso_2 === "de")
   : (countries[0]?.iso_2 ?? "de");
 ---
 
-<Layout title="Kasse" description="Schließe deine Bestellung ab." noindex wide>
+<Layout shop title="Kasse" description="Schließe deine Bestellung ab." noindex wide>
   <!-- Client-only: the checkout depends entirely on the browser's cart -->
   <CheckoutPage client:only="react" defaultCountry={defaultCountry} countries={countries}>
     <p slot="fallback" class="checkout-loading">Kasse wird geladen…</p>

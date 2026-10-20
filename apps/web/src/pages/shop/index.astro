@@ -10,7 +10,7 @@ import { jsonLd } from "@shroom-mates/ui/json-ld";
 const region = await getRegion();
 
 if (!region) {
-  return Astro.rewrite("/shop/not-found/");
+  return Astro.rewrite("/404/");
 }
 
 const catalog = await loadCatalog(region.id);
@@ -35,10 +35,11 @@ const itemList = {
 ---
 
 <Layout
+  shop
   wide
   title="Unser Sortiment"
   description="Entdecke unser Sortiment an Growkits und Pilztinkturen aus Leipzig."
-  image={catalog.products[0]?.thumbnail ?? undefined}
+  ogImage={catalog.products[0]?.thumbnail ?? undefined}
 >
   <script slot="head" type="application/ld+json" set:html={jsonLd(itemList)} />
   <StoreCatalog

@@ -1,6 +1,11 @@
 ---
+// SSR: shop pages rewrite to this page (Astro.rewrite("/404/")) for unknown products.
+export const prerender = false;
+
+import Layout from "@layouts/Layout.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
-import Layout from "../layouts/SiteLayout.astro";
+
+Astro.response.status = 404;
 ---
 
 <Layout

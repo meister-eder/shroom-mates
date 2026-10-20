@@ -1,11 +1,11 @@
 ---
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
+import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import emmiAusternpilz from "../assets/images/fotos/emmi-austernpilz.jpg";
 import rosenseitling from "../assets/images/fotos/rosenseitling-bueschel.jpg";
 import timFreigestellt from "../assets/images/fotos/tim-freigestellt.png";
-import Layout from "../layouts/SiteLayout.astro";
 
 const aboutUsEntry = await getEntry("about-us-page", "content");
 if (!aboutUsEntry) {

@@ -3,10 +3,9 @@
 // Shown on phones only (the desktop start page has the news band instead).
 import { Image } from "astro:assets";
 import lionsMane from "@assets/lions-mane-makro.webp";
-import { websiteUrl } from "@shroom-mates/ui/site";
 ---
 
-<a href={websiteUrl("/unsere-pilze/")} class="fresh-link">
+<a href="/unsere-pilze/" class="fresh-link">
   <Image
     src={lionsMane}
     alt=""

@@ -145,12 +145,6 @@ export function initCart(): Promise<void> {
 
 async function loadCart(): Promise<void> {
   try {
-    const regionId = $regionId.get();
-    if (!regionId) {
-      console.warn("Region ID not set, cannot initialize cart");
-      return;
-    }
-
     const baseUrl = import.meta.env.PUBLIC_MEDUSA_BACKEND_URL;
 
     if (!baseUrl) {
@@ -162,6 +156,12 @@ async function loadCart(): Promise<void> {
 
     const existingCartId = getCartId();
 
+    // Prerendered pages know no region; an existing cart brings its own.
+    if (!$regionId.get() && !existingCartId) {
+      console.warn("Region ID not set, cannot initialize cart");
+      return;
+    }
+
     if (existingCartId) {
       // Try to retrieve existing cart
       try {
@@ -170,6 +170,7 @@ async function loadCart(): Promise<void> {
         });
         // A cart completed by the payment webhook can't be reused.
         if (!cart.completed_at) {
+          if (!$regionId.get()) $regionId.set(cart.region_id ?? null);
           $cart.set(cart);
           return;
         }
@@ -185,6 +186,11 @@ async function loadCart(): Promise<void> {
     }
 
     // Create new cart
+    const regionId = $regionId.get();
+    if (!regionId) {
+      console.warn("Region ID not set, cannot create cart");
+      return;
+    }
     const { cart } = await storeApi.cart.create(
       {
         region_id: regionId,

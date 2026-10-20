@@ -1,55 +1,171 @@
 ---
 import "@shroom-mates/ui/fonts";
 import "@shroom-mates/ui/base.css";
+import "@shroom-mates/ui/utilities.css";
 import frauncesUrl from "@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2?url";
-import { getRegion } from "@lib/data/regions";
 import AddedToast from "@modules/layout/components/AddedToast.astro";
 import CartSidebar from "@modules/layout/components/CartSidebar.astro";
 import Footer from "@modules/layout/components/Footer.astro";
 import Header from "@modules/layout/components/Header.astro";
 import LayoutScripts from "@shroom-mates/ui/LayoutScripts.astro";
+import type { NavKey } from "@shroom-mates/ui/site";
+import { colors } from "@shroom-mates/ui/tokens";
+import WaveRoller from "@shroom-mates/ui/WaveRoller.astro";
 import "@styles/global.css";
 import "@styles/shop.css";
+import "@styles/site.css";
+import { jsonLd } from "../utils/json-ld";
 
 interface Props {
-  title?: string;
+  /** Page title; shop pages get " | Shroom-Mates Shop" appended */
+  title: string;
   description?: string;
-  image?: string;
+  /** og:image / twitter:image (default: logo with mushrooms) */
+  ogImage?: string;
   type?: "website" | "product";
   noindex?: boolean;
-  /** Which header pill is highlighted (default: Shop) */
-  active?: "shop" | "none";
+  /** Aktiver Navigationspunkt (aria-current im Header); Shop-Seiten: "shop" */
+  active?: NavKey | "none";
+  /** Shop pages (SSR): info line instead of ticker, shop footer, region lookup */
+  shop?: boolean;
+  /** Full-bleed main without header offset (marketing landing pages) */
+  isLandingPage?: boolean;
   /** Full-width main (catalog + product pages manage their own containers) */
   wide?: boolean;
 }
 
-const SITE_NAME = "Shroom-Mates Shop";
-const DEFAULT_DESCRIPTION =
-  "Growkits und Tinkturen aus Leipzig — direkt vom Erzeuger.";
-
 const {
-  title,
-  description = DEFAULT_DESCRIPTION,
-  image,
+  title: pageName,
+  description: descriptionProp,
+  ogImage,
   type = "website",
   noindex = false,
-  active = "shop",
+  active,
+  shop = false,
+  isLandingPage = false,
   wide = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
-const canonicalUrl = new URL(
+const description =
+  descriptionProp ??
+  (shop
+    ? "Growkits und Tinkturen aus Leipzig — direkt vom Erzeuger."
+    : "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Leutzsch. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.");
+const SITE_NAME = shop ? "Shroom-Mates Shop" : "shroom-mates";
+const title = shop ? `${pageName} | ${SITE_NAME}` : pageName;
+const navActive: NavKey | undefined =
+  active === "none" ? undefined : (active ?? (shop ? "shop" : undefined));
+
+// Shop pages are rendered per request. Marketing pages are prerendered without
+// a backend; their Pilzkorb button resolves the region in the browser.
+// (lazy import: the Medusa SDK must not be evaluated while prerendering)
+const regionId = shop
+  ? ((await (await import("@lib/data/regions")).getRegion())?.id ?? null)
+  : null;
+
+const canonicalURL = new URL(
   Astro.url.pathname,
   Astro.site ?? Astro.url.origin,
 );
+// Use a better default image - the logo with mushrooms
+const defaultOgImage =
+  ogImage ||
+  new URL("/assets/logo_with_shrooms_and_text.png", Astro.site).toString();
 
-const region = await getRegion();
-const regionId = region?.id || null;
+// Structured data for local business SEO
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://shroom-mates.de/#business",
+  name: "shroom-mates",
+  alternateName: "shroom-mates GbR",
+  legalName: "shroom-mates GbR – Emmelie Kunz & Tim Eder",
+  image: new URL(
+    "/assets/logo_with_shrooms_and_text.png",
+    Astro.site,
+  ).toString(),
+  description:
+    "Edelpilzzucht in Leipzig-Leutzsch. Frische Austernpilze, Lion's Mane, Pioppino, Growkits und Pilztinkturen. Für Privat und Gastronomie.",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Franz-Flemming-Straße 25",
+    addressLocality: "Leipzig",
+    addressRegion: "Sachsen",
+    postalCode: "04179",
+    addressCountry: "DE",
+  },
+  url: "https://shroom-mates.de",
+  email: "hey@shroom-mates.de",
+  knowsLanguage: "de",
+  knowsAbout: [
+    "Edelpilze",
+    "Pilzzucht",
+    "Austernpilze",
+    "Lion's Mane",
+    "Growkits",
+    "Pilztinkturen",
+    "Vitalpilze",
+    "Pilze für Gastronomie",
+  ],
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Leipzig",
+      "@id": "https://www.wikidata.org/wiki/Q2079",
+    },
+    {
+      "@type": "State",
+      name: "Sachsen",
+    },
+  ],
+  sameAs: ["https://www.instagram.com/shroom_mates_le/"],
+  founder: [
+    { "@type": "Person", name: "Emmelie Kunz" },
+    { "@type": "Person", name: "Tim Eder" },
+  ],
+};
+
+// Breadcrumb structured data
+const pathSegments = Astro.url.pathname.split("/").filter(Boolean);
+const breadcrumbItems = [
+  {
+    "@type": "ListItem",
+    position: 1,
+    name: "Startseite",
+    item: "https://shroom-mates.de/",
+  },
+];
+const breadcrumbNames: Record<string, string> = {
+  "unsere-pilze": "Unsere Pilze",
+  growkits: "Growkits",
+  tinkturen: "Tinkturen",
+  kontakt: "Kontakt",
+  "ueber-uns": "Über uns",
+  impressum: "Impressum",
+  faq: "Häufige Fragen",
+  gastronomie: "Gastronomie",
+};
+pathSegments.forEach((segment, index) => {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: index + 2,
+    name: breadcrumbNames[segment] || segment,
+    item: `https://shroom-mates.de/${pathSegments.slice(0, index + 1).join("/")}/`,
+  });
+});
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: breadcrumbItems,
+};
 ---
 
 <!doctype html>
 <html lang="de">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="preload"
       as="font"
@@ -57,53 +173,151 @@ const regionId = region?.id || null;
       href={frauncesUrl}
       crossorigin="anonymous"
     />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta
+      name="google-site-verification"
+      content="4MHVB3PHlJNORM3zCWb3yyka7m2Y-cEwrXlLAZitKFs"
+    />
     <meta name="generator" content={Astro.generator} />
 
-    <title>{pageTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl.href} />
+    <!-- SEO and Open Graph -->
+    <title>{title}</title>
+    <link rel="canonical" href={canonicalURL} />
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <!-- Structured Data for Local Business SEO (marketing pages) -->
+    {
+      !shop && (
+        <script
+          type="application/ld+json"
+          set:html={jsonLd(structuredData)}
+        />
+      )
+    }
+
+    <!-- Breadcrumb Structured Data -->
+    {
+      !shop && pathSegments.length > 0 && (
+        <script
+          type="application/ld+json"
+          set:html={jsonLd(breadcrumbSchema)}
+        />
+      )
+    }
 
     <!-- Open Graph -->
-    <meta property="og:title" content={pageTitle} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content={type} />
-    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content={SITE_NAME} />
-    {image && <meta property="og:image" content={image} />}
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:image" content={defaultOgImage} />
+    <meta
+      property="og:image:alt"
+      content="shroom-mates Logo - Edelpilze aus Leipzig"
+    />
 
     <!-- Twitter Card -->
-    <meta
-      name="twitter:card"
-      content={image ? "summary_large_image" : "summary"}
-    />
-    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {image && <meta name="twitter:image" content={image} />}
+    <meta name="twitter:image" content={defaultOgImage} />
+    <meta
+      name="twitter:image:alt"
+      content="shroom-mates Logo - Edelpilze aus Leipzig"
+    />
+
+    <!-- Additional meta tags -->
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        />
+      )
+    }
+    <meta name="author" content="shroom-mates - Emmelie Kunz & Tim Eder" />
+    <meta name="theme-color" content={colors.bg} />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <slot name="head" />
   </head>
-  <body>
+  <body class:list={{ "is-shop": shop }}>
+    <!-- Skip link for keyboard navigation -->
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
     <div class="site-wrapper">
-      <Header regionId={regionId} active={active} />
+      <Header
+        variant={shop ? "shop" : "site"}
+        regionId={regionId}
+        active={navActive}
+      />
       <main
         id="main-content"
-        class:list={["site-main", "with-nav-spacing", { "site-main--wide": wide }]}
+        class:list={[
+          "site-main",
+          { "with-nav-spacing": !isLandingPage },
+          { "site-main--wide": wide },
+        ]}
         aria-label="Seiteninhalt"
       >
         <slot />
       </main>
-      <Footer />
+
+      <Footer shop={shop} />
       <CartSidebar />
       <AddedToast />
-    </div>
 
-    <LayoutScripts />
+      <LayoutScripts />
+      {!shop && <WaveRoller />}
+
+      <script>
+        // Scroll-triggered reveal animations using IntersectionObserver
+        function setupRevealAnimations() {
+          const prefersReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches;
+          if (prefersReducedMotion) return;
+
+          const revealElements = document.querySelectorAll(
+            ".reveal, .reveal-left, .reveal-right, .reveal-scale",
+          );
+          if (!revealElements.length) return;
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("reveal--visible");
+                  observer.unobserve(entry.target);
+                }
+              }
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
+          );
+
+          for (const el of revealElements) {
+            observer.observe(el);
+          }
+        }
+
+        setupRevealAnimations();
+      </script>
+
+      <style is:global>
+        /* Landing page renders full-bleed without the header offset */
+        .site-main:not(.with-nav-spacing) {
+          max-width: none;
+          padding: 0;
+          margin: 0;
+        }
+      </style>
+    </div>
   </body>
 </html>

@@ -9,10 +9,10 @@ const { orderId } = Astro.params;
 
 const order = orderId ? await retrieveOrder(orderId) : null;
 if (!order) {
-  return Astro.rewrite("/shop/not-found/");
+  return Astro.rewrite("/404/");
 }
 ---
 
-<Layout title="Bestellung bestätigt" description="Deine Bestellung wurde bestätigt." noindex wide>
+<Layout shop title="Bestellung bestätigt" description="Deine Bestellung wurde bestätigt." noindex wide>
   <OrderConfirmedPage order={order} />
 </Layout>

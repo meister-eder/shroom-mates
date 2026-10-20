@@ -1,10 +1,10 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 import MyceliumScroll from "@shroom-mates/ui/MyceliumScroll.astro";
 import schneidebrett from "../assets/images/fotos/schneidebrett.jpg";
-import Layout from "../layouts/SiteLayout.astro";
 
 const landingPageEntries = await getCollection("landing-page");
 const landingPageContent = landingPageEntries[0];

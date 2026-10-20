@@ -89,7 +89,6 @@ services:
         PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
         PUBLIC_SITE_URL: https://shop.${DOMAIN}
-        PUBLIC_WEBSITE_URL: https://shroom-mates.${DOMAIN}
     restart: unless-stopped
     environment:
       NODE_ENV: production

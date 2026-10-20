@@ -50,6 +50,7 @@ from any of it.
 - P7.1: compose service renamed storefront → web: next deploy leaves an orphan storefront container (docker compose up --remove-orphans); adjust branch protection if it checks old CI job/step names.
 - P7.2: set SumUp redirect to https://shroom-mates.de/shop/checkout/complete in SumUp dashboard (if configured) and server backend .env (old /de/ path 301s). Not redirected: /de/<unknown>, other country prefixes.
 - P7.3: website build.assets 'assets' + manualChunks not carried over (assets now under /_astro/) — Caddy immutable caching for /_astro/* covers it.
+- P7.4: re-baselined shop-404-desktop/mobile (now the website 404 + Pilzkorb, checked vs web-404). Marketing pages have no region: adding to cart there only works with an existing cart (cart brings region).
 
 ---
 
@@ -220,7 +221,7 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Switch `apps/web` to `output: "static"` with the node adapter; every SSR page gets `export const prerender = false` (shop, cart, checkout, order, sitemap endpoint, anything reading cookies/Medusa per request). Move from `apps/website`: `src/pages/*` (prerendered), `src/content/**` + `src/content.config.ts`, `src/components/**`, `src/assets/**`, `src/scripts/**`, `src/styles/global.css`, `public/**` (favicons, robots, manifest, `admin/`), `scripts/copy-cms.mjs` (+ `predev`/`prebuild` hooks), integrations (`@astrojs/mdx`, `@astrojs/sitemap` for the static pages, with the shop sitemap from P4.2 added to the sitemap index). Merge `robots.txt` (one file, both sitemaps, disallow `/admin/`, cart/checkout/order). Sveltia `public/admin/config.yml`: update content/media paths to `apps/web/...`. Config: `site: "https://shroom-mates.de"`, `trailingSlash: "always"`, image settings from the website config, website redirects (minus `/shop`). Keep `apps/website` untouched for now (deleted in P7.5). Visual: update `routes.ts` so web keys point at the web app (one server now) and `VISUAL_SERVERS` in the playwright config; all keys must still match their baselines.
   Commit: `feat(web): marketing pages as prerendered routes of the web app`
 
-- [ ] **P7.4 One layout, one header, relative links** · deps: P7.3 · verify: visual
+- [x] **P7.4 One layout, one header, relative links** · deps: P7.3 · verify: visual · 54a5677
   Merge the two `Layout.astro` into one (website's SEO head as the base; shop pages pass `type="product"`, `noindex`, etc.). The header gets the Pilzkorb button on every page; the ticker vs. info-line difference becomes a prop decided per page group (keep today's choice per page). Remove the cross-origin machinery: `AppId`, `app` props, `linkBuilders`, `external` flags, `websiteUrl`/`shopUrl`/`WEBSITE_URL`/`SHOP_URL`, `PUBLIC_WEBSITE_URL`/`PUBLIC_SHOP_URL` env vars: all links relative. One favicon set (website's), one 404 page (website's design with the mascot), CSP in one place. Expected visual diffs: the header of former website pages now shows the cart button. Before re-baselining, copy `e2e/visual/__screenshots__` to `e2e/visual/__screenshots__.pre-merge/`, run visual, and re-baseline only if every failing key's diff is confined to the header area (check the diff images); list the re-baselined keys in the report.
   Commit: `refactor(web): one layout and header for the whole site`
 
@@ -308,3 +309,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 01:34 P7.1 DONE 2ad6a73 — apps/web, service web; leftovers only prose comments
 2026-10-20 01:40 P7.2 DONE 94a3a1d — single region, /shop/ URLs, legacy 301s verified with query
 2026-10-20 01:47 P7.3 DONE 0934437 — website pages prerendered in apps/web; legacy redirects via /de/[...path] route
+2026-10-20 02:02 P7.4 DONE 54a5677 — one Layout/header, relative links, single 404; shop-404 re-baselined

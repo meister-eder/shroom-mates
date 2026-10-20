@@ -1,12 +1,9 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection, getEntry } from "astro:content";
+import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
-import { linkBuilders } from "@shroom-mates/ui/site";
 import rosenseitlingBueschel from "../assets/images/fotos/rosenseitling-bueschel.jpg";
-import Layout from "../layouts/SiteLayout.astro";
-
-const { shop } = linkBuilders("website");
 
 // Generische Anleitung (CMS)
 const growkitsPageEntry = await getEntry("growkits-page", "content");
@@ -71,7 +68,7 @@ const growkits = growkitsCollection
     intro: entry.data.intro,
     tips: entry.data.tips,
     use: entry.data.usage,
-    shopHref: shop(`/shop/${entry.data.shopHandle}/`),
+    shopHref: `/shop/${entry.data.shopHandle}/`,
     slug: entry.id,
   }))
   .sort((a, b) => a.order - b.order);
@@ -244,7 +241,7 @@ const growkits = growkitsCollection
         <h2 class="pickup__title">{ctaTitle}</h2>
         <p>{ctaText}</p>
         <div class="pickup__actions">
-          <a class="btn btn--primary pickup__btn" href={shop("/shop/")}>{ctaShopButton} <Icon name="arrow-right" size={20} /></a>
+          <a class="btn btn--primary pickup__btn" href="/shop/">{ctaShopButton} <Icon name="arrow-right" size={20} /></a>
           {ctaButtonText && ctaButtonLink && (
             <a class="btn btn--outline pickup__btn" href={ctaButtonLink}>{ctaButtonText}</a>
           )}

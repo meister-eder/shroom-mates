@@ -25,6 +25,7 @@ const { regionId } = Astro.props;
   import {
     $cartItemCount,
     $regionId,
+    getCartId,
     initCart,
     toggleCartSidebar,
   } from "@lib/stores/cart";
@@ -42,6 +43,9 @@ const { regionId } = Astro.props;
     const regionId = button.dataset.regionId;
     if (regionId) {
       $regionId.set(regionId);
+      initCart();
+    } else if (getCartId()) {
+      // Prerendered page without region: load the existing cart (and its region)
       initCart();
     }
   }

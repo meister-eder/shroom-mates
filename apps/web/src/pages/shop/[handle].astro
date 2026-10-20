@@ -14,18 +14,17 @@ import ProductAttributes from "@modules/products/components/product-details/Prod
 import Icon from "@shroom-mates/ui/Icon.astro";
 import { jsonLd } from "@shroom-mates/ui/json-ld";
 import { GROW_STEPS, SHIPPING } from "@shroom-mates/ui/shop-facts";
-import { websiteUrl } from "@shroom-mates/ui/site";
 
 const { handle } = Astro.params;
 
 if (!handle) {
-  return Astro.rewrite("/shop/not-found/");
+  return Astro.rewrite("/404/");
 }
 
 const region = await getRegion();
 
 if (!region) {
-  return Astro.rewrite("/shop/not-found/");
+  return Astro.rewrite("/404/");
 }
 
 let product: Awaited<ReturnType<typeof retrieveProduct>> | undefined;
@@ -39,7 +38,7 @@ try {
 }
 
 if (product === null) {
-  return Astro.rewrite("/shop/not-found/");
+  return Astro.rewrite("/404/");
 }
 
 // Old links used the product ID; send them to the readable URL.
@@ -201,11 +200,12 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 ---
 
 <Layout
+  shop
   wide
-  title={title}
+  title={title ?? "Produkt"}
   description={description ??
     `${title} — jetzt im Shroom-Mates Shop bestellen.`}
-  image={images?.[0]?.url}
+  ogImage={images?.[0]?.url}
   type="product"
 >
   {structuredData.map((d) => <script slot="head" type="application/ld+json" set:html={jsonLd(d)} />)}
@@ -334,7 +334,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
                 ))}
                 <li class="how-card how-card--link">
                   <p class="how-card__cta">Ganze Anleitung</p>
-                  <a href={websiteUrl("/growkits/")}>
+                  <a href="/growkits/">
                     Ansehen <span aria-hidden="true">→</span>
                   </a>
                 </li>
@@ -378,7 +378,7 @@ import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
                 <li class="pair-card pair-card--more">
                   <MatesLogo alt="" width={96} class="pair-card__img pair-card__img--plain" />
                   <span>
-                    <a href={websiteUrl("/unsere-pilze/")} class="pair-card__title">
+                    <a href="/unsere-pilze/" class="pair-card__title">
                       Mehr über {varietyName} <span aria-hidden="true">→</span>
                     </a>
                     <span class="pair-card__sub">Alles zur Sorte</span>

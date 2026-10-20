@@ -1,41 +1,29 @@
 ---
 /**
- * Site header shared by website and shop (Redesign 2026).
+ * Site header (Redesign 2026).
  *
  * Desktop: mascot + wordmark left, NavPills right (Kontakt, then the cart).
  * Mobile: menu button left, wordmark centre (no mascot), Instagram icon + cart right; the menu is a
  * full-screen overlay on ink with large Fraunces links.
  *
- * Usage (website):  <SiteHeader app="website" active="growkits" ticker={[...]} />
- * Usage (shop):     <SiteHeader app="shop" active="shop" info={[...]}>
- *                     <CartButton slot="cart" ... />
- *                   </SiteHeader>
+ * Usage (marketing): <SiteHeader active="growkits" ticker={[...]}>
+ *                       <CartButton slot="cart" ... />
+ *                     </SiteHeader>
+ * Usage (shop):      <SiteHeader variant="shop" active="shop" info={[...]}> … </SiteHeader>
  *
- * Links are derived from `app` (same-origin relative, cross-origin absolute,
- * see site.ts). Legacy props (homeHref, links, shopHref, shopActive, slot
- * "end") still work but are deprecated.
+ * All links are relative (see site.ts). `variant="shop"` is the shop look
+ * (info line instead of ticker, no Growkits/Tinkturen, mascot on mobile).
  */
 import { Image } from "astro:assets";
 import logoFont from "./assets/logo_font.svg?url";
 import logoWithShrooms from "./assets/logo_with_shrooms.png";
 import Icon from "./Icon.astro";
 import MatesLogo from "./MatesLogo.astro";
-import {
-  type AppId,
-  INSTAGRAM_URL,
-  linkBuilders,
-  mainNav,
-  type NavKey,
-} from "./site";
-
-export interface NavLink {
-  label: string;
-  href: string;
-}
+import { INSTAGRAM_URL, mainNav, type NavKey } from "./site";
 
 interface Props {
-  /** Which app renders the header (default "website") */
-  app?: AppId;
+  /** Look of the bar: marketing pages (default) or shop pages */
+  variant?: "site" | "shop";
   /** Current section; the pill gets aria-current="page" */
   active?: NavKey;
   /** Marquee line above the header (website) */
@@ -44,48 +32,20 @@ interface Props {
   info?: string[];
   /** Shop only: one-line variant of `info` shown on mobile instead of the list */
   infoCompact?: string;
-  /** Override the brand link */
-  homeHref?: string;
-
-  /** @deprecated pass `app` instead */
-  links?: NavLink[];
-  /** @deprecated pass `app` instead */
-  shopHref?: string;
-  /** @deprecated use active="shop" */
-  shopActive?: boolean;
 }
 
-const {
-  app = "website",
-  active,
-  ticker,
-  info,
-  infoCompact,
-  homeHref,
-  links: legacyLinks,
-  shopHref,
-  shopActive = false,
-} = Astro.props;
+const { variant = "site", active, ticker, info, infoCompact } = Astro.props;
 
-const current: NavKey | undefined = active ?? (shopActive ? "shop" : undefined);
+const current: NavKey | undefined = active;
+const isShop = variant === "shop";
 
-type Item = { key: string; label: string; href: string };
-let items: Item[];
-if (legacyLinks) {
-  items = [
-    ...legacyLinks.map((l) => ({ key: l.label, ...l })),
-    ...(shopHref ? [{ key: "shop", label: "Shop", href: shopHref }] : []),
-  ];
-} else {
-  items = mainNav(app);
-  // Shop nav (ShopHeader mockup): no Growkits/Tinkturen; Kontakt only in the mobile menu
-  if (app === "shop")
-    items = items.filter((i) => i.key !== "growkits" && i.key !== "tinkturen");
-}
-const isShop = app === "shop";
+// Shop nav (ShopHeader mockup): no Growkits/Tinkturen; Kontakt only in the mobile menu
+const items = isShop
+  ? mainNav.filter((i) => i.key !== "growkits" && i.key !== "tinkturen")
+  : mainNav;
 
-const home = homeHref ?? linkBuilders(app).home;
-const hasCart = Astro.slots.has("cart") || Astro.slots.has("end");
+const home = isShop ? "/shop/" : "/";
+const hasCart = Astro.slots.has("cart");
 // Without a cart, Kontakt is the orange call-to-action pill
 const kontaktAccent = !hasCart;
 // duplicated groups make the marquee seamless; only the first one is exposed
@@ -190,7 +150,6 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
         </a>
       )}
       <slot name="cart" />
-      <slot name="end" />
     </div>
   </nav>
 </header>

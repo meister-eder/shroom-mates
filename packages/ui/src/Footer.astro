@@ -1,44 +1,32 @@
 ---
 /**
- * Site footer shared by website and shop (Redesign 2026): bg surface, big
- * mushroom drawing, "Bis bald in der Glasfabrik!" and four link columns.
+ * Site footer (Redesign 2026): bg surface, big mushroom drawing,
+ * "Bis bald in der Glasfabrik!" and four link columns.
  *
- *   Website: <Footer app="website" />
- *   Shop:    <Footer app="shop">
- *              <a slot="actions" href=…>Vertrag widerrufen</a>   (§ 356a BGB)
- *            </Footer>
+ *   <Footer />
+ *   <Footer legalExtended>
+ *     <a slot="actions" href=…>Vertrag widerrufen</a>   (§ 356a BGB)
+ *   </Footer>
  *
- * `legalExtended` adds AGB / Widerruf / Gewährleistung (default: shop only).
- * The old `links` prop is ignored (deprecated).
+ * `legalExtended` adds AGB / Widerruf / Gewährleistung.
  */
 import { Image } from "astro:assets";
 import drawing from "./assets/shroom-mates-drawing-eyeless.png";
 import Icon from "./Icon.astro";
 import {
   ADDRESS,
-  type AppId,
   CONTACT_EMAIL,
   footerColumns,
   INSTAGRAM_URL,
   REPO_URL,
 } from "./site";
 
-export interface FooterLink {
-  label: string;
-  href: string;
-  external?: boolean;
-  isEmail?: boolean;
-}
-
 interface Props {
-  app?: AppId;
   legalExtended?: boolean;
-  /** @deprecated links are derived from `app` */
-  links?: FooterLink[];
 }
 
-const { app = "website", legalExtended } = Astro.props;
-const columns = footerColumns(app, legalExtended);
+const { legalExtended = false } = Astro.props;
+const columns = footerColumns(legalExtended);
 const currentYear = new Date().getFullYear();
 
 /*

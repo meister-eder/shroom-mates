@@ -1,74 +1,79 @@
-/* tokens.css kommt hier bewusst nach base.css erneut: es überschreibt
-   --gutter (32px) auch mobil, wie es das Aussehen des Shops bisher hatte
-   (früher über theme.css). Bei Token-Hygiene (P5.9) bewusst entscheiden. */
-@import "@shroom-mates/ui/tokens.css";
 @import "@shroom-mates/ui/utilities.css";
 
-/* Reset (früher Tailwind-Preflight). In einem Layer, damit alle ungelayerten
+/* Shop-Seiten (body.is-shop) behalten die 32px-Gutter auch mobil, Marketing-
+   Seiten nutzen den 16px-Wert aus base.css. Früher überschrieb ein zweiter
+   tokens.css-Import das global. */
+body.is-shop {
+  --gutter: 32px;
+  --section-gap: 3rem;
+}
+
+/* Reset (früher Tailwind-Preflight), nur für Shop-Seiten. In einem Layer, damit alle ungelayerten
    Regeln (base.css, utilities.css, shop.css) wie bisher gewinnen. */
 @layer base {
-  *,
-  ::before,
-  ::after {
+  body.is-shop,
+  body.is-shop *,
+  body.is-shop ::before,
+  body.is-shop ::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     border: 0 solid;
   }
 
-  html {
+  html:has(body.is-shop) {
     line-height: 1.5;
     tab-size: 4;
     -webkit-text-size-adjust: 100%;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  body.is-shop h1,
+  body.is-shop h2,
+  body.is-shop h3,
+  body.is-shop h4,
+  body.is-shop h5,
+  body.is-shop h6 {
     font-size: inherit;
     font-weight: inherit;
   }
 
-  a {
+  body.is-shop a {
     color: inherit;
     text-decoration: inherit;
   }
 
-  b,
-  strong {
+  body.is-shop b,
+  body.is-shop strong {
     font-weight: bolder;
   }
 
-  small {
+  body.is-shop small {
     font-size: 80%;
   }
 
-  img,
-  svg,
-  video,
-  canvas,
-  audio,
-  iframe,
-  embed,
-  object {
+  body.is-shop img,
+  body.is-shop svg,
+  body.is-shop video,
+  body.is-shop canvas,
+  body.is-shop audio,
+  body.is-shop iframe,
+  body.is-shop embed,
+  body.is-shop object {
     display: block;
     vertical-align: middle;
   }
 
-  img,
-  video {
+  body.is-shop img,
+  body.is-shop video {
     max-width: 100%;
     height: auto;
   }
 
-  button,
-  input,
-  select,
-  optgroup,
-  textarea {
+  body.is-shop button,
+  body.is-shop input,
+  body.is-shop select,
+  body.is-shop optgroup,
+  body.is-shop textarea {
     font: inherit;
     font-feature-settings: inherit;
     font-variation-settings: inherit;
@@ -79,47 +84,47 @@
     opacity: 1;
   }
 
-  button,
-  input:where([type="button"], [type="reset"], [type="submit"]) {
+  body.is-shop button,
+  body.is-shop
+    input:where(
+      [type="button"],
+      body.is-shop [type="reset"],
+      body.is-shop [type="submit"]
+    ) {
     appearance: button;
   }
 
-  ol,
-  ul,
-  menu {
+  body.is-shop ol,
+  body.is-shop ul,
+  body.is-shop menu {
     list-style: none;
   }
 
-  textarea {
+  body.is-shop textarea {
     resize: vertical;
   }
 
-  table {
+  body.is-shop table {
     border-collapse: collapse;
     text-indent: 0;
     border-color: inherit;
   }
 
-  summary {
+  body.is-shop summary {
     display: list-item;
   }
 
-  ::placeholder {
+  body.is-shop ::placeholder {
     opacity: 1;
     color: color-mix(in oklab, currentcolor 50%, transparent);
   }
 
-  [hidden]:where(:not([hidden="until-found"])) {
+  body.is-shop [hidden]:where(:not([hidden="until-found"])) {
     display: none !important;
   }
 }
 
 /* ===== Shroom-Mates Storefront Design System ===== */
-
-:root {
-  /* Storefront-only layout token; shared tokens live in @shroom-mates/ui/base.css */
-  --section-gap: 3rem;
-}
 
 /* ── Badges ───────────────────────────────────────────────────────────────── */
 .badge {
@@ -281,7 +286,7 @@ select.input-field {
 }
 
 /* ── Accessibility ──────────────────────────────────────────────────────── */
-*:focus-visible {
+body.is-shop *:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
