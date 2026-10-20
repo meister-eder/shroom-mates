@@ -17,7 +17,7 @@ import "@styles/site.css";
 import { jsonLd } from "../utils/json-ld";
 
 interface Props {
-  /** Page title; shop pages get " | Shroom-Mates Shop" appended */
+  /** Page title; " | shroom-mates" is appended unless the title already names the brand */
   title: string;
   description?: string;
   /** og:image / twitter:image (default: logo with mushrooms) */
@@ -26,7 +26,11 @@ interface Props {
   noindex?: boolean;
   /** Aktiver Navigationspunkt (aria-current im Header); Shop-Seiten: "shop" */
   active?: NavKey | "none";
-  /** Shop pages (SSR): info line instead of ticker, shop footer, region lookup */
+  /**
+   * Technical flag for SSR pages only: looks up the Medusa region on the server
+   * and adds the `is-shop` body class for the shop styles. No visual or
+   * content split otherwise (same header, marquee, footer, title scheme).
+   */
   shop?: boolean;
   /** Full-bleed main without header offset (marketing landing pages) */
   isLandingPage?: boolean;
@@ -51,8 +55,10 @@ const description =
   (shop
     ? "Growkits und Tinkturen aus Leipzig — direkt vom Erzeuger."
     : "Frische Edelpilze, Growkits & Pilztinkturen aus Leipzig-Leutzsch. Austernpilze, Lion's Mane, Pioppino. Nachhaltig gezüchtet für Privat und Gastronomie, direkt vom Züchter.");
-const SITE_NAME = shop ? "Shroom-Mates Shop" : "shroom-mates";
-const title = shop ? `${pageName} | ${SITE_NAME}` : pageName;
+const SITE_NAME = "shroom-mates";
+const title = pageName.toLowerCase().includes(SITE_NAME)
+  ? pageName
+  : `${pageName} | ${SITE_NAME}`;
 const navActive: NavKey | undefined =
   active === "none" ? undefined : (active ?? (shop ? "shop" : undefined));
 
@@ -159,6 +165,10 @@ pathSegments.forEach((segment, index) => {
     item: `https://shroom-mates.de/${pathSegments.slice(0, index + 1).join("/")}/`,
   });
 });
+// No structured data on cart, checkout and order pages
+const showStructuredData = !/^\/shop\/(cart|checkout|order)(\/|$)/.test(
+  Astro.url.pathname,
+);
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -193,9 +203,9 @@ const breadcrumbSchema = {
     <title>{title}</title>
     <link rel="canonical" href={canonicalURL} />
 
-    <!-- Structured Data for Local Business SEO (marketing pages) -->
+    <!-- Structured Data for Local Business SEO -->
     {
-      !shop && (
+      showStructuredData && (
         <script
           type="application/ld+json"
           set:html={jsonLd(structuredData)}
@@ -205,7 +215,7 @@ const breadcrumbSchema = {
 
     <!-- Breadcrumb Structured Data -->
     {
-      !shop && pathSegments.length > 0 && (
+      showStructuredData && pathSegments.length > 0 && (
         <script
           type="application/ld+json"
           set:html={jsonLd(breadcrumbSchema)}
