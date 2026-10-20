@@ -23,5 +23,7 @@ if (process.env.TEST_TYPE === "integration:http") {
 } else if (process.env.TEST_TYPE === "integration:modules") {
   module.exports.testMatch = ["**/src/modules/*/__tests__/**/*.[jt]s"];
 } else if (process.env.TEST_TYPE === "unit") {
+  // Unit specs live in src/__tests__/: Medusa loads every file under src/workflows,
+  // src/api, src/subscribers and src/jobs at startup, specs there crash the server.
   module.exports.testMatch = ["**/src/**/__tests__/**/*.unit.spec.[jt]s"];
 }

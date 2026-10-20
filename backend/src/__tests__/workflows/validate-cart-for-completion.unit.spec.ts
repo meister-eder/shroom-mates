@@ -1,5 +1,5 @@
-import { validateCartForCompletion } from "../validate-cart-for-completion";
-import { MANUAL_PROVIDER_ID } from "../../../lib/payment";
+import { validateCartForCompletion } from "../../workflows/hooks/validate-cart-for-completion";
+import { MANUAL_PROVIDER_ID } from "../../lib/payment";
 
 const session = (over: Record<string, unknown> = {}) => ({
   status: "pending",

@@ -159,7 +159,11 @@ jobs:
             export MEDUSA_PUBLISHABLE_KEY="${{ secrets.MEDUSA_PUBLISHABLE_KEY }}"
             docker compose pull postgres redis caddy umami
             docker compose build medusa web
-            docker compose up -d --remove-orphans --force-recreate
+            docker compose up -d --remove-orphans --force-recreate || {
+              docker compose ps -a
+              docker compose logs --tail=60 medusa web
+              exit 1
+            }
           EOF
 
       # Quoted heredoc: everything below runs on the server, not on the runner.
