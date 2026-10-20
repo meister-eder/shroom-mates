@@ -220,25 +220,43 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
     padding-inline: 1.1rem;
   }
 
-  /* Compact pills so 8 links + Pilzkorb stay on one line down to 1241px;
-     below that the mobile menu takes over (keep in sync with hamburger.ts) */
-  @media (max-width: 1440px) and (min-width: 1241px) {
-    .nav-pill {
-      padding: 0.45rem 0.75rem;
-      font-size: 0.95rem;
+  /* Fluid sizing: pills, gaps and wordmark shrink with the viewport so 8 links + Pilzkorb
+     stay on one line from 1024px up (full size from 1600px); below 1024px the mobile menu
+     takes over (keep in sync with hamburger.ts and base.css) */
+  @media (min-width: 1024px) {
+    .site-nav {
+      gap: 16px;
+    }
+
+    .brand {
+      gap: clamp(6px, 0.8vw, 10px);
+    }
+
+    .brand :global(.brand__logo) {
+      width: clamp(44px, 3.4vw + 9px, 58px);
+      height: auto;
+      aspect-ratio: 1;
+    }
+
+    .brand__word {
+      font-size: clamp(22px, 1.9vw + 3px, 30px);
     }
 
     .nav-links {
-      gap: 4px;
+      flex-wrap: nowrap;
+      gap: clamp(2px, 0.5vw - 2px, 6px);
     }
 
-    .site-nav {
-      gap: 12px;
+    .nav-pill,
+    .nav-pill--accent {
+      padding: 8px clamp(8px, 1.5625vw - 8px, 17px);
+      font-size: clamp(14px, 0.521vw + 8.67px, 17px);
+      white-space: nowrap;
     }
   }
 
   /* ── Mobile: menu button | wordmark | cart ────────── */
-  @media (max-width: 1240px) {
+  @media (max-width: 1023px) {
     .site-nav {
       grid-template-columns: 1fr auto 1fr;
       gap: 8px;

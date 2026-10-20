@@ -48,10 +48,10 @@ Scope boundaries and user decisions (2026-10-20):
   Re-baseline allowed: all `shop-*` keys (header area only). Marketing keys must stay unchanged.
   Commit: `fix(ui): one header for site and shop, logo goes home` · 7c2047b
 
-- [ ] **P1.2 Header always fits in one line** · deps: P1.1 · verify: visual
+- [x] **P1.2 Header always fits in one line** · deps: P1.1 · verify: visual
   Today the nav pills keep their full size until the hamburger breakpoint (`max-width: 1240px`) and then barely fit or collide (gap of ~8 px at 1245 px). Make pills, gaps and the wordmark scale fluidly (`clamp()` on font-size, padding, gap; tokens from `packages/ui/src/tokens.css`) so all 8 items + Instagram + Pilzkorb fit in one line with at least 16 px free space at every width from **1024 px** upward; below 1024 px the hamburger menu. Pills stay readable (font-size ≥ 14 px) and keep a 44×44 px target via padding/min-height where the design allows (WCAG 2.5.8 needs ≥ 24 px). Add a Playwright check to the smoke suite (`e2e/smoke/`, run by `scripts/verify.sh smoke`): for widths 1024–1920 in steps of 16 px, the header nav items share one `offsetTop`, nothing overlaps the Pilzkorb pill, and `document.documentElement.scrollWidth <= innerWidth`.
   Re-baseline allowed: all keys, desktop only (header area only; mobile must stay unchanged).
-  Commit: `fix(ui): header nav scales down and stays on one line`
+  Commit: `fix(ui): header nav scales down and stays on one line` · c6ff5d2
 
 - [ ] **P1.3 Marquee on every page, pausable** · deps: P1.1 · verify: visual
   One list of marquee texts, defined once (where today's marketing `ticker` texts live), containing today's ticker items followed by the former shop info items ("Versand in 3–5 Werktagen", "Selbst gezüchtet in Leipzig", "Sicher bezahlen mit SumUp" and "Versand ab 4,95 €"; take the exact current wording and the shipping price from `packages/ui/src/shop-facts.ts`, don't duplicate the number). Shown on every page. Pausing (WCAG 2.2.2) must not look like an added control (user, 2026-10-20): the marquee pauses on hover, on keyboard focus inside the bar and on tap/click anywhere on the bar (toggle), and there is a very discreet pause/play icon (~14 px, same colour and opacity as the bar text, no pill/border, `aria-pressed`, label "Laufband anhalten"/"Laufband abspielen", visible focus ring only on keyboard focus) at the right end that reads as part of the bar; `prefers-reduced-motion: reduce` keeps it static as today. The duplicated groups stay `aria-hidden`.
@@ -142,3 +142,4 @@ The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged int
 
 _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — note`)_
 2026-10-20 10:51 P1.1 DONE 7c2047b — one header everywhere; 14 shop-* keys re-baselined
+2026-10-20 11:01 P1.2 DONE c6ff5d2 — fluid header, hamburger <1024px, header smoke spec; desktop keys re-baselined

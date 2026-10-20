@@ -8,7 +8,7 @@
  * - page scroll is locked (html.menu-locked)
  * - closes on link click and when the viewport grows to desktop
  */
-const DESKTOP = "(min-width: 1241px)" /* keep in sync with SiteHeader.astro */;
+const DESKTOP = "(min-width: 1024px)" /* keep in sync with SiteHeader.astro */;
 const LABEL_OPEN = "Navigationsmenü öffnen";
 const LABEL_CLOSE = "Navigationsmenü schließen";
 
