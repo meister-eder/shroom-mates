@@ -639,9 +639,8 @@ body:has(.cart-drawer[open]) {
 
 .store-hero__title {
   margin: 0;
-  font-size: clamp(64px, 13.5vw, 208px);
+  font-size: clamp(40px, 8.4vw, 124px);
   line-height: 0.9;
-  letter-spacing: -0.03em;
   color: var(--color-accent);
   white-space: nowrap;
 }
@@ -945,8 +944,6 @@ a.chip[aria-current="page"] {
   }
 
   .store-hero__title {
-    font-size: min(84px, 21.5vw);
-    letter-spacing: -0.02em;
     white-space: normal;
   }
 
