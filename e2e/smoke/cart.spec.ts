@@ -57,3 +57,25 @@ test("Quick-Add im Sortiment zeigt Toast und erhöht den Zähler", async ({
     page.getByRole("button", { name: /^Pilzkorb, 1 Artikel/ }),
   ).toBeVisible();
 });
+
+test("Pilzkorb: Drawer verlinkt die Seite, Pille auf /shop/cart/ ist ein Link", async ({
+  page,
+}) => {
+  await page.goto(`${SHOP}/shop/`);
+  await page.locator("[data-quick-add]").first().click();
+  const pill = page.getByRole("button", { name: /^Pilzkorb, 1 Artikel/ });
+  await expect(pill).toBeVisible();
+  await pill.click();
+  const drawer = page.getByRole("dialog", { name: "Pilzkorb" });
+  await expect(drawer).toBeVisible();
+  await expect(
+    drawer.getByRole("link", { name: "Pilzkorb ansehen" }),
+  ).toHaveAttribute("href", "/shop/cart/");
+
+  await page.goto(`${SHOP}/shop/cart/`);
+  const link = page.getByRole("link", { name: /^Pilzkorb, \d+ Artikel/ });
+  await expect(link).toHaveAttribute("href", "/shop/cart/");
+  await link.click();
+  await expect(page.getByRole("dialog", { name: "Pilzkorb" })).toBeHidden();
+  await expect(page).toHaveURL(/\/shop\/cart\/$/);
+});

@@ -341,6 +341,16 @@ body:has(.cart-drawer[open]) {
   list-style: none;
 }
 
+@media (max-width: 480px) {
+  .cart-drawer__items {
+    padding: 16px 20px;
+  }
+
+  .cart-line {
+    padding: 12px 16px 12px 12px;
+  }
+}
+
 .cart-drawer__foot {
   display: flex;
   flex-direction: column;
