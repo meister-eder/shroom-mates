@@ -54,7 +54,7 @@ Scope boundaries and user decisions (2026-10-20):
   Commit: `fix(ui): header nav scales down and stays on one line`
 
 - [ ] **P1.3 Marquee on every page, pausable** · deps: P1.1 · verify: visual
-  One list of marquee texts, defined once (where today's marketing `ticker` texts live), containing today's ticker items followed by the former shop info items ("Versand in 3–5 Werktagen", "Selbst gezüchtet in Leipzig", "Sicher bezahlen mit SumUp" and "Versand ab 4,95 €"; take the exact current wording and the shipping price from `packages/ui/src/shop-facts.ts`, don't duplicate the number). Shown on every page. Add a small pause/play button (icon button, `aria-pressed`, label "Laufband anhalten"/"Laufband abspielen", visible focus) at the right end of the bar; hover-pause stays; `prefers-reduced-motion: reduce` keeps it static as today. The duplicated groups stay `aria-hidden`.
+  One list of marquee texts, defined once (where today's marketing `ticker` texts live), containing today's ticker items followed by the former shop info items ("Versand in 3–5 Werktagen", "Selbst gezüchtet in Leipzig", "Sicher bezahlen mit SumUp" and "Versand ab 4,95 €"; take the exact current wording and the shipping price from `packages/ui/src/shop-facts.ts`, don't duplicate the number). Shown on every page. Pausing (WCAG 2.2.2) must not look like an added control (user, 2026-10-20): the marquee pauses on hover, on keyboard focus inside the bar and on tap/click anywhere on the bar (toggle), and there is a very discreet pause/play icon (~14 px, same colour and opacity as the bar text, no pill/border, `aria-pressed`, label "Laufband anhalten"/"Laufband abspielen", visible focus ring only on keyboard focus) at the right end that reads as part of the bar; `prefers-reduced-motion: reduce` keeps it static as today. The duplicated groups stay `aria-hidden`.
   Re-baseline allowed: all keys (bar area only).
   Commit: `feat(ui): marquee on every page with a pause button`
 
@@ -91,7 +91,7 @@ Scope boundaries and user decisions (2026-10-20):
   Removing a line or changing quantity on /shop/cart/ greys the row for 4–5 s without feedback. Make quantity change and remove optimistic (update the row and totals immediately, roll back with an error message in a live region if the request fails) and show a small inline spinner while syncing; don't change the cart store's API or any payment function. The initial "Pilzkorb wird geladen…" state gets a skeleton of the expected layout (no layout jump when data arrives). Smoke test: remove a line → row disappears immediately.
   Commit: `perf(shop): optimistic cart updates`
 
-- [ ] **P2.4 Wording: Pilzkorb everywhere** · deps: P2.1 · verify: visual
+- [x] **P2.4 Wording: Pilzkorb everywhere** · dropped by the user on 2026-10-20: "Körbchen" button texts stay as they are. Do nothing.
   Buttons say "Rein ins Körbchen" (3 places in `apps/web/src`), the cart is called Pilzkorb everywhere else. Change the button label to "In den Pilzkorb" and the success state "Liegt im Körbchen ✓" to "Liegt im Pilzkorb ✓" (also aria-labels and the smoke test selectors). Grep for other "Körbchen" / "Warenkorb" in UI text and align them.
   Re-baseline allowed: `shop-katalog`, `shop-produkt-*` (button text only).
   Commit: `fix(shop): call the cart Pilzkorb everywhere`
@@ -113,7 +113,7 @@ Scope boundaries and user decisions (2026-10-20):
 
 - [ ] **P3.2 Copy fixes** · deps: — · verify: visual
   - /kontakt/: heading "DAILY BUSINESS" → German (e.g. "Öffnungszeiten" or what fits the content); the address appears twice ("Besuch" block and "Unser Standort" block): keep it once, the block with the map stays.
-  - `OrderConfirmedPage.tsx`: English fragments → German.
+  - `OrderConfirmedPage.tsx`: English fragments → German. Leave "Körbchen"/"Pilzkorb" wording as it is everywhere.
   - Naming: "Austernseitlinge" consistently on the Austernseitlinge pages (e.g. "Züchte deine eigenen Austernpilze!" → "Züchte deine eigenen Austernseitlinge!"); grep `Austernpilz` in `apps/web/src`.
   Re-baseline allowed: `web-kontakt`, `web-growkits` (text only).
   Commit: `fix(content): German wording, Kontakt without duplicate address`
