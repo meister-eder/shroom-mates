@@ -198,7 +198,8 @@ const breadcrumbSchema = {
       content="4MHVB3PHlJNORM3zCWb3yyka7m2Y-cEwrXlLAZitKFs"
     />
     <meta name="generator" content={Astro.generator} />
-    <script is:inline src="/page-sync.js"></script>
+    {/* blocking="render": the page transition script must run before the first frame (spread: attribute not in Astro's types yet) */}
+    <script is:inline src="/page-sync.js" {...{ blocking: "render" }}></script>
 
     <!-- SEO and Open Graph -->
     <title>{title}</title>

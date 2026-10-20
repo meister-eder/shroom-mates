@@ -206,41 +206,57 @@ a {
     navigation: auto;
   }
 
-  /* Header incl. marquee stays put (no morph, no fade). Everything else is the
-     root snapshot, which is only the viewport: a short cross-fade, no movement.
-     Naming the (tall, scrolled) main content would make the browser slide its
-     snapshot from the old scroll position to the new one, which reads as a jerk. */
+  /* Header incl. marquee stays put: only the new header is shown (the old
+     snapshot could still contain an open mobile menu). Everything else is the
+     root snapshot: the new page grows as a circle ("Sporenkreis") from the point
+     the visitor clicked, which /page-sync.js passes on as --vt-x / --vt-y.
+     Blend mode normal: the default plus-lighter adds both snapshots up and
+     flashes white on the light background. */
   .site-header {
     view-transition-name: site-header;
   }
 
   /* biome-ignore lint/correctness/noUnknownTypeSelector: view-transition pseudo-element */
   ::view-transition-group(site-header),
-  ::view-transition-old(site-header),
   ::view-transition-new(site-header) {
     animation: none;
   }
 
+  /* biome-ignore lint/correctness/noUnknownTypeSelector: view-transition pseudo-element */
+  ::view-transition-old(site-header) {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
+  ::view-transition-image-pair(root) {
+    isolation: auto;
+  }
+
+  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
+  ::view-transition-old(root),
+  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
+    ::view-transition-new(root) {
+    mix-blend-mode: normal;
+  }
+
   /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
   ::view-transition-old(root) {
-    animation: vt-fade-out 0.15s ease-out both;
+    animation: none;
   }
 
   /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
   ::view-transition-new(root) {
-    animation: vt-fade-in 0.22s ease-out both;
+    animation: vt-spore 0.55s cubic-bezier(0.6, 0, 0.2, 1) both;
   }
 }
 
-@keyframes vt-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes vt-fade-in {
+@keyframes vt-spore {
   from {
-    opacity: 0;
+    clip-path: circle(0 at var(--vt-x, 50vw) var(--vt-y, 30vh));
+  }
+  to {
+    clip-path: circle(150vmax at var(--vt-x, 50vw) var(--vt-y, 30vh));
   }
 }
 
