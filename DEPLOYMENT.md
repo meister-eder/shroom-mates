@@ -20,7 +20,7 @@ differ only in variables, set in the `env` block of the deploy workflow:
 | `DOMAIN` | `staging.shroom-mates.de` | `shroom-mates.de` |
 | `ROBOTS_TAG` | `noindex, nofollow` (keeps staging out of search engines) | `all` |
 | `ALLOW_MANUAL_PAYMENT` | `true` | `false` |
-| `CSP_HEADER` | `Content-Security-Policy-Report-Only` | `Content-Security-Policy` (only once the CSP covers Astro's inline island scripts on product, cart and checkout pages; enforced today it would stop React there) |
+| `CSP_HEADER` | `Content-Security-Policy` | `Content-Security-Policy` (`Content-Security-Policy-Report-Only` only logs violations in the browser console, as a fallback when trying out a policy change, see [CSP](#csp)) |
 
 Today the server is staging; production is still GitHub Pages from `main`. At
 go-live the same server becomes production (see [Going to production](#going-to-production)).
@@ -237,14 +237,38 @@ When production moves from `shop` to `main`, change it in two places:
 
 ### CSP
 
-`Caddyfile` serves a separate, stricter-scoped Content-Security-Policy for `/admin/*`
-that additionally allows `connect-src https://api.github.com` (plus
-`raw.githubusercontent.com` / `*.githubusercontent.com`) and `blob:` for image
-previews. The CSP of the public site is unchanged. `/admin/*` is also sent with
-`Cache-Control: no-cache` (config changes apply immediately) and
-`X-Robots-Tag: noindex`. Staging sends the same CSP as report-only (see `CSP_HEADER`).
-If the admin UI shows blocked requests in the browser console, extend the `@admin`
-CSP in `Caddyfile`.
+`Caddyfile` sends two Content-Security-Policies, enforced or report-only depending on
+`CSP_HEADER`:
+
+- **Site and shop** (everything except `/admin/*`): `script-src 'self'` plus the SumUp
+  card widget (`gateway.sumup.com`) and the sha256 hashes of Astro's inline island
+  scripts. Pages with React islands (product, Pilzkorb, Kasse, checkout complete) contain
+  two inline scripts: the astro-island runtime and the loader of the `client:*`
+  directive. Both are fixed strings that change only with an Astro update, so the
+  hashes for the runtime and all five directives (`idle`, `load`, `media`, `only`,
+  `visible`) are listed in the Caddyfile. Everything else is an external file under
+  `/_astro/` (`assetsInlineLimit: 0` in `astro.config.mjs`). Styles keep
+  `'unsafe-inline'` (style attributes, SumUp widget). `connect-src` allows the Medusa
+  API (`https://api.{$DOMAIN}`) and web3forms, `frame-src` SumUp and the Google map
+  (loaded on click).
+- **CMS admin** (`/admin/*`): additionally allows the GitHub API
+  (`api.github.com`, `raw.githubusercontent.com`, `*.githubusercontent.com`), `blob:`
+  for image previews, and what Sveltia loads at runtime despite the self-hosted
+  bundle: libraries such as Immutable.js (needed for the preview templates) and its
+  locales from `unpkg.com`, fonts from `cdn.jsdelivr.net`, the status check at
+  `www.githubstatus.com`. `/admin/*` is also sent with `Cache-Control: no-cache`
+  (config changes apply immediately) and `X-Robots-Tag: noindex`.
+
+`e2e/smoke/csp.spec.ts` (part of `scripts/verify.sh smoke`/`visual`) reads both
+policies from the `Caddyfile`, enforces them in Chromium against the production
+build and the Medusa mock and fails on any violation: shop flow (product, Pilzkorb,
+Kasse, checkout complete, islands hydrated), all pages of the screenshot comparison,
+`/admin/` with the CMS preview. It also compares the hashes with the installed Astro
+version. **After an Astro update** it fails and prints the new hashes: replace them in
+the `@notadmin` `script-src` (same order). Not covered locally: the real SumUp widget
+and Sveltia after login (editing, saving); check the browser console on staging for
+those. To try a policy change without risk, deploy once with
+`CSP_HEADER: Content-Security-Policy-Report-Only`.
 
 ### Optional: "Sign in with GitHub" (OAuth)
 
@@ -266,8 +290,8 @@ See "Editing website content with Sveltia CMS" in `docs/LOCAL_DEVELOPMENT.md`.
 2. Put the **live** SumUp key and merchant code into the `netcup-test` environment
    secrets (or a new `production` environment referenced by the workflow).
 3. In the workflow `env`: `DOMAIN: shroom-mates.de`, `ROBOTS_TAG: all`,
-   `ALLOW_MANUAL_PAYMENT: 'false'`, `CSP_HEADER: Content-Security-Policy` (after
-   the CSP fix, check the browser console on staging for violations first). Product image URLs stored with the staging
+   `ALLOW_MANUAL_PAYMENT: 'false'`, `CSP_HEADER: Content-Security-Policy` (unchanged; check the
+   browser console on staging for CSP violations first). Product image URLs stored with the staging
    host need rewriting (see above).
 4. Run `enable-sumup.ts` against the production database and remove the manual
    test payment provider from the region. As a safety net, `docker-compose.yml`

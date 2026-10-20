@@ -36,8 +36,8 @@ env:
   DOMAIN: staging.shroom-mates.de
   ROBOTS_TAG: noindex, nofollow
   ALLOW_MANUAL_PAYMENT: 'true'
-  # Report-only until Astro's inline island scripts are covered by the CSP
-  CSP_HEADER: Content-Security-Policy-Report-Only
+  # Content-Security-Policy-Report-Only only logs violations (see DEPLOYMENT.md, CSP)
+  CSP_HEADER: Content-Security-Policy
 
 jobs:
   # ── Build check (fails fast; the images are built on the server) ──
