@@ -30,9 +30,12 @@ function caddyPolicy(matcher: string): string {
 
 // Lokal ist Medusa der Mock (http) statt https://api.<DOMAIN>; Produktbilder
 // kommen ebenfalls von dort (auf dem Server deckt `img-src https:` sie ab).
-const SITE_POLICY = caddyPolicy("@notadmin")
-  .replaceAll("https://api.{$DOMAIN}", MOCK)
-  .replace("img-src", `img-src ${MOCK}`);
+const forMock = (policy: string) =>
+  policy
+    .replaceAll("https://api.{$DOMAIN}", MOCK)
+    .replace("img-src", `img-src ${MOCK}`);
+const SITE_POLICY = forMock(caddyPolicy("@site"));
+const CHECKOUT_POLICY = forMock(caddyPolicy("@checkout"));
 const ADMIN_POLICY = caddyPolicy("@admin");
 
 const sha256 = (s: string) =>
@@ -53,7 +56,13 @@ async function enforceCsp(page: Page): Promise<string[]> {
     const res = await route.fetch();
     const { pathname } = new URL(route.request().url());
     const admin = pathname === "/admin" || pathname.startsWith("/admin/");
-    const policy = admin ? ADMIN_POLICY : SITE_POLICY;
+    const checkout =
+      pathname === "/shop/checkout" || pathname.startsWith("/shop/checkout/");
+    const policy = admin
+      ? ADMIN_POLICY
+      : checkout
+        ? CHECKOUT_POLICY
+        : SITE_POLICY;
     const headers = res.headers();
     // Caddy ergänzt den Header; ein eigener der App (Vorschau) gilt zusätzlich.
     headers["content-security-policy"] = [
@@ -66,7 +75,7 @@ async function enforceCsp(page: Page): Promise<string[]> {
       const html = await res.text();
       for (const [, body] of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
         const hash = sha256(body);
-        if (!SITE_POLICY.includes(`'${hash}'`)) missingHashes.add(hash);
+        if (!policy.includes(`'${hash}'`)) missingHashes.add(hash);
       }
     }
     await route.fulfill({ response: res, headers });
@@ -114,6 +123,13 @@ test.describe("Content-Security-Policy (erzwungen)", () => {
     expect(actual, "Caddyfile: script-src-Hashes in dieser Reihenfolge").toEqual(
       expected,
     );
+  });
+
+  test("Kasse erlaubt unsafe-eval, der Rest der Seite nicht", async () => {
+    expect(CHECKOUT_POLICY).toContain("'unsafe-eval'");
+    expect(SITE_POLICY).not.toContain("'unsafe-eval'");
+    const strip = (p: string) => p.replace(" 'unsafe-eval'", "");
+    expect(strip(CHECKOUT_POLICY)).toBe(SITE_POLICY);
   });
 
   test("Pilzkorb: Produkt, Korb, Kasse hydrieren", async ({ page }) => {

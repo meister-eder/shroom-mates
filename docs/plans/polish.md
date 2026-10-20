@@ -38,6 +38,7 @@ Scope boundaries and user decisions (2026-10-20):
 - P2.6: Caddyfile not validated locally (Docker down): run the `caddy validate` command from P2.6 (CI deploy will also catch syntax errors).
 - P3.1 legal review (HCVO): all /tinkturen/ text changes incl. removed Quellen list and one FAQ sentence are in commit c8480a1 (`git show c8480a1`); also check "Vitalpilze" (landing teaser) and "Pilzextrakte" (FAQ).
 - P3.2: "daily business" still in landing-page content; "Austernpilze" still on Pilze/Gastronomie/Über uns/Landing content and in Layout: decide whether to align.
+- P4.1: run one real SumUp sandbox checkout on staging and watch the console (CSP); if the self-framing frame-src report persists with extensions off, investigate.
 - Product descriptions live in Medusa (not in the repo): check them for health claims ("maximale Bioverfügbarkeit") and English fragments ("Hot-water und alkohol-extrahiert") in the Medusa Admin.
 
 ---
@@ -127,9 +128,9 @@ Scope boundaries and user decisions (2026-10-20):
 
 The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged into `polish` during setup): Caddy allows Astro's inline island scripts by sha256 hash, `e2e/smoke/csp.spec.ts` enforces both Caddyfile policies against the production build and fails on any violation or outdated hash, staging enforces (`CSP_HEADER: Content-Security-Policy`). Every task that touches scripts or `<head>` must keep that spec green (it runs in `verify.sh smoke`); if Astro's inline scripts change, update the hashes in `Caddyfile` the way the spec's failure message says.
 
-- [ ] **P4.1 CSP leftovers from the dogfood test** · deps: P1.6 · verify: smoke
+- [x] **P4.1 CSP leftovers from the dogfood test** · deps: P1.6 · verify: smoke
   The report-only run on staging also showed (a) a `frame-src` report "Framing https://staging.shroom-mates.de/<page>/" on every page (something frames the site itself; find it: CMS preview, a prefetch, a browser extension in the tester?), (b) an `unsafe-eval` report on `/shop/checkout/` (SumUp widget from gateway.sumup.com?). Investigate both from the code and the SumUp widget docs; fix (a) if it comes from our code (e.g. `frame-src 'self'` only if we really frame ourselves). For (b): if our code evals, remove it; if it's the SumUp widget, add `'unsafe-eval'` to `script-src` **only for `/shop/checkout/*`** (separate matcher in `Caddyfile`) and extend `csp.spec.ts` accordingly. Note under "Follow-up for humans": test one real checkout with the SumUp sandbox on staging and watch the console.
-  Commit: `fix(web): CSP covers checkout and self-framing`
+  Commit: `fix(web): CSP covers checkout and self-framing` · 9a55a38
 
 ## P5 Finish
 
@@ -164,3 +165,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:39 P2.6 DONE 5c9211e — /de and /de/ → / in Astro route and Caddy; Caddy not validated (no Docker)
 2026-10-20 11:47 P3.1 DONE c8480a1 — effect claims and sources removed, neutral text; web-tinkturen re-baselined
 2026-10-20 11:54 P3.2 DONE c06a4fd — Kontakt single address, Daily Business→Instagram, Austernseitling in growkit content
+2026-10-20 11:56 P4.1 DONE 9a55a38 — unsafe-eval only on /shop/checkout*; self-framing not from our code
