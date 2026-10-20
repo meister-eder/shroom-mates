@@ -1,15 +1,32 @@
+# ── docker-compose.yml ───────────────────────────────────────
+# The server stack (site + shop, Medusa, Postgres, Redis, Umami, Caddy).
+# Environments differ only in variables: DOMAIN, ROBOTS_TAG, ALLOW_MANUAL_PAYMENT,
+# the SumUp keys (sandbox or live) and the secrets in .env (see .env.example).
+# The deploy workflow sets them; by hand:
+#   DOMAIN=staging.shroom-mates.de docker compose up -d
+#
+# Hosts: https://<DOMAIN> (site + shop), https://api.<DOMAIN> (Medusa + admin),
+# shop.<DOMAIN> and www.<DOMAIN> redirect to the site.
+
+# Pinned so the volume names below stay stable whatever the checkout folder is.
+name: shroom-mates
+
 services:
   # ── Reverse Proxy ──────────────────────────────────────────────
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN is required}
+      ROBOTS_TAG: ${ROBOTS_TAG:-all}
+      CSP_HEADER: ${CSP_HEADER:-Content-Security-Policy}
     ports:
       - "80:80"
       - "443:443"
       - "443:443/udp" # HTTP/3
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
+      - caddy_data:/data # certificates (Let's Encrypt), keep across deploys
       - caddy_config:/config
       - caddy_logs:/var/log/caddy
     depends_on:
@@ -18,15 +35,8 @@ services:
       web:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:80",
-        ]
+      # Admin API inside the container; the sites themselves only answer on their hostnames
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:2019/config/"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -56,7 +66,8 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    # noeviction: Medusa keeps workflow and event state in Redis; evicting it loses data
+    command: redis-server --maxmemory 256mb --maxmemory-policy noeviction
     volumes:
       - redis_data:/data
     healthcheck:
@@ -73,27 +84,29 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      # Set to "true" only to test without SumUp; orders then need no payment.
+      # "true" allows "Manuelle Zahlung (Test)" (orders without payment); never in production
       ALLOW_MANUAL_PAYMENT: ${ALLOW_MANUAL_PAYMENT:-false}
       DATABASE_URL: postgres://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-shroom-mates}?sslmode=disable
       REDIS_URL: redis://redis:6379
-      MEDUSA_BACKEND_URL: https://api.shroom-mates.de
-      STORE_CORS: https://shroom-mates.de,https://shop.shroom-mates.de
-      ADMIN_CORS: https://api.shroom-mates.de
-      AUTH_CORS: https://api.shroom-mates.de,https://shroom-mates.de
+      MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+      STORE_CORS: https://${DOMAIN}
+      ADMIN_CORS: https://api.${DOMAIN}
+      AUTH_CORS: https://api.${DOMAIN},https://${DOMAIN}
       COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       SUMUP_API_KEY: ${SUMUP_API_KEY:-}
       SUMUP_MERCHANT_CODE: ${SUMUP_MERCHANT_CODE:-}
-      SUMUP_MEDUSA_URL: ${SUMUP_MEDUSA_URL:-https://api.shroom-mates.de}
-      SUMUP_REDIRECT_URL: ${SUMUP_REDIRECT_URL:-https://shroom-mates.de/shop/checkout/complete}
+      # Derived from DOMAIN so they can't drift from the real hosts (the
+      # redirect_url must be on the site host).
+      SUMUP_MEDUSA_URL: https://api.${DOMAIN}
+      SUMUP_REDIRECT_URL: https://${DOMAIN}/shop/checkout/complete
       SUMUP_REDIRECT_ALLOWED_HOSTS: ${SUMUP_REDIRECT_ALLOWED_HOSTS:-}
       # Transactional email via Resend (mails are only logged without a key)
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-shroom-mates <bestellung@shroom-mates.de>}
       EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:-hey@shroom-mates.de}
       SHOP_NOTIFICATION_EMAIL: ${SHOP_NOTIFICATION_EMAIL:-hey@shroom-mates.de}
-      SHOP_PUBLIC_URL: https://shroom-mates.de
+      SHOP_PUBLIC_URL: https://${DOMAIN}
     volumes:
       - medusa_uploads:/app/static
     depends_on:
@@ -102,26 +115,21 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:9000/health",
-        ]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9000/health"]
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 60s
 
-  # ── Web (Astro: prerendered site + SSR shop) ────────────────────────────────────
+  # ── Web (Astro: prerendered site + SSR shop) ───────────────────
   web:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
       args:
+        PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+        PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
+        PUBLIC_SITE_URL: https://${DOMAIN}
         # Optional: set to the Umami website ID to enable the tracker
         PUBLIC_UMAMI_WEBSITE_ID: ${PUBLIC_UMAMI_WEBSITE_ID:-}
     restart: unless-stopped
@@ -129,21 +137,14 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
-      PUBLIC_MEDUSA_BACKEND_URL: https://api.shroom-mates.de
+      PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
       MEDUSA_INTERNAL_URL: http://medusa:9000
+      APP_TRUST_PROXY: "true"
     depends_on:
       medusa:
         condition: service_healthy
     healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:4321",
-        ]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4321/"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -198,10 +199,16 @@ services:
       retries: 5
       start_period: 30s
 
+# The data volumes keep the names of the former test setup, so the server's
+# existing database, Redis data and uploads carry over.
 volumes:
   postgres_data:
+    name: shroom-mates_test_postgres_data
   redis_data:
+    name: shroom-mates_test_redis_data
+  medusa_uploads:
+    name: shroom-mates_test_medusa_uploads
+  caddy_logs:
+    name: shroom-mates_test_caddy_logs
   caddy_data:
   caddy_config:
-  caddy_logs:
-  medusa_uploads:

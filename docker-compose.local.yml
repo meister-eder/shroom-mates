@@ -1,5 +1,5 @@
 # ── docker-compose.local.yml ──────────────────────────────────
-# Full stack for local testing. Same as test but using localhost.
+# Full stack for local testing, like docker-compose.yml but on localhost.
 #
 # Usage:
 #   cp .env.example .env

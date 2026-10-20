@@ -1,6 +1,8 @@
-# Deploys to the netcup test server (docker-compose.test.yml, <host>.sslip.io).
-# Production is still GitHub Pages from `main` (deploy.yml on main).
-name: Deploy test server
+# Deploys the server stack (docker-compose.yml + Caddyfile) to the netcup server.
+# Until go-live it runs as staging under staging.shroom-mates.de; production is
+# still GitHub Pages from `main`. Go-live = change the values under
+# "Server environment" below (plus SumUp live keys in the environment secrets).
+name: Deploy server
 
 on:
   # Pushes to `shop` (code and CMS commits from Sveltia) deploy automatically
@@ -12,8 +14,8 @@ on:
       - 'packages/**'
       - 'backend/**'
       - 'bun.lock'
-      - 'Caddyfile.test'
-      - 'docker-compose.test.yml'
+      - 'Caddyfile'
+      - 'docker-compose.yml'
   workflow_dispatch:
     inputs:
       branch:
@@ -23,15 +25,19 @@ on:
         type: string
 
 concurrency:
-  group: deploy-test
+  group: deploy-server
   cancel-in-progress: false
 
 env:
   DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
   DEPLOY_USER: ${{ secrets.DEPLOY_USER || 'deploy' }}
   DEPLOY_PATH: /opt/shroom-mates
-  COMPOSE_FILE: docker-compose.test.yml
-  DOMAIN: ${{ secrets.DEPLOY_HOST }}.sslip.io
+  # ── Server environment ──
+  DOMAIN: staging.shroom-mates.de
+  ROBOTS_TAG: noindex, nofollow
+  ALLOW_MANUAL_PAYMENT: 'true'
+  # Report-only until Astro's inline island scripts are covered by the CSP
+  CSP_HEADER: Content-Security-Policy-Report-Only
 
 jobs:
   # ── Build check (fails fast; the images are built on the server) ──
@@ -61,7 +67,7 @@ jobs:
         env:
           PUBLIC_MEDUSA_BACKEND_URL: https://api.${{ env.DOMAIN }}
           PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
-          PUBLIC_SITE_URL: https://shroom-mates.${{ env.DOMAIN }}
+          PUBLIC_SITE_URL: https://${{ env.DOMAIN }}
 
       - name: Install backend dependencies
         working-directory: backend
@@ -144,25 +150,35 @@ jobs:
       - name: Deploy with Docker Compose
         run: |
           ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
-            cd /opt/shroom-mates
-            export DOMAIN="$DEPLOY_HOST.sslip.io"
+            set -e
+            cd ${DEPLOY_PATH}
+            export DOMAIN="${DOMAIN}"
+            export ROBOTS_TAG="${ROBOTS_TAG}"
+            export ALLOW_MANUAL_PAYMENT="${ALLOW_MANUAL_PAYMENT}"
+            export CSP_HEADER="${CSP_HEADER}"
             export MEDUSA_PUBLISHABLE_KEY="${{ secrets.MEDUSA_PUBLISHABLE_KEY }}"
-            docker compose -f $COMPOSE_FILE pull postgres redis caddy
-            docker compose -f $COMPOSE_FILE build medusa web
-            docker compose -f $COMPOSE_FILE up -d --remove-orphans --force-recreate
-            echo "Waiting for health checks..."
-            sleep 10
-            docker compose -f $COMPOSE_FILE ps
+            docker compose pull postgres redis caddy umami
+            docker compose build medusa web
+            docker compose up -d --remove-orphans --force-recreate
           EOF
 
+      # Quoted heredoc: everything below runs on the server, not on the runner.
       - name: Verify deployment
         run: |
-          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" << EOF
-            cd /opt/shroom-mates
-            unhealthy=$(docker compose -f $COMPOSE_FILE ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Name')
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" "cd ${DEPLOY_PATH} && DOMAIN=${DOMAIN} bash -s" << 'EOF'
+            health() {
+              docker compose ps --format json \
+                | jq -r 'if type == "array" then .[] else . end | "\(.Name) \(.Health)"'
+            }
+            for i in $(seq 1 36); do
+              health | grep -q ' starting$' || break
+              sleep 5
+            done
+            docker compose ps
+            unhealthy=$(health | awk '$2 != "healthy" && $2 != "" {print $1}')
             if [ -n "$unhealthy" ]; then
               echo "⚠ Unhealthy services: $unhealthy"
-              docker compose -f $COMPOSE_FILE logs --tail=30 $unhealthy
+              for c in $unhealthy; do docker logs --tail=30 "$c"; done
               exit 1
             fi
             echo "✓ All services healthy"
@@ -170,10 +186,10 @@ jobs:
 
       - name: Smoke test
         run: |
-          # Self-signed certificate on the test server → --insecure
+          # Certificates are issued on first start, so allow a couple of minutes
           check() {
             for i in $(seq 1 20); do
-              if curl --insecure --fail --silent --max-time 10 -o /dev/null "$1"; then
+              if curl --fail --silent --max-time 10 -o /dev/null "$1"; then
                 echo "✓ $1"; return 0
               fi
               sleep 6
@@ -181,8 +197,13 @@ jobs:
             echo "✗ $1 not reachable"; return 1
           }
           check "https://api.$DOMAIN/health"
-          check "https://shroom-mates.$DOMAIN/shop/"
-          check "https://shroom-mates.$DOMAIN"
+          check "https://$DOMAIN/shop/"
+          check "https://$DOMAIN/"
+          # Staging must stay out of search engines
+          if [ "$ROBOTS_TAG" != "all" ]; then
+            curl -sI "https://$DOMAIN/" | grep -qi '^x-robots-tag: noindex' \
+              && echo "✓ noindex header" || { echo "✗ noindex header missing"; exit 1; }
+          fi
 
       - name: Cleanup SSH key
         if: always()

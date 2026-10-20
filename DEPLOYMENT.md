@@ -1,34 +1,41 @@
 # Deployment — Shroom-Mates
 
 Everything runs with Docker Compose on a single **netcup** VPS (`DEPLOY_HOST`).
-Caddy terminates TLS and routes three hostnames (one web app serves site and shop):
+Caddy terminates TLS (Let's Encrypt, automatic) and routes these hostnames (one web app serves site and shop):
 
 | Host | Service |
 |------|---------|
-| `shroom-mates.<domain>` | Site + shop (Astro app `web:4321`: prerendered pages, SSR shop under `/shop/`) |
-| `shop.<domain>` | Redirects only: old shop URLs (`/de/store/...`, `/de/cart`, ...) 301 to `shroom-mates.<domain>/shop/...`; unmapped paths go to `/shop/` |
+| `<domain>` | Site + shop (Astro app `web:4321`: prerendered pages, SSR shop under `/shop/`) |
+| `shop.<domain>` | Redirects only: old shop URLs (`/de/store/...`, `/de/cart`, ...) 301 to `<domain>/shop/...`; unmapped paths go to `/shop/` |
 | `api.<domain>` | Medusa API + Admin (`medusa:9000`, admin at `/app`) |
+| `www.<domain>` | Redirect to `<domain>` |
 
 ## Environments
 
-| Environment | Domain | Compose file | Caddyfile | How to deploy |
-|-------------|--------|--------------|-----------|---------------|
-| **netcup-test** (current) | `<DEPLOY_HOST>.sslip.io` | `docker-compose.test.yml` | `Caddyfile.test` (self-signed TLS) | automatic on push to `shop`, or Actions → **Deploy test server** → Run workflow |
-| Production (server not live yet; today GitHub Pages from `main`) | `shroom-mates.de` | `docker-compose.yml` | `Caddyfile` (Let's Encrypt) | — |
-| Local | `localhost` | `docker-compose.dev.yml` (Postgres + Redis only) | — | see `docs/LOCAL_DEVELOPMENT.md` |
+One `docker-compose.yml` and one `Caddyfile` for every server environment; they
+differ only in variables, set in the `env` block of the deploy workflow:
+
+| Variable | Now (staging) | After go-live |
+|----------|---------------|---------------|
+| `DOMAIN` | `staging.shroom-mates.de` | `shroom-mates.de` |
+| `ROBOTS_TAG` | `noindex, nofollow` (keeps staging out of search engines) | `all` |
+| `ALLOW_MANUAL_PAYMENT` | `true` | `false` |
+| `CSP_HEADER` | `Content-Security-Policy-Report-Only` | `Content-Security-Policy` (only once the CSP covers Astro's inline island scripts on product, cart and checkout pages; enforced today it would stop React there) |
+
+Today the server is staging; production is still GitHub Pages from `main`. At
+go-live the same server becomes production (see [Going to production](#going-to-production)).
+Locally: `docker-compose.dev.yml` (Postgres + Redis only), see `docs/LOCAL_DEVELOPMENT.md`.
+
+DNS: `staging` and `*.staging` (A records) point at the server. Caddy fetches and
+renews certificates itself; they live in the `caddy_data` volume.
 
 Secrets for the server's `.env`: see `.env.example`.
-
-[sslip.io](https://sslip.io) is a public wildcard DNS: `shop.1.2.3.4.sslip.io`
-resolves to `1.2.3.4`, so the test server gets hostnames without any DNS setup.
-Its certificates are self-signed (`tls internal`), so accept the browser warning
-once each for `shop.…` and `api.…`.
 
 ## Deploying (`.github/workflows/deploy-server.yml`)
 
 Pushes to `shop` deploy automatically when they touch `apps/web`, `packages`,
-`backend`, `bun.lock`, `Caddyfile.test` or `docker-compose.test.yml`. Manually:
-**Actions → Deploy test server → Run workflow**, select the branch for both "Use workflow
+`backend`, `bun.lock`, `Caddyfile` or `docker-compose.yml`. Manually:
+**Actions → Deploy server → Run workflow**, select the branch for both "Use workflow
 from" and the `branch` input. With the GitHub CLI:
 
 ```bash
@@ -43,14 +50,15 @@ The workflow:
 3. writes `SUMUP_API_KEY` / `SUMUP_MERCHANT_CODE` from the `netcup-test`
    environment secrets into the server `.env` (only if **both** are set),
 4. rebuilds the `medusa` and `web` images on the server and restarts the stack,
-5. smoke-tests `api…/health`, `shroom-mates…/shop/` and the site.
+5. waits for all health checks, then smoke-tests `api…/health`, `/shop/`, the site
+   and (on staging) the `noindex` header.
 
 **Automatic deploys:** besides the manual run, the workflow also triggers on every
-`push` to the `shop` branch that touches `apps/web/**` (this is what deploys
+`push` to the `shop` branch that touches the server stack (this is what deploys
 CMS edits, see [Content editing](#content-editing-sveltia-cms)). A push deploys
 the pushed commit (`github.sha`). Every deploy is a full deploy because the
 prerendered pages are baked into the `web` image.
-Deploys are serialized (`concurrency: deploy-production`), so rapid CMS saves queue up.
+Deploys are serialized (`concurrency: deploy-server`), so rapid CMS saves queue up.
 
 ## Configuration
 
@@ -58,7 +66,7 @@ Deploys are serialized (`concurrency: deploy-production`), so rapid CMS saves qu
 
 | Secret | Scope | Purpose |
 |--------|-------|---------|
-| `DEPLOY_HOST` | repository | Server IP (also forms the sslip.io domain) |
+| `DEPLOY_HOST` | repository | Server IP (SSH target) |
 | `DEPLOY_USER` | repository | SSH user, default `deploy` |
 | `DEPLOY_SSH_KEY` | repository | Private key of the deploy user |
 | `MEDUSA_PUBLISHABLE_KEY` | repository | Publishable key baked into the storefront build; must exist in the server database |
@@ -88,7 +96,7 @@ SUMUP_MERCHANT_CODE=…      # managed by the workflow (see above)
 
 All URLs (`MEDUSA_BACKEND_URL`, CORS, `SUMUP_MEDUSA_URL`, `SUMUP_REDIRECT_URL`)
 are derived from `DOMAIN` in the compose file, so the SumUp redirect always
-points at `https://shroom-mates.<domain>/shop/checkout/complete`.
+points at `https://<domain>/shop/checkout/complete`.
 
 ## SumUp
 
@@ -102,7 +110,7 @@ points at `https://shroom-mates.<domain>/shop/checkout/complete`.
   ```bash
   ssh deploy@<DEPLOY_HOST>
   cd /opt/shroom-mates
-  docker compose -f docker-compose.test.yml exec medusa npx medusa exec ./src/scripts/enable-sumup.ts
+  docker compose exec medusa npx medusa exec ./src/scripts/enable-sumup.ts
   ```
 
   (Or Admin → Settings → Regions → Deutschland → Payment providers.)
@@ -141,13 +149,13 @@ rewrite the `http(s)://old-host` prefix in `image.url` and the `thumbnail` colum
 
 The storefront optimises product images server-side via Astro's `/_image`
 endpoint, which fetches the originals through `MEDUSA_INTERNAL_URL`
-(`http://medusa:9000`), so it also works with the self-signed test certificate.
+(`http://medusa:9000`), so it does not depend on the public certificate.
 
 ## First-time database seed
 
 ```bash
 cd /opt/shroom-mates
-docker compose -f docker-compose.test.yml exec medusa npx medusa exec ./src/scripts/seed.ts
+docker compose exec medusa npx medusa exec ./src/scripts/seed.ts
 ```
 
 Creates the Deutschland region (19 % VAT, tax-inclusive), products, shipping options
@@ -157,7 +165,7 @@ and a publishable API key (copy it into the `MEDUSA_PUBLISHABLE_KEY` secret).
 
 ```bash
 cd /opt/shroom-mates
-C="docker compose -f docker-compose.test.yml"
+C="docker compose"
 
 $C ps                       # status
 $C logs -f medusa           # logs (or web, caddy)
@@ -200,7 +208,7 @@ The site content is edited with [Sveltia CMS](https://github.com/sveltia/sveltia
 a Git-based CMS with no server of its own: the admin UI is just static files served
 with the web app.
 
-- **URL:** `https://shroom-mates.<domain>/admin/` (test server: `https://shroom-mates.<DEPLOY_HOST>.sslip.io/admin/`)
+- **URL:** `https://<domain>/admin/` (staging: `https://staging.shroom-mates.de/admin/`)
 - **Backend:** GitHub repo `meister-eder/shroom-mates`, branch `shop`
   (later `main`). Uploaded images go to `apps/web/src/assets/images`.
 
@@ -217,8 +225,8 @@ with the web app.
 ### What happens when you save
 
 Saving (publishing) an entry creates a commit on `shop` via the GitHub API →
-the `push` trigger starts **Deploy test server** → the full deploy rebuilds the `web` image with the new content → live after
-about 5 minutes. Progress: **Actions → Deploy test server**. Because the CMS commits directly,
+the `push` trigger starts **Deploy server** → the full deploy rebuilds the `web` image with the new content → live after
+about 5 minutes. Progress: **Actions → Deploy server**. Because the CMS commits directly,
 pull before working locally on the same branch.
 
 ### Switching the branch to `main`
@@ -234,7 +242,7 @@ that additionally allows `connect-src https://api.github.com` (plus
 `raw.githubusercontent.com` / `*.githubusercontent.com`) and `blob:` for image
 previews. The CSP of the public site is unchanged. `/admin/*` is also sent with
 `Cache-Control: no-cache` (config changes apply immediately) and
-`X-Robots-Tag: noindex`. `Caddyfile.test` has no CSP, only the `no-cache` header.
+`X-Robots-Tag: noindex`. Staging sends the same CSP as report-only (see `CSP_HEADER`).
 If the admin UI shows blocked requests in the browser console, extend the `@admin`
 CSP in `Caddyfile`.
 
@@ -252,10 +260,15 @@ See "Editing website content with Sveltia CMS" in `docs/LOCAL_DEVELOPMENT.md`.
 
 ## Going to production
 
-1. Point DNS A records for `shroom-mates.de`, `shop.` and `api.` at the server.
-2. Create a `production` environment with the **live** SumUp key and merchant code.
-3. Parameterise the workflow's `COMPOSE_FILE`, `DOMAIN` and environment name
-   (today they are fixed to the test setup) and deploy with `docker-compose.yml`.
+1. Lower the TTL of the existing records a day ahead. Then replace the GitHub Pages
+   records of `shroom-mates.de` with A records for `@`, `www`, `shop` and `api`
+   pointing at the server.
+2. Put the **live** SumUp key and merchant code into the `netcup-test` environment
+   secrets (or a new `production` environment referenced by the workflow).
+3. In the workflow `env`: `DOMAIN: shroom-mates.de`, `ROBOTS_TAG: all`,
+   `ALLOW_MANUAL_PAYMENT: 'false'`, `CSP_HEADER: Content-Security-Policy` (after
+   the CSP fix, check the browser console on staging for violations first). Product image URLs stored with the staging
+   host need rewriting (see above).
 4. Run `enable-sumup.ts` against the production database and remove the manual
    test payment provider from the region. As a safety net, `docker-compose.yml`
    sets `ALLOW_MANUAL_PAYMENT=false`: the backend then hides "Manuelle Zahlung

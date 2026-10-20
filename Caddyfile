@@ -1,3 +1,12 @@
+# One config for every server environment. The caddy service gets:
+#   DOMAIN      site host, e.g. staging.shroom-mates.de or shroom-mates.de
+#   ROBOTS_TAG  X-Robots-Tag for the site ("noindex, nofollow" before go-live, else "all")
+#   CSP_HEADER  Content-Security-Policy (enforced, default) or
+#               Content-Security-Policy-Report-Only (violations only logged in the browser)
+# Hosts: {$DOMAIN} (site + shop), api.{$DOMAIN} (Medusa), shop.{$DOMAIN} (old shop
+# URLs, redirects only), www.{$DOMAIN} (redirect). Certificates come from Let's
+# Encrypt automatically (needs DNS for all four names pointing at the server).
+
 # Old shop URLs (former shop host, country prefix) -> new paths on the main
 # host. 301, query string kept (SumUp sends buyers back to /de/checkout/complete?...).
 # Anything unmapped lands on the shop index.
@@ -57,9 +66,20 @@
 	}
 }
 
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "{args[0]}"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+	}
+}
+
 # ── Site + Shop (Astro: prerendered pages and SSR shop, one app) ──
-shroom-mates.de {
+{$DOMAIN} {
 	import access_log
+	import security_headers SAMEORIGIN
 
 	# Umami: only the tracker script and the collect endpoint are public (names set via
 	# TRACKER_SCRIPT_NAME / COLLECT_API_ENDPOINT on the umami service). The dashboard
@@ -76,25 +96,19 @@ shroom-mates.de {
 	@assets path /assets/* /_astro/*
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 
-	# Security headers
-	header {
-		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "SAMEORIGIN"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-	}
-
 	# CSP: site + SumUp widget + Medusa API + web3forms + Google map frame
 	# (everything except the CMS admin)
 	@notadmin not path /admin /admin/*
-	header @notadmin Content-Security-Policy "default-src 'self'; script-src 'self' https://gateway.sumup.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.shroom-mates.de https://api.web3forms.com; frame-src https://gateway.sumup.com https://www.google.com; font-src 'self'"
+	header @notadmin {
+		{$CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self' https://gateway.sumup.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://api.{$DOMAIN} https://api.web3forms.com; frame-src https://gateway.sumup.com https://www.google.com; font-src 'self'"
+		X-Robots-Tag "{$ROBOTS_TAG:all}"
+	}
 
 	# Sveltia CMS admin (/admin/): talks to the GitHub API, previews use blob: URLs.
 	# Declared after the cache rules above so its Cache-Control wins.
 	@admin path /admin /admin/*
 	header @admin {
-		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; media-src 'self' blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.githubusercontent.com; frame-src 'self' blob: about:; worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+		{$CSP_HEADER:Content-Security-Policy} "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; media-src 'self' blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.githubusercontent.com; frame-src 'self' blob: about:; worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
 		Cache-Control "no-cache"
 		X-Robots-Tag "noindex, nofollow"
 	}
@@ -102,32 +116,22 @@ shroom-mates.de {
 	encode gzip zstd
 }
 
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} 308
+}
+
 # ── Old shop host: redirects only ────────────────────────────
-shop.shroom-mates.de {
-	import legacy_shop https://shroom-mates.de
-
-	header {
-		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "SAMEORIGIN"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-	}
-
+shop.{$DOMAIN} {
+	import legacy_shop https://{$DOMAIN}
+	import security_headers SAMEORIGIN
+	header X-Robots-Tag "{$ROBOTS_TAG:all}"
 	encode gzip zstd
 }
 
 # ── Medusa Backend + Admin ───────────────────────────────────
-api.shroom-mates.de {
+api.{$DOMAIN} {
 	reverse_proxy medusa:9000
-
-	header {
-		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "DENY"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-	}
-
+	import security_headers DENY
+	header X-Robots-Tag "noindex, nofollow"
 	encode gzip zstd
 }
