@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
 import FAQ from "../FAQ.astro";
 
 interface Props {
@@ -24,15 +25,15 @@ const {
 
 <Layout title={title} description={description} active="faq" isLandingPage>
   <div class="faq-page">
+    <PageHero eyebrow={heroEyebrow} title={heroHeadline} lead={heroLead}>
+      <div slot="media" class="faq-mascot">
+        <div class="dots" aria-hidden="true"></div>
+        <MatesLogo class="faq-mascot__logo" alt="" width={340} sizes="(max-width: 900px) 70vw, 340px" loading="eager" />
+      </div>
+    </PageHero>
+
     <div class="container faq-layout">
       <div class="faq-aside">
-        <h1 class="eyebrow faq-eyebrow">{heroEyebrow}</h1>
-        <p class="faq-title">{heroHeadline}</p>
-        <p class="lead faq-lead">{heroLead}</p>
-        <div class="faq-mascot">
-          <div class="dots" aria-hidden="true"></div>
-          <MatesLogo class="faq-mascot__logo" alt="" width={340} sizes="(max-width: 900px) 70vw, 340px" loading="eager" />
-        </div>
         <div class="faq-help">
           <h2 class="faq-help__title">{helpTitle}</h2>
           <p>
@@ -62,7 +63,6 @@ const {
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 56px;
-    padding-top: 40px;
     padding-bottom: 112px;
   }
 
@@ -76,31 +76,8 @@ const {
     min-width: 0;
   }
 
-  .faq-eyebrow {
-    margin-bottom: 18px;
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  .faq-title {
-    margin: 0 0 20px;
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(48px, 7vw, 104px);
-    line-height: 0.9;
-    color: var(--color-accent);
-    text-wrap: balance;
-  }
-
-  .faq-lead {
-    max-width: 34ch;
-    margin: 0;
-  }
-
   .faq-mascot {
     position: relative;
-    margin-top: 32px;
     padding-top: 16px;
   }
 
@@ -117,7 +94,6 @@ const {
   }
 
   .faq-help {
-    margin-top: 32px;
     padding: 24px;
     background: var(--color-white);
     border: 3px solid var(--color-ink);

@@ -25,19 +25,7 @@ const PATHS = [
  * Noch nicht auf PageHero umgestellte Seiten. Einträge entfernen, sobald die
  * Seite migriert ist: Dann gelten alle drei Prüfungen auch für sie.
  */
-const NOT_YET_MIGRATED = new Set([
-  "/",
-  "/unsere-pilze/",
-  "/tinkturen/",
-  "/gastronomie/",
-  "/ueber-uns/",
-  "/faq/",
-  "/kontakt/",
-  "/impressum/",
-  "/agb/",
-  "/shop/",
-  "/shop/cart/",
-]);
+const NOT_YET_MIGRATED = new Set<string>([]);
 
 for (const width of [390, 1280, 1512]) {
   test(`Seitenkopf gleich ausgerichtet bei ${width}px`, async ({ page }) => {

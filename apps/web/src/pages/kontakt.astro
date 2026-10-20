@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
 import LocationInfo from "../components/LocationInfo.astro";
 
 const title =
@@ -19,19 +20,13 @@ const topics = [
 
 <Layout title={title} description={description} active="kontakt" isLandingPage>
   <div class="contact-page">
-    <section class="container contact-layout">
-      <div class="contact-info">
-        <h1 class="eyebrow contact-eyebrow">Kontakt: Pilze, Growkits &amp; Tinkturen bestellen in Leipzig</h1>
-        <p class="contact-title">Schreib uns!</p>
-        <a class="contact-mail" href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
-        <p class="contact-intro">
-          Wir liefern an Privatkunden und Gastronomiebetriebe in Leipzig. Fragen zu
-          <a href="/unsere-pilze/">Pilzen</a>, <a href="/growkits/">Growkits</a> oder
-          <a href="/tinkturen/">Tinkturen</a>? Oder brauchst du ein Angebot für dein
-          <a href="/gastronomie/">Restaurant</a>? Schreib uns einfach.
-        </p>
-
-        <div class="contact-cards">
+    <PageHero eyebrow="Kontakt: Pilze, Growkits & Tinkturen bestellen in Leipzig" title="Schreib uns!">
+      Wir liefern an Privatkunden und Gastronomiebetriebe in Leipzig. Fragen zu
+      <a href="/unsere-pilze/">Pilzen</a>, <a href="/growkits/">Growkits</a> oder
+      <a href="/tinkturen/">Tinkturen</a>? Oder brauchst du ein Angebot für dein
+      <a href="/gastronomie/">Restaurant</a>? Schreib uns einfach.
+      <a slot="actions" class="contact-mail" href="mailto:hey@shroom-mates.de">hey@shroom-mates.de</a>
+        <div slot="actions" class="contact-cards">
           <div class="contact-card contact-card--insta">
             <p class="label">Instagram</p>
             <p>Werksverkauf-Termine und was gerade wächst.</p>
@@ -45,9 +40,7 @@ const topics = [
             <a href="/faq/">Zu den Fragen</a>
           </div>
         </div>
-      </div>
-
-      <div class="form-card">
+      <div slot="media" class="form-card">
         <form method="POST" id="form" class="contact-form">
           <input
             type="hidden"
@@ -91,7 +84,8 @@ const topics = [
           <div id="result" class="contact-result" role="status" aria-live="polite"></div>
         </form>
       </div>
-    </section>
+    </PageHero>
+
 
     <script>
       import "../scripts/contact-form.ts";
@@ -104,36 +98,6 @@ const topics = [
 <style>
   .contact-page {
     overflow-x: clip;
-  }
-
-  .contact-layout {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 56px;
-    padding-top: 40px;
-    padding-bottom: 96px;
-  }
-
-  .contact-info {
-    flex: 1 1 420px;
-    min-width: 0;
-  }
-
-  .contact-eyebrow {
-    margin-bottom: 18px;
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  .contact-title {
-    margin: 0 0 32px;
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(48px, 7vw, 104px);
-    line-height: 0.9;
-    color: var(--color-accent);
   }
 
   .contact-mail {
@@ -152,18 +116,13 @@ const topics = [
     color: var(--color-accent-dark);
   }
 
-  .contact-intro {
-    max-width: 44ch;
-    margin: 24px 0 0;
-    font-size: 1.125rem;
-    line-height: 1.55;
-  }
-
   .contact-cards {
+    flex-basis: 100%;
+    margin-top: 16px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
     gap: 18px;
-    margin-top: 40px;
+    margin-top: 0;
   }
 
   .contact-card {
@@ -196,10 +155,6 @@ const topics = [
     color: var(--color-ink);
     font-weight: 700;
     overflow-wrap: anywhere;
-  }
-
-  .contact-intro a {
-    font-weight: 700;
   }
 
   /* ── Formular ───────────────────────────────────── */
@@ -280,11 +235,6 @@ const topics = [
   }
 
   @media (max-width: 768px) {
-    .contact-layout {
-      gap: 40px;
-      padding-bottom: 64px;
-    }
-
     .form-card {
       padding: 22px 18px;
       border-radius: 0;

@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
 import emmiAusternpilz from "../../assets/images/fotos/emmi-austernpilz.jpg";
 import rosenseitling from "../../assets/images/fotos/rosenseitling-bueschel.jpg";
 import timFreigestellt from "../../assets/images/fotos/tim-freigestellt.png";
@@ -34,13 +35,9 @@ const mapsLink =
 
 <Layout title={title} description={description} active="ueber-uns" isLandingPage>
   <div class="about-page">
-    <section class="container about-hero">
-      <div class="about-hero__copy">
-        <h1 class="eyebrow about-hero__eyebrow">{heroTitle} – {heroSubtitle}</h1>
-        <p class="about-hero__title">{heroName}</p>
-        <div class="about-hero__lead lead" set:html={(whoWeAre[0] ?? "")} />
-      </div>
-      <div class="about-hero__photos">
+    <PageHero eyebrow={`${heroTitle} – ${heroSubtitle}`} title={heroName}>
+      <Fragment set:html={whoWeAre[0] ?? ""} />
+      <div slot="media" class="about-hero__photos">
         <div class="dots" aria-hidden="true"></div>
         <Image
           src={emmiAusternpilz}
@@ -60,7 +57,7 @@ const mapsLink =
           loading="eager"
         />
       </div>
-    </section>
+    </PageHero>
 
     <section class="section section--night section--no-border timeline" aria-labelledby="timeline-heading">
       <div class="container">
@@ -162,49 +159,9 @@ const mapsLink =
     overflow-x: clip;
   }
 
-  /* ── Hero ───────────────────────────────────────── */
-  .about-hero {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 48px;
-    padding-top: 40px;
-    padding-bottom: 96px;
-  }
-
-  .about-hero__copy {
-    flex: 1 1 520px;
-    min-width: 0;
-  }
-
-  .about-hero__eyebrow {
-    margin-bottom: 18px;
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  .about-hero__title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(48px, 8vw, 120px);
-    line-height: 0.9;
-    color: var(--color-accent);
-    text-wrap: balance;
-  }
-
-  .about-hero__lead {
-    max-width: 40ch;
-    margin: 24px 0 0;
-    font-size: 1.3125rem;
-    line-height: 1.5;
-  }
-
+  /* ── Hero (Gerüst in PageHero) ──────────────────── */
   .about-hero__photos {
     position: relative;
-    flex: 1 1 420px;
-    min-width: 0;
     padding: 24px;
   }
 
@@ -478,11 +435,6 @@ const mapsLink =
   }
 
   @media (max-width: 768px) {
-    .about-hero {
-      gap: 32px;
-      padding-bottom: 56px;
-    }
-
     .about-hero__photos {
       padding: 16px 12px 28px;
     }

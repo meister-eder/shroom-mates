@@ -628,13 +628,13 @@ body:has(.cart-drawer[open]) {
 
 .store-hero,
 .store-section {
-  max-width: 1376px;
+  max-width: var(--container);
   margin: 0 auto;
   padding-inline: var(--gutter);
 }
 
 .store-hero {
-  padding-top: 8px;
+  padding-top: var(--page-top);
 }
 
 .store-hero__title {
@@ -939,7 +939,6 @@ a.chip[aria-current="page"] {
 
 @media (max-width: 640px) {
   .store-hero {
-    padding-top: 24px;
     padding-bottom: 12px;
   }
 
@@ -1061,7 +1060,7 @@ a.chip[aria-current="page"] {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-width: 1280px;
+  max-width: var(--container);
   margin: 0 auto;
   padding: 20px var(--gutter) 0;
   font-family: var(--font-mono);
@@ -1077,7 +1076,7 @@ a.chip[aria-current="page"] {
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 56px;
-  max-width: 1280px;
+  max-width: var(--container);
   margin: 0 auto;
   padding: 28px var(--gutter) 88px;
 }
@@ -1648,7 +1647,7 @@ a.chip[aria-current="page"] {
 }
 
 .how-band__inner {
-  max-width: 1280px;
+  max-width: var(--container);
   margin: 0 auto;
 }
 
@@ -1723,7 +1722,7 @@ a.chip[aria-current="page"] {
 
 /* "Passt dazu" */
 .pairs {
-  max-width: 1280px;
+  max-width: var(--container);
   margin: 0 auto;
   padding: 80px var(--gutter) 96px;
 }
@@ -1849,14 +1848,13 @@ a.chip[aria-current="page"] {
 
 /* ── Gemeinsam ─────────────────────────────────────────────────────────── */
 .shop-page {
-  max-width: 1280px;
+  max-width: var(--container);
   margin-inline: auto;
-  padding: 2rem 1rem 6rem;
+  padding: var(--page-top) var(--gutter) 6rem;
 }
 
 .shop-page--loading {
-  max-width: 80rem;
-  padding-block: 4rem;
+  padding-top: var(--page-top);
   text-align: center;
   color: var(--text-muted);
 }
@@ -1889,11 +1887,10 @@ a.chip[aria-current="page"] {
 .shop-notice {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   max-width: 42rem;
-  margin-inline: auto;
-  padding: 4rem 1rem;
-  text-align: center;
+  padding: 4rem 0;
+  text-align: left;
 }
 
 .shop-notice .shop-h1 {
@@ -1998,14 +1995,6 @@ a.chip[aria-current="page"] {
 }
 
 @media (min-width: 640px) {
-  .shop-page {
-    padding-inline: 2rem;
-  }
-
-  .shop-notice {
-    padding-inline: 2rem;
-  }
-
   .form-grid--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2026,9 +2015,9 @@ a.chip[aria-current="page"] {
 .cartpage-empty {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 2rem 0;
-  text-align: center;
+  align-items: flex-start;
+  padding: 0 0 2rem;
+  text-align: left;
 }
 
 .cartpage-empty .shop-h1 {

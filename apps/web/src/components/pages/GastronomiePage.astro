@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Icon from "@shroom-mates/ui/Icon.astro";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
 import { jsonLd } from "../../utils/json-ld";
 
 interface Props {
@@ -60,31 +61,24 @@ const gastroSchema = {
   <script type="application/ld+json" set:html={jsonLd(gastroSchema)} />
 
   <div class="gastro-page">
-    <section class="gastro-hero">
-      <div class="container gastro-hero__inner">
-        <div class="gastro-hero__copy">
-          <h1 class="eyebrow gastro-hero__eyebrow">{heroEyebrow}</h1>
-          <p class="gastro-hero__title">{heroTitle}</p>
-          {heroSubtitle && <p class="gastro-hero__lead">{heroSubtitle}</p>}
-          <a class="btn btn--accent gastro-hero__cta" href="#anfrage">{heroButton}</a>
-        </div>
-        <div class="gastro-hero__photos">
-          {
-            heroPhotos.map((photo, i) => (
-              <Image
-                src={photo.image}
-                alt={photo.imageAlt}
-                class={i === 0 ? "gastro-hero__img gastro-hero__img--tall" : "gastro-hero__img"}
-                widths={[320, 480, 640]}
-                sizes="(max-width: 900px) 50vw, 280px"
-                loading="eager"
-                format="webp"
-              />
-            ))
-          }
-        </div>
+    <PageHero tone="dark" eyebrow={heroEyebrow} title={heroTitle} lead={heroSubtitle}>
+      <a slot="actions" class="btn btn--accent gastro-hero__cta" href="#anfrage">{heroButton}</a>
+      <div slot="media" class="gastro-hero__photos">
+        {
+          heroPhotos.map((photo, i) => (
+            <Image
+              src={photo.image}
+              alt={photo.imageAlt}
+              class={i === 0 ? "gastro-hero__img gastro-hero__img--tall" : "gastro-hero__img"}
+              widths={[320, 480, 640]}
+              sizes="(max-width: 900px) 50vw, 280px"
+              loading="eager"
+              format="webp"
+            />
+          ))
+        }
       </div>
-    </section>
+    </PageHero>
 
     <section class="container gastro-intro" aria-labelledby="intro-heading">
       <h2 id="intro-heading" class="text-accent">{introTitle}</h2>
@@ -188,66 +182,13 @@ const gastroSchema = {
     overflow-x: clip;
   }
 
-  /* ── Hero (dunkles Band) ────────────────────────── */
-  .gastro-hero {
-    margin-top: 0;
-    padding: 80px 0;
-    background: var(--color-night);
-    color: var(--color-paper);
-  }
-
-  .gastro-hero__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 48px;
-  }
-
-  .gastro-hero__copy {
-    flex: 1 1 540px;
-    min-width: 0;
-  }
-
-  .gastro-hero__eyebrow {
-    margin-bottom: 18px;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #ff7a45;
-  }
-
-  .gastro-hero__title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-variation-settings: "SOFT" 100, "WONK" 1;
-    font-size: clamp(48px, 7.4vw, 112px);
-    line-height: 0.9;
-    color: var(--color-accent);
-    text-wrap: balance;
-  }
-
-  .gastro-hero__lead {
-    max-width: 42ch;
-    margin: 24px 0 0;
-    font-size: 1.3125rem;
-    line-height: 1.5;
-    color: #bfc1ea;
-  }
-
+  /* ── Hero (Gerüst in PageHero) ──────────────────── */
   .gastro-hero__cta {
-    margin-top: 32px;
     padding: 16px 26px;
     font-size: 1.125rem;
-    box-shadow: 4px 4px 0 var(--color-paper);
-  }
-
-  .gastro-hero__cta:hover {
-    box-shadow: 2px 2px 0 var(--color-paper);
   }
 
   .gastro-hero__photos {
-    flex: 1 1 400px;
-    min-width: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
@@ -460,10 +401,6 @@ const gastroSchema = {
   }
 
   @media (max-width: 768px) {
-    .gastro-hero {
-      padding: 40px 0 56px;
-    }
-
     .gastro-hero__photos :global(.gastro-hero__img) {
       height: 150px;
     }

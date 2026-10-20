@@ -4,6 +4,7 @@ import type { CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import MatesLogo from "@shroom-mates/ui/MatesLogo.astro";
 import MyceliumScroll from "@shroom-mates/ui/MyceliumScroll.astro";
+import PageHero from "@shroom-mates/ui/PageHero.astro";
 import schneidebrett from "../../assets/images/fotos/schneidebrett.jpg";
 
 interface Props {
@@ -29,6 +30,9 @@ const {
 // Name nowrap mit geschütztem Bindestrich (U+2011)
 const [heroBefore, ...heroRest] = heroTitle.split("shroom-mates");
 const heroAfter = heroRest.join("shroom-mates");
+const escapeHtml = (v: string) =>
+  v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const heroTitleHtml = `${escapeHtml(heroBefore.trim())}<br /><span class="nowrap">shroom&#8209;mates</span>${escapeHtml(heroAfter)}`;
 
 // Platzhalterfarbe je Schritt, falls kein Bild gesetzt ist; Kartonfarbe je Produkt
 const placeholders = [
@@ -49,19 +53,12 @@ const productColors = ["pink", "lavender", "olive-soft"];
 >
   <MyceliumScroll />
   <div class="landing">
-    <section class="hero container">
-      <p class="eyebrow hero__eyebrow">{heroEyebrow}</p>
-      <h1 class="hero__title">{heroBefore.trim()}<br /><span class="nowrap">shroom&#8209;mates</span>{heroAfter}</h1>
-    </section>
-    <section class="container hero-body">
-      <div class="hero__copy">
-        <p class="lead hero__lead">{teaserText}</p>
-        <div class="hero__actions">
-          <a class="btn btn--primary" href="/unsere-pilze/">{heroPrimaryButton}</a>
-          <a class="btn btn--secondary" href="/growkits/">{heroSecondaryButton}</a>
-        </div>
-      </div>
-      <div class="hero__mascot">
+    <PageHero wideTitle eyebrow={heroEyebrow} titleHtml={heroTitleHtml} lead={teaserText}>
+      <Fragment slot="actions">
+        <a class="btn btn--primary" href="/unsere-pilze/">{heroPrimaryButton}</a>
+        <a class="btn btn--secondary" href="/growkits/">{heroSecondaryButton}</a>
+      </Fragment>
+      <div slot="media" class="hero__mascot">
         <div class="dots" aria-hidden="true"></div>
         <MatesLogo
           class="hero__logo"
@@ -74,7 +71,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
           {heroBubble}
         </p>
       </div>
-    </section>
+    </PageHero>
 
     <section class="section section--night steps" aria-labelledby="steps-heading">
       <div class="container steps__inner">
@@ -162,7 +159,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
     overflow-x: clip;
   }
 
-  .nowrap {
+  .landing :global(.nowrap) {
     white-space: nowrap;
   }
 
@@ -172,59 +169,24 @@ const productColors = ["pink", "lavender", "olive-soft"];
     font-size: 1.125rem;
   }
 
-  .hero {
-    padding-top: 32px;
-    padding-bottom: 0;
-  }
-
-  .hero__eyebrow {
-    margin-bottom: 18px;
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
-
-  .hero__title {
-    color: var(--color-accent);
+  /* Startseite: größeres Statement als der geteilte Seitenkopf */
+  .landing :global(.page-hero__title) {
+    font-size: clamp(2.5rem, 8.4vw, 7.75rem);
     letter-spacing: -0.02em;
   }
 
-  .hero-body {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 40px;
-    padding-bottom: 80px;
-  }
-
-  .hero__copy {
-    flex: 1 1 420px;
-    min-width: 0;
-  }
-
-  .hero__lead {
+  .landing :global(.page-hero__lead) {
     max-width: 34ch;
-    margin: 28px 0 0;
+    margin-top: 28px;
     font-size: 1.3125rem;
   }
 
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 32px;
-  }
-
-  .hero__actions :global(.btn--secondary) {
-    box-shadow: none;
-  }
-
-  .hero__actions :global(.btn--secondary:hover) {
+  .landing :global(.page-hero__actions) :global(.btn--secondary),
+  .landing :global(.page-hero__actions) :global(.btn--secondary:hover) {
     box-shadow: none;
   }
 
   .hero__mascot {
-    flex: 1 1 440px;
-    min-width: 0;
     position: relative;
     min-height: 520px;
   }
@@ -440,12 +402,7 @@ const productColors = ["pink", "lavender", "olive-soft"];
 
   /* ── Responsive ─────────────────────────────────── */
   @media (max-width: 900px) {
-    .hero-body {
-      padding-bottom: 56px;
-    }
-
     .hero__mascot {
-      flex-basis: 100%;
       min-height: 0;
       padding-top: 56px;
     }

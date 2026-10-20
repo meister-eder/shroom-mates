@@ -13,6 +13,7 @@ interface Props {
 const { title, draft = true } = Astro.props;
 ---
 
+<div class="legal-wrap container">
 <article class="legal-page" aria-labelledby="legal-title">
   <h1 id="legal-title" class="section-heading">{title}</h1>
   {
@@ -27,12 +28,24 @@ const { title, draft = true } = Astro.props;
     <slot />
   </div>
 </article>
+</div>
 
 <style>
+  /* Aligned like every page: container edge and --page-top; the main's own
+     padding/max-width is reset so the container is the only one. */
+  :global(.site-main:has(> .legal-wrap)) {
+    max-width: none;
+    padding: 0;
+  }
+
+  .legal-wrap {
+    padding-top: var(--page-top);
+    padding-bottom: 4rem;
+  }
+
   .legal-page {
     max-width: 820px;
-    margin: 0 auto;
-    padding: 2rem 0 4rem;
+    margin: 0;
   }
 
   .legal-page > h1 {
