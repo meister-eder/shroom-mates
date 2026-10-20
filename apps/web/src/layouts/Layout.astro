@@ -259,11 +259,7 @@ const breadcrumbSchema = {
     <a href="#main-content" class="skip-link">Zum Hauptinhalt springen</a>
 
     <div class="site-wrapper">
-      <Header
-        variant={shop ? "shop" : "site"}
-        regionId={regionId}
-        active={navActive}
-      />
+      <Header regionId={regionId} active={navActive} />
       <main
         id="main-content"
         class:list={[

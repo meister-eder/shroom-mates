@@ -6,13 +6,11 @@
  * Mobile: menu button left, wordmark centre (no mascot), Instagram icon + cart right; the menu is a
  * full-screen overlay on ink with large Fraunces links.
  *
- * Usage (marketing): <SiteHeader active="growkits" ticker={[...]}>
- *                       <CartButton slot="cart" ... />
- *                     </SiteHeader>
- * Usage (shop):      <SiteHeader variant="shop" active="shop" info={[...]}> … </SiteHeader>
+ * Usage: <SiteHeader active="growkits" ticker={[...]}>
+ *           <CartButton slot="cart" ... />
+ *        </SiteHeader>
  *
- * All links are relative (see site.ts). `variant="shop"` is the shop look
- * (info line instead of ticker, no Growkits/Tinkturen, mascot on mobile).
+ * One header for the whole site (marketing and shop). All links are relative (see site.ts).
  */
 import { Image } from "astro:assets";
 import logoFont from "./assets/logo_font.svg?url";
@@ -22,29 +20,17 @@ import MatesLogo from "./MatesLogo.astro";
 import { INSTAGRAM_URL, mainNav, type NavKey } from "./site";
 
 interface Props {
-  /** Look of the bar: marketing pages (default) or shop pages */
-  variant?: "site" | "shop";
   /** Current section; the pill gets aria-current="page" */
   active?: NavKey;
-  /** Marquee line above the header (website) */
+  /** Marquee line above the header */
   ticker?: string[];
-  /** Static info line above the header (shop; no animation) */
-  info?: string[];
-  /** Shop only: one-line variant of `info` shown on mobile instead of the list */
-  infoCompact?: string;
 }
 
-const { variant = "site", active, ticker, info, infoCompact } = Astro.props;
+const { active, ticker } = Astro.props;
 
 const current: NavKey | undefined = active;
-const isShop = variant === "shop";
-
-// Shop nav (ShopHeader mockup): no Growkits/Tinkturen; Kontakt only in the mobile menu
-const items = isShop
-  ? mainNav.filter((i) => i.key !== "growkits" && i.key !== "tinkturen")
-  : mainNav;
-
-const home = isShop ? "/shop/" : "/";
+const items = mainNav;
+const home = "/";
 const hasCart = Astro.slots.has("cart");
 // Without a cart, Kontakt is the orange call-to-action pill
 const kontaktAccent = !hasCart;
@@ -52,7 +38,7 @@ const kontaktAccent = !hasCart;
 const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
 ---
 
-<header class:list={["site-header", { "site-header--shop": isShop }]} role="banner">
+<header class="site-header" role="banner">
   {
     tickerGroups.length > 0 && (
       <div class="ticker">
@@ -68,17 +54,6 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
       </div>
     )
   }
-  {
-    info && info.length > 0 && (
-      <ul class:list={["header-info", { "header-info--has-compact": !!infoCompact }]}>
-        {info.map((t) => (
-          <li>{t}</li>
-        ))}
-      </ul>
-    )
-  }
-
-  {infoCompact && <p class="header-info header-info--compact">{infoCompact}</p>}
 
   <nav class="site-nav" aria-label="Hauptnavigation">
     <button
@@ -105,11 +80,7 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
             <li>
               <a
                 href={item.href}
-                class:list={[
-                  "nav-pill",
-                  { "nav-pill--accent": isKontakt && kontaktAccent },
-                  { "nav-pill--menu-only": isShop && isKontakt },
-                ]}
+                class:list={["nav-pill", { "nav-pill--accent": isKontakt && kontaktAccent }]}
                 aria-current={current === item.key ? "page" : undefined}
               >
                 {item.label}
@@ -119,11 +90,11 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
         })
       }
       <li class="nav-links__extra">
-        {!isShop && <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class="nav-links__ig">
+        <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class="nav-links__ig">
           <Icon name="instagram" size={22} />
           Instagram
           <span class="sr-only"> (öffnet in neuem Tab)</span>
-        </a>}
+        </a>
         <Image
           src={logoWithShrooms}
           alt=""
@@ -138,17 +109,15 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
     </ul>
 
     <div class:list={["header-cart", { "header-cart--ig-only": !hasCart }]}>
-      {!isShop && (
-        <a
-          href={INSTAGRAM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="header-ig"
-          aria-label="Instagram (öffnet in neuem Tab)"
-        >
-          <Icon name="instagram" size={26} />
-        </a>
-      )}
+      <a
+        href={INSTAGRAM_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="header-ig"
+        aria-label="Instagram (öffnet in neuem Tab)"
+      >
+        <Icon name="instagram" size={26} />
+      </a>
       <slot name="cart" />
     </div>
   </nav>
@@ -160,41 +129,6 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
     top: 0;
     z-index: 1000;
     background: var(--color-bg);
-  }
-
-  /* ── Info line (shop) ─────────────────────────────── */
-  .header-info {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2px 28px;
-    margin: 0;
-    padding: 9px var(--gutter);
-    list-style: none;
-    background: var(--color-ink);
-    color: var(--color-cream);
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .header-info:not(.header-info--compact) {
-    line-height: 21px; /* whole px keeps the sticky header height integral */
-  }
-
-  .header-info--compact {
-    display: none;
-  }
-
-  .nav-pill--menu-only {
-    display: none;
-  }
-
-  .header-info li + li::before {
-    content: "\2726";
-    margin-right: 28px;
-    color: inherit;
   }
 
   .site-header :global(.ticker__group li::before) {
@@ -389,63 +323,6 @@ const tickerGroups = ticker && ticker.length ? [0, 1, 2, 3] : [];
 
     .brand__word {
       display: none;
-    }
-
-    /* ── Shop variant (ShopMobilListe): mascot + two-line wordmark, cart pill right ── */
-    .site-header--shop .site-nav {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .site-header--shop .brand {
-      gap: 6px;
-    }
-
-    .site-header--shop .brand :global(.brand__logo) {
-      display: block;
-      width: 40px;
-      height: 40px;
-    }
-
-    .site-header--shop .brand__word {
-      display: block;
-      font-size: 21px;
-      line-height: 0.86;
-    }
-
-    .site-header--shop .brand__wordmark {
-      display: none;
-    }
-
-    .site-header--shop .header-info--has-compact {
-      display: none;
-    }
-
-    .site-header--shop .header-info--compact {
-      display: block;
-      padding: 8px 16px;
-      font-size: 11px;
-      line-height: normal;
-      text-align: center;
-    }
-
-    .site-header--shop .nav-pill--menu-only {
-      display: block;
-    }
-
-    .site-header--shop .nav-links {
-      gap: 4px;
-      padding-top: 24px;
-    }
-
-    .site-header--shop .nav-links .nav-pill {
-      padding: 12px 0;
-      line-height: 1.2;
-    }
-
-    .site-header--shop .nav-links__extra {
-      justify-content: flex-end;
     }
 
     /* Bentley wordmark (SVG, tinted with the accent colour) */

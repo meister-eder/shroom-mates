@@ -1,43 +1,26 @@
 ---
 // Header of the whole site (shared SiteHeader): the Pilzkorb pill sits right
-// next to "Kontakt". Marketing pages show the ticker, shop pages an info line.
+// next to "Kontakt". Same header and ticker on every page.
 import SiteHeader from "@shroom-mates/ui/SiteHeader.astro";
-import { SHIPPING } from "@shroom-mates/ui/shop-facts";
 import type { NavKey } from "@shroom-mates/ui/site";
 import CartButton from "./CartButton.astro";
 
 interface Props {
-  variant?: "site" | "shop";
   regionId?: string | null;
   active?: NavKey;
 }
 
-const { variant = "site", regionId = null, active } = Astro.props;
+const { regionId = null, active } = Astro.props;
 
-// Ticker above the header (marketing pages): only verifiable statements
+// Ticker above the header: only verifiable statements
 const ticker = [
   "Neu: Wir sind in die Glasfabrik Leutzsch umgezogen",
   "Edel- und Vitalpilze aus Leipzig-Leutzsch",
   "Frische Pilze, Growkits & Tinkturen",
   "Alles selbst gezüchtet",
 ];
-
-const info = [
-  `Versand in ${SHIPPING.standard.time.replace("Werktage", "Werktagen")}`,
-  "Selbst gezüchtet in Leipzig",
-  "Sicher bezahlen mit SumUp",
-];
-const shop = variant === "shop";
 ---
 
-<SiteHeader
-  variant={variant}
-  active={active}
-  ticker={shop ? undefined : ticker}
-  info={shop ? info : undefined}
-  infoCompact={shop
-    ? `Selbst gezüchtet in Leipzig ✦ Versand ab ${SHIPPING.standard.price}`
-    : undefined}
->
+<SiteHeader active={active} ticker={ticker}>
   <CartButton slot="cart" regionId={regionId} />
 </SiteHeader>

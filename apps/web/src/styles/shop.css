@@ -1836,24 +1836,6 @@ a.chip[aria-current="page"] {
   }
 }
 
-/* Infozeile mobil: nur die ersten zwei Punkte, eine Zeile */
-@media (max-width: 768px) {
-  .site-header .header-info {
-    gap: 2px 14px;
-    padding: 8px var(--gutter);
-    font-size: 0.6875rem;
-    letter-spacing: 0.05em;
-  }
-
-  .site-header .header-info li + li::before {
-    margin-right: 14px;
-  }
-
-  .site-header .header-info li:nth-child(n + 3) {
-    display: none;
-  }
-}
-
 /* ===================================================================
    Pilzkorb, Kasse, Bestätigung, Widerruf (Layout und Kleinteile)
    =================================================================== */

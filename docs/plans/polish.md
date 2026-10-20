@@ -43,10 +43,10 @@ Scope boundaries and user decisions (2026-10-20):
 
 ## P1 One header, one footer
 
-- [ ] **P1.1 One header for every page** · deps: — · verify: visual
+- [x] **P1.1 One header for every page** · deps: — · verify: visual
   Remove the shop variant from the header. In `packages/ui/src/SiteHeader.astro` drop `variant`, `info`, `infoCompact` and everything that depends on `isShop` (filtered nav, `home = "/shop/"`, `site-header--shop` styles, the different mobile layout); in `apps/web/src/modules/layout/components/Header.astro` stop passing them. Every page gets today's marketing header: all `mainNav` items, Instagram icon, Pilzkorb pill, logo link `href="/"` with aria-label "shroom-mates Startseite", Kontakt visible. Mobile: today's marketing mobile header (menu button left, wordmark centre, Instagram + Pilzkorb right) and the full mobile menu everywhere. `aria-current` keeps working (shop pages: "shop"). The shop info line (`header-info`) is removed here; its texts move into the marquee in P1.3 (until then shop pages show the marketing marquee). Check legal pages (/agb/, /datenschutz/ …) and checkout too.
   Re-baseline allowed: all `shop-*` keys (header area only). Marketing keys must stay unchanged.
-  Commit: `fix(ui): one header for site and shop, logo goes home`
+  Commit: `fix(ui): one header for site and shop, logo goes home` · 7c2047b
 
 - [ ] **P1.2 Header always fits in one line** · deps: P1.1 · verify: visual
   Today the nav pills keep their full size until the hamburger breakpoint (`max-width: 1240px`) and then barely fit or collide (gap of ~8 px at 1245 px). Make pills, gaps and the wordmark scale fluidly (`clamp()` on font-size, padding, gap; tokens from `packages/ui/src/tokens.css`) so all 8 items + Instagram + Pilzkorb fit in one line with at least 16 px free space at every width from **1024 px** upward; below 1024 px the hamburger menu. Pills stay readable (font-size ≥ 14 px) and keep a 44×44 px target via padding/min-height where the design allows (WCAG 2.5.8 needs ≥ 24 px). Add a Playwright check to the smoke suite (`e2e/smoke/`, run by `scripts/verify.sh smoke`): for widths 1024–1920 in steps of 16 px, the header nav items share one `offsetTop`, nothing overlaps the Pilzkorb pill, and `document.documentElement.scrollWidth <= innerWidth`.
@@ -141,3 +141,4 @@ The enforceable CSP is already in (branch `fix/csp-enforce`, 341686e, merged int
 ## Log
 
 _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — note`)_
+2026-10-20 10:51 P1.1 DONE 7c2047b — one header everywhere; 14 shop-* keys re-baselined
