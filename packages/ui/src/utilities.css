@@ -485,6 +485,10 @@
 
 /* ===== Ticker (Laufband) ===== */
 
+:root {
+  --ticker-duration: 40s; /* single source, also read by /page-sync.js */
+}
+
 .ticker {
   position: relative;
   overflow: hidden;
@@ -502,7 +506,9 @@
   display: flex;
   width: max-content;
   padding: 10px 0;
-  animation: ticker-scroll 40s linear infinite;
+  animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
+  /* --ticker-delay is set by /page-sync.js so the marquee continues across pages */
+  animation-delay: var(--ticker-delay, 0s);
 }
 
 .ticker__group {
@@ -742,6 +748,14 @@
 .reveal-right[style*="--reveal-delay"],
 .reveal-scale[style*="--reveal-delay"] {
   transition-delay: var(--reveal-delay);
+}
+
+/* Pages arriving through a view transition: no second animation on top */
+html[data-vt-arrive] .reveal,
+html[data-vt-arrive] .reveal-left,
+html[data-vt-arrive] .reveal-right,
+html[data-vt-arrive] .reveal-scale {
+  transition: none;
 }
 
 /* Prefers reduced motion */

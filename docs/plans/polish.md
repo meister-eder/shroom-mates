@@ -67,10 +67,10 @@ Scope boundaries and user decisions (2026-10-20):
   In `apps/web/src/layouts/Layout.astro`: titles `"<page> | shroom-mates"` everywhere (shop pages too, `og:site_name` "shroom-mates"); keep the `shop` prop only where it is technically needed (region lookup, body class for shop styles) and document that in its JSDoc; LocalBusiness and Breadcrumb JSON-LD on every page that is not checkout/cart/order. Remove now-dead CSS for the shop header/footer variants (grep `site-header--shop`, `header-info`, `is-shop` and check each use). No other visual change.
   Commit: `refactor(web): one layout for site and shop` · 39f114d
 
-- [ ] **P1.6 Calm, smooth page transitions** · deps: P1.3 · verify: visual
+- [x] **P1.6 Calm, smooth page transitions** · deps: P1.3 · verify: visual
   Today the whole page (`root`) cross-fades in 0.3 s including header and marquee, and the marquee restarts at 0 on every page, which reads as a jerk. Target: header (incl. marquee) gets `view-transition-name: site-header` and does not animate (`::view-transition-group(site-header)`, old/new: `animation: none`), so it stays put; only the content area animates: old content fades out fast (~120 ms), new content fades in with a slight upward move (~200 ms, `cubic-bezier(0.2, 0, 0, 1)`), nothing longer than 250 ms. The marquee continues seamlessly across pages: a tiny blocking script in `<head>` (external file under `apps/web/public/`, no inline script because of the CSP) sets `--ticker-delay: -<Date.now() % duration>ms` on `<html>`, and `.ticker__track` uses `animation-delay: var(--ticker-delay, 0s)`; keep the duration in one place. Respect `prefers-reduced-motion` (no transition, static marquee). Make sure scroll-reveal animations don't double-animate the new page. Check in Chromium with a short Playwright script that navigating / → /growkits/ → /shop/ shows no layout shift of the header (header bounding box identical before and after).
   Visual baselines must stay unchanged (screenshots run with reduced motion).
-  Commit: `feat(ui): smoother page transitions, header and marquee stay put`
+  Commit: `feat(ui): smoother page transitions, header and marquee stay put` · bbd70c2
 
 - [ ] **P1.7 One type scale for page headings** · deps: P1.5 · verify: visual
   The shop index h1 ("shroom shop", 172.8 px) is much larger than the marketing h1s (~107 px). Use the same display heading size and colour rule as the marketing pages (look up the h1 rule of e.g. /unsere-pilze/ and the design tokens; orange only per DESIGN.md rules). Check the other shop headings (product title, cart, checkout) against the same scale and align only clear outliers.
@@ -146,3 +146,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:06 P1.3 DONE fca8444 — marquee everywhere incl. shop facts; hover/focus/tap pause + discreet toggle; no re-baseline
 2026-10-20 11:17 P1.4 DONE 9b7b719 — one footer, all legal links + Kontakt; all keys re-baselined (footer + P1.3 bar)
 2026-10-20 11:20 P1.5 DONE 39f114d — one layout; titles | shroom-mates; JSON-LD on all but cart/checkout/order
+2026-10-20 11:25 P1.6 DONE bbd70c2 — header static in VT, content fade, marquee phase synced via page-sync.js
