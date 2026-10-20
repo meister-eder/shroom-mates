@@ -13,12 +13,11 @@ Caddy terminates TLS and routes three hostnames (one web app serves site and sho
 
 | Environment | Domain | Compose file | Caddyfile | How to deploy |
 |-------------|--------|--------------|-----------|---------------|
-| **netcup-test** (current) | `<DEPLOY_HOST>.sslip.io` | `docker-compose.test.yml` | `Caddyfile.test` (self-signed TLS) | Actions → **Deploy** → Run workflow → pick a branch |
-| Production (not live yet) | `shroom-mates.de` | `docker-compose.yml` | `Caddyfile` (Let's Encrypt) | — |
+| **netcup-test** (current) | `<DEPLOY_HOST>.sslip.io` | `docker-compose.test.yml` | `Caddyfile.test` (self-signed TLS) | automatic on push to `shop`, or Actions → **Deploy test server** → Run workflow |
+| Production (server not live yet; today GitHub Pages from `main`) | `shroom-mates.de` | `docker-compose.yml` | `Caddyfile` (Let's Encrypt) | — |
 | Local | `localhost` | `docker-compose.dev.yml` (Postgres + Redis only) | — | see `docs/LOCAL_DEVELOPMENT.md` |
 
-`deploy-staging.yml` / `stop-staging.yml` / `docker-compose.staging.yml` are an
-older IP-and-port staging setup from the Hetzner days and are currently unused.
+Secrets for the server's `.env`: see `.env.example`.
 
 [sslip.io](https://sslip.io) is a public wildcard DNS: `shop.1.2.3.4.sslip.io`
 resolves to `1.2.3.4`, so the test server gets hostnames without any DNS setup.
@@ -27,7 +26,9 @@ once each for `shop.…` and `api.…`.
 
 ## Deploying (`.github/workflows/deploy-server.yml`)
 
-Run **Actions → Deploy → Run workflow**, select the branch for both "Use workflow
+Pushes to `shop` deploy automatically when they touch `apps/web`, `packages`,
+`backend`, `bun.lock`, `Caddyfile.test` or `docker-compose.test.yml`. Manually:
+**Actions → Deploy test server → Run workflow**, select the branch for both "Use workflow
 from" and the `branch` input. With the GitHub CLI:
 
 ```bash
@@ -171,7 +172,7 @@ Umami v3 runs as the `umami` service (own database `umami` on the existing
 `postgres`; the one-shot `umami-db-init` creates it on first start). Only the
 tracker is public: Caddy proxies exactly `/stats/s.js` and `/stats/e` on the main
 host to `umami:3000`. The dashboard is **not** routed; it is published on the
-server's loopback only (`127.0.0.1:3001`; the unused staging file uses `3002`).
+server's loopback only (`127.0.0.1:3001`).
 
 First run:
 
@@ -216,8 +217,8 @@ with the web app.
 ### What happens when you save
 
 Saving (publishing) an entry creates a commit on `shop` via the GitHub API →
-the `push` trigger starts **Deploy** → the full deploy rebuilds the `web` image with the new content → live after
-about 5 minutes. Progress: **Actions → Deploy**. Because the CMS commits directly,
+the `push` trigger starts **Deploy test server** → the full deploy rebuilds the `web` image with the new content → live after
+about 5 minutes. Progress: **Actions → Deploy test server**. Because the CMS commits directly,
 pull before working locally on the same branch.
 
 ### Switching the branch to `main`

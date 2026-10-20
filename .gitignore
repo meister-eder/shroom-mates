@@ -12,7 +12,6 @@ dist/
 .env
 .env.*
 !.env.example
-!.env.staging.example
 
 # lockfile (binary)
 bun.lockb

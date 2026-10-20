@@ -2,7 +2,7 @@
 # Full stack for local testing. Same as test but using localhost.
 #
 # Usage:
-#   cp .env.staging.example .env
+#   cp .env.example .env
 #   docker compose -f docker-compose.local.yml up -d --build
 #
 # Access:

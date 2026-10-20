@@ -1,21 +1,29 @@
-name: Deploy
+# Deploys to the netcup test server (docker-compose.test.yml, <host>.sslip.io).
+# Production is still GitHub Pages from `main` (deploy.yml on main).
+name: Deploy test server
 
 on:
-  # CMS commits (Sveltia → GitHub API) land on `shop` and deploy automatically.
-  # When switching production to `main`, change the branch here too.
+  # Pushes to `shop` (code and CMS commits from Sveltia) deploy automatically
+  # when they touch anything the server stack runs.
   push:
     branches: [shop]
-    paths: ['apps/web/**']
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'backend/**'
+      - 'bun.lock'
+      - 'Caddyfile.test'
+      - 'docker-compose.test.yml'
   workflow_dispatch:
     inputs:
       branch:
         description: Branch to deploy
         required: true
-        default: main
+        default: shop
         type: string
 
 concurrency:
-  group: deploy-production
+  group: deploy-test
   cancel-in-progress: false
 
 env:
@@ -26,7 +34,7 @@ env:
   DOMAIN: ${{ secrets.DEPLOY_HOST }}.sslip.io
 
 jobs:
-  # ── Deploy (content changes rebuild the web image too) ──────
+  # ── Build check (fails fast; the images are built on the server) ──
   build:
     runs-on: ubuntu-latest
     steps:
@@ -57,7 +65,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: bun install
+        run: npm ci --cache /tmp/npm-cache-sm
 
       - name: Build backend
         working-directory: backend
