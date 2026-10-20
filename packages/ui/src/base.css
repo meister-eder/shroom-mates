@@ -205,13 +205,12 @@ a {
     navigation: auto;
   }
 
-  /* header incl. marquee stays put, the rest of the chrome swaps instantly */
+  /* Header incl. marquee stays put (no morph, no fade). Everything else is the
+     root snapshot, which is only the viewport: a short cross-fade, no movement.
+     Naming the (tall, scrolled) main content would make the browser slide its
+     snapshot from the old scroll position to the new one, which reads as a jerk. */
   .site-header {
     view-transition-name: site-header;
-  }
-
-  .site-main {
-    view-transition-name: site-content;
   }
 
   /* biome-ignore lint/correctness/noUnknownTypeSelector: view-transition pseudo-element */
@@ -222,20 +221,13 @@ a {
   }
 
   /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-  ::view-transition-old(root),
+  ::view-transition-old(root) {
+    animation: vt-fade-out 0.15s ease-out both;
+  }
+
   /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-    ::view-transition-new(root) {
-    animation: none;
-  }
-
-  /* biome-ignore lint/correctness/noUnknownTypeSelector: view-transition pseudo-element */
-  ::view-transition-old(site-content) {
-    animation: vt-fade-out 0.12s ease-out both;
-  }
-
-  /* biome-ignore lint/correctness/noUnknownTypeSelector: view-transition pseudo-element */
-  ::view-transition-new(site-content) {
-    animation: vt-fade-in 0.2s cubic-bezier(0.2, 0, 0, 1) both;
+  ::view-transition-new(root) {
+    animation: vt-fade-in 0.22s ease-out both;
   }
 }
 
@@ -248,7 +240,6 @@ a {
 @keyframes vt-fade-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
 }
 

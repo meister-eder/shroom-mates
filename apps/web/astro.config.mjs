@@ -22,6 +22,9 @@ export default defineConfig({
   // `export const prerender = false`.
   output: "static",
   trailingSlash: "always",
+  // Load the next page on hover/touch so cross-document view transitions
+  // start without waiting for the server.
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   redirects: {
     "/about": "/ueber-uns/",
     "/shrooms": "/unsere-pilze/",
