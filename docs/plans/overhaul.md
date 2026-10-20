@@ -55,6 +55,7 @@ from any of it.
 - P7.6 (legal review): merged packages/ui/src/legal/datenschutz.md — all legal-open/legal-check marks, date, log retention, Web3Forms address; GitHub-Pages section kept (drop if site no longer on GH Pages); obsolete 'Online-Shop' pointer section dropped; check AGB/Widerruf URLs.
 - P7.7: Umami first run — change default admin password, create website, set PUBLIC_UMAMI_WEBSITE_ID in .env (staging/prod), set up funnel (DEPLOYMENT.md). Legal review of new datenschutz.md sections (13/16/17, legal-open; retention open: Umami doesn't auto-delete). data-domains=shroom-mates.de → no tracking on test domain. purchase fires again on order-page reload. DATABASE_URL uses unencoded password (as Medusa). Staging compose has no Caddy/tracker.
 - P7.8: try the CMS preview in /admin/ for each page type (Sveltia login; templates not yet tested in a real Sveltia run), incl. admin CSP frame-src for srcdoc iframe; Caddyfile change not validated with caddy. No preview yet for single collections mushrooms/growkits. Preview endpoint loads page CSS via loopback 127.0.0.1:$PORT.
+- P8.2: deploy-staging.yml (+ stop-staging.yml) must exist on default branch main for workflow_dispatch — bring them to main (PR/cherry-pick), then dispatch with -f branch=overhaul and run the smoke checks (home, /shop/, product, /sitemap-index.xml, shop. legacy redirect; umami healthy, /stats/s.js, dashboard not public). origin/overhaul was pushed. Check whether docker-compose.staging.yml contains umami/Caddy.
 
 ---
 
@@ -270,7 +271,7 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Run `scripts/verify.sh all`. Build both a clean install (`rm -rf node_modules apps/*/node_modules && bun install --frozen-lockfile`) and the production build. Measure: JS and CSS gzip per page type (home, growkits, catalog, product, cart, checkout) before (from the review: website ≈17 KB JS, shop ≈90 KB JS, shop CSS 16 KB) vs. after. Write `docs/plans/overhaul-report.md`: what changed per phase, numbers, deviations, blocked tasks with reasons, every manual follow-up from the Log. Commit it.
   Commit: `docs(plan): overhaul report`
 
-- [ ] **P8.2 Deploy to staging** · deps: P8.1 · verify: —
+- [!] **P8.2 Deploy to staging** · deps: P8.1 · verify: —
   Allowed external actions (approved by the user on 2026-10-19): `git push origin overhaul` (only this branch; never `main`/`shop`, never force), `gh workflow run deploy-staging.yml -f branch=overhaul`, `gh run watch`/`gh run view --log-failed`. Never run `deploy-server.yml`. If the run fails: read the failed log, fix in a commit, push, re-dispatch; at most 3 attempts. Server-side `.env.staging` can't be changed: if the failure needs a new env value, mark blocked and describe it. After a green run, smoke-check the staging host with `curl` (home, `/shop/`, one product, `/sitemap-index.xml`, a legacy `shop.` URL redirect) using the host from the workflow log only for this check (never write it into the repo). Report result + run URL.
   Commit (only if fixes were needed): `fix(deploy): <what>`
 
@@ -319,3 +320,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 02:19 P7.7 DONE 2889c6f — Umami 3.4.0 self-hosted, tracker+events, masked logs; caddy validate OK
 2026-10-20 03:38 P7.8 DONE d2363ac — page components + /vorschau/render/ container endpoint + Sveltia templates
 2026-10-20 03:41 P8.1 DONE a60a9b0 — verify all PASS, clean install OK, report written
+2026-10-20 03:42 P8.2 BLOCKED — deploy-staging.yml missing on main, workflow_dispatch 404; branch overhaul pushed, no run
