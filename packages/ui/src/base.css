@@ -206,12 +206,10 @@ a {
     navigation: auto;
   }
 
-  /* Header incl. marquee stays put: only the new header is shown (the old
-     snapshot could still contain an open mobile menu). Everything else is the
-     root snapshot: the new page grows as a circle ("Sporenkreis") from the point
-     the visitor clicked, which /page-sync.js passes on as --vt-x / --vt-y.
-     Blend mode normal: the default plus-lighter adds both snapshots up and
-     flashes white on the light background. */
+  /* Simple cross-fade: the browser's own root animation (old fades out while
+     new fades in, blended so the sum never brightens). Only the header incl.
+     marquee is taken out: it stays put and shows the new header at once (the
+     old snapshot could still contain an open mobile menu). */
   .site-header {
     view-transition-name: site-header;
   }
@@ -229,34 +227,8 @@ a {
   }
 
   /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-  ::view-transition-image-pair(root) {
-    isolation: auto;
-  }
-
-  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-  ::view-transition-old(root),
-  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-    ::view-transition-new(root) {
-    mix-blend-mode: normal;
-  }
-
-  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-  ::view-transition-old(root) {
-    animation: none;
-  }
-
-  /* biome-ignore lint/correctness/noUnknownTypeSelector: "root" is the view-transition name, not an element */
-  ::view-transition-new(root) {
-    animation: vt-spore 0.55s cubic-bezier(0.6, 0, 0.2, 1) both;
-  }
-}
-
-@keyframes vt-spore {
-  from {
-    clip-path: circle(0 at var(--vt-x, 50vw) var(--vt-y, 30vh));
-  }
-  to {
-    clip-path: circle(150vmax at var(--vt-x, 50vw) var(--vt-y, 30vh));
+  ::view-transition-group(root) {
+    animation-duration: 0.2s;
   }
 }
 
