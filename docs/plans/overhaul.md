@@ -56,6 +56,7 @@ from any of it.
 - P7.7: Umami first run — change default admin password, create website, set PUBLIC_UMAMI_WEBSITE_ID in .env (staging/prod), set up funnel (DEPLOYMENT.md). Legal review of new datenschutz.md sections (13/16/17, legal-open; retention open: Umami doesn't auto-delete). data-domains=shroom-mates.de → no tracking on test domain. purchase fires again on order-page reload. DATABASE_URL uses unencoded password (as Medusa). Staging compose has no Caddy/tracker.
 - P7.8: try the CMS preview in /admin/ for each page type (Sveltia login; templates not yet tested in a real Sveltia run), incl. admin CSP frame-src for srcdoc iframe; Caddyfile change not validated with caddy. No preview yet for single collections mushrooms/growkits. Preview endpoint loads page CSS via loopback 127.0.0.1:$PORT.
 - P8.2: deploy-staging.yml (+ stop-staging.yml) must exist on default branch main for workflow_dispatch — bring them to main (PR/cherry-pick), then dispatch with -f branch=overhaul and run the smoke checks (home, /shop/, product, /sitemap-index.xml, shop. legacy redirect; umami healthy, /stats/s.js, dashboard not public). origin/overhaul was pushed. Check whether docker-compose.staging.yml contains umami/Caddy.
+- P8.3: landing blocked — untracked e2e/bun.lock in the main checkout differs from overhaul's version. Check/move it, then: git -C <main checkout> merge --ff-only overhaul (shop at 2a20601 is an ancestor; human-modified TODO.md doesn't conflict). Don't push shop until staging (P8.2) has run.
 
 ---
 
@@ -275,7 +276,7 @@ Every old URL 301s to the new one (query strings preserved: SumUp sends buyers b
   Allowed external actions (approved by the user on 2026-10-19): `git push origin overhaul` (only this branch; never `main`/`shop`, never force), `gh workflow run deploy-staging.yml -f branch=overhaul`, `gh run watch`/`gh run view --log-failed`. Never run `deploy-server.yml`. If the run fails: read the failed log, fix in a commit, push, re-dispatch; at most 3 attempts. Server-side `.env.staging` can't be changed: if the failure needs a new env value, mark blocked and describe it. After a green run, smoke-check the staging host with `curl` (home, `/shop/`, one product, `/sitemap-index.xml`, a legacy `shop.` URL redirect) using the host from the workflow log only for this check (never write it into the repo). Report result + run URL.
   Commit (only if fixes were needed): `fix(deploy): <what>`
 
-- [ ] **P8.3 Land on shop** · deps: P8.2 or P8.1 (if P8.2 is blocked) · verify: —
+- [!] **P8.3 Land on shop** · deps: P8.2 or P8.1 (if P8.2 is blocked) · verify: —
   Main checkout = first entry of `git worktree list` (on branch `shop`; it may have uncommitted files of the humans: never touch, stash, reset or commit them). If `shop` moved since the run started, `git merge shop` into `overhaul` here in the worktree first, resolve conflicts, re-run `scripts/verify.sh quick`. Then in the main checkout: if an untracked file there would be overwritten by the merge (e.g. `e2e/bun.lock`) and it is byte-identical to the version on `overhaul`, delete that untracked copy; otherwise stop and report. Run `git -C <main> merge --ff-only overhaul`. Don't push `shop`. Report the final `shop` SHA.
 
 ---
@@ -321,3 +322,4 @@ _(orchestrator appends one line per task: `2026-10-19 23:10 P1.1 DONE abc1234 �
 2026-10-20 03:38 P7.8 DONE d2363ac — page components + /vorschau/render/ container endpoint + Sveltia templates
 2026-10-20 03:41 P8.1 DONE a60a9b0 — verify all PASS, clean install OK, report written
 2026-10-20 03:42 P8.2 BLOCKED — deploy-staging.yml missing on main, workflow_dispatch 404; branch overhaul pushed, no run
+2026-10-20 03:42 P8.3 BLOCKED — untracked e2e/bun.lock in main checkout differs from overhaul; ff-only would overwrite it
