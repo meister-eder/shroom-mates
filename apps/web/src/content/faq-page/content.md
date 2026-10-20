@@ -25,7 +25,7 @@ faqs:
   - question: "Kann ich Growkits in Leipzig abholen?"
     answer: "Ja, du kannst dein Growkit direkt bei uns in der Glasfabrik (Franz-Flemming-Straße 25, 04179 Leipzig-Leutzsch) abholen. Schreib uns vorher kurz an hey@shroom-mates.de, damit wir eins für dich bereitstellen."
   - question: "Was sind Pilztinkturen und Pilzextrakte?"
-    answer: "Unsere Pilztinkturen sind handgemachte Doppelextrakte aus Fruchtkörpern, die wir selbst in Leipzig züchten. Der Doppelextrakt (Alkohol-Mazeration + Heißwasserextrakt) löst sowohl alkohol- als auch wasserlösliche Wirkstoffe. Aktuell bieten wir Lion's Mane und Reishi+Cordyceps an. Details gibt's auf unserer <a href='/tinkturen'>Tinkturen-Seite</a>."
+    answer: "Unsere Pilztinkturen sind handgemachte Doppelextrakte aus Fruchtkörpern, die wir selbst in Leipzig züchten. Der Doppelextrakt (Alkohol-Mazeration + Heißwasserextrakt) nutzt sowohl Alkohol als auch heißes Wasser zur Extraktion. Aktuell bieten wir Lion's Mane und Reishi+Cordyceps an. Details gibt's auf unserer <a href='/tinkturen'>Tinkturen-Seite</a>."
   - question: "Versendet ihr Pilze, Growkits und Tinkturen auch per Post?"
     answer: "Growkits und Tinkturen versenden wir deutschlandweit per Post. Frische Pilze liefern wir direkt in Leipzig und Umgebung. Rosenseitling-Growkits verschicken wir allerdings nicht im Winter, weil das Mycel bei Kälte abstirbt."
 ---
