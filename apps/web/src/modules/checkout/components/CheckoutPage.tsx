@@ -1,3 +1,4 @@
+import { track } from "@lib/analytics";
 import { $cart, $isCartLoading } from "@lib/stores/cart";
 import { MatesEyes } from "@modules/common/components/MatesEyes";
 import { useStore } from "@nanostores/react";
@@ -41,6 +42,9 @@ function validateStep(
   return step;
 }
 
+// Module-level (not storage): resets on every full page load
+let beginCheckoutTracked = false;
+
 export const CheckoutPage = ({
   defaultCountry,
   countries,
@@ -56,6 +60,18 @@ export const CheckoutPage = ({
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
+
+  // One begin-checkout event per page view, once the cart has items
+  const hasItems = Boolean(cart?.items?.length);
+  const cartTotal = cart?.total;
+  useEffect(() => {
+    if (!hasItems || beginCheckoutTracked) return;
+    beginCheckoutTracked = true;
+    track("begin-checkout", {
+      value: Number(cartTotal ?? 0),
+      currency: "EUR",
+    });
+  }, [hasItems, cartTotal]);
 
   const goToStep = (next: CheckoutStep) => {
     const url = new URL(window.location.href);

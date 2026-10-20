@@ -8,7 +8,14 @@ import { MOCK, routes, WEB } from "../visual/routes";
  * gewünschten Dienst): https://www.gesetze-im-internet.de/ttdsg/__25.html
  * Erlaubnislisten nur nach rechtlicher Prüfung erweitern, nicht um den Test grün zu bekommen.
  */
-const ALLOWED_STORAGE_KEYS = ["cart_id", "checkout_cart_id", "cart_snapshot"];
+// "umami.disabled": Opt-out der Statistik auf /datenschutz/. Den Schlüssel setzt nur der Besucher
+// selbst per Klick (nutzerinitiiert, nicht einwilligungsrelevant); ohne Klick bleibt er leer.
+const ALLOWED_STORAGE_KEYS = [
+  "cart_id",
+  "checkout_cart_id",
+  "cart_snapshot",
+  "umami.disabled",
+];
 // Die Karte hat keinen gespeicherten Einwilligungsschlüssel (Klick lädt nur für diese Ansicht).
 const ALLOWED_ORIGINS = [WEB, MOCK].map((u) => new URL(u).origin);
 
@@ -52,4 +59,24 @@ test("Datenschutz: Google-Karte erst nach Klick", async ({ page }) => {
   await page.locator("[data-load-map]").click();
   await googleRequest;
   expect(await page.evaluate(() => document.cookie)).toBe("");
+});
+
+test("Datenschutz: Statistik-Opt-out setzt nur auf Klick den Umami-Schlüssel", async ({
+  page,
+}) => {
+  await page.goto(`${WEB}/datenschutz/`, { waitUntil: "load" });
+  expect(await page.evaluate(() => localStorage.getItem("umami.disabled"))).toBe(
+    null,
+  );
+  await page.locator("[data-umami-optout]").click();
+  expect(await page.evaluate(() => localStorage.getItem("umami.disabled"))).toBe(
+    "1",
+  );
+  await expect(page.locator("[data-umami-optout-state]")).toContainText(
+    "deaktiviert",
+  );
+  await page.locator("[data-umami-optout]").click();
+  expect(await page.evaluate(() => localStorage.getItem("umami.disabled"))).toBe(
+    null,
+  );
 });

@@ -29,3 +29,4 @@ pnpm-debug.log*
 # Sveltia CMS bundle (copied by scripts/copy-cms.mjs)
 public/admin/sveltia-cms.js
 public/admin/chunks/
+dist-umami/

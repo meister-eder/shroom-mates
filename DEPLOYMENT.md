@@ -79,6 +79,10 @@ SUMUP_API_KEY=…            # managed by the workflow (see above)
 SUMUP_MERCHANT_CODE=…      # managed by the workflow (see above)
 # Optional: extra storefront hosts allowed as SumUp redirect targets (host[:port], comma-separated)
 # SUMUP_REDIRECT_ALLOWED_HOSTS=
+# Analytics (Umami), see "Analytics" below. Empty = no tracker in the pages.
+# PUBLIC_UMAMI_WEBSITE_ID=…
+# Optional: Umami APP_SECRET; defaults to COOKIE_SECRET
+# UMAMI_APP_SECRET=…
 ```
 
 All URLs (`MEDUSA_BACKEND_URL`, CORS, `SUMUP_MEDUSA_URL`, `SUMUP_REDIRECT_URL`)
@@ -160,6 +164,34 @@ $C restart medusa           # restart one service
 ./scripts/backup-postgres.sh
 docker image prune -f && docker builder prune -f   # free disk space
 ```
+
+## Analytics (Umami, cookieless)
+
+Umami v3 runs as the `umami` service (own database `umami` on the existing
+`postgres`; the one-shot `umami-db-init` creates it on first start). Only the
+tracker is public: Caddy proxies exactly `/stats/s.js` and `/stats/e` on the main
+host to `umami:3000`. The dashboard is **not** routed; it is published on the
+server's loopback only (`127.0.0.1:3001`; the unused staging file uses `3002`).
+
+First run:
+
+1. Deploy, then open a tunnel: `ssh -L 3001:127.0.0.1:3001 <user>@<host>` and browse to `http://localhost:3001`.
+2. Log in with Umami's default account and **change the default admin password immediately**.
+3. Settings → Websites → add `shroom-mates.de`; copy the website ID.
+4. Put it into the server `.env` as `PUBLIC_UMAMI_WEBSITE_ID=<id>` and redeploy (the ID is baked in at build time; without it the pages contain no tracker).
+
+Funnel (Reports → Funnel): window 1 day, steps in this order:
+page `/shop/` (catalog) → page `/shop/` + any product (path starts with `/shop/`) →
+event `add-to-cart` → event `begin-checkout` → event `purchase`.
+`purchase` carries `revenue` and `currency` (Reports → Revenue). Event data holds only
+product handle/variant, quantities and amounts, never order IDs or e-mail addresses.
+
+Notes: the tracker only runs on `shroom-mates.de` (`data-domains`), respects Do-Not-Track and
+drops query strings and hashes; `/shop/order/<id>/` is sent as `/shop/order/`. Visitors can opt
+out on `/datenschutz/`. `scripts/backup-postgres.sh` dumps the `umami` database too.
+The Caddy access log (`/var/log/caddy/access.log` in the `caddy` container, volume `caddy_logs`)
+is JSON with masked IPs (IPv4 /16, IPv6 /32), no cookies or auth headers, kept 30 days.
+`scripts/test-umami.sh` builds with a dummy website ID and runs the tracker spec.
 
 ## Content editing (Sveltia CMS)
 

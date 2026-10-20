@@ -32,13 +32,56 @@
 	}
 }
 
+# Privacy-friendly JSON access log: IPs masked (IPv4 /16, IPv6 /32), no cookies or
+# credentials, rolled daily and kept for 30 days (roll_interval needs Caddy >= 2.11).
+(access_log) {
+	log {
+		output file /var/log/caddy/access.log {
+			roll_interval 24h
+			roll_keep 40
+			roll_keep_for 720h
+		}
+		format filter {
+			wrap json
+			request>remote_ip ip_mask {
+				ipv4 16
+				ipv6 32
+			}
+			request>client_ip ip_mask {
+				ipv4 16
+				ipv6 32
+			}
+			request>headers>X-Forwarded-For ip_mask {
+				ipv4 16
+				ipv6 32
+			}
+			request>headers>Cookie delete
+			request>headers>Authorization delete
+			resp_headers>Set-Cookie delete
+		}
+	}
+}
+
 shroom-mates.{$DOMAIN} {
 	tls internal
 	# Test server: keep it out of search engines
 	header X-Robots-Tag "noindex, nofollow"
-	reverse_proxy web:4321 {
-		header_up Host {http.request.host}
-		header_up X-Forwarded-Proto https
+	import access_log
+
+	# Umami: only the tracker script and the collect endpoint are public (names set via
+	# TRACKER_SCRIPT_NAME / COLLECT_API_ENDPOINT on the umami service). The dashboard
+	# is not routed: it is reachable only through an SSH tunnel to 127.0.0.1:3001.
+	@umami path /stats/s.js /stats/e
+	handle @umami {
+		reverse_proxy umami:3000 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+	handle {
+		reverse_proxy web:4321 {
+			header_up Host {http.request.host}
+			header_up X-Forwarded-Proto https
+		}
 	}
 
 	@assets path /assets/* /_astro/*

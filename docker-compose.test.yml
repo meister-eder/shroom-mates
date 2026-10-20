@@ -21,6 +21,7 @@ services:
       - "443:443/udp"
     volumes:
       - ./Caddyfile.test:/etc/caddy/Caddyfile:ro
+      - test_caddy_logs:/var/log/caddy
     depends_on:
       medusa:
         condition: service_started
@@ -36,6 +37,15 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-shroom-mates}
     volumes:
       - test_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-medusa} -d ${POSTGRES_DB:-shroom-mates}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -88,6 +98,8 @@ services:
         PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
         PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY:-}
         PUBLIC_SITE_URL: https://shroom-mates.${DOMAIN}
+        # Optional: set to the Umami website ID to enable the tracker
+        PUBLIC_UMAMI_WEBSITE_ID: ${PUBLIC_UMAMI_WEBSITE_ID:-}
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -99,7 +111,57 @@ services:
     depends_on:
       - medusa
 
+  # ── Analytics (Umami, cookieless, self-hosted) ─────────────────
+  # Creates the "umami" database on the existing postgres once (init scripts do
+  # not run on existing volumes), then exits.
+  umami-db-init:
+    image: postgres:16-alpine
+    restart: "no"
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-medusa}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: postgres
+    command:
+      - sh
+      - -c
+      - >-
+        psql -tAc "SELECT 1 FROM pg_database WHERE datname='umami'" | grep -q 1
+        || psql -c "CREATE DATABASE umami"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  umami:
+    image: ghcr.io/umami-software/umami:3.4.0
+    restart: unless-stopped
+    init: true
+    mem_limit: 768m
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:-${COOKIE_SECRET}}
+      # Only the tracker is public (Caddy proxies exactly these two paths)
+      TRACKER_SCRIPT_NAME: /stats/s.js
+      COLLECT_API_ENDPOINT: /stats/e
+      DISABLE_TELEMETRY: "1"
+      DISABLE_UPDATES: "1"
+    # Dashboard: host loopback only, reach it via SSH tunnel (see DEPLOYMENT.md)
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      umami-db-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/heartbeat"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
 volumes:
+  test_caddy_logs:
   test_postgres_data:
   test_redis_data:
   test_medusa_uploads:

@@ -1,3 +1,4 @@
+import { track } from "@lib/analytics";
 import { storeApi } from "@lib/store-api";
 import type { StoreCart, StoreOrder } from "@medusajs/types";
 import { atom, computed } from "nanostores";
@@ -239,6 +240,13 @@ export async function addToCart(
     );
 
     $cart.set(updatedCart);
+    track("add-to-cart", {
+      handle:
+        updatedCart.items?.find((i) => i.variant_id === variantId)
+          ?.product_handle ?? "",
+      variant: variantId,
+      quantity,
+    });
     // Open sidebar after adding item (callers with their own feedback opt out)
     if (openSidebar) $isCartSidebarOpen.set(true);
   } catch (error) {
@@ -314,7 +322,9 @@ export async function updateLineItemQuantity(
  * Toggle cart sidebar
  */
 export function toggleCartSidebar(): void {
-  $isCartSidebarOpen.set(!$isCartSidebarOpen.get());
+  const open = !$isCartSidebarOpen.get();
+  $isCartSidebarOpen.set(open);
+  if (open) track("open-pilzkorb");
 }
 
 /**
@@ -329,6 +339,7 @@ export function closeCartSidebar(): void {
  */
 export function openCartSidebar(): void {
   $isCartSidebarOpen.set(true);
+  track("open-pilzkorb");
 }
 
 /**

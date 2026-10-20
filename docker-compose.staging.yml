@@ -125,6 +125,55 @@ services:
       retries: 3
       start_period: 15s
 
+  # ── Analytics (Umami, cookieless, self-hosted) ─────────────────
+  # Creates the "umami" database on the existing postgres once (init scripts do
+  # not run on existing volumes), then exits.
+  umami-db-init:
+    image: postgres:16-alpine
+    restart: "no"
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-medusa}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: postgres
+    command:
+      - sh
+      - -c
+      - >-
+        psql -tAc "SELECT 1 FROM pg_database WHERE datname='umami'" | grep -q 1
+        || psql -c "CREATE DATABASE umami"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  umami:
+    image: ghcr.io/umami-software/umami:3.4.0
+    restart: unless-stopped
+    init: true
+    mem_limit: 768m
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-medusa}:${POSTGRES_PASSWORD}@postgres:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:-${COOKIE_SECRET}}
+      # Only the tracker is public (Caddy proxies exactly these two paths)
+      TRACKER_SCRIPT_NAME: /stats/s.js
+      COLLECT_API_ENDPOINT: /stats/e
+      DISABLE_TELEMETRY: "1"
+      DISABLE_UPDATES: "1"
+    # Dashboard: host loopback only, reach it via SSH tunnel (see DEPLOYMENT.md)
+    ports:
+      - "127.0.0.1:3002:3000"
+    depends_on:
+      umami-db-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/heartbeat"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
 volumes:
   staging_postgres_data:
   staging_redis_data:

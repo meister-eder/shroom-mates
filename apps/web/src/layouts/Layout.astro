@@ -63,6 +63,9 @@ const regionId = shop
   ? ((await (await import("@lib/data/regions")).getRegion())?.id ?? null)
   : null;
 
+// Cookieless analytics only when a website ID was given at build time
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+
 const canonicalURL = new URL(
   Astro.url.pathname,
   Astro.site ?? Astro.url.origin,
@@ -276,6 +279,28 @@ const breadcrumbSchema = {
 
       <LayoutScripts />
       {!shop && <WaveRoller />}
+
+      <script>
+        // Umami before-send hook (strips order IDs from URLs); defined before the
+        // tracker tag below. Inert without the tracker.
+        import "../scripts/umami-before-send";
+      </script>
+      {
+        umamiWebsiteId && (
+          <script
+            is:inline
+            defer
+            src="/stats/s.js"
+            data-website-id={umamiWebsiteId}
+            data-host-url=""
+            data-domains="shroom-mates.de"
+            data-do-not-track="true"
+            data-exclude-search="true"
+            data-exclude-hash="true"
+            data-before-send="umamiBeforeSend"
+          />
+        )
+      }
 
       <script>
         // Scroll-triggered reveal animations using IntersectionObserver

@@ -14,7 +14,7 @@ Einen Datenschutzbeauftragten haben wir nicht benannt, da wir hierzu gesetzlich 
 
 <mark class="legal-open">Website, Shop und Schnittstelle werden</mark> auf Servern der netcup GmbH, Daimlerstraße 25, 76185 Karlsruhe, Deutschland <mark class="legal-check">prüfen: Anschrift</mark>, in Deutschland betrieben. Wir betreiben die Shop-Software (Medusa), die Datenbank (PostgreSQL), einen Zwischenspeicher (Redis) und den Webserver (Caddy) selbst. netcup verarbeitet Daten in unserem Auftrag; mit netcup besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO.
 
-<mark class="legal-open">Beim Aufruf unserer Website und des Shops</mark> verarbeitet unser Webserver automatisch: IP-Adresse, Datum und Uhrzeit, aufgerufene URL, HTTP-Statuscode, übertragene Datenmenge, Referrer-URL und Browserkennung (User-Agent). Dies ist technisch erforderlich, <mark class="legal-open">um die Seiten auszuliefern</mark> und die Sicherheit und Stabilität zu gewährleisten (Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse liegt in einem sicheren, funktionsfähigen Betrieb). Server-Logfiles werden nach <mark class="legal-open">offen: z. B. 14</mark> Tagen gelöscht, sofern sie nicht zur Aufklärung eines Sicherheitsvorfalls länger benötigt werden.
+<mark class="legal-open">Beim Aufruf unserer Website und des Shops</mark> verarbeitet unser Webserver automatisch: IP-Adresse, Datum und Uhrzeit, aufgerufene URL, HTTP-Statuscode, übertragene Datenmenge, Referrer-URL und Browserkennung (User-Agent). Dies ist technisch erforderlich, <mark class="legal-open">um die Seiten auszuliefern</mark> und die Sicherheit und Stabilität zu gewährleisten (Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse liegt in einem sicheren, funktionsfähigen Betrieb). <mark class="legal-open">Die IP-Adressen werden dabei vor dem Speichern gekürzt (siehe Ziffer 17).</mark> Server-Logfiles werden nach <mark class="legal-open">offen: z. B. 14</mark> Tagen gelöscht, sofern sie nicht zur Aufklärung eines Sicherheitsvorfalls länger benötigt werden.
 
 ## 3. Hosting über GitHub Pages
 
@@ -80,13 +80,15 @@ Wenn Sie die Widerrufsfunktion im Shop nutzen, verarbeiten wir Ihren Namen, die 
 
 ## 13. Speicherung im Browser (kein Tracking)
 
-Wir setzen keine Cookies, keine Analyse-, Werbe- oder Tracking-Dienste und keine Social-Media-Plugins ein. Schriftarten werden von unserem eigenen Server geladen; dabei werden keine Daten an Dritte (z. B. Google Fonts) übermittelt.
+Wir setzen keine Cookies, keine Werbe- oder Tracking-Dienste Dritter und keine Social-Media-Plugins ein. <mark class="legal-open">Für die Reichweitenmessung nutzen wir eine eigene, cookielose Installation von Umami (siehe Ziffer 16).</mark> Schriftarten werden von unserem eigenen Server geladen; dabei werden keine Daten an Dritte (z. B. Google Fonts) übermittelt.
 
 <mark class="legal-open">Wir speichern im Speicher Ihres Browsers ausschließlich die folgenden Einträge:</mark>
 
 - <mark class="legal-open">`cart_id` (localStorage): ID Ihres Warenkorbs („Pilzkorb“), damit er beim Weiterklicken und bei einem erneuten Besuch erhalten bleibt.</mark>
 - <mark class="legal-open">`checkout_cart_id` (localStorage): ID des Warenkorbs, der gerade bezahlt wird, damit der Bezahlvorgang zuverlässig abgeschlossen werden kann.</mark>
 - <mark class="legal-open">`cart_snapshot` (sessionStorage): Warenkorb-ID und Artikelanzahl, damit die Anzeige im Seitenkopf beim Seitenwechsel sofort stimmt; wird beim Schließen des Browser-Tabs verworfen.</mark>
+
+- <mark class="legal-open">`umami.disabled` (localStorage): wird nur gesetzt, wenn Sie selbst auf der Seite die Statistik für Ihren Browser deaktivieren (siehe Ziffer 16); er merkt sich diese Entscheidung.</mark>
 
 <mark class="legal-open">Ihre Entscheidung zum Laden der Karte (siehe Ziffer 5) wird nicht gespeichert.</mark> Die Warenkorb-ID und die ID des zu bezahlenden Warenkorbs werden nach Abschluss der Bestellung gelöscht.
 
@@ -111,3 +113,19 @@ Sächsische Datenschutz- und Transparenzbeauftragte<br>
 Maternistraße 17, 01067 Dresden<br>
 Telefon: +49 351 85471-101<br>
 https://www.datenschutz.sachsen.de <mark class="legal-check">prüfen: Postanschrift laut Behörde (Postfach 11 01 32, 01330 Dresden)</mark>
+
+## 16. Reichweitenmessung mit Umami
+
+<mark class="legal-open">Wir messen die Nutzung unserer Website mit der Software Umami. Umami läuft ausschließlich auf unserem eigenen Server (netcup, siehe Ziffer 2); es werden keine Daten an Dritte weitergegeben und keine externen Dienste eingebunden. Die Messung kommt ohne Cookies aus und verfolgt Sie nicht über andere Websites hinweg. Ihre IP-Adresse wird nicht gespeichert: Sie wird nur kurz im Arbeitsspeicher verwendet, um daraus das Land abzuleiten und eine regelmäßig wechselnde, nicht umkehrbare Kennung (Hash) zu bilden; danach wird sie verworfen.</mark>
+
+<mark class="legal-open">Erhoben werden: aufgerufene Seite (ohne Parameter hinter dem Fragezeichen und ohne Anker; Bestellnummern werden aus der Adresse entfernt), Referrer, Browser, Betriebssystem, Gerätetyp, Bildschirmgröße, Sprache, Land sowie im Shop die Ereignisse „In den Pilzkorb gelegt“ (Produkt, Variante, Menge), „Pilzkorb geöffnet“, „Kasse begonnen“ (Warenkorbwert) und „Bestellung abgeschlossen“ (Gesamtbetrag in Euro). Bestellnummer, Name, E-Mail-Adresse und Anschrift werden nicht übermittelt.</mark>
+
+<mark class="legal-open">Zweck ist, zu verstehen, welche Seiten und Produkte genutzt werden und an welcher Stelle Besucher im Bestellprozess abbrechen, um das Angebot zu verbessern. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Optimierung unseres Angebots). Da auf Ihrem Endgerät weder Informationen gespeichert noch ausgelesen werden, die über das Abrufen der Messdatei hinausgehen, und die Messwerte nicht auf Sie als Person zurückgeführt werden, gehen wir davon aus, dass § 25 TDDDG nicht einschlägig ist und keine Einwilligung erforderlich ist. Die Browser-Einstellung „Do Not Track“ beachten wir: Dann findet keine Messung statt.</mark> <mark class="legal-check">prüfen: Einschätzung zu § 25 TDDDG und Rechtsgrundlage</mark>
+
+<mark class="legal-open">Die Messdaten löschen wir nach offen: z. B. 14 Monaten.</mark> <mark class="legal-open">Sie können der Messung jederzeit widersprechen (Art. 21 DSGVO), indem Sie sie für Ihren Browser abschalten:</mark>
+
+<p><mark class="legal-open"><button type="button" class="btn btn--secondary" data-umami-optout>Statistik für diesen Browser deaktivieren</button></mark> <span role="status" data-umami-optout-state></span></p>
+
+## 17. Gekürzte Zugriffsprotokolle
+
+<mark class="legal-open">Unser Webserver (Caddy) schreibt für Website und Shop ein Zugriffsprotokoll im JSON-Format (Zeitpunkt, aufgerufene Adresse, Statuscode, Datenmenge, Browserkennung). IP-Adressen werden vor dem Speichern gekürzt (bei IPv4 auf die ersten 16 Bit, bei IPv6 auf die ersten 32 Bit), sodass sie keiner einzelnen Person mehr zugeordnet werden können. Cookies und Zugangsdaten (Cookie- und Authorization-Header) werden nicht protokolliert. Das Protokoll dient der Fehleranalyse und der Abwehr von Missbrauch (Art. 6 Abs. 1 lit. f DSGVO) und wird nach 30 Tagen gelöscht.</mark> <mark class="legal-check">prüfen: Löschfrist mit Ziffer 2 (Server-Logfiles) abgleichen</mark>

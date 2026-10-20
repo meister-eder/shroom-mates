@@ -42,7 +42,12 @@ export const OrderConfirmedPage = ({ order }: OrderConfirmedPageProps) => {
   const firstName = order.shipping_address?.first_name?.trim();
 
   return (
-    <section aria-label="Bestellbestätigung" className="order-page">
+    <section
+      aria-label="Bestellbestätigung"
+      className="order-page"
+      data-purchase-total={order.total}
+      data-purchase-currency={currencyCode.toUpperCase()}
+    >
       <section className="order-hero">
         <div className="order-hero-art">
           <MatesEyes
