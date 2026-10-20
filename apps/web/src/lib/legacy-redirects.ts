@@ -15,7 +15,7 @@ export function legacyTarget(pathname: string): string | undefined {
   if (parts[0] !== "de") return undefined;
   const [, a, b, ...rest] = parts;
 
-  if (!a) return "/shop/";
+  if (!a) return "/";
   if (a === "store") {
     if (!b) return "/shop/";
     return rest.length ? undefined : `/shop/${b}/`;

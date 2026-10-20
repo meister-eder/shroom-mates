@@ -9,11 +9,14 @@
 
 # Old shop URLs (former shop host, country prefix) -> new paths on the main
 # host. 301, query string kept (SumUp sends buyers back to /de/checkout/complete?...).
-# Anything unmapped lands on the shop index.
+# /de/ lands on the homepage, anything else unmapped on the shop index.
 (legacy_shop) {
 	route {
 		@new path /shop /shop/*
 		redir @new {args[0]}{uri} 301
+
+		@home path /de /de/
+		redir @home {args[0]}/ 301
 
 		@store path /de/store /de/store/
 		rewrite @store /shop/

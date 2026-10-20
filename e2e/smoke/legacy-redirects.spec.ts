@@ -19,7 +19,8 @@ const cases: [string, string][] = [
   ["/de/gewaehrleistung", "/gewaehrleistung/"],
   ["/de/vertrag-widerrufen", "/vertrag-widerrufen/"],
   ["/de/datenschutz", "/datenschutz/"],
-  ["/de", "/shop/"],
+  ["/de", "/"],
+  ["/de/", "/"],
 ];
 
 // Without a trailing slash the Node adapter first adds one (301), then the

@@ -35,6 +35,7 @@ Scope boundaries and user decisions (2026-10-20):
 - Product image URLs on staging still point at the old sslip host (broken images, and the server IP shows up in the HTML): run the SQL rewrite from the chat of 2026-10-20 / DEPLOYMENT.md "Product images".
 - P2.1: quick-add toast works against the mock; confirm on staging with the real backend (slow responses).
 - P2.2: check the drawer line-item price padding on a real phone (≤480 px); it was not screenshot-tested.
+- P2.6: Caddyfile not validated locally (Docker down): run the `caddy validate` command from P2.6 (CI deploy will also catch syntax errors).
 - Product descriptions live in Medusa (not in the repo): check them for health claims ("maximale Bioverfügbarkeit") and English fragments ("Hot-water und alkohol-extrahiert") in the Medusa Admin.
 
 ---
@@ -102,9 +103,9 @@ Scope boundaries and user decisions (2026-10-20):
   Checkout field errors ("E-Mail ist erforderlich") set `aria-invalid` but are not linked to the field: add `aria-describedby` pointing at the message element (stable ids), for every field with a message. No change to validation logic or payment.
   Commit: `fix(checkout): link field errors to their inputs` · 65ac159
 
-- [ ] **P2.6 `/de/` goes to the homepage** · deps: — · verify: quick
+- [x] **P2.6 `/de/` goes to the homepage** · deps: — · verify: quick
   `/de/` and `/de` redirect (301) to `/` instead of `/shop/`, both in the Astro legacy route (`apps/web/src/pages/de/[...path].ts`) and in the Caddy `legacy_shop` snippet if it handles the bare path; all other legacy mappings stay exactly as they are (`/de/store/…` → `/shop/…`, `/de/checkout/complete?…` with query). Validate the Caddyfile with `docker run --rm -e DOMAIN=example.test -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile` if Docker is available, otherwise note it in the report.
-  Commit: `fix(web): /de/ redirects to the homepage`
+  Commit: `fix(web): /de/ redirects to the homepage` · 5c9211e
 
 ## P3 Content
 
@@ -158,3 +159,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 11:32 P2.2 DONE 3c9ac32 — drawer link to Pilzkorb page, pill is a link on cart/checkout, mobile padding
 2026-10-20 11:36 P2.3 DONE a7d63e6 — optimistic qty/remove with rollback alert, sync spinner, cart skeleton
 2026-10-20 11:38 P2.5 DONE 65ac159 — aria-describedby on all checkout fields with error messages
+2026-10-20 11:39 P2.6 DONE 5c9211e — /de and /de/ → / in Astro route and Caddy; Caddy not validated (no Docker)
