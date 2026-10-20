@@ -42,19 +42,8 @@ export interface FooterColumn {
   links: Array<{ label: string; href: string }>;
 }
 
-/** Footer link columns. `legalExtended` adds AGB / Widerruf / Gewährleistung. */
-export function footerColumns(legalExtended = false): FooterColumn[] {
-  const legal: FooterColumn["links"] = [
-    { label: "Impressum", href: "/impressum/" },
-    { label: "Datenschutz", href: "/datenschutz/" },
-  ];
-  if (legalExtended) {
-    legal.push(
-      { label: "AGB", href: "/agb/" },
-      { label: "Widerruf", href: "/widerruf/" },
-      { label: "Gewährleistung", href: "/gewaehrleistung/" },
-    );
-  }
+/** Footer link columns (same on every page). */
+export function footerColumns(): FooterColumn[] {
   return [
     {
       title: "Seiten",
@@ -71,7 +60,12 @@ export function footerColumns(legalExtended = false): FooterColumn[] {
       links: [
         { label: "Über uns", href: "/ueber-uns/" },
         { label: "FAQ", href: "/faq/" },
-        ...legal,
+        { label: "Kontakt", href: "/kontakt/" },
+        { label: "Impressum", href: "/impressum/" },
+        { label: "Datenschutz", href: "/datenschutz/" },
+        { label: "AGB", href: "/agb/" },
+        { label: "Widerrufsbelehrung", href: "/widerruf/" },
+        { label: "Gewährleistung", href: "/gewaehrleistung/" },
       ],
     },
   ];

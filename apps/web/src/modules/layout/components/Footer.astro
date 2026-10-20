@@ -1,23 +1,7 @@
 ---
-// Shared footer. Shop pages (`shop`) show the legal links incl. AGB / Widerruf /
-// Gewährleistung and the § 356a BGB withdrawal function.
+// Shared footer: same links (incl. legal pages and the § 356a BGB withdrawal
+// function) on every page.
 import SharedFooter from "@shroom-mates/ui/Footer.astro";
-
-interface Props {
-  shop?: boolean;
-}
-
-const { shop = false } = Astro.props;
 ---
 
-{
-  shop ? (
-    <SharedFooter legalExtended>
-      <a slot="actions" href="/vertrag-widerrufen/">
-        Vertrag widerrufen
-      </a>
-    </SharedFooter>
-  ) : (
-    <SharedFooter />
-  )
-}
+<SharedFooter />

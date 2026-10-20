@@ -4,11 +4,9 @@
  * "Bis bald in der Glasfabrik!" and four link columns.
  *
  *   <Footer />
- *   <Footer legalExtended>
- *     <a slot="actions" href=…>Vertrag widerrufen</a>   (§ 356a BGB)
- *   </Footer>
  *
- * `legalExtended` adds AGB / Widerruf / Gewährleistung.
+ * Same on every page, incl. all legal links and the withdrawal function
+ * (§ 356a BGB).
  */
 import { Image } from "astro:assets";
 import drawing from "./assets/shroom-mates-drawing-eyeless.png";
@@ -21,12 +19,7 @@ import {
   REPO_URL,
 } from "./site";
 
-interface Props {
-  legalExtended?: boolean;
-}
-
-const { legalExtended = false } = Astro.props;
-const columns = footerColumns(legalExtended);
+const columns = footerColumns();
 const currentYear = new Date().getFullYear();
 
 /*
@@ -150,9 +143,9 @@ const eyes: [number, number, number, number, number][] = [
                   <a href={l.href}>{l.label}</a>
                 </li>
               ))}
-              {col.title === "Mehr" && Astro.slots.has("actions") && (
+              {col.title === "Mehr" && (
                 <li class="footer-actions">
-                  <slot name="actions" />
+                  <a href="/vertrag-widerrufen/">Vertrag widerrufen</a>
                 </li>
               )}
             </ul>
@@ -292,7 +285,7 @@ const eyes: [number, number, number, number, number][] = [
     margin-top: 10px;
   }
 
-  /* Withdraw button etc. passed via slot="actions" */
+  /* Withdraw button */
   .footer-actions :global(a) {
     padding: 0.5rem 1.1rem;
     min-height: 44px;

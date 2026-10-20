@@ -58,10 +58,10 @@ Scope boundaries and user decisions (2026-10-20):
   Re-baseline allowed: all keys (bar area only).
   Commit: `feat(ui): marquee on every page with a pause button` · fca8444
 
-- [ ] **P1.4 One footer for every page** · deps: P1.1 · verify: visual
+- [x] **P1.4 One footer for every page** · deps: P1.1 · verify: visual
   `Footer` loses its `shop` prop: every page gets the same footer with all legal links (Impressum, Datenschutz, AGB, Widerrufsbelehrung, Gewährleistung, Vertrag widerrufen) and links to FAQ and Kontakt; keep today's column structure and look, merge the link lists without duplicates. The WaveRoller (`{!shop && <WaveRoller />}` in `Layout.astro`) shows on every page.
   Re-baseline allowed: all keys (footer area only).
-  Commit: `fix(ui): one footer with all legal links`
+  Commit: `fix(ui): one footer with all legal links` · 9b7b719
 
 - [ ] **P1.5 Layout: no shop/site split left that visitors see** · deps: P1.3, P1.4 · verify: visual
   In `apps/web/src/layouts/Layout.astro`: titles `"<page> | shroom-mates"` everywhere (shop pages too, `og:site_name` "shroom-mates"); keep the `shop` prop only where it is technically needed (region lookup, body class for shop styles) and document that in its JSDoc; LocalBusiness and Breadcrumb JSON-LD on every page that is not checkout/cart/order. Remove now-dead CSS for the shop header/footer variants (grep `site-header--shop`, `header-info`, `is-shop` and check each use). No other visual change.
@@ -144,3 +144,4 @@ _(orchestrator appends one line per task: `YYYY-MM-DD HH:MM <ID> DONE <sha> — 
 2026-10-20 10:51 P1.1 DONE 7c2047b — one header everywhere; 14 shop-* keys re-baselined
 2026-10-20 11:01 P1.2 DONE c6ff5d2 — fluid header, hamburger <1024px, header smoke spec; desktop keys re-baselined
 2026-10-20 11:06 P1.3 DONE fca8444 — marquee everywhere incl. shop facts; hover/focus/tap pause + discreet toggle; no re-baseline
+2026-10-20 11:17 P1.4 DONE 9b7b719 — one footer, all legal links + Kontakt; all keys re-baselined (footer + P1.3 bar)

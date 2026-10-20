@@ -272,12 +272,12 @@ const breadcrumbSchema = {
         <slot />
       </main>
 
-      <Footer shop={shop} />
+      <Footer />
       <CartSidebar />
       <AddedToast />
 
       <LayoutScripts />
-      {!shop && <WaveRoller />}
+      <WaveRoller />
 
       <script>
         // Umami before-send hook (strips order IDs from URLs); defined before the
